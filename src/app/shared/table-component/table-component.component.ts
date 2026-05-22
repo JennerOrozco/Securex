@@ -93,7 +93,9 @@ export class TableComponent implements OnInit, OnChanges {
   selectedItems: any[] = [];
   selectedColumns: TableColumn[] = [];
   displayColumnsModal: boolean = false;
-  isMenuOpen: boolean = false;
+  isMenuOpen: boolean = false; // Controls mobile bottom sheet
+  contextMenuVisible: boolean = false; // Controls desktop context menu
+  menuPosition = { x: 0, y: 0 };
   activeRow: any = null;
   expandedRowKeys: { [s: string]: boolean } = {};
 
@@ -133,23 +135,77 @@ export class TableComponent implements OnInit, OnChanges {
   // CORREGIDO: Se elimina el parámetro '$event' del decorador ya que la firma no lo requiere
   @HostListener('window:resize')
   onResize() {
-    if (window.innerWidth > 768 && this.isMenuOpen) {
+    if (window.innerWidth > 768 && (this.isMenuOpen || this.contextMenuVisible)) {
       this.closeMenus();
     }
+  }
+
+  onRowClick(event: MouseEvent, rowData: any) {
+    if (window.innerWidth >= 768) {
+      return;
+    }
+
+    const target = event.target as HTMLElement;
+    if (
+      target.closest('button') || 
+      target.closest('a') || 
+      target.closest('.actions')
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.openMobileMenu(rowData);
+  }
+
+  onRowContextMenu(event: MouseEvent, rowData: any) {
+    if (window.innerWidth < 768) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.openContextMenu(event, rowData);
+  }
+
+  openContextMenu(event: MouseEvent, rowData: any) {
+    this.activeRow = rowData;
+    this.contextMenuVisible = true;
+    this.isMenuOpen = false;
+    this.menuPosition = {
+      x: event.clientX,
+      y: event.clientY
+    };
   }
 
   openMobileMenu(row: any) {
     if (window.innerWidth <= 768) {
       this.activeRow = row;
       this.isMenuOpen = true;
+      this.contextMenuVisible = false;
       document.body.style.overflow = 'hidden';
     }
   }
 
   closeMenus() {
     this.isMenuOpen = false;
+    this.contextMenuVisible = false;
     this.activeRow = null;
     document.body.style.overflow = '';
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    this.closeMenus();
+  }
+
+  @HostListener('document:contextmenu', ['$event'])
+  onDocumentContextMenu(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.custom-context-menu') && !target.closest('tr')) {
+      this.closeMenus();
+    }
   }
 
   executeAction(actionType: 'view' | 'pdf' | 'send' | 'duplicate' | 'delete' | 'edit' | 'permissions') {

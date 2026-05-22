@@ -108,7 +108,7 @@
 
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
-          (click)="openMobileMenu(rowData)">
+          (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
           <td *ngFor="let col of columns" [style]="col.style">
             @if (col.type === 'status') {
             <span class="estado-badge" [ngClass]="rowData[col.field]?.toString()?.toLowerCase()">
@@ -159,30 +159,86 @@
   </div>
 </div>
 
-<div class="sheet-menu-backdrop" *ngIf="isMenuOpen" (click)="closeMenus()">
-  <div class="sheet-menu-content" (click)="$event.stopPropagation()">
-    <div class="sheet-header">
-      <div class="sheet-drag-handle"></div>
-      <h3>Acciones</h3>
-    </div>
+<!-- Custom Context Menu for Desktop -->
+<div class="custom-context-menu" 
+     *ngIf="contextMenuVisible" 
+     [style.top.px]="menuPosition.y" 
+     [style.left.px]="menuPosition.x"
+     (click)="$event.stopPropagation()">
+  <div class="menu-header">
+    <span class="menu-title">Acciones</span>
+  </div>
+  <ul class="menu-list">
+    <li *ngIf="showView" (click)="executeAction('view')">
+      <i class="pi pi-eye text-indigo-500"></i>
+      <span>Visualizar</span>
+    </li>
+    <li *ngIf="showEdit" (click)="executeAction('edit')">
+      <i class="pi pi-pencil text-teal-500"></i>
+      <span>Editar</span>
+    </li>
+    <li *ngIf="showPdf" (click)="executeAction('pdf')">
+      <i class="pi pi-file-pdf text-red-500"></i>
+      <span>Descargar PDF</span>
+    </li>
+    <li *ngIf="showSend" (click)="executeAction('send')">
+      <i class="pi pi-send text-emerald-500"></i>
+      <span>Enviar Correo</span>
+    </li>
+    <li *ngIf="showDuplicate" (click)="executeAction('duplicate')">
+      <i class="pi pi-copy text-purple-500"></i>
+      <span>Duplicar</span>
+    </li>
+    <li *ngIf="showPermissions" (click)="executeAction('permissions')">
+      <i class="pi pi-shield text-amber-500"></i>
+      <span>Permisos</span>
+    </li>
+    <li *ngIf="showDelete" (click)="executeAction('delete')" class="menu-item-danger">
+      <i class="pi pi-trash text-red-500"></i>
+      <span>Eliminar</span>
+    </li>
+  </ul>
+</div>
+
+<!-- Mobile Bottom Sheet for Actions -->
+<div class="mobile-sheet-backdrop" *ngIf="isMenuOpen" (click)="closeMenus()"></div>
+<div class="mobile-bottom-sheet" [class.show]="isMenuOpen" (click)="$event.stopPropagation()">
+  <div class="sheet-handle-container" (click)="closeMenus()">
+    <div class="sheet-handle"></div>
+  </div>
+  <div class="sheet-header">
+    <h3 class="sheet-title">Acciones de Fila</h3>
+    <p class="sheet-subtitle" *ngIf="activeRow">Selecciona una opción para el registro</p>
+  </div>
+  <div class="sheet-body">
     <ul class="sheet-list">
       <li *ngIf="showView" (click)="executeAction('view')">
-        <div class="sheet-item-icon view"><i class="pi pi-eye"></i></div><span>Visualizar</span>
+        <div class="sheet-item-icon view"><i class="pi pi-eye"></i></div>
+        <span>Visualizar</span>
+      </li>
+      <li *ngIf="showEdit" (click)="executeAction('edit')">
+        <div class="sheet-item-icon edit"><i class="pi pi-pencil"></i></div>
+        <span>Editar</span>
       </li>
       <li *ngIf="showPdf" (click)="executeAction('pdf')">
-        <div class="sheet-item-icon pdf"><i class="pi pi-file-pdf"></i></div><span>Descargar PDF</span>
+        <div class="sheet-item-icon pdf"><i class="pi pi-file-pdf"></i></div>
+        <span>Descargar PDF</span>
       </li>
       <li *ngIf="showSend" (click)="executeAction('send')">
-        <div class="sheet-item-icon send"><i class="pi pi-send"></i></div><span>Enviar Correo</span>
+        <div class="sheet-item-icon send"><i class="pi pi-send"></i></div>
+        <span>Enviar Correo</span>
       </li>
       <li *ngIf="showDuplicate" (click)="executeAction('duplicate')">
-        <div class="sheet-item-icon duplicate"><i class="pi pi-copy"></i></div><span>Duplicar</span>
+        <div class="sheet-item-icon duplicate"><i class="pi pi-copy"></i></div>
+        <span>Duplicar</span>
       </li>
       <li *ngIf="showPermissions" (click)="executeAction('permissions')">
-        <div class="sheet-item-icon perm"><i class="pi pi-shield"></i></div><span>Permisos</span>
+        <div class="sheet-item-icon perm"><i class="pi pi-shield"></i></div>
+        <span>Permisos</span>
       </li>
       <li *ngIf="showDelete" (click)="executeAction('delete')" class="sheet-item-danger">
-        <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div><span>Eliminar</span>
+        <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div>
+        <span>Eliminar</span>
       </li>
     </ul>
     <button class="sheet-cancel-btn" (click)="closeMenus()">Cancelar</button>
