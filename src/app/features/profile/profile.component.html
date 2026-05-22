@@ -1,0 +1,217 @@
+<div class="profile-wrapper">
+  <div class="profile-card">
+    @if (profileLoading() && !profileData()) {
+      <div class="skeleton-container">
+        <div class="skeleton-header">
+          <div class="skeleton avatar-skeleton"></div>
+          <div class="skeleton-text-group">
+            <div class="skeleton skeleton-title"></div>
+            <div class="skeleton skeleton-subtitle"></div>
+            <div class="skeleton skeleton-badge"></div>
+          </div>
+        </div>
+        <div class="skeleton-body">
+          <div class="skeleton skeleton-menu-item"></div>
+          <div class="skeleton skeleton-menu-item"></div>
+          <div class="skeleton skeleton-pane"></div>
+        </div>
+      </div>
+    } @else {
+      @if (profileError(); as error) {
+        <div class="error-banner">
+          <i class="pi pi-exclamation-circle"></i>
+          <span>{{ error }}</span>
+          <button class="retry-btn" (click)="ngOnInit()">Reintentar</button>
+        </div>
+      }
+
+      <div class="profile-header">
+        <div class="user-avatar">
+          @if (profileData()?.profile_picture) {
+            <img [src]="profileData()?.profile_picture" alt="Avatar" />
+          } @else {
+            <span class="avatar-initials">{{ getUserInitials() }}</span>
+          }
+        </div>
+        <div class="user-meta">
+          <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
+          <p>{{ profileData()?.email }}</p>
+          <span class="role-badge">{{ profileData()?.role_name || 'Sin Rol' }}</span>
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <nav class="profile-menu" role="tablist">
+          <button
+            [class.active]="activeTab() === 'info'"
+            (click)="setTab('info')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'info'"
+          >
+            <i class="pi pi-info-circle"></i>
+            <span>Información</span>
+          </button>
+          <button
+            [class.active]="activeTab() === 'security'"
+            (click)="setTab('security')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'security'"
+          >
+            <i class="pi pi-shield"></i>
+            <span>Seguridad</span>
+          </button>
+        </nav>
+
+        <div class="profile-pane" [class.switch-in]="true">
+          @if (activeTab() === 'info') {
+            <div class="info-grid">
+              <div class="info-box">
+                <h3><i class="pi pi-user mr-2"></i>Usuario</h3>
+                <div class="detail">
+                  <span>Nombre</span>
+                  <strong>{{ profileData()?.full_name }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Email</span>
+                  <strong>{{ profileData()?.email }}</strong>
+                </div>
+              </div>
+
+              <div class="info-box">
+                <h3><i class="pi pi-building mr-2"></i>Compañía & Sucursal</h3>
+                <div class="detail">
+                  <span>Compañía</span>
+                  <strong>{{ profileData()?.company_name || 'N/A' }}</strong>
+                </div>
+                <div class="detail">
+                  <span>Sucursal</span>
+                  <strong>{{ profileData()?.branch?.name || 'N/A' }}</strong>
+                </div>
+              </div>
+            </div>
+          }
+
+          @if (activeTab() === 'security') {
+            <div class="security-box">
+              <h3><i class="pi pi-lock mr-2"></i>Actualizar Contraseña</h3>
+
+              <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+                <app-password
+                  label="Contraseña Actual"
+                  placeholder="Ingrese su contraseña actual"
+                  [control]="passwordForm.get('currentPassword')"
+                  [required]="true"
+                  [feedback]="false"
+                ></app-password>
+
+                <app-password
+                  label="Nueva Contraseña"
+                  placeholder="Mínimo 6 caracteres"
+                  [control]="passwordForm.get('newPassword')"
+                  [required]="true"
+                  [feedback]="true"
+                ></app-password>
+
+                <app-password
+                  label="Confirmar Nueva Contraseña"
+                  placeholder="Repita la nueva contraseña"
+                  [control]="passwordForm.get('confirmPassword')"
+                  [required]="true"
+                  [feedback]="false"
+                ></app-password>
+
+                @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+                  <div class="form-feedback error">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>Las contraseñas no coinciden.</span>
+                  </div>
+                }
+
+                @if (passwordSuccess()) {
+                  <div class="form-feedback success">
+                    <i class="pi pi-check-circle"></i>
+                    <span>Contraseña actualizada exitosamente.</span>
+                  </div>
+                }
+
+                @if (passwordError(); as errMsg) {
+                  <div class="form-feedback error">
+                    <i class="pi pi-exclamation-circle"></i>
+                    <span>{{ errMsg }}</span>
+                  </div>
+                }
+
+                <button
+                  type="submit"
+                  [disabled]="passwordForm.invalid || passwordLoading()"
+                  class="btn-submit"
+                >
+                  @if (passwordLoading()) {
+                    <i class="pi pi-spin pi-spinner mr-2"></i>
+                  }
+                  {{ passwordLoading() ? 'Actualizando...' : 'Actualizar Contraseña' }}
+                </button>
+              </form>
+            </div>
+
+            <div class="security-box mt-4">
+              <h3><i class="fa-solid fa-fingerprint mr-2"></i>Autenticación Biométrica</h3>
+              <p class="text-muted">Registra tu huella digital o reconocimiento facial para iniciar sesión de forma más rápida y segura.</p>
+              
+              @if (biometricsSuccess()) {
+                <div class="form-feedback success mb-3">
+                  <i class="pi pi-check-circle"></i>
+                  <span>Huella registrada exitosamente.</span>
+                </div>
+              }
+
+              @if (biometricsError(); as errMsg) {
+                <div class="form-feedback error mb-3">
+                  <i class="pi pi-exclamation-circle"></i>
+                  <span>{{ errMsg }}</span>
+                </div>
+              }
+
+              @if (!devicesLoading() && devices().length === 0) {
+                <div class="biometric-prompt">
+                  <div class="prompt-icon">
+                    <i class="fa-solid fa-fingerprint"></i>
+                  </div>
+                  <h4>Configura tu autenticación biométrica</h4>
+                  <p>
+                    Registra tu huella digital, rostro o llave de acceso para iniciar sesión
+                    de forma más rápida y segura sin necesidad de ingresar tu contraseña cada vez.
+                  </p>
+                  <button class="btn-register" (click)="registerBiometrics()" [disabled]="biometricsLoading()">
+                    @if (biometricsLoading()) {
+                      <i class="pi pi-spin pi-spinner mr-2"></i>
+                    }
+                    <i class="fa-solid fa-fingerprint mr-2"></i>
+                    {{ biometricsLoading() ? 'Registrando...' : 'Registrar mi llave de acceso' }}
+                  </button>
+                </div>
+              }
+
+              <div class="table-container-responsive">
+                <app-table-component
+                  [title]="'Dispositivos Registrados'"
+                  [subtitle]="'Tus métodos de autenticación'"
+                  [data]="devices()"
+                  [columns]="columns"
+                  [loading]="devicesLoading()"
+                  [showAdd]="devices().length > 0"
+                  [addLabel]="'Agregar Metodo'"
+                  [showEdit]="false"
+                  [showDelete]="true"
+                  [rows]="5"
+                  (onAdd)="registerBiometrics()"
+                  (onDelete)="deleteDevice($event)"
+                ></app-table-component>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

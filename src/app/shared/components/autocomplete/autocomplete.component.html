@@ -1,0 +1,34 @@
+<div class="gm-field" [class.gm-has-icon]="icon">
+  <label class="gm-label" [for]="id">
+    {{ label }}
+    @if (required) { <span class="gm-required">*</span> }
+  </label>
+  <div class="gm-control-wrap">
+    @if (icon) {
+      <i [className]="icon + ' gm-field-icon'"></i>
+    }
+    <p-autoComplete
+      [id]="id"
+      class="gm-autocomplete"
+      [suggestions]="suggestions"
+      [optionLabel]="optionLabel"
+      [placeholder]="placeholder"
+      [formControl]="control"
+      (completeMethod)="completeMethod.emit($event)"
+      [style]="{'width': '100%'}"
+      [inputStyle]="{'width': '100%'}"
+    ></p-autoComplete>
+    @if (control?.touched) {
+      @if (control?.valid) {
+        <i class="pi pi-check gm-status-icon gm-valid"></i>
+      } @else if (control?.invalid) {
+        <i class="pi pi-times gm-status-icon gm-invalid"></i>
+      }
+    }
+  </div>
+  @if (control?.touched && control?.invalid) {
+    <span class="gm-error-msg">
+      <i class="pi pi-exclamation-circle"></i> Campo inválido
+    </span>
+  }
+</div>

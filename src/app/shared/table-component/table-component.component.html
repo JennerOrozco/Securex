@@ -1,0 +1,203 @@
+<div class="page-wrapper" [ngClass]="{'minimal': minimalMode}">
+  <div [ngClass]="minimalMode ? 'minimal-container' : 'table-card'">
+
+    <p-table #dt [value]="data" [rows]="rows" [paginator]="true" [globalFilterFields]="globalFilterFields"
+      [(selection)]="selectedItems" [rowHover]="true" [loading]="loading" [scrollable]="true"
+      [scrollHeight]="scrollHeight" [stripedRows]="stripedRows" responsiveLayout="scroll" [resizableColumns]="true"
+      columnResizeMode="expand" currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} registros"
+      [showCurrentPageReport]="true" class="users-table" [columns]="selectedColumns"
+      [rowGroupMode]="enableRowGroup ? 'subheader' : undefined" [groupRowsBy]="enableRowGroup ? groupRowsBy : ''"
+      [sortField]="enableRowGroup ? groupRowsBy : ''" [sortMode]="enableRowGroup ? 'single' : 'multiple'"
+      [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'">
+
+      <ng-template pTemplate="caption">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <div>
+              <h2 class="toolbar-title">{{ title }}</h2>
+              <p class="toolbar-sub">{{ subtitle }}</p>
+            </div>
+          </div>
+          <div class="toolbar-right">
+            <button class="btn-new" (click)="displayColumnsModal = true" pTooltip="Mostrar/Ocultar Columnas"
+              tooltipPosition="top">
+              <i class="pi pi-th-large"></i>
+            </button>
+            <div class="search-box">
+              <i class="pi pi-search search-ic"></i>
+              <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+                [placeholder]="searchPlaceholder" class="search-inp" />
+            </div>
+            @if (showAdd) {
+            <button class="btn-new" (click)="onAdd.emit()">
+              <i class="pi pi-plus"></i> {{ addLabel }}
+            </button>
+            }
+          </div>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable ? col.field : undefined"
+            [style]="col.style">
+            <div class="th-content">
+              <span>{{ col.header }}</span>
+              <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+              @if (col.field !== 'actions') {
+              @if (col.filterOptions && col.filterOptions.length > 0) {
+              <p-columnFilter [field]="col.field" matchMode="equals" display="menu" [showMatchModes]="false"
+                [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                <ng-template pTemplate="filter" let-value let-filterCallback="filterCallback">
+                  <p-select [ngModel]="value" [options]="col.filterOptions" (onChange)="filterCallback($event.value)"
+                    placeholder="Todos" [optionLabel]="col.filterOptionLabel || 'label'"
+                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true">
+                  </p-select>
+                </ng-template>
+              </p-columnFilter>
+              } @else if (col.type === 'date') {
+              <p-columnFilter type="date" [field]="col.field" display="menu" class="ml-auto"></p-columnFilter>
+              } @else {
+              <p-columnFilter type="text" [field]="col.field" display="menu" [showMatchModes]="true"
+                [showOperator]="false" [showAddButton]="true" class="ml-auto"></p-columnFilter>
+              }
+              }
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="groupheader" let-rowData>
+        <tr pRowGroupHeader style="background-color: var(--bg-page); font-weight: 600;">
+          @if (showAddChild && hasActionsColumn) {
+          <td [attr.colspan]="selectedColumns.length - 1">
+            <span style="font-size: 13px; display: flex; align-items: center; min-height: 12px;">
+              @if (expandableRowGroups) {
+              <button type="button" (click)="toggleGroupRow(rowData[groupRowsBy]); $event.stopPropagation()"
+                style="padding: 0; width: 24px; height: 24px; min-width: auto; background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-right: 6px; transition: transform 0.2s ease;">
+                <i class="pi" [ngClass]="expandedRowKeys[rowData[groupRowsBy]] ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 12px;"></i>
+              </button>
+              }
+              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
+            </span>
+          </td>
+          <td style="text-align: center; padding: 4px 16px; width: 8rem;">
+            <button class="act-btn add-child-btn" (click)="onAddChild.emit(rowData); $event.stopPropagation()"
+              pTooltip="Agregar a este grupo" tooltipPosition="top">
+              <i class="pi pi-plus"></i>
+            </button>
+          </td>
+          } @else {
+          <td [attr.colspan]="selectedColumns.length">
+            <span class="text-navy" style="font-size: 14px; display: flex; align-items: center; height: 32px;">
+              @if (expandableRowGroups) {
+              <button type="button" (click)="toggleGroupRow(rowData[groupRowsBy]); $event.stopPropagation()"
+                style="padding: 0; width: 24px; height: 24px; min-width: auto; background: transparent; border: none; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; margin-right: 6px; transition: transform 0.2s ease;">
+                <i class="pi" [ngClass]="expandedRowKeys[rowData[groupRowsBy]] ? 'pi-chevron-down' : 'pi-chevron-right'"
+                  style="font-size: 12px;"></i>
+              </button>
+              }
+              <i class="pi pi-folder mr-2" style="color: var(--blue-accent);"></i>
+              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
+            </span>
+          </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
+          (click)="openMobileMenu(rowData)">
+          <td *ngFor="let col of columns" [style]="col.style">
+            @if (col.type === 'status') {
+            <span class="estado-badge" [ngClass]="rowData[col.field]?.toString()?.toLowerCase()">
+              <span class="edo-dot"></span>
+              {{ rowData[col.field] }}
+            </span>
+            } @else if (col.type === 'image') {
+            <div class="table-logo-container">
+              @if (rowData[col.field]) {
+              <img [src]="rowData[col.field]" alt="Logo" class="table-logo-img"
+                (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
+              <div class="table-logo-fallback" style="display: none;">
+                <i class="pi pi-building"></i>
+              </div>
+              } @else {
+              <div class="table-logo-fallback">
+                <i class="pi pi-building"></i>
+              </div>
+              }
+            </div>
+            } @else if (col.type === 'actions') {
+            <div class="actions">
+              <button *ngIf="showEdit" class="act-btn edit" (click)="onEdit.emit(rowData); $event.stopPropagation()"><i
+                  class="pi pi-pencil"></i></button>
+              <button *ngIf="showPermissions" class="act-btn perm"
+                (click)="onPermissions.emit(rowData); $event.stopPropagation()"><i class="pi pi-shield"></i></button>
+              <button *ngIf="showDelete" class="act-btn del"
+                (click)="onDelete.emit(rowData); $event.stopPropagation()"><i class="pi pi-trash"></i></button>
+            </div>
+            } @else {
+            {{ rowData[col.field] }}
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptystate" let-columns>
+        <tr>
+          <td [attr.colspan]="columns.length">
+            <div class="empty-state" style="padding: 2rem; text-align: center; color: var(--text-light);">
+              <i class="pi pi-folder-open" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+              <span>No se encontraron registros.</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<div class="sheet-menu-backdrop" *ngIf="isMenuOpen" (click)="closeMenus()">
+  <div class="sheet-menu-content" (click)="$event.stopPropagation()">
+    <div class="sheet-header">
+      <div class="sheet-drag-handle"></div>
+      <h3>Acciones</h3>
+    </div>
+    <ul class="sheet-list">
+      <li *ngIf="showView" (click)="executeAction('view')">
+        <div class="sheet-item-icon view"><i class="pi pi-eye"></i></div><span>Visualizar</span>
+      </li>
+      <li *ngIf="showPdf" (click)="executeAction('pdf')">
+        <div class="sheet-item-icon pdf"><i class="pi pi-file-pdf"></i></div><span>Descargar PDF</span>
+      </li>
+      <li *ngIf="showSend" (click)="executeAction('send')">
+        <div class="sheet-item-icon send"><i class="pi pi-send"></i></div><span>Enviar Correo</span>
+      </li>
+      <li *ngIf="showDuplicate" (click)="executeAction('duplicate')">
+        <div class="sheet-item-icon duplicate"><i class="pi pi-copy"></i></div><span>Duplicar</span>
+      </li>
+      <li *ngIf="showPermissions" (click)="executeAction('permissions')">
+        <div class="sheet-item-icon perm"><i class="pi pi-shield"></i></div><span>Permisos</span>
+      </li>
+      <li *ngIf="showDelete" (click)="executeAction('delete')" class="sheet-item-danger">
+        <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div><span>Eliminar</span>
+      </li>
+    </ul>
+    <button class="sheet-cancel-btn" (click)="closeMenus()">Cancelar</button>
+  </div>
+</div>
+
+<p-dialog header="Seleccionar Columnas" [(visible)]="displayColumnsModal" [modal]="true" [style]="{width: '350px'}"
+  [breakpoints]="{ '480px': '90vw' }">
+  <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem 0;">
+    @for (col of columns; track $index) {
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <p-checkbox name="columns" [value]="col" [(ngModel)]="selectedColumns" [inputId]="col.field"></p-checkbox>
+      <label [for]="col.field" style="cursor: pointer; font-size: 14px; color: var(--text-main);">{{ col.header
+        }}</label>
+    </div>
+    }
+  </div>
+</p-dialog>

@@ -1,0 +1,27 @@
+<div class="section-card">
+  <div class="section-card-header">
+    <div>
+      <h3 class="section-card-title">Ventas</h3>
+      <p class="section-card-subtitle">Evolución de ventas en el tiempo</p>
+    </div>
+    <div class="flex gap-1">
+      @for (freq of frequencies; track freq.value) {
+        <button
+          (click)="changeFrequency(freq.value)"
+          class="frequency-btn"
+          [class.active]="currentFrequency === freq.value">
+          {{ freq.label }}
+        </button>
+      }
+    </div>
+  </div>
+  @if (data) {
+    <div class="chart-container">
+      <p-chart type="line" [data]="data" [options]="options" height="300px"></p-chart>
+    </div>
+  } @else {
+    <div class="empty-state">
+      <i class="pi pi-spin pi-spinner mr-2"></i> Cargando datos...
+    </div>
+  }
+</div>

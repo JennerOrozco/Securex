@@ -1,0 +1,77 @@
+{
+  "theme_color": "hsl(222.2, 84%, 4.9%)",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "purpose": "maskable",
+      "sizes": "512x512",
+      "src": "icon512_maskable.png",
+      "type": "image/png"
+    },
+    {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "icon512_rounded.png",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait",
+  "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "dir": "auto",
+  "lang": "es-GT",
+  "name": "SECUREX",
+  "short_name": "SECUREX",
+  "description": "Seguridad empresarial. Control total.",
+  "start_url": "https://admin.ggts.com.gt/home",
+  "id": "https://admin.ggts.com.gt/home",
+  "scope": "https://admin.ggts.com.gt",
+  "launch_handler": {
+    "client_mode": [
+      "focus-existing",
+      "auto"
+    ]
+  },
+  "shortcuts": [
+    {
+      "name": "Nuevo Registro",
+      "short_name": "Nuevo",
+      "description": "Crear una nueva entrada en el sistema",
+      "url": "https://admin.ggts.com.gt/nuevo",
+      "icons": [
+        {
+          "src": "icon-new.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Reportes",
+      "short_name": "Reportes",
+      "url": "https://admin.ggts.com.gt/reportes",
+      "icons": [
+        {
+          "src": "icon-reports.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "screenshot_mobile_1.png",
+      "sizes": "1080x2400",
+      "type": "image/png",
+      "form_factor": "narrow"
+    },
+    {
+      "src": "screenshot_desktop_1.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
+}

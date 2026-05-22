@@ -1,0 +1,50 @@
+<div class="p-2">
+  <div *ngIf="!hasPermission" class="access-denied">
+    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    <h2>Acceso restringido</h2>
+    <p>Solo los administradores del sistema pueden gestionar permisos.</p>
+  </div>
+
+  <ng-container *ngIf="hasPermission">
+    <app-tree-table-component
+      title="Permisos"
+      subtitle="Estructura jerárquica de accesos por aplicación"
+      [nodes]="treeNodes"
+      [columns]="cols"
+      [loading]="loading"
+      addLabel="Nuevo Permiso"
+      searchPlaceholder="Buscar permiso..."
+      (onAddRoot)="handleAdd()"
+      (onAddChild)="handleAddChild($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)">
+    </app-tree-table-component>
+  </ng-container>
+
+  <app-add-modal
+    [visible]="modalVisible && modalMode === 'add'"
+    title="Nuevo Permiso"
+    [fields]="formFields"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-edit-modal
+    [visible]="modalVisible && modalMode === 'edit'"
+    title="Editar Permiso"
+    [fields]="formFields"
+    [data]="selectedItem"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-edit-modal>
+
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    title="Eliminar Permiso"
+    [loading]="isSaving"
+    (onConfirm)="confirmDelete()"
+    (onClose)="modalVisible = false">
+  </app-delete-modal>
+</div>

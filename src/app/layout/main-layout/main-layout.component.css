@@ -1,0 +1,69 @@
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.admin-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  background-color: hsl(var(--background));
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.admin-main {
+  flex: 1;
+  overflow-y: auto;
+  position: relative;
+  /* Removed large padding here, will let components handle their own padding or use a wrapper */
+  padding: 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Full layout variant for builders/editors */
+.admin-main.admin-main-full {
+  padding: 0;
+  /* We use overflow-y: auto as fallback if child doesn't handle it */
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* On full layouts, we want the host component to stretch to 100% */
+.admin-main.admin-main-full > * {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for nested flex scroll */
+}
+
+@media (max-width: 768px) {
+  :host {
+    padding-top: 4rem;
+  }
+
+  .admin-main {
+    padding: 0.1rem;
+    padding-bottom: 80px; /* Space for mobile nav */
+  }
+
+  .admin-main.admin-main-full {
+    padding-bottom: 0; /* Builders usually don't want bottom padding */
+  }
+}
+
+
+
+

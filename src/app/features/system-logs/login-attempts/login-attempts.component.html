@@ -1,0 +1,9 @@
+<div class="px-4 pb-4 animate-fade-in">
+  <app-table-component title="Intentos de Acceso" description="Historial de intentos de inicio de sesión en el sistema"
+    [data]="data" [columns]="cols" [loading]="loading" (onRefresh)="load()" [showEdit]="true" [showDelete]="true"
+    (onDelete)="handleDelete($event)"></app-table-component>
+</div>
+
+<app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Intento de Acceso"
+  [bodyMessage]="'¿Estás seguro de eliminar el intento de acceso de ' + (selectedItem?.email || 'este usuario') + '?'"
+  [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false"></app-delete-modal>

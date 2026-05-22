@@ -1,0 +1,17 @@
+<div class="p-2">
+  <div *ngIf="!hasPermission" class="access-denied">
+    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    <h2>Acceso restringido</h2>
+    <p>Solo los administradores del sistema pueden ver la auditoría de seguridad.</p>
+  </div>
+
+  <ng-container *ngIf="hasPermission">
+    <app-table-component
+      title="Auditoría de Seguridad"
+      subtitle="Registro de eventos de seguridad del sistema"
+      [columns]="cols"
+      [data]="logs"
+      [loading]="loading">
+    </app-table-component>
+  </ng-container>
+</div>

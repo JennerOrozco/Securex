@@ -1,0 +1,79 @@
+.gm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gm-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gm-required {
+  color: #e11d48;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.gm-control-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gm-field-icon {
+  position: absolute;
+  left: 10px;
+  z-index: 2;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.gm-status-icon {
+  position: absolute;
+  right: 10px;
+  z-index: 2;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.gm-valid { color: #059669; }
+.gm-invalid { color: #e11d48; }
+
+:host ::ng-deep .gm-inputnumber .p-inputtext {
+  width: 100%; min-height: 32px; border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 8px; padding: 0.4rem 0.65rem; font-size: 0.85rem; color: #0f172a;
+  background: rgba(248, 250, 252, 0.75); backdrop-filter: blur(4px); transition: all 0.2s; outline: none;
+}
+
+:host ::ng-deep .gm-inputnumber .p-inputtext:focus {
+  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+}
+
+.gm-has-icon ::ng-deep .p-inputtext {
+  padding-left: 2rem !important;
+}
+
+.gm-error-msg {
+  font-size: 0.65rem;
+  color: #e11d48;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  animation: error-in 0.18s ease both;
+}
+
+@keyframes error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

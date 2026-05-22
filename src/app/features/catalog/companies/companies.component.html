@@ -1,0 +1,30 @@
+<div class="p-2">
+  <div *ngIf="!hasPermission" class="access-denied">
+    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    <h2>Acceso restringido</h2>
+    <p>Solo los administradores del sistema pueden gestionar compañías.</p>
+  </div>
+
+  <ng-container *ngIf="hasPermission">
+    <app-table-component title="Compañías" subtitle="Organizadas por aplicación" [data]="tableData" [columns]="cols"
+      [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true" addLabel="Nueva Compañía"
+      searchPlaceholder="Buscar compañía..." [enableRowGroup]="true" groupRowsBy="app_name"
+      groupHeaderLabel="Aplicación:" [showAddChild]="true" [expandableRowGroups]="true" (onAdd)="handleAdd()" (onAddChild)="handleAddChild($event.app_id)"
+      (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
+    </app-table-component>
+  </ng-container>
+
+  <app-add-modal [visible]="modalVisible && modalMode === 'add'" title="Nueva Compañía" [fields]="formFields"
+    [initialData]="preselectedAppId ? { app_id: preselectedAppId, is_active: 1 } : { is_active: 1 }"
+    [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-edit-modal [visible]="modalVisible && modalMode === 'edit'" title="Editar Compañía" [fields]="formFields"
+    [data]="selectedItem" [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
+  </app-edit-modal>
+
+  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Compañía"
+    [bodyMessage]="'¿Está seguro de que desea eliminar la compañía ' + selectedItem?.name + '?'" [loading]="isSaving"
+    (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
+  </app-delete-modal>
+</div>

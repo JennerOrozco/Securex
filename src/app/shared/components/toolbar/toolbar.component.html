@@ -1,0 +1,25 @@
+<div class="toolbar">
+  <div class="toolbar-left">
+    <div>
+      <h2 class="toolbar-title">{{ title }}</h2>
+      <p class="toolbar-sub">{{ subtitle }}</p>
+    </div>
+  </div>
+  <div class="toolbar-right">
+    <div class="search-box">
+      <i class="pi pi-search search-ic"></i>
+      <input
+        pInputText
+        type="text"
+        (input)="search($event)"
+        [placeholder]="searchPlaceholder"
+        class="search-inp"
+      />
+    </div>
+    @if (showAdd) {
+      <button class="btn-new" (click)="onAdd.emit()">
+        <i class="pi pi-plus"></i> {{ addLabel }}
+      </button>
+    }
+  </div>
+</div>

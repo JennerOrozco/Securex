@@ -1,0 +1,14 @@
+<div class="summary-card">
+  <div>
+    <p class="summary-card-label">{{ label }}</p>
+    @if (value !== undefined && value !== null && value !== '') {
+      <h3 class="summary-card-value">{{ value }}</h3>
+    }
+    <div class="summary-card-states">
+      <ng-content></ng-content>
+    </div>
+  </div>
+  <div class="summary-card-icon" [ngClass]="iconClass">
+    <i [class]="icon + ' text-xl'"></i>
+  </div>
+</div>

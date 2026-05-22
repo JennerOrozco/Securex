@@ -1,0 +1,18 @@
+<div class="p-2">
+  <app-table-component title="Accesos de Usuario" subtitle="Gestión de accesos a aplicaciones"
+    [columns]="cols" [data]="records" [loading]="loading" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)">
+  </app-table-component>
+
+  <app-add-modal [visible]="modalVisible && modalMode === 'add'" title="Nuevo Acceso" [fields]="formFields"
+    [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-edit-modal [visible]="modalVisible && modalMode === 'edit'" title="Editar Acceso" [fields]="formFields"
+    [data]="selectedItem" [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
+  </app-edit-modal>
+
+  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Acceso" [loading]="isSaving"
+    (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
+  </app-delete-modal>
+</div>

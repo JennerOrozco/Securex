@@ -1,0 +1,53 @@
+<div class="p-2">
+  <app-table-component
+    title="Roles de Empresa"
+    subtitle="Define y gestiona los roles disponibles para tu organización"
+    [columns]="cols"
+    [data]="roles"
+    [loading]="loading"
+    [showAdd]="true"
+    [showEdit]="true"
+    [showDelete]="true"
+    [showPermissions]="true"
+    (onAdd)="handleAdd()"
+    (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)"
+    (onPermissions)="handleManagePermissions($event)">
+  </app-table-component>
+
+  <app-add-modal
+    [visible]="modalVisible && modalMode === 'add'"
+    title="Nuevo Rol"
+    [fields]="formFields"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-edit-modal
+    [visible]="modalVisible && modalMode === 'edit'"
+    title="Editar Rol"
+    [fields]="formFields"
+    [data]="selectedItem"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-edit-modal>
+
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    title="Eliminar Rol"
+    [loading]="isSaving"
+    (onConfirm)="confirmDelete()"
+    (onClose)="modalVisible = false">
+  </app-delete-modal>
+
+  <app-role-permissions-modal
+    [visible]="permModalVisible"
+    [roleId]="selectedItem?.id"
+    [roleName]="selectedItem?.name"
+    [loading]="isSaving"
+    (onSave)="syncPermissions($event)"
+    (onClose)="permModalVisible = false">
+  </app-role-permissions-modal>
+</div>

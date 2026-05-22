@@ -1,0 +1,82 @@
+.gm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gm-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gm-required {
+  color: #e11d48;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.gm-control-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gm-field-icon {
+  position: absolute;
+  left: 10px;
+  z-index: 2;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.gm-status-icon {
+  position: absolute;
+  right: 10px;
+  z-index: 2;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
+
+.gm-valid { color: #059669; }
+.gm-invalid { color: #e11d48; }
+
+:host ::ng-deep .gm-datepicker .p-datepicker-input,
+:host ::ng-deep .gm-datepicker .p-inputtext {
+  width: 100%; min-height: 38px !important; border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  border-radius: 8px !important; padding: 0.45rem 0.75rem !important; font-size: 0.9rem !important; color: #0f172a !important;
+  background: rgba(248, 250, 252, 0.75) !important; backdrop-filter: blur(4px) !important; transition: all 0.2s !important; outline: none !important;
+}
+
+:host ::ng-deep .gm-datepicker .p-datepicker-input:focus,
+:host ::ng-deep .gm-datepicker .p-inputtext:focus {
+  border-color: #6366f1 !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08) !important;
+}
+
+.gm-has-icon ::ng-deep .p-datepicker-input,
+.gm-has-icon ::ng-deep .p-inputtext {
+  padding-left: 2.2rem !important;
+}
+
+.gm-error-msg {
+  font-size: 0.65rem;
+  color: #e11d48;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  animation: error-in 0.18s ease both;
+}
+
+@keyframes error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}

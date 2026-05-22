@@ -1,0 +1,39 @@
+/* =====================================================
+   SHARED BUTTON — Base Styles
+   ===================================================== */
+:host {
+  display: inline-block;
+}
+
+:host ::ng-deep .gm-btn.p-button,
+:host ::ng-deep .p-button.gm-btn {
+  border-radius: 15x;
+  font-size: 0.8rem;
+  font-weight: 600;
+  min-height: 34px;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+/* =====================================================
+   MOBILE — Half the size
+   ===================================================== */
+@media (max-width: 640px) {
+  :host ::ng-deep .gm-btn.p-button,
+  :host ::ng-deep .p-button.gm-btn {
+    font-size: 0.62rem;
+    min-height: 26px;
+    border-radius: 8px;
+    gap: 0.2rem;
+  }
+
+  :host ::ng-deep .gm-btn.p-button i,
+  :host ::ng-deep .p-button.gm-btn i {
+    font-size: 0.58rem;
+    margin-right: 0.15rem;
+  }
+}

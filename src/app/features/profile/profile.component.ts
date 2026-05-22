@@ -1,0 +1,306 @@
+import { Component, OnInit, signal, inject, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { AuthService } from '../../core/services/auth.service';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { PasswordComponent } from '../../shared/components/password/password.component';
+import { TableComponent, TableColumn } from '../../shared/table-component/table-component.component';
+import { Subject, timer } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+export interface ProfileData {
+  uuid: string;
+  full_name: string;
+  email: string;
+  role_name?: string;
+  role_id?: number;
+  company_name?: string;
+  branch?: {
+    uuid: string;
+    name: string;
+  };
+  profile_picture?: string;
+  phone?: string;
+}
+
+@Component({
+  selector: 'app-profile',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent],
+  templateUrl: './profile.component.html',
+  styleUrl: './profile.component.scss'
+})
+export class ProfileComponent implements OnInit, OnDestroy {
+  private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
+  private destroy$ = new Subject<void>();
+
+  profileData = signal<ProfileData | null>(null);
+  profileLoading = signal<boolean>(true);
+  profileError = signal<string | null>(null);
+ 
+  devices = signal<any[]>([]);
+  devicesLoading = signal<boolean>(false);
+  
+  columns: TableColumn[] = [
+    { field: 'device_name', header: 'Dispositivo', type: 'text' },
+    { field: 'sign_count', header: 'Uso', type: 'text' },
+    { field: 'created_at', header: 'Fecha de Registro', type: 'text' },
+    { field: 'acciones', header: 'Acciones', type: 'actions' }
+  ];
+
+  activeTab = signal<string>('info');
+
+  passwordForm!: FormGroup;
+  passwordLoading = signal<boolean>(false);
+  passwordSuccess = signal<boolean>(false);
+  passwordError = signal<string | null>(null);
+
+  constructor() {
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', [Validators.required]]
+    }, { validators: this.passwordMatchValidator });
+  }
+
+  ngOnInit() {
+    const currentUser = this.authService.currentUser();
+    if (currentUser) {
+      this.profileData.set({
+        uuid: currentUser.uuid,
+        full_name: currentUser.full_name,
+        email: currentUser.email,
+        role_name: currentUser.role_name,
+      });
+    }
+
+    this.authService.getUserProfile().subscribe({
+      next: (response) => {
+        const data = response.data || response;
+        this.profileData.set(data);
+        this.profileLoading.set(false);
+      },
+      error: () => {
+        this.profileError.set('Error al cargar el perfil. Intente de nuevo.');
+        this.profileLoading.set(false);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  passwordMatchValidator(g: FormGroup) {
+    return g.get('newPassword')?.value === g.get('confirmPassword')?.value
+      ? null : { mismatch: true };
+  }
+
+  setTab(tab: string) {
+    this.activeTab.set(tab);
+    this.passwordError.set(null);
+    this.passwordSuccess.set(false);
+    if (tab === 'security') {
+      this.loadDevices();
+    }
+  }
+
+  loadDevices() {
+    this.devicesLoading.set(true);
+    this.authService.getWebAuthnCredentials().subscribe({
+      next: (res) => {
+        console.log('Devices API response:', res);
+        // Soporta tanto si viene el array directo como si viene envuelto en { data: [...] }
+        const devicesData = Array.isArray(res) ? res : (res.data || []);
+        this.devices.set(devicesData);
+        console.log('Devices signal set to:', this.devices());
+        this.devicesLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Error loading devices:', err);
+        this.devicesLoading.set(false);
+      }
+    });
+  }
+
+  deleteDevice(device: any) {
+    if (confirm(`¿Estás seguro de que deseas eliminar el dispositivo "${device.device_name}"?`)) {
+      this.authService.deleteWebAuthnCredential(device.id).subscribe({
+        next: () => {
+          this.loadDevices();
+        },
+        error: (err) => {
+          console.error('Error al eliminar dispositivo:', err);
+        }
+      });
+    }
+  }
+
+  getUserInitials(): string {
+    const name = this.profileData()?.full_name || 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  changePassword() {
+    if (this.passwordForm.invalid) return;
+
+    this.passwordLoading.set(true);
+    this.passwordError.set(null);
+    this.passwordSuccess.set(false);
+
+    const payload = {
+      old_password: this.passwordForm.value.currentPassword,
+      new_password: this.passwordForm.value.newPassword
+    };
+
+    this.authService.changePassword(payload).subscribe({
+      next: () => {
+        this.passwordLoading.set(false);
+        this.passwordSuccess.set(true);
+        this.passwordForm.reset();
+
+        timer(4000).pipe(takeUntil(this.destroy$)).subscribe(() => {
+          this.passwordSuccess.set(false);
+        });
+      },
+      error: (err) => {
+        this.passwordLoading.set(false);
+        this.passwordError.set(err.error?.message || 'Error al cambiar la contraseña');
+      }
+    });
+  }
+
+  // Helper to convert base64 to ArrayBuffer (supports Base64URL)
+  private base64ToBuffer(base64Url: string): ArrayBuffer {
+    if (!base64Url || typeof base64Url !== 'string') {
+      console.warn('base64ToBuffer: input is not a string', base64Url);
+      return new ArrayBuffer(0);
+    }
+    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4 !== 0) {
+      base64 += '=';
+    }
+    const binary = window.atob(base64);
+    const buffer = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      buffer[i] = binary.charCodeAt(i);
+    }
+    return buffer.buffer;
+  }
+
+  // Helper to convert ArrayBuffer to base64
+  private bufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return window.btoa(binary);
+  }
+
+  biometricsLoading = signal<boolean>(false);
+  biometricsSuccess = signal<boolean>(false);
+  biometricsError = signal<string | null>(null);
+
+  registerBiometrics() {
+    this.biometricsLoading.set(true);
+    this.biometricsError.set(null);
+    this.biometricsSuccess.set(false);
+
+    this.authService.getWebAuthnRegisterOptions().subscribe({
+      next: async (response) => {
+        try {
+          const data = response.data ?? response;
+          const options = data.options;
+          console.log('WebAuthn Options received:', options);
+
+          // El objeto real de opciones está dentro de 'publicKey'
+          const pubKeyOptions = options.publicKey || options;
+
+          if (!pubKeyOptions || !pubKeyOptions.challenge) {
+            throw new Error('El backend no incluyó el challenge en las opciones.');
+          }
+
+          // El backend ya calcula el rp.id correctamente desde Origin/Referer/X-Forwarded-Host
+          // Solo sobrescribir si el backend no envía rp.id
+          if (!pubKeyOptions.rp?.id) {
+            pubKeyOptions.rp = pubKeyOptions.rp || {};
+            pubKeyOptions.rp.id = window.location.hostname;
+          }
+
+          // Función para limpiar el formato =?BINARY?B?...?= que manda la librería PHP
+          const extractBase64 = (str: string) => {
+            if (typeof str !== 'string') return str;
+            const match = str.match(/^=\?BINARY\?B\?(.+)\?=$/);
+            return match ? match[1] : str;
+          };
+
+          // Convertir challenge de base64 a Buffer
+          const base64Challenge = extractBase64(pubKeyOptions.challenge);
+          pubKeyOptions.challenge = this.base64ToBuffer(base64Challenge);
+          
+          // Convertir user.id de base64 a Buffer
+          if (pubKeyOptions.user && typeof pubKeyOptions.user.id === 'string') {
+            const base64UserId = extractBase64(pubKeyOptions.user.id);
+            pubKeyOptions.user.id = this.base64ToBuffer(base64UserId);
+          }
+
+          // Convertir los excludeCredentials si existen
+          if (pubKeyOptions.excludeCredentials) {
+            pubKeyOptions.excludeCredentials = pubKeyOptions.excludeCredentials.map((cred: any) => {
+              cred.id = this.base64ToBuffer(extractBase64(cred.id));
+              return cred;
+            });
+          }
+
+          // Llamar a la API del navegador
+          const credential = await navigator.credentials.create({
+            publicKey: pubKeyOptions
+          }) as PublicKeyCredential;
+
+          if (!credential) {
+            throw new Error('No se pudo crear la credencial.');
+          }
+
+          const responseObj = credential.response as AuthenticatorAttestationResponse;
+
+          // Preparar datos para el backend
+          const registrationData = {
+            clientDataJSON: this.bufferToBase64(responseObj.clientDataJSON),
+            attestationObject: this.bufferToBase64(responseObj.attestationObject),
+            challenge: base64Challenge, // Mandamos el challenge original en base64
+            device_name: navigator.userAgent // Opcional: Nombre del dispositivo
+          };
+
+          // Enviar al backend
+          this.authService.registerWebAuthn(registrationData).subscribe({
+            next: () => {
+              this.biometricsLoading.set(false);
+              this.biometricsSuccess.set(true);
+              this.loadDevices(); // Recargar la lista de dispositivos
+              timer(4000).pipe(takeUntil(this.destroy$)).subscribe(() => {
+                this.biometricsSuccess.set(false);
+              });
+            },
+            error: (err) => {
+              this.biometricsLoading.set(false);
+              this.biometricsError.set(err.error?.message || 'Error al registrar la huella en el servidor');
+            }
+          });
+
+        } catch (err: any) {
+          this.biometricsLoading.set(false);
+          this.biometricsError.set(err.message || 'Error en el proceso de autenticación');
+          console.error(err);
+        }
+      },
+      error: (err) => {
+        this.biometricsLoading.set(false);
+        this.biometricsError.set(err.error?.message || 'Error al obtener opciones de registro');
+      }
+    });
+  }
+}

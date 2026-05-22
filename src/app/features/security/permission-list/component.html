@@ -1,0 +1,46 @@
+<div class="p-1 md:p-2">
+  <app-tree-table-component
+    title="Gestión de Permisos"
+    subtitle="Estructura jerárquica de accesos, menús y acciones del ecosistema."
+    [nodes]="permissionNodes"
+    [columns]="cols"
+    [loading]="loading"
+    [showLegend]="true"
+    addLabel="Nuevo Módulo Raíz"
+    searchPlaceholder="Buscar slug o nombre..."
+    (onAddRoot)="handleAdd()"
+    (onAddChild)="handleAdd($event)"
+    (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)"
+    (onFilter)="filterTree($event)"
+    (onFilterType)="filterByType($event)">
+  </app-tree-table-component>
+
+  <!-- MODALS -->
+  <app-add-modal
+    [visible]="modalVisible && modalMode === 'add'"
+    title="Crear Nuevo Permiso"
+    [fields]="formFields"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-edit-modal
+    [visible]="modalVisible && modalMode === 'edit'"
+    title="Modificar Permiso"
+    [fields]="formFields"
+    [data]="selectedItem"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-edit-modal>
+
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    [title]="'Eliminar: ' + selectedItem?.name"
+    [loading]="isSaving"
+    (onConfirm)="confirmDelete()"
+    (onClose)="modalVisible = false">
+  </app-delete-modal>
+</div>

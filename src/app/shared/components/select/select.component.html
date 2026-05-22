@@ -1,0 +1,29 @@
+<div class="gm-field" [class.gm-has-icon]="icon">
+  @if (label) {
+    <label class="gm-label" [for]="id">
+      {{ label }}
+      @if (required) { <span class="gm-required">*</span> }
+    </label>
+  }
+  <div class="gm-control-wrap">
+    @if (icon) {
+      <i [className]="icon + ' gm-field-icon'"></i>
+    }
+    <p-select
+      [id]="id"
+      class="gm-select"
+      [options]="options"
+      [optionLabel]="optionLabel"
+      [optionValue]="optionValue"
+      [placeholder]="placeholder"
+      [formControl]="control"
+      [style]="{'width': '100%'}"
+      [showClear]="!!control?.value"
+      appendTo="body"
+      [filter]="true"
+      filterBy="label"
+      (onChange)="onChange.emit($event)"
+    ></p-select>
+
+  </div>
+</div>

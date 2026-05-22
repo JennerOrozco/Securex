@@ -1,0 +1,671 @@
+/* =====================================================
+   AUTH SHARED STYLES
+   Common styles for login-form, register-form, 
+   forgot-password-form, reset-password-form
+   ===================================================== */
+
+:root {
+    --teal-darkest: #0a1628;
+    --teal-accent: #1a7a6e;
+    --teal-bright: #22c5a0;
+    --teal-dark: #0f3a52;
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+}
+
+/* ═══════════════════════════════════════
+   FORM HEADER (icon + title + subtitle)
+   ═══════════════════════════════════════ */
+.form-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.form-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-icon svg {
+    width: 26px;
+    height: 26px;
+    color: var(--teal-bright);
+}
+
+.card-title {
+    font-family: var(--font-head);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+}
+
+.card-sub {
+    font-size: 0.83rem;
+    color: rgba(255, 255, 255, 0.48);
+    margin: 0 0 3rem 0 !important;
+    line-height: 1.5;
+}
+
+/* ═══════════════════════════════════════
+   FORM BODY
+   ═══════════════════════════════════════ */
+.form-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+/* ═══════════════════════════════════════
+   FIELD
+   ═══════════════════════════════════════ */
+.field {
+    margin-bottom: 16px;
+}
+
+.field label {
+    display: block;
+    font-size: 0.76rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.55);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+}
+
+/* ═══════════════════════════════════════
+   INPUT WRAP
+   ═══════════════════════════════════════ */
+.input-wrap {
+    position: relative;
+}
+
+.input-wrap svg {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    color: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    transition: color 0.2s;
+}
+
+.input-wrap input,
+.input-wrap select {
+    width: 100%;
+    padding: 13px 14px 13px 42px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    color: #ffffff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.input-wrap input::placeholder {
+    color: rgba(255, 255, 255, 0.22);
+}
+
+.input-wrap select option {
+    background: var(--teal-dark);
+    color: #ffffff;
+}
+
+.input-wrap input:focus,
+.input-wrap select:focus {
+    border-color: var(--teal-bright);
+    background: rgba(34, 197, 160, 0.08);
+    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15);
+}
+
+.input-wrap:focus-within svg {
+    color: var(--teal-bright);
+}
+
+/* Select arrow */
+.input-wrap--select::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+}
+
+/* ═══════════════════════════════════════
+   REMEMBER / FORGOT ROW
+   ═══════════════════════════════════════ */
+.row-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 4px 0 22px;
+}
+
+.remember {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+.remember input[type="checkbox"] {
+    accent-color: var(--teal-bright);
+    width: 14px;
+    height: 14px;
+}
+
+.forgot-link {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--teal-bright);
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.forgot-link:hover {
+    opacity: 0.75;
+}
+
+/* ═══════════════════════════════════════
+   PRIMARY BUTTON
+   ═══════════════════════════════════════ */
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #dc2626 0%, #880c0c 100%);
+    border: none;
+    border-radius: 14px;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
+}
+
+.btn-login:active {
+    transform: scale(0.98);
+}
+
+.btn-login:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Spinner inside button */
+.btn-spinner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.spin-icon {
+    width: 18px;
+    height: 18px;
+    animation: spin 0.75s linear infinite;
+    flex-shrink: 0;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ═══════════════════════════════════════
+   DIVIDER
+   ═══════════════════════════════════════ */
+.divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 0;
+}
+
+.divider::before,
+.divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.divider span {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: 0.06em;
+    white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════
+   GOOGLE BUTTON WRAP
+   ═══════════════════════════════════════ */
+.google-wrap {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 4px;
+}
+
+/* ═══════════════════════════════════════
+   BOTTOM LINK
+   ═══════════════════════════════════════ */
+.bottom-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.bottom-link a {
+    color: var(--teal-bright);
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.bottom-link a:hover {
+    opacity: 0.75;
+}
+
+/* ═══════════════════════════════════════
+   ERROR BOX
+   ═══════════════════════════════════════ */
+.error-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.25);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 0.82rem;
+    color: #fca5a5;
+    margin-bottom: 16px;
+}
+
+.error-box svg {
+    flex-shrink: 0;
+    color: #f87171;
+}
+
+/* ═══════════════════════════════════════
+   MOBILE OVERRIDES
+   ═══════════════════════════════════════ */
+@media (max-width: 768px) {
+    .m-sheet .card-title {
+        font-family: var(--font-head);
+        font-size: 1.9rem;
+        color: #0a1628;
+        margin: 0 0 4px;
+        letter-spacing: -0.03em;
+    }
+
+    .m-sheet .card-sub {
+        color: #94a3b8;
+        font-size: 0.8rem;
+        margin-bottom: 0;
+    }
+
+    .m-sheet .form-icon {
+        background: #ffffff;
+        border-color: #e2e8f0;
+    }
+
+    .m-sheet .form-icon svg {
+        color: #22c5a0;
+    }
+
+    .m-sheet .field label {
+        color: #64748b;
+    }
+
+    .m-sheet .input-wrap svg {
+        color: #cbd5e1;
+    }
+
+    .m-sheet .input-wrap input,
+    .m-sheet .input-wrap select {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        color: #0f172a;
+    }
+
+    .m-sheet .input-wrap input::placeholder {
+        color: #cbd5e1;
+    }
+
+    .m-sheet .input-wrap input:focus,
+    .m-sheet .input-wrap select:focus {
+        border-color: #22c5a0;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12);
+    }
+
+    .m-sheet .input-wrap:focus-within svg {
+        color: #22c5a0;
+    }
+
+    :host-context(.m-sheet) .input-wrap select option {
+        background: #ffffff;
+        color: #0f172a;
+    }
+
+    :host-context(.m-sheet) .remember {
+        color: #94a3b8;
+    }
+
+    :host-context(.m-sheet) .divider::before,
+    :host-context(.m-sheet) .divider::after {
+        background: #e2e8f0;
+    }
+
+    :host-context(.m-sheet) .divider span {
+        color: #cbd5e1;
+    }
+
+    .m-sheet .bottom-link,
+    :host-context(.m-sheet) .bottom-link {
+        color: #94a3b8 !important;
+    }
+
+    .m-sheet .btn-login {
+        box-shadow: 0 8px 24px rgba(34, 197, 160, 0.3);
+    }
+
+    .m-sheet .error-box {
+        background: #fef2f2;
+        border-color: #fecaca;
+        color: #ef4444;
+    }
+
+    .m-sheet .error-box svg {
+        color: #f87171;
+    }
+}
+
+/* ═══════════════════════════════════════
+   SHARED COMPONENT FIELD WRAPPER
+   Spacing for app-input / app-password / app-select
+   inside auth forms
+   ═══════════════════════════════════════ */
+.auth-field-wrap {
+    margin-bottom: 16px;
+}
+
+/* Ocultar mensajes de error en desktop hasta que se toque el campo */
+:host-context(.desktop-shell) ::ng-deep .gm-error-msg {
+    display: none !important;
+}
+
+:host-context(.desktop-shell) .auth-field-wrap:has(.ng-touched) ::ng-deep .gm-error-msg {
+    display: flex !important;
+}
+
+/* ═══════════════════════════════════════
+   DARK THEME OVERRIDES FOR SHARED COMPONENTS
+   (app-input, app-password, app-select)
+   These override the light-mode defaults from shared/
+   ═══════════════════════════════════════ */
+
+/* ─── Labels ─── */
+:host ::ng-deep .gm-label,
+.auth-field-wrap .gm-label {
+    color: rgba(255, 255, 255, 0.55) !important;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+}
+
+.auth-field-wrap ::ng-deep .gm-required {
+    color: #ef4444 !important;
+}
+
+/* ─── Input fields (pInputText) ─── */
+:host ::ng-deep .gm-input,
+.auth-field-wrap .gm-input {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.9rem !important;
+    padding: 13px 14px 13px 2rem !important;
+    min-height: 44px !important;
+}
+
+.auth-field-wrap .gm-input::placeholder {
+    color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.auth-field-wrap .gm-input:focus {
+    border-color: var(--teal-bright) !important;
+    background: rgba(34, 197, 160, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+}
+
+/* ─── Field icon (pi icon on left) ─── */
+.auth-field-wrap .gm-field-icon {
+    color: rgba(255, 255, 255, 0.3) !important;
+    font-size: 0.85rem !important;
+}
+
+.auth-field-wrap .gm-field:focus-within .gm-field-icon {
+    color: var(--teal-bright) !important;
+}
+
+/* ─── Status icons (check / x) ─── */
+.auth-field-wrap .gm-valid {
+    color: var(--teal-bright) !important;
+}
+
+.auth-field-wrap .gm-invalid {
+    color: #f87171 !important;
+}
+
+/* ─── Error message ─── */
+.auth-field-wrap .gm-error-msg {
+    color: #fca5a5 !important;
+}
+
+/* ─── Password component (PrimeNG p-password) ─── */
+.auth-field-wrap ::ng-deep .p-password,
+.auth-field-wrap ::ng-deep .p-password-input {
+    width: 100% !important;
+}
+
+.auth-field-wrap ::ng-deep .p-password .p-inputtext {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.9rem !important;
+    padding: 13px 14px !important;
+    min-height: 44px !important;
+}
+
+.auth-field-wrap ::ng-deep .p-password .p-inputtext::placeholder {
+    color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.auth-field-wrap ::ng-deep .p-password .p-inputtext:focus {
+    border-color: var(--teal-bright) !important;
+    background: rgba(34, 197, 160, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+}
+
+/* Toggle mask icon color */
+.auth-field-wrap ::ng-deep .p-password .p-password-toggle-mask-icon,
+.auth-field-wrap ::ng-deep .p-password .p-icon {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ─── Select component (PrimeNG p-select) ─── */
+.auth-field-wrap ::ng-deep .p-select {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 12px !important;
+    min-height: 44px !important;
+    height: 44px !important;
+}
+
+.auth-field-wrap ::ng-deep .p-select-label {
+    color: #ffffff !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.9rem !important;
+}
+
+.auth-field-wrap ::ng-deep .p-select .p-select-placeholder {
+    color: rgba(255, 255, 255, 0.22) !important;
+}
+
+.auth-field-wrap ::ng-deep .p-select:focus-within {
+    border-color: var(--teal-bright) !important;
+    background: rgba(34, 197, 160, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+}
+
+.auth-field-wrap ::ng-deep .p-select .p-select-dropdown {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* ─── Mobile overrides for shared components ─── */
+@media (max-width: 768px) {
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-label {
+        color: #64748b !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-input {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-input::placeholder {
+        color: #cbd5e1 !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-input:focus {
+        border-color: var(--teal-bright) !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-field-icon {
+        color: #cbd5e1 !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-field:focus-within .gm-field-icon {
+        color: var(--teal-bright) !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-error-msg {
+        color: #ef4444 !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-inputtext,
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password-input {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-inputtext::placeholder,
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password-input::placeholder {
+        color: #cbd5e1 !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-inputtext:focus,
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password-input:focus {
+        border-color: var(--teal-bright) !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+    }
+
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-password-toggle-mask-icon,
+    :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-icon {
+        color: #94a3b8 !important;
+    }
+
+    .m-sheet .auth-field-wrap ::ng-deep .p-select {
+        background: #f8fafc !important;
+        border: 1.5px solid #e2e8f0 !important;
+    }
+
+    .m-sheet .auth-field-wrap ::ng-deep .p-select-label {
+        color: #0f172a !important;
+    }
+
+    .m-sheet .auth-field-wrap ::ng-deep .p-select .p-select-placeholder {
+        color: #cbd5e1 !important;
+    }
+
+    .m-sheet .auth-field-wrap ::ng-deep .p-select:focus-within {
+        border-color: var(--teal-bright) !important;
+        background: #ffffff !important;
+        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+    }
+
+    .m-sheet .auth-field-wrap ::ng-deep .p-select .p-select-dropdown {
+        background: rgba(226, 232, 240, 0.5) !important;
+        border-left: 1px solid #e2e8f0 !important;
+        color: #64748b !important;
+    }
+}
+
+/* ─── Captcha Centering ─── */
+.captcha-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.captcha-container ::ng-deep .g-recaptcha {
+    display: inline-block !important;
+}

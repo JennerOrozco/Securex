@@ -1,0 +1,41 @@
+<div class="p-2">
+  <div *ngIf="!hasPermission" class="access-denied">
+    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
+    <h2>Acceso restringido</h2>
+    <p>Solo los administradores del sistema pueden gestionar los permisos de compañías.</p>
+  </div>
+
+  <ng-container *ngIf="hasPermission">
+    <app-tree-table-component
+      title="Permisos por Compañía"
+      subtitle="Organizados por aplicación y compañía"
+      [nodes]="treeNodes"
+      [columns]="cols"
+      [loading]="loading"
+      addLabel="Asignar Permiso"
+      searchPlaceholder="Buscar permiso..."
+      (onAddRoot)="handleAdd()"
+      (onAddChild)="handleAddChild($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)">
+    </app-tree-table-component>
+  </ng-container>
+
+  <app-add-modal
+    [visible]="modalVisible && modalMode === 'add'"
+    title="Asignar Permiso a Compañía"
+    [fields]="formFields"
+    [initialData]="preselectedCompanyId ? { company_id: preselectedCompanyId } : {}"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-add-modal>
+
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    title="Remover Permiso"
+    [loading]="isSaving"
+    (onConfirm)="confirmDelete()"
+    (onClose)="modalVisible = false">
+  </app-delete-modal>
+</div>

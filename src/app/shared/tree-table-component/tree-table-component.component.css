@@ -1,0 +1,653 @@
+:host {
+  --navy:        #1e293b;
+  --navy-light:  #334155;
+  --blue-accent: #2b3a8b;
+  --teal:        #0d9488;
+  --bg-page:     #f1f5f9;
+  --bg-card:     #ffffff;
+  --border:      #e2e8f0;
+  --text-main:   #0f172a;
+  --text-muted:  #64748b;
+  --text-light:  #94a3b8;
+}
+
+.perm-card {
+  background: var(--bg-card);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(0,0,0,0.05);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* ── Toolbar ── */
+.toolbar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+}
+
+@media (max-width: 768px) {
+  .toolbar {
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    grid-template-areas:
+      "header action"
+      "search search" !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+  }
+  .toolbar-left {
+    grid-area: header !important;
+  }
+  .toolbar-right {
+    display: contents !important;
+  }
+  .search-box {
+    grid-area: search !important;
+    width: 100% !important;
+    margin-top: 0.25rem;
+  }
+  .btn-new {
+    grid-area: action !important;
+    height: 32px !important;
+    padding: 0 0.75rem !important;
+    font-size: 11px !important;
+    align-self: center !important;
+  }
+}
+
+.toolbar-left { display: flex; align-items: center; gap: 0.75rem; }
+
+.toolbar-title {
+  font-size: 1.1rem; font-weight: 700; color: var(--navy);
+  margin: 0; letter-spacing: -0.01em;
+}
+
+.toolbar-sub { font-size: 0.8rem; color: var(--text-muted); margin: 0; }
+
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Search */
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  max-width: 300px;
+  transition: all 0.3s ease;
+}
+
+.search-ic {
+  position: absolute;
+  left: 12px;
+  font-size: 13px;
+  color: var(--text-light);
+  pointer-events: none;
+  transition: color 0.3s ease, transform 0.3s ease;
+  z-index: 2;
+}
+
+.search-inp {
+  height: 40px;
+  padding: 0 16px 0 38px;
+  width: 100%;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.search-inp:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.search-inp:focus {
+  background: #ffffff;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1), 0 4px 12px -2px rgba(13, 148, 136, 0.08);
+}
+
+.search-box:focus-within .search-ic {
+  color: var(--teal);
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .search-box {
+    max-width: 100%;
+  }
+  .search-inp {
+    height: 42px;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-inp { width: 200px; }
+}
+
+/* Button */
+.btn-new {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  height: 36px; padding: 0 1rem;
+  background: var(--navy); border: none; border-radius: 8px;
+  color: white; font-size: 13px; font-weight: 600;
+  cursor: pointer; white-space: nowrap;
+  transition: all 0.2s;
+}
+.btn-new:hover { background: var(--navy-light); }
+
+.types-legend-bar {
+  background: #f8fafc;
+  padding: 0.65rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.legend-label {
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.legend-items {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.legend-item:hover {
+  opacity: 0.7;
+}
+
+.legend-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+:host ::ng-deep .p-treetable {
+  background: transparent;
+}
+
+/* Match Table Header (thead) from TableComponent */
+:host ::ng-deep .p-treetable .p-treetable-thead > tr > th {
+  background: var(--navy) !important;
+  color: rgba(255,255,255,0.7) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em;
+  padding: 6px 10px !important;
+  border: none !important;
+  position: relative;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-thead > tr > th.sortable {
+  cursor: pointer;
+}
+
+:host ::ng-deep .p-treetable .th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+:host ::ng-deep .p-treetable .th-content i {
+  font-size: 10px;
+  opacity: 0.5;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-thead > tr > th.sortable:hover .th-content i {
+  opacity: 1;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-thead > tr > th .p-column-filter-menu-button .p-icon {
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr {
+  background: transparent;
+  color: var(--navy);
+  transition: all 0.15s ease-in-out;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr:hover {
+  background: #f8fafc !important;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr > td {
+  padding: 0.1rem 0.6rem !important;
+  border-bottom: 1px solid var(--border) !important;
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.node-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.node-name {
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--navy);
+}
+
+.node-slug {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-light);
+  font-weight: 500;
+  margin-top: 1px;
+}
+
+.type-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  letter-spacing: 0.03em;
+  background: #f1f5f9 !important;
+  color: #334155 !important;
+  border: 1px solid #e2e8f0;
+  text-transform: uppercase;
+}
+
+.type-chip::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.type-menu::before { background: #6366f1; }       /* Indigo dot */
+.type-submenu::before { background: #10b981; }    /* Emerald dot */
+.type-action::before { background: #f59e0b; }     /* Amber dot */
+.type-component::before { background: #f43f5e; }  /* Rose dot */
+
+.route-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: color 0.2s;
+  text-decoration: none;
+}
+
+.route-link:hover {
+  color: var(--blue-accent);
+}
+
+.actions {
+  display: flex;
+  gap: 4px;
+}
+
+.act-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: all 0.15s;
+}
+
+.act-btn:hover {
+  background: #f8fafc;
+  color: var(--navy);
+  transform: translateY(-1px);
+}
+
+.act-btn.view:hover { color: #10b981; border-color: #10b981; background: #ecfdf5; }
+.act-btn.edit:hover { color: #3b82f6; border-color: #3b82f6; background: #eff6ff; }
+.act-btn.del:hover { color: #ef4444; border-color: #ef4444; background: #fef2f2; }
+
+/* Module icons styles - unified neutral background and border, colored icon */
+.bg-indigo, .bg-emerald, .bg-amber, .bg-rose, .bg-slate {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+.bg-indigo { color: #6366f1 !important; }   /* Indigo color for Menu icon */
+.bg-emerald { color: #10b981 !important; }  /* Emerald color for Submenu icon */
+.bg-amber { color: #f59e0b !important; }    /* Amber color for Action icon */
+.bg-rose { color: #f43f5e !important; }     /* Rose color for Component icon */
+.bg-slate { color: #64748b !important; }    /* Slate color for Default icon */
+
+/* Paginator Styling */
+:host ::ng-deep .p-paginator {
+  background: rgba(255, 255, 255, 0.5) !important;
+  border-top: 1px solid var(--border) !important;
+  padding: 0.25rem !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-element {
+  min-width: 1.75rem !important;
+  height: 1.75rem !important;
+  font-size: 11px !important;
+  color: var(--text-muted) !important;
+  border-radius: 6px !important;
+}
+
+:host ::ng-deep .p-paginator .p-paginator-element:hover {
+  background: #f1f5f9 !important;
+}
+
+:host ::ng-deep .p-paginator .p-link.p-highlight {
+  background: #eff6ff !important;
+  color: #1e40af !important;
+  font-weight: 700 !important;
+}
+
+.empty-state {
+  padding: 4rem 2rem;
+  text-align: center;
+  color: var(--text-light);
+}
+
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text-light);
+}
+
+@media (max-width: 768px) {
+  :host ::ng-deep .gm-treetable table {
+    min-width: 650px !important;
+  }
+  
+  :host ::ng-deep .gm-treetable .p-treetable-thead > tr > th:last-child,
+  :host ::ng-deep .gm-treetable .p-treetable-tbody > tr > td:last-child {
+    min-width: 120px !important;
+    text-align: center !important;
+  }
+}
+
+/* ═══ Custom Context Menu (Desktop) ═══ */
+.custom-context-menu {
+  position: fixed;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15), 
+              0 1px 3px rgba(0, 0, 0, 0.05),
+              inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  min-width: 180px;
+  padding: 6px;
+  transform-origin: top left;
+  animation: contextMenuFadeIn 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes contextMenuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.menu-header {
+  padding: 6px 12px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-light);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+  margin-bottom: 4px;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menu-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-main);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.menu-list li i {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+}
+
+.menu-list li:hover {
+  background: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+}
+
+.menu-list li.menu-item-danger:hover {
+  background: rgba(239, 68, 68, 0.08);
+  color: #dc2626;
+}
+
+/* Make table rows clickable/pointer if contextmenu/mobile tap is enabled */
+::ng-deep .gm-treetable .p-treetable-tbody > tr {
+  cursor: context-menu;
+  transition: background-color 0.15s ease;
+}
+
+@media (max-width: 768px) {
+  ::ng-deep .gm-treetable .p-treetable-tbody > tr {
+    cursor: pointer;
+  }
+}
+
+/* ═══ Mobile Bottom Sheet ═══ */
+.mobile-sheet-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9998;
+  animation: fadeInBackdrop 0.25s ease;
+}
+
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mobile-bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #ffffff;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -8px 24px rgba(15, 23, 42, 0.12);
+  z-index: 9999;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
+  padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 12px);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-bottom-sheet.show {
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.sheet-handle-container {
+  padding: 8px 0 4px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  cursor: pointer;
+}
+
+.sheet-handle {
+  width: 32px;
+  height: 4px;
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+.sheet-header {
+  padding: 0 16px 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sheet-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.sheet-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin: 2px 0 0;
+}
+
+.sheet-body {
+  overflow-y: auto;
+  padding: 6px 12px;
+}
+
+.sheet-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sheet-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-main);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.sheet-list li:active {
+  background: #f1f5f9;
+}
+
+.sheet-item-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.sheet-item-icon.edit { background: rgba(59, 130, 246, 0.08); color: #3b82f6; }
+.sheet-item-icon.perm { background: rgba(245, 158, 11, 0.08); color: #f59e0b; }
+.sheet-item-icon.view { background: rgba(99, 102, 241, 0.08); color: #6366f1; }
+.sheet-item-icon.pdf { background: rgba(239, 68, 68, 0.08); color: #ef4444; }
+.sheet-item-icon.send { background: rgba(13, 148, 136, 0.08); color: #0d9488; }
+.sheet-item-icon.duplicate { background: rgba(147, 51, 234, 0.08); color: #9333ea; }
+.sheet-item-icon.del { background: rgba(244, 63, 94, 0.08); color: #f43f5e; }
+
+.sheet-list li.sheet-item-danger {
+  color: #f43f5e;
+}
+
+.sheet-cancel-btn {
+  width: 100%;
+  margin-top: 8px;
+  height: 36px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.sheet-cancel-btn:active {
+  background: #f8fafc;
+}

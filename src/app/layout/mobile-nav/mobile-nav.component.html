@@ -1,0 +1,103 @@
+<!-- Mobile Header -->
+<header class="mobile-header">
+  <div class="mobile-header-logo">
+    <img src="image.png" alt="N-Consultores Logo" class="h-8 w-auto object-contain">
+    <span class="text-lg font-bold">{{ branch()?.name + " - Admin App"  || 'Sin Sucursal' }}</span>
+  </div>
+  <div class="mobile-header-actions">
+    <div class="relative">
+      <button class="notif-btn" (click)="toggleNotifications()" aria-label="Notificaciones">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+          </path>
+        </svg>
+        @if (unreadCount() > 0) {
+          <span class="notif-badge"></span>
+        }
+      </button>
+    </div>
+    <button class="hamburger-btn" (click)="toggleSidebar()" aria-label="Abrir menú">
+      @if (sidebarOpen()) {
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      } @else {
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      }
+    </button>
+  </div>
+</header>
+
+<!-- Mobile Notifications Dropdown -->
+@if (showNotifications()) {
+  <div class="mobile-notif-overlay" (click)="showNotifications.set(false)"></div>
+  <div class="mobile-notif-dropdown">
+    <div class="mobile-notif-header">
+      <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+      <button (click)="markAllAsRead()" class="text-xs text-padel-orange hover:underline bg-transparent border-none cursor-pointer">Marcar todas</button>
+    </div>
+    <div class="mobile-notif-list">
+      @for (notif of notifications(); track notif.id) {
+        <div class="swipe-container">
+          <div class="swipe-background" [class.swipe-ready]="currentDeltaX() > 120 && activeSwipeId() === notif.id">
+            <svg class="w-5 h-5 text-white transition-transform" [style.transform]="currentDeltaX() > 120 && activeSwipeId() === notif.id ? 'scale(1.25)' : 'none'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+          </div>
+          <div (click)="markAsRead(notif.id)"
+               (touchstart)="onTouchStart($event, notif.id)"
+               (touchmove)="onTouchMove($event, notif.id)"
+               (touchend)="onTouchEnd($event, notif.id)"
+               class="mobile-notif-item"
+               [style.transform]="activeSwipeId() === notif.id ? 'translateX(' + currentDeltaX() + 'px)' : 'none'"
+               [style.transition]="activeSwipeId() === notif.id ? 'none' : 'transform 0.3s ease'"
+               [class.notif-unread]="!notif.is_read">
+            <div class="flex justify-between items-start">
+              <p class="text-sm font-semibold" [class.text-white]="notif.is_read" [class.text-padel-orange]="!notif.is_read">{{ notif.title }}</p>
+              <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">{{ timeAgo(notif.created_at) }}</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
+          </div>
+        </div>
+      } @empty {
+        <div class="mobile-notif-empty">No tienes notificaciones</div>
+      }
+    </div>
+  </div>
+}
+
+<!-- Overlay -->
+@if (sidebarOpen()) {
+  <div class="sidebar-overlay open" (click)="closeSidebar()"></div>
+}
+
+<!-- Bottom Navigation -->
+<nav class="mobile-bottom-nav">
+  <div class="mobile-nav-items">
+    <div
+      class="nav-indicator"
+      [style.left.%]="indicatorLeft()"
+    ></div>
+
+    @for (item of visibleMenuItems(); track $index) {
+      <a
+        [routerLink]="item.path"
+        class="mobile-nav-item"
+        [class.active-item]="$index === activeIndex()"
+        (click)="closeSidebar()"
+      >
+        <div class="nav-icon-wrap">
+          @if (item.icon && (item.icon.startsWith('pi ') || item.icon.includes(' '))) {
+            <i [class]="item.icon"></i>
+          } @else {
+            <i class="pi pi-circle"></i>
+          }
+        </div>
+        <span>{{ item.label }}</span>
+      </a>
+    }
+  </div>
+</nav>

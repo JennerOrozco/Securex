@@ -1,0 +1,14 @@
+<app-mobile-nav></app-mobile-nav>
+<div class="admin-layout">
+  <app-sidebar></app-sidebar>
+
+  <div class="layout-container">
+    <app-header></app-header>
+    <main class="admin-main" [class.admin-main-full]="isFullLayout()">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
+
+
+

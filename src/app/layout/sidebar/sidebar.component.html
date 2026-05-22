@@ -1,0 +1,193 @@
+<div class="sidebar-overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+<aside class="sidebar" [class.mobile-open]="sidebarOpen()">
+  <div class="sidebar-header">
+    <a routerLink="/" class="logo-wrapper">
+      <div class="logo-icon-container">
+        <img src="image.png" alt="Logo" class="logo-img">
+      </div>
+      <span class="logo-text">{{ branch()?.name + " - Admin App" || 'Sin Sucursal' }}</span>
+    </a>
+  </div>
+
+  <nav class="sidebar-nav">
+    <ul class="nav-list">
+      @for (item of visibleMenuItems(); track $index) {
+      <li class="nav-item">
+        @if (item.children) {
+        <button class="nav-parent" [class.nav-parent-expanded]="isExpanded(item.label)"
+          (click)="toggleSubmenu(item.label)">
+          <div class="nav-group">
+            <span class="icon-slot">
+              @switch (item.icon) {
+              @case ('settings') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path
+                  d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg> }
+              @case ('clipboard') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1" />
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+              </svg> }
+              @case ('briefcase') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+              </svg> }
+              @default { <i [class]="item.icon"></i> }
+              }
+            </span>
+            <span class="label">{{ item.label }}</span>
+          </div>
+          <svg class="chevron-icon" [class.rotated]="isExpanded(item.label)" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        @if (isExpanded(item.label)) {
+        <div class="submenu-container">
+          @for (child of item.children; track $index) {
+          @if (child.children && child.children.length > 0) {
+          <button class="submenu-item submenu-parent"
+            [class.submenu-parent-expanded]="isExpanded(item.label + '/' + child.label)"
+            (click)="toggleSubmenu(item.label + '/' + child.label)">
+            <div class="submenu-group">
+              <span class="submenu-dot"></span>
+              <span>{{ child.label }}</span>
+            </div>
+            <svg class="chevron-icon sub-chevron" [class.rotated]="isExpanded(item.label + '/' + child.label)"
+              fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </button>
+          @if (isExpanded(item.label + '/' + child.label)) {
+          <div class="sub-submenu-container">
+            @for (subchild of child.children; track $index) {
+            <a [routerLink]="subchild.path" routerLinkActive="active-gradient" class="sub-submenu-item"
+              (click)="closeSidebar()">
+              <span class="sub-submenu-dot"></span>
+              <span>{{ subchild.label }}</span>
+            </a>
+            }
+          </div>
+          }
+          } @else {
+          <a [routerLink]="child.path" routerLinkActive="active-gradient" class="submenu-item" (click)="closeSidebar()">
+            <span class="submenu-dot"></span>
+            <span>{{ child.label }}</span>
+          </a>
+          }
+          }
+        </div>
+        }
+        } @else {
+        <a [routerLink]="item.path" routerLinkActive="active-gradient"
+          [routerLinkActiveOptions]="{ exact: item.path === '/home' }" class="nav-link" (click)="closeSidebar()">
+          <div class="nav-group">
+            <span class="icon-slot">
+              @switch (item.icon) {
+              @case ('dashboard') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg> }
+              @case ('users') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+              </svg> }
+              @case ('chart') { <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10" />
+                <line x1="12" y1="20" x2="12" y2="4" />
+                <line x1="6" y1="20" x2="6" y2="14" />
+              </svg> }
+              @default { <i [class]="item.icon"></i> }
+              }
+            </span>
+            <span class="label">{{ item.label }}</span>
+          </div>
+        </a>
+        }
+      </li>
+      }
+    </ul>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-profile-vertical">
+      <div class="user-avatar-mini">
+        {{ user()?.name?.charAt(0) || 'U' }}
+      </div>
+      <div class="user-meta">
+        <span class="user-name-label">{{ user()?.name || 'Usuario' }}</span>
+        <div class="context-selector" (click)="toggleContextSwitcher()" [class.clickable]="hasMultipleContexts()">
+          <div class="context-info">
+            <span class="context-company">{{ company()?.name || 'Sin Compañía' }}</span>
+            <span class="context-separator">/</span>
+            <span class="context-branch">{{ branch()?.name || 'Sin Sucursal' }}</span>
+          </div>
+          @if (hasMultipleContexts()) {
+          <svg class="context-chevron" [class.rotated]="showContextSwitcher()" fill="none" stroke="currentColor"
+            viewBox="0 0 24 24">
+            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (showContextSwitcher() && hasMultipleContexts()) {
+    <div class="context-dropdown">
+      @for (section of contextSections(); track section.label) {
+      <div class="context-section">
+        <span class="context-section-label">{{ section.label }}</span>
+        @for (item of section.items; track item.branchUuid ?? item.companyUuid) {
+        <button class="context-item" [class.active]="item.isActive" (click)="selectContext(item)">
+          <span class="context-item-indicator" [class.active]="item.isActive"></span>
+          <span class="context-item-label">{{ item.label }}</span>
+          @if (item.isActive) {
+          <svg class="context-check-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          }
+        </button>
+        }
+      </div>
+      }
+    </div>
+    }
+
+    <button (click)="logout()" class="logout-compact-btn">
+      <svg class="logout-mini-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="logout-mini-text">SALIR</span>
+    </button>
+  </div>
+</aside>
+
+@if (switchingCompany()) {
+<div class="switch-overlay">
+  <div class="switch-card">
+    <div class="switch-ring-outer"></div>
+    <div class="switch-ring-inner"></div>
+
+    <div class="switch-text">
+      <span class="switch-title">Cambiando contexto</span>
+      <span class="switch-subtitle">
+        <span class="dot-pulse">
+          <span class="dot"></span>
+          <span class="dot"></span>
+          <span class="dot"></span>
+        </span>
+      </span>
+    </div>
+    <div class="switch-progress">
+      <div class="switch-progress-bar"></div>
+    </div>
+  </div>
+</div>
+}

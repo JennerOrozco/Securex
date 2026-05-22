@@ -1,0 +1,16 @@
+<button
+  pButton
+  [type]="type"
+  [class]="'gm-btn ' + class"
+  [disabled]="disabled"
+  [loading]="loading"
+  [routerLink]="routerLink"
+  [pTooltip]="tooltip"
+  [tooltipPosition]="tooltipPosition"
+  (click)="onClick.emit()"
+>
+  @if (icon && !loading) {
+    <i [className]="icon + ' mr-2'"></i>
+  }
+  {{ label }}
+</button>

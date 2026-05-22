@@ -1,0 +1,188 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.gm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+}
+
+.gm-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #475569;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gm-required {
+  color: #e11d48;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.gm-control-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.gm-field-icon {
+  position: absolute;
+  left: 10px;
+  z-index: 2;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+.gm-status-icon {
+  position: absolute;
+  right: 10px; /* Default for inputs without arrow */
+  z-index: 2;
+  font-size: 0.8rem;
+  pointer-events: none;
+  transition: right 0.2s ease;
+}
+
+/* For fields with select, we need more space for arrow and clear icon */
+:host ::ng-deep .gm-control-wrap:has(.p-select) .gm-status-icon {
+  right: 14px !important;
+}
+
+/* When the select is empty, the status icon moves to the right */
+:host ::ng-deep .gm-control-wrap:has(.p-select) .gm-status-icon.gm-status-icon--empty {
+  right: 10px !important;
+}
+
+.gm-valid { color: #059669; }
+.gm-invalid { color: #e11d48; }
+
+
+
+:host ::ng-deep .gm-select .p-select:focus-within {
+  border-color: #6366f1;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+}
+
+:host ::ng-deep .gm-select .p-select-label {
+  font-size: 0.85rem;
+  color: #0f172a;
+  padding: 0.15rem 0.65rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.gm-has-icon ::ng-deep .p-select-label {
+  padding-left: 1.9rem !important;
+}
+
+.gm-error-msg {
+  font-size: 0.65rem;
+  color: #e11d48;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  animation: error-in 0.18s ease both;
+}
+
+@keyframes error-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Placeholder styles */
+:host ::ng-deep .p-select .p-select-placeholder {
+  color: #94a3b8 !important; /* Pale gray (slate-400) */
+}
+
+:host ::ng-deep .p-select .p-placeholder {
+  color: #94a3b8 !important; /* Fallback */
+}
+
+/* Styles for the dropdown arrow container */
+:host ::ng-deep .p-select .p-select-dropdown {
+  background: rgba(226, 232, 240, 0.5) !important; /* Gray background */
+  border-left: 1px solid rgba(226, 232, 240, 0.9) !important;
+  width: 32px !important;
+  align-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #64748b !important;
+}
+
+/* Move the clear icon further left from the arrow */
+:host ::ng-deep .p-select .p-select-clear-icon {
+  right: 52px !important;
+}
+
+:host ::ng-deep .p-select .p-select-clear {
+  right: 52px !important;
+}
+
+/* Placeholder styles for inputs and textareas (Global via ::ng-deep) */
+::ng-deep .p-inputtext::placeholder {
+  color: #94a3b8 !important;
+}
+
+::ng-deep .p-textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+/* Specific styles for the select component */
+:host ::ng-deep .p-select {
+  height: 32px !important;
+  font-size: 0.85rem !important;
+  box-sizing: border-box !important;
+}
+
+:host ::ng-deep .p-select-label {
+  padding: 0.15rem 0.65rem !important;
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Move the clear icon further left from the arrow in this component */
+:host ::ng-deep .p-select .p-select-clear-icon,
+:host ::ng-deep .p-select .p-select-clear {
+  right: 60px !important;
+  margin-right: 10px !important;
+}
+
+/* Styles for the dropdown panel (overlay) moved from styles.css */
+::ng-deep .p-select-overlay {
+  font-size: 0.85rem !important;
+}
+
+::ng-deep .p-select-panel .p-select-item,
+::ng-deep .p-select-panel .p-select-option {
+  padding: 0.35rem 0.65rem !important;
+}
+
+::ng-deep .p-select-overlay .p-select-filter.p-inputtext {
+  font-size: xx-small !important;
+}
+
+::ng-deep .p-select-panel .p-select-filter {
+  padding: 0.3rem 0.5rem !important;
+}
+
+::ng-deep .p-select-panel .p-select-filter-container {
+  padding: 0.35rem !important;
+}
+
+::ng-deep .p-select-panel .p-select-empty-message {
+  padding: 0.35rem 0.65rem !important;
+}
