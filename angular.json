@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "avantex-app": {
+    "securex-app": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -72,10 +72,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "avantex-app:build:production"
+              "buildTarget": "securex-app:build:production"
             },
             "development": {
-              "buildTarget": "avantex-app:build:development"
+              "buildTarget": "securex-app:build:development"
             }
           },
           "defaultConfiguration": "development"

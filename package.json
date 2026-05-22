@@ -1,5 +1,5 @@
 {
-  "name": "avantex-app",
+  "name": "securex-app",
   "version": "0.0.0",
   "scripts": {
     "start": "ng serve --proxy-config proxy.conf.json",
