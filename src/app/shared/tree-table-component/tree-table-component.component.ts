@@ -211,6 +211,17 @@ export interface TreeTableColumn {
         </p-treeTable>
       </div>
 
+      @if (draggedNode) {
+        <div class="root-drop-zone"
+          (dragover)="onRootDragOver($event)"
+          (dragleave)="onRootDragLeave($event)"
+          (drop)="onRootDrop($event)"
+          [class.drag-over]="dragOverRoot">
+          <i class="pi pi-arrow-up"></i>
+          <span>Soltar aquí para convertir en <strong>elemento raíz</strong> (sin padre)</span>
+        </div>
+      }
+
       <!-- Custom Context Menu for Desktop -->
       <div class="custom-context-menu" 
            *ngIf="contextMenuVisible" 
@@ -321,6 +332,7 @@ export class TreeTableComponent implements OnInit {
   // Drag-drop state
   draggedNode: any = null;
   dragOverNode: any = null;
+  dragOverRoot = false;
 
   onRowDragStart(event: DragEvent, rowData: any) {
     this.draggedNode = rowData;
@@ -345,6 +357,24 @@ export class TreeTableComponent implements OnInit {
     }
     this.draggedNode = null;
     this.dragOverNode = null;
+  }
+
+  onRootDragOver(event: DragEvent) {
+    event.preventDefault();
+    this.dragOverRoot = true;
+  }
+
+  onRootDragLeave(event: DragEvent) {
+    this.dragOverRoot = false;
+  }
+
+  onRootDrop(event: DragEvent) {
+    event.preventDefault();
+    if (this.draggedNode) {
+      this.onNodeReorder.emit({ dragNode: this.draggedNode, dropNode: null });
+    }
+    this.draggedNode = null;
+    this.dragOverRoot = false;
   }
 
   // Menu State
