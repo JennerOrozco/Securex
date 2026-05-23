@@ -5,12 +5,11 @@ import { SecurexService } from '@core/services/securex.service';
 import { ConfigService } from '@core/services/config.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
-import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
+import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { catchError, map, of } from 'rxjs';
 
 interface ApiStatus {
@@ -27,8 +26,9 @@ interface ApiStatus {
 @Component({
   selector: 'app-api-status',
   standalone: true,
-  imports: [CommonModule, ButtonModule, CardModule, TableModule, TagModule, TooltipModule, DialogModule],
-  templateUrl: './api-status.component.html'
+  imports: [CommonModule, CardModule, TagModule, DialogModule, ToolbarComponent, ButtonComponent],
+  templateUrl: './api-status.component.html',
+  styleUrls: ['./api-status.component.css']
 })
 export class ApiStatusComponent implements OnInit {
   private securexService = inject(SecurexService);
@@ -101,7 +101,7 @@ export class ApiStatusComponent implements OnInit {
 
     updatedApis.forEach((api, index) => {
       const startTime = performance.now();
-      
+
       this.http.get<any>(api.healthEndpoint).pipe(
         map(response => {
           const latency = Math.round(performance.now() - startTime);
@@ -113,9 +113,9 @@ export class ApiStatusComponent implements OnInit {
       ).subscribe(result => {
         this.apis.update(apis => {
           const newApis = [...apis];
-          newApis[index] = { 
-            ...newApis[index], 
-            status: result.status as 'ONLINE' | 'OFFLINE', 
+          newApis[index] = {
+            ...newApis[index],
+            status: result.status as 'ONLINE' | 'OFFLINE',
             latency: (result as any).latency,
             version: (result as any).version,
             error: (result as any).error
@@ -129,11 +129,11 @@ export class ApiStatusComponent implements OnInit {
   syncApps() {
     this.isSyncing.set(true);
     this.securexService.broadcastAppSync().subscribe({
-      next: (res) => {
+      next: () => {
         this.isSyncing.set(false);
         this.notificationService.showSuccess('Sincronización Completada. Se ha enviado la orden de sincronizar apps a todos los microservicios.');
       },
-      error: (err) => {
+      error: () => {
         this.isSyncing.set(false);
         this.notificationService.showError('Hubo un error al intentar sincronizar las aplicaciones.');
       }

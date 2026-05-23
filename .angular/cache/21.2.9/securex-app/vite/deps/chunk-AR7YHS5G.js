@@ -6,6 +6,10 @@ import {
   MinusIcon
 } from "./chunk-QC2N2MT2.js";
 import {
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-VN65QM5Q.js";
+import {
   PARENT_INSTANCE
 } from "./chunk-C46CXQ5C.js";
 import {
@@ -23,10 +27,6 @@ import {
   k2 as k,
   q
 } from "./chunk-ZGIVYFBQ.js";
-import {
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-VN65QM5Q.js";
 import {
   CommonModule,
   NgClass,
@@ -768,4 +768,4 @@ export {
   Checkbox,
   CheckboxModule
 };
-//# sourceMappingURL=chunk-KNTHXZDU.js.map
+//# sourceMappingURL=chunk-AR7YHS5G.js.map

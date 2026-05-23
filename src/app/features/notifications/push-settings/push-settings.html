@@ -9,10 +9,9 @@
     <app-table-component title="Configuraciones Push" subtitle="Llaves VAPID y parámetros para notificaciones web" [columns]="cols" [data]="items"
       [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true" (onAdd)="handleAdd()"
       (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
-        <ng-template pTemplate="right">
-          <p-button label="Generar VAPID" icon="pi pi-key" severity="info" class="mr-2" (onClick)="handleGenerateVapid()"></p-button>
-          <p-button label="Agregar Configuración" icon="pi pi-plus" severity="primary" (onClick)="handleAdd()"></p-button>
-        </ng-template>
+      <div custom-toolbar-actions>
+        <p-button label="Generar VAPID" icon="pi pi-key" styleClass="bg-blue-900 border-blue-900 hover:bg-blue-800 text-white" class="mr-2" (onClick)="handleGenerateVapid()"></p-button>
+      </div>
     </app-table-component>
   </ng-container>
 

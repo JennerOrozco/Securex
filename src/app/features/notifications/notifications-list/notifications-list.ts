@@ -18,7 +18,7 @@ import { NotificationService } from '@core/services/notification.service';
 
     <app-delete-modal [visible]="modalVisible" title="Eliminar Notificación"
       message="¿Estás seguro que deseas eliminar este registro histórico?"
-      [loading]="isSaving" (onConfirm)="confirmDelete()" (onCancel)="modalVisible = false">
+      [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
     </app-delete-modal>
   `
 })
@@ -35,8 +35,8 @@ export class NotificationsListComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
-    { field: 'app_uuid', header: 'App UUID', type: 'text', sortable: true },
-    { field: 'user_uuid', header: 'User UUID', type: 'text', sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'title', header: 'Título', type: 'text', sortable: true },
     { field: 'channels', header: 'Canales', type: 'text', sortable: true },
     { field: 'status', header: 'Estado', type: 'badge', sortable: true },

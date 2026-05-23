@@ -35,8 +35,8 @@ export class UserDevicesComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
-    { field: 'app_uuid', header: 'App UUID', type: 'text', sortable: true },
-    { field: 'user_uuid', header: 'User UUID', type: 'text', sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'device_type', header: 'Tipo', type: 'text', sortable: true },
     { field: 'last_active', header: 'Última Actividad', type: 'date', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }

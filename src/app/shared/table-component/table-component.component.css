@@ -557,6 +557,12 @@
   transform: scale(1.05);
 }
 
+.act-btn.select:hover {
+  color: #10b981;
+  border-color: #10b981;
+  background: #ecfdf5;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
 
@@ -908,6 +914,12 @@
 
 .sheet-item-icon.del {
   background: rgba(244, 63, 94, 0.08);
+
+.sheet-item-icon.select {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+}
+
   color: #f43f5e;
 }
 
@@ -1102,6 +1114,12 @@
 
 .sheet-item-icon.del {
   background: rgba(244, 63, 94, 0.08);
+
+.sheet-item-icon.select {
+  background: rgba(16, 185, 129, 0.08);
+  color: #10b981;
+}
+
   color: #f43f5e;
 }
 

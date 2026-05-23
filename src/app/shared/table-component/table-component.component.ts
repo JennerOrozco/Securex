@@ -74,6 +74,7 @@ export class TableComponent implements OnInit, OnChanges {
   @Input() showSend: boolean = false;
   @Input() showDuplicate: boolean = false;
   @Input() showPermissions: boolean = false;
+  @Input() showSelect: boolean = false;
 
   // Lógica de Row Grouping nativo que compartes en tu html
   @Input() enableRowGroup: boolean = false;
@@ -91,6 +92,7 @@ export class TableComponent implements OnInit, OnChanges {
   @Output() onSend = new EventEmitter<any>();
   @Output() onDuplicate = new EventEmitter<any>();
   @Output() onPermissions = new EventEmitter<any>();
+  @Output() onSelect = new EventEmitter<any>();
 
   @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
 
@@ -217,7 +219,7 @@ export class TableComponent implements OnInit, OnChanges {
     this.displayColumnsModal = false;
   }
 
-  executeAction(actionType: 'view' | 'pdf' | 'send' | 'duplicate' | 'delete' | 'edit' | 'permissions') {
+  executeAction(actionType: 'view' | 'pdf' | 'send' | 'duplicate' | 'delete' | 'edit' | 'permissions' | 'select') {
     const target = this.activeRow;
     this.closeMenus();
 
@@ -231,6 +233,7 @@ export class TableComponent implements OnInit, OnChanges {
         case 'edit': this.onEdit.emit(target); break;
         case 'delete': this.onDelete.emit(target); break;
         case 'permissions': this.onPermissions.emit(target); break;
+        case 'select': this.onSelect.emit(target); break;
       }
     }, 300);
   }

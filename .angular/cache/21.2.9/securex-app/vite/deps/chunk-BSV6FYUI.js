@@ -5,6 +5,9 @@ import {
   BaseModelHolder
 } from "./chunk-R5IOAG2E.js";
 import {
+  NgControl
+} from "./chunk-VN65QM5Q.js";
+import {
   PARENT_INSTANCE
 } from "./chunk-C46CXQ5C.js";
 import {
@@ -13,9 +16,6 @@ import {
 import {
   BaseStyle
 } from "./chunk-F432P5EP.js";
-import {
-  NgControl
-} from "./chunk-VN65QM5Q.js";
 import {
   Directive,
   HostListener,
@@ -385,4 +385,4 @@ export {
   InputText,
   InputTextModule
 };
-//# sourceMappingURL=chunk-4EWE45MP.js.map
+//# sourceMappingURL=chunk-BSV6FYUI.js.map

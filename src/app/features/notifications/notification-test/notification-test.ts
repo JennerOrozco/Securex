@@ -6,7 +6,6 @@ import { SecurexService } from '@core/services/securex.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
 import { TextareaModule } from 'primeng/textarea';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
@@ -19,7 +18,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    CardModule, ButtonModule, TextareaModule,
+    CardModule, TextareaModule,
     TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent
   ],
   templateUrl: './notification-test.html',
@@ -52,21 +51,20 @@ export class NotificationTestComponent implements OnInit {
   appCols: TableColumn[] = [
     { field: 'name', header: 'Nombre', type: 'text', sortable: true },
     { field: 'uuid', header: 'UUID', type: 'text' },
-    { field: 'acciones', header: 'Seleccionar', type: 'actions' }
+    { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
   companyCols: TableColumn[] = [
     { field: 'name', header: 'Nombre', type: 'text', sortable: true },
     { field: 'tax_id', header: 'Tax ID', type: 'text' },
-    { field: 'acciones', header: 'Seleccionar', type: 'actions' }
+    { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
   userCols: TableColumn[] = [
-    { field: 'first_name', header: 'Nombre', type: 'text', sortable: true },
-    { field: 'last_name', header: 'Apellido', type: 'text', sortable: true },
+    { field: 'full_name', header: 'Nombre', type: 'text', sortable: true },
     { field: 'email', header: 'Email', type: 'text', sortable: true },
     { field: 'uuid', header: 'UUID', type: 'text' },
-    { field: 'acciones', header: 'Seleccionar', type: 'actions' }
+    { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
   channelOptions = [

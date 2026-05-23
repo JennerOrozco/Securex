@@ -35,8 +35,8 @@ export class SendAttemptsComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
-    { field: 'app_uuid', header: 'App UUID', type: 'text', sortable: true },
-    { field: 'user_uuid', header: 'User UUID', type: 'text', sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'ip_address', header: 'Dirección IP', type: 'text', sortable: true },
     { field: 'created_at', header: 'Fecha', type: 'date', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }

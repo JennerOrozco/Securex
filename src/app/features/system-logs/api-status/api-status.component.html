@@ -1,106 +1,94 @@
-<div class="px-4 pb-4 animate-fade-in" *ngIf="hasPermission">
-  <div class="flex flex-col md:flex-row md:items-center justify-between mb-6">
-    <div>
-      <h2 class="text-2xl font-bold text-slate-800 dark:text-white">Estado de APIs</h2>
-      <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">
-        Monitoreo de microservicios y herramientas de sincronización global.
-      </p>
-    </div>
-    <div class="mt-4 md:mt-0 flex gap-3">
-      <p-button 
-        label="Refrescar Estado" 
-        icon="pi pi-refresh" 
-        styleClass="p-button-outlined"
-        (onClick)="checkAllHealth()">
-      </p-button>
-      <p-button 
-        label="Sincronizar Apps" 
-        icon="pi pi-sync" 
-        [loading]="isSyncing()"
-        (onClick)="syncApps()"
-        pTooltip="Envía el catálogo de Apps a todos los microservicios"
-        tooltipPosition="bottom">
-      </p-button>
-    </div>
-  </div>
-
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <p-card *ngFor="let api of apis()" styleClass="shadow-sm border border-slate-200 dark:border-slate-700">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-lg font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-          <i class="pi pi-server text-indigo-500"></i>
-          {{ api.name }}
-        </h3>
-        
-        <p-tag *ngIf="api.status === 'ONLINE'" severity="success" value="ONLINE" icon="pi pi-check"></p-tag>
-        <p-tag *ngIf="api.status === 'OFFLINE'" severity="danger" value="OFFLINE" icon="pi pi-times"></p-tag>
-        <p-tag *ngIf="api.status === 'CHECKING'" severity="info" value="VERIFICANDO" icon="pi pi-spin pi-spinner"></p-tag>
-      </div>
-
-      <div class="text-sm text-slate-600 dark:text-slate-400 mb-4 truncate" [title]="api.url">
-        {{ api.url }}
-      </div>
-
-      <div class="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-        <div class="flex flex-col">
-          <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Latencia</span>
-          <span class="text-sm font-medium" [class.text-red-500]="api.latency && api.latency > 1000">
-            {{ api.latency ? api.latency + ' ms' : '--' }}
-          </span>
+<div *ngIf="hasPermission; else noPermission">
+  <div class="api-status-body">
+    <div class="api-card-panel">
+      <div class="api-toolbar">
+        <div class="api-toolbar-left">
+          <h2 class="api-toolbar-title">Estado de APIs</h2>
+          <p class="api-toolbar-sub">Monitoreo de microservicios y herramientas de sincronización global</p>
         </div>
-        <div class="flex flex-col text-right">
-          <span class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Versión</span>
-          <span class="text-sm font-medium">{{ api.version || '--' }}</span>
+        <div class="api-toolbar-right">
+          <app-button label="Refrescar Estado" icon="pi pi-refresh" class="p-button-outlined" (onClick)="checkAllHealth()"></app-button>
+          <app-button label="Sincronizar Apps" icon="pi pi-sync" tooltip="Envía el catálogo de Apps a todos los microservicios" [loading]="isSyncing()" (onClick)="syncApps()"></app-button>
         </div>
       </div>
 
-      <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800 flex justify-end">
-        <p-button 
-          label="Métricas" 
-          icon="pi pi-chart-bar" 
-          size="small" 
-          styleClass="p-button-outlined p-button-sm"
-          (onClick)="openMetrics(api)">
-        </p-button>
-      </div>
+      <div class="api-grid">
+        @for (api of apis(); track api.name) {
+          <p-card class="api-card">
+            <div class="api-card-header">
+              <div class="api-card-title">
+                <i class="pi pi-server api-card-icon"></i>
+                <h3>{{ api.name }}</h3>
+              </div>
+              <p-tag *ngIf="api.status === 'ONLINE'" severity="success" value="ONLINE" icon="pi pi-check"></p-tag>
+              <p-tag *ngIf="api.status === 'OFFLINE'" severity="danger" value="OFFLINE" icon="pi pi-times"></p-tag>
+              <p-tag *ngIf="api.status === 'CHECKING'" severity="info" value="VERIFICANDO" icon="pi pi-spin pi-spinner"></p-tag>
+            </div>
 
-      <div *ngIf="api.error" class="mt-3 p-2 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-xs rounded border border-red-100 dark:border-red-800/30">
-        <i class="pi pi-exclamation-triangle mr-1"></i> {{ api.error }}
+            <div class="api-card-url" [title]="api.url">{{ api.url }}</div>
+
+            <div class="api-card-stats">
+              <div class="api-stat">
+                <span class="api-stat-label">Latencia</span>
+                <span class="api-stat-value" [class.api-stat-warn]="api.latency && api.latency > 1000">
+                  {{ api.latency ? api.latency + ' ms' : '--' }}
+                </span>
+              </div>
+              <div class="api-stat api-stat-right">
+                <span class="api-stat-label">Versión</span>
+                <span class="api-stat-value">{{ api.version || '--' }}</span>
+              </div>
+            </div>
+
+            <div class="api-card-footer">
+              <app-button label="Métricas" icon="pi pi-chart-bar" class="p-button-outlined p-button-sm" (onClick)="openMetrics(api)"></app-button>
+            </div>
+
+            @if (api.error) {
+              <div class="api-error">
+                <i class="pi pi-exclamation-triangle"></i> {{ api.error }}
+              </div>
+            }
+          </p-card>
+        }
       </div>
-    </p-card>
+    </div>
   </div>
 </div>
 
-<p-dialog 
-  header="Métricas: {{ selectedApiForMetrics()?.name }}" 
-  [(visible)]="showMetricsDialog" 
-  [modal]="true" 
-  [style]="{ width: '50vw' }" 
+<p-dialog
+  header="Métricas: {{ selectedApiForMetrics()?.name }}"
+  [(visible)]="showMetricsDialog"
+  [modal]="true"
+  [style]="{ width: '50vw' }"
   [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
-  [draggable]="false" 
+  [draggable]="false"
   [resizable]="false">
-  
-  <div *ngIf="isLoadingMetrics()" class="flex justify-center p-6">
-    <i class="pi pi-spin pi-spinner text-3xl text-indigo-500"></i>
-  </div>
-
-  <div *ngIf="!isLoadingMetrics() && metricsData()">
-    <div *ngIf="metricsData().error" class="p-4 bg-red-50 text-red-600 rounded">
-      {{ metricsData().error }}
+  @if (isLoadingMetrics()) {
+    <div class="metrics-loading">
+      <i class="pi pi-spin pi-spinner"></i>
     </div>
-    <div *ngIf="!metricsData().error" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div *ngFor="let item of metricsData() | keyvalue" class="p-3 bg-slate-50 dark:bg-slate-800 rounded border border-slate-100 dark:border-slate-700">
-        <div class="text-xs text-slate-500 mb-1 uppercase tracking-wider">{{ item.key.toString().replace(/_/g, ' ') }}</div>
-        <div class="text-lg font-semibold text-slate-800 dark:text-white">{{ item.value }}</div>
+  }
+  @if (!isLoadingMetrics() && metricsData()) {
+    @if (metricsData().error) {
+      <div class="metrics-error">{{ metricsData().error }}</div>
+    } @else {
+      <div class="metrics-grid">
+        @for (item of metricsData() | keyvalue; track item.key) {
+          <div class="metrics-item">
+            <div class="metrics-item-label">{{ item.key.toString().replace(/_/g, ' ') }}</div>
+            <div class="metrics-item-value">{{ item.value }}</div>
+          </div>
+        }
       </div>
-    </div>
-  </div>
+    }
+  }
 </p-dialog>
 
-<div class="px-4 pb-4 animate-fade-in" *ngIf="!hasPermission">
-  <div class="p-8 text-center bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
-    <i class="pi pi-lock text-4xl text-slate-400 dark:text-slate-500 mb-4"></i>
-    <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-2">Acceso Denegado</h3>
-    <p class="text-slate-500 dark:text-slate-400">No tienes permisos para ver el estado de las APIs.</p>
+<ng-template #noPermission>
+  <div class="no-permission">
+    <i class="pi pi-lock"></i>
+    <h3>Acceso Denegado</h3>
+    <p>No tienes permisos para ver el estado de las APIs.</p>
   </div>
-</div>
+</ng-template>

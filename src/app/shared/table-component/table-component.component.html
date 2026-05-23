@@ -28,6 +28,7 @@
               <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
                 [placeholder]="searchPlaceholder" class="search-inp" />
             </div>
+            <ng-content select="[custom-toolbar-actions]"></ng-content>
             @if (showAdd) {
             <button class="btn-new" (click)="onAdd.emit()">
               <i class="pi pi-plus"></i> {{ addLabel }}
@@ -143,6 +144,8 @@
             <ng-template [ngTemplateOutlet]="customActionsTemplate" [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
             } @else {
             <div class="actions">
+              <button *ngIf="showSelect" class="act-btn select" (click)="onSelect.emit(rowData); $event.stopPropagation()"><i
+                  class="pi pi-check-circle"></i></button>
               <button *ngIf="showEdit" class="act-btn edit" (click)="onEdit.emit(rowData); $event.stopPropagation()"><i
                   class="pi pi-pencil"></i></button>
               <button *ngIf="showPermissions" class="act-btn perm"
@@ -182,6 +185,10 @@
     <span class="menu-title">Acciones</span>
   </div>
   <ul class="menu-list">
+    <li *ngIf="showSelect" (click)="executeAction('select')">
+      <i class="pi pi-check-circle text-emerald-500"></i>
+      <span>Seleccionar</span>
+    </li>
     <li *ngIf="showView" (click)="executeAction('view')">
       <i class="pi pi-eye text-indigo-500"></i>
       <span>Visualizar</span>
@@ -225,6 +232,10 @@
   </div>
   <div class="sheet-body">
     <ul class="sheet-list">
+      <li *ngIf="showSelect" (click)="executeAction('select')">
+        <div class="sheet-item-icon select"><i class="pi pi-check-circle"></i></div>
+        <span>Seleccionar</span>
+      </li>
       <li *ngIf="showView" (click)="executeAction('view')">
         <div class="sheet-item-icon view"><i class="pi pi-eye"></i></div>
         <span>Visualizar</span>

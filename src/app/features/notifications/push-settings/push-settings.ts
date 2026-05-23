@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
+import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
@@ -17,10 +18,12 @@ import { ButtonModule } from 'primeng/button';
 })
 export class PushSettingsComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
+  private securexService = inject(SecurexService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   items: any[] = [];
+  apps: any[] = [];
   total = 0;
   loading = false;
   isSaving = false;
@@ -30,19 +33,12 @@ export class PushSettingsComponent implements OnInit {
   selectedItem: any = null;
   initialData: any = {};
 
-  formFields: FormField[] = [
-    { name: 'app_uuid', label: 'App UUID', type: 'text', required: true, icon: 'pi pi-id-card' },
-    { name: 'vapid_public_key', label: 'VAPID Public Key', type: 'text', required: true, icon: 'pi pi-key' },
-    { name: 'vapid_private_key', label: 'VAPID Private Key', type: 'text', required: true, icon: 'pi pi-key' },
-    { name: 'vapid_subject', label: 'VAPID Subject', type: 'text', required: false, icon: 'pi pi-envelope' },
-    { name: 'icon', label: 'Icon URL', type: 'text', required: false, icon: 'pi pi-image' },
-    { name: 'url_base', label: 'URL Base', type: 'text', required: false, icon: 'pi pi-link' }
-  ];
+  formFields: FormField[] = [];
 
   cols: TableColumn[] = [
-    { field: 'app_uuid', header: 'App UUID', type: 'text', sortable: true },
+    { field: 'app_name', header: 'App Asociada', type: 'text', sortable: true },
     { field: 'vapid_subject', header: 'Subject', type: 'text', sortable: true },
-    { field: 'icon', header: 'Icon', type: 'text', sortable: false },
+    { field: 'icon', header: 'Icon', type: 'image', style: { width: '80px', 'text-align': 'center' } },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
@@ -58,15 +54,49 @@ export class PushSettingsComponent implements OnInit {
 
   load() {
     this.loading = true;
+    this.securexService.getApps().subscribe({
+      next: (res: any) => {
+        this.apps = res.data || res || [];
+        this.updateFormFields();
+        this.loadSettings();
+      },
+      error: () => this.loading = false
+    });
+  }
+
+  loadSettings() {
     this.apiService.getPushSettings().subscribe({
       next: (res: any) => {
         const d = res.data || res;
-        this.items = d || [];
+        this.items = (d || []).map((item: any) => {
+          const app = this.apps.find((a: any) => a.uuid === item.app_uuid);
+          return {
+            ...item,
+            app_name: app ? app.name : item.app_uuid
+          };
+        });
         this.total = this.items.length;
         this.loading = false;
       },
       error: () => this.loading = false
     });
+  }
+
+  updateFormFields() {
+    this.formFields = [
+      {
+        name: 'app_uuid',
+        label: 'Aplicación Asociada',
+        type: 'select',
+        required: true,
+        options: this.apps.map(app => ({ label: app.name, value: app.uuid }))
+      },
+      { name: 'vapid_public_key', label: 'VAPID Public Key', type: 'text', required: true, icon: 'pi pi-key' },
+      { name: 'vapid_private_key', label: 'VAPID Private Key', type: 'text', required: true, icon: 'pi pi-key' },
+      { name: 'vapid_subject', label: 'VAPID Subject', type: 'text', required: false, icon: 'pi pi-envelope' },
+      { name: 'icon', label: 'Icon', type: 'file', required: false, accept: 'image/*' },
+      { name: 'url_base', label: 'URL Base', type: 'text', required: false, icon: 'pi pi-link' }
+    ];
   }
 
   handleAdd() { this.modalMode = 'add'; this.selectedItem = null; this.initialData = {}; this.modalVisible = true; }
@@ -93,15 +123,33 @@ export class PushSettingsComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const id = this.modalMode === 'add' ? null : this.selectedItem.id;
-    this.apiService.savePushSetting(id, data).subscribe({
-      next: () => {
-        this.notificationService.showSuccess(`Configuración ${this.modalMode === 'add' ? 'creada' : 'actualizada'} correctamente`);
-        this.load();
-        this.modalVisible = false;
+
+    const proceedWithSave = (finalData: any) => {
+      this.apiService.savePushSetting(id, finalData).subscribe({
+        next: () => {
+          this.notificationService.showSuccess(`Configuración ${this.modalMode === 'add' ? 'creada' : 'actualizada'} correctamente`);
+          this.load();
+          this.modalVisible = false;
+          this.isSaving = false;
+        },
+        error: () => this.isSaving = false
+      });
+    };
+
+    if (data.icon instanceof File) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        data.icon = reader.result as string;
+        proceedWithSave(data);
+      };
+      reader.onerror = () => {
+        this.notificationService.showError('Error al procesar la imagen del ícono');
         this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
+      };
+      reader.readAsDataURL(data.icon);
+    } else {
+      proceedWithSave(data);
+    }
   }
 
   confirmDelete() {

@@ -2,6 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
+import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
@@ -16,10 +17,12 @@ import { NotificationService } from '@core/services/notification.service';
 })
 export class SmtpSettingsComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
+  private securexService = inject(SecurexService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   items: any[] = [];
+  apps: any[] = [];
   total = 0;
   loading = false;
   isSaving = false;
@@ -28,23 +31,10 @@ export class SmtpSettingsComponent implements OnInit {
   modalMode: 'add' | 'edit' | 'delete' = 'add';
   selectedItem: any = null;
 
-  formFields: FormField[] = [
-    { name: 'app_uuid', label: 'App UUID', type: 'text', required: true, icon: 'pi pi-id-card' },
-    { name: 'smtp_host', label: 'SMTP Host', type: 'text', required: true, icon: 'pi pi-server' },
-    { name: 'smtp_port', label: 'SMTP Port', type: 'number', required: true, icon: 'pi pi-hashtag' },
-    { name: 'smtp_user', label: 'Usuario SMTP', type: 'text', required: true, icon: 'pi pi-user' },
-    { name: 'smtp_pass', label: 'Contraseña SMTP', type: 'password', required: true, icon: 'pi pi-lock' },
-    { name: 'smtp_encryption', label: 'Encriptación', type: 'select', required: true, options: [
-      { label: 'TLS', value: 'tls' },
-      { label: 'SSL', value: 'ssl' },
-      { label: 'Ninguna', value: 'none' }
-    ]},
-    { name: 'from_email', label: 'Email Remitente', type: 'email', required: true, icon: 'pi pi-envelope' },
-    { name: 'from_name', label: 'Nombre Remitente', type: 'text', required: true, icon: 'pi pi-user' }
-  ];
+  formFields: FormField[] = [];
 
   cols: TableColumn[] = [
-    { field: 'app_uuid', header: 'App UUID', type: 'text', sortable: true },
+    { field: 'app_name', header: 'App Asociada', type: 'text', sortable: true },
     { field: 'smtp_host', header: 'Host', type: 'text', sortable: true },
     { field: 'from_email', header: 'Remitente', type: 'text', sortable: true },
     { field: 'smtp_encryption', header: 'Encriptación', type: 'text', sortable: false },
@@ -63,15 +53,55 @@ export class SmtpSettingsComponent implements OnInit {
 
   load() {
     this.loading = true;
+    this.securexService.getApps().subscribe({
+      next: (res: any) => {
+        this.apps = res.data || res || [];
+        this.updateFormFields();
+        this.loadSettings();
+      },
+      error: () => this.loading = false
+    });
+  }
+
+  loadSettings() {
     this.apiService.getSmtpSettings().subscribe({
       next: (res: any) => {
         const d = res.data || res;
-        this.items = d || [];
+        this.items = (d || []).map((item: any) => {
+          const app = this.apps.find((a: any) => a.uuid === item.app_uuid);
+          return {
+            ...item,
+            app_name: app ? app.name : item.app_uuid
+          };
+        });
         this.total = this.items.length;
         this.loading = false;
       },
       error: () => this.loading = false
     });
+  }
+
+  updateFormFields() {
+    this.formFields = [
+      {
+        name: 'app_uuid',
+        label: 'Aplicación Asociada',
+        type: 'select',
+        required: true,
+        options: this.apps.map(app => ({ label: app.name, value: app.uuid }))
+      },
+      { name: 'smtp_host', label: 'SMTP Host', type: 'text', required: true, icon: 'pi pi-server' },
+      { name: 'smtp_port', label: 'SMTP Port', type: 'number', required: true, icon: 'pi pi-hashtag' },
+      { name: 'smtp_user', label: 'Usuario SMTP', type: 'text', required: true, icon: 'pi pi-user' },
+      { name: 'smtp_pass', label: 'Contraseña SMTP', type: 'password', required: true, icon: 'pi pi-lock' },
+      { name: 'smtp_encryption', label: 'Encriptación', type: 'select', required: true, options: [
+        { label: 'TLS', value: 'tls' },
+        { label: 'SSL', value: 'ssl' },
+        { label: 'Ninguna', value: 'none' }
+      ]},
+      { name: 'from_email', label: 'Email Remitente', type: 'email', required: true, icon: 'pi pi-envelope' },
+      { name: 'from_name', label: 'Nombre Remitente', type: 'text', required: true, icon: 'pi pi-user' }
+    ];
   }
 
   handleAdd() { this.modalMode = 'add'; this.selectedItem = null; this.modalVisible = true; }

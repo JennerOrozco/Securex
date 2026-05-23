@@ -1,0 +1,317 @@
+:host {
+  display: block;
+}
+
+.api-status-body {
+  padding: 1.5rem;
+}
+
+.api-card-panel {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+}
+
+.api-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.api-toolbar-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.api-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c0707;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.api-toolbar-sub {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.api-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.api-grid {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .api-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .api-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.api-card {
+  border-radius: 12px;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.api-card:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.api-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.api-card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.api-card-icon {
+  color: #4f46e5;
+  font-size: 1rem;
+}
+
+.api-card-url {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-bottom: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.api-card-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.api-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.api-stat-right {
+  text-align: right;
+}
+
+.api-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.api-stat-value {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.api-stat-warn {
+  color: #ef4444;
+}
+
+.api-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.75rem;
+  margin-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.api-error {
+  margin-top: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: #fef2f2;
+  color: #dc2626;
+  font-size: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #fecaca;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* Metrics dialog */
+.metrics-loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  font-size: 2rem;
+  color: #4f46e5;
+}
+
+.metrics-error {
+  padding: 1rem;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: 6px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metrics-item {
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.metrics-item-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.25rem;
+}
+
+.metrics-item-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* No permission */
+.no-permission {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  max-width: 400px;
+  margin: 2rem auto;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.no-permission i {
+  font-size: 2.5rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+}
+
+.no-permission h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.5rem;
+}
+
+.no-permission p {
+  font-size: 0.85rem;
+  color: #64748b;
+}
+
+/* Dark mode overrides */
+.my-app-dark .api-card-panel {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.my-app-dark .api-toolbar {
+  border-bottom-color: #334155;
+}
+
+.my-app-dark .api-toolbar-title {
+  color: #f1f5f9;
+}
+
+.my-app-dark .api-toolbar-sub {
+  color: #94a3b8;
+}
+
+.my-app-dark .api-card-title {
+  color: #f1f5f9;
+}
+
+.my-app-dark .api-card-url {
+  color: #94a3b8;
+}
+
+.my-app-dark .api-card-stats {
+  border-top-color: #334155;
+}
+
+.my-app-dark .api-stat-value {
+  color: #e2e8f0;
+}
+
+.my-app-dark .api-card-footer {
+  border-top-color: #334155;
+}
+
+.my-app-dark .api-error {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: #fca5a5;
+}
+
+.my-app-dark .metrics-item {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.my-app-dark .metrics-item-label {
+  color: #94a3b8;
+}
+
+.my-app-dark .metrics-item-value {
+  color: #e2e8f0;
+}
+
+.my-app-dark .no-permission {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.my-app-dark .no-permission h3 {
+  color: #f1f5f9;
+}
+
+.my-app-dark .no-permission p {
+  color: #94a3b8;
+}

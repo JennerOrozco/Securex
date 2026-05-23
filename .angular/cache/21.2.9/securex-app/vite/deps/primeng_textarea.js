@@ -5,6 +5,9 @@ import {
   BaseModelHolder
 } from "./chunk-R5IOAG2E.js";
 import {
+  NgControl
+} from "./chunk-VN65QM5Q.js";
+import {
   PARENT_INSTANCE
 } from "./chunk-C46CXQ5C.js";
 import {
@@ -15,9 +18,6 @@ import {
 } from "./chunk-F432P5EP.js";
 import "./chunk-CD2TGPKN.js";
 import "./chunk-ZGIVYFBQ.js";
-import {
-  NgControl
-} from "./chunk-VN65QM5Q.js";
 import "./chunk-M43CJRIJ.js";
 import "./chunk-WUZNPPW4.js";
 import {
