@@ -1,26 +1,29 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { SecurexService } from '@core/services/securex.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { CardModule } from 'primeng/card';
-import { InputTextModule } from 'primeng/inputtext';
-import { TextareaModule } from 'primeng/textarea';
-import { SelectModule } from 'primeng/select';
 import { ButtonModule } from 'primeng/button';
+import { TextareaModule } from 'primeng/textarea';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
+import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
+import { InputComponent } from '@shared/components/input/input.component';
+import { SelectComponent } from '@shared/components/select/select.component';
+import { ButtonComponent } from '@shared/components/button/button.component';
 
 @Component({
   selector: 'app-notification-test',
   standalone: true,
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, 
-    CardModule, InputTextModule, TextareaModule, SelectModule, ButtonModule,
-    TableComponent
+    CommonModule, ReactiveFormsModule,
+    CardModule, ButtonModule, TextareaModule,
+    TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent
   ],
-  templateUrl: './notification-test.html'
+  templateUrl: './notification-test.html',
+  styleUrls: ['./notification-test.css']
 })
 export class NotificationTestComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
@@ -32,7 +35,7 @@ export class NotificationTestComponent implements OnInit {
   testForm: FormGroup;
   isSending = false;
 
-  step = 1; // 1: App, 2: Company, 3: User, 4: Message
+  step = 1;
 
   apps: any[] = [];
   companies: any[] = [];
@@ -77,6 +80,13 @@ export class NotificationTestComponent implements OnInit {
     { label: 'Advertencia (WARNING)', value: 'WARNING' },
     { label: 'Error (ERROR)', value: 'ERROR' },
     { label: 'Éxito (SUCCESS)', value: 'SUCCESS' }
+  ];
+
+  steps = [
+    { num: 1, label: 'App', icon: 'pi pi-th-large' },
+    { num: 2, label: 'Empresa', icon: 'pi pi-building' },
+    { num: 3, label: 'Usuario', icon: 'pi pi-user' },
+    { num: 4, label: 'Mensaje', icon: 'pi pi-send' },
   ];
 
   constructor() {
@@ -125,7 +135,7 @@ export class NotificationTestComponent implements OnInit {
     this.securexService.getAdminUsers({ company_uuid: this.selectedCompany.uuid }).subscribe({
       next: (res: any) => {
         const data = res.data || res;
-        this.users = data.data || data; // Handle pagination if any
+        this.users = data.data || data;
         this.loadingUsers = false;
       },
       error: () => this.loadingUsers = false
@@ -170,19 +180,28 @@ export class NotificationTestComponent implements OnInit {
     };
 
     this.apiService.sendNotificationToAny(payload).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.notificationService.showSuccess('Notificación enviada correctamente al usuario.');
         this.isSending = false;
-        // Optionally reset wizard
-        this.step = 1;
-        this.selectedApp = null;
-        this.selectedCompany = null;
-        this.selectedUser = null;
+        this.resetWizard();
       },
       error: (err) => {
         this.notificationService.showError('Error al enviar notificación: ' + (err.error?.message || err.message));
         this.isSending = false;
       }
+    });
+  }
+
+  private resetWizard() {
+    this.step = 1;
+    this.selectedApp = null;
+    this.selectedCompany = null;
+    this.selectedUser = null;
+    this.testForm.reset({
+      title: 'Test Notificación',
+      message: 'Este es un mensaje de prueba desde el wizard.',
+      type: 'INFO',
+      channels: 'PUSH,EMAIL'
     });
   }
 }

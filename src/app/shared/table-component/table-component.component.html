@@ -139,6 +139,9 @@
               }
             </div>
             } @else if (col.type === 'actions') {
+            @if (customActionsTemplate) {
+            <ng-template [ngTemplateOutlet]="customActionsTemplate" [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
+            } @else {
             <div class="actions">
               <button *ngIf="showEdit" class="act-btn edit" (click)="onEdit.emit(rowData); $event.stopPropagation()"><i
                   class="pi pi-pencil"></i></button>
@@ -147,6 +150,7 @@
               <button *ngIf="showDelete" class="act-btn del"
                 (click)="onDelete.emit(rowData); $event.stopPropagation()"><i class="pi pi-trash"></i></button>
             </div>
+            }
             } @else {
             {{ rowData[col.field] }}
             }

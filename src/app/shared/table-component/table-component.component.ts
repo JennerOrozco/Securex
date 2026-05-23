@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, HostListener, ContentChild, TemplateRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -91,6 +91,8 @@ export class TableComponent implements OnInit, OnChanges {
   @Output() onSend = new EventEmitter<any>();
   @Output() onDuplicate = new EventEmitter<any>();
   @Output() onPermissions = new EventEmitter<any>();
+
+  @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
 
   selectedItems: any[] = [];
   selectedColumns: TableColumn[] = [];
