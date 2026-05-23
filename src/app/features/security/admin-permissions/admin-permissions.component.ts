@@ -4,8 +4,7 @@ import { TreeTableComponent, TreeTableColumn } from '@shared/tree-table-componen
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal.types';
-import { AddModalComponent } from '@shared/modals/add-modal/add-modal.component';
-import { EditModalComponent } from '@shared/modals/edit-modal/edit-modal.component';
+import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 import { TreeNode } from 'primeng/api';
@@ -13,7 +12,7 @@ import { TreeNode } from 'primeng/api';
 @Component({
   selector: 'app-admin-permissions',
   standalone: true,
-  imports: [CommonModule, TreeTableComponent, AddModalComponent, EditModalComponent, DeleteModalComponent],
+  imports: [CommonModule, TreeTableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './admin-permissions.component.html',
   styleUrl: './admin-permissions.component.css'
 })
@@ -45,9 +44,10 @@ export class AdminPermissionsComponent implements OnInit {
   ];
 
   cols: TreeTableColumn[] = [
-    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', style: { width: '40%' } },
-    { field: 'slug', header: 'Slug', type: 'text', style: { width: '30%' } },
-    { field: 'type', header: 'Tipo', type: 'badge', style: { width: '15%' } },
+    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
+    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
+    { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },
+    { field: 'sort_order', header: 'Orden', type: 'text', sortable: true, style: { width: '10%', textAlign: 'center' } },
     { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
   ];
 

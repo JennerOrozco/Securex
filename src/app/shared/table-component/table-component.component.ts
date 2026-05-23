@@ -21,6 +21,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 
 import { TableColumn } from './table.types';
 export type { TableColumn } from './table.types';
+import { ColumnsModalComponent } from '../modals/columns-modal/columns-modal.component';
 
 @Component({
   selector: 'app-table-component',
@@ -42,7 +43,8 @@ export type { TableColumn } from './table.types';
     CheckboxModule,
     RippleModule,
     SelectModule,
-    DatePickerModule
+    DatePickerModule,
+    ColumnsModalComponent
   ],
   templateUrl: './table-component.component.html',
   styleUrl: './table-component.component.css'
@@ -206,6 +208,11 @@ export class TableComponent implements OnInit, OnChanges {
     if (!target.closest('.custom-context-menu') && !target.closest('tr')) {
       this.closeMenus();
     }
+  }
+
+  onApplyColumns(columns: TableColumn[]) {
+    this.selectedColumns = columns;
+    this.displayColumnsModal = false;
   }
 
   executeAction(actionType: 'view' | 'pdf' | 'send' | 'duplicate' | 'delete' | 'edit' | 'permissions') {

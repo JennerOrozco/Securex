@@ -32,7 +32,7 @@ export class PasswordResets implements OnInit {
   cols: TableColumn[] = [
     { field: 'email', header: 'Email', type: 'text', style: { width: '45%' }, sortable: true },
     { field: 'token', header: 'Token', type: 'text', style: { width: '30%' }, sortable: false },
-    { field: 'created_at', header: 'Fecha de Solicitud', type: 'text', style: { width: '15%' }, sortable: true },
+    { field: 'created_at', header: 'Fecha de Solicitud', type: 'date', style: { width: '15%' }, sortable: true },
     { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '10%', textAlign: 'center' } }
   ];
 

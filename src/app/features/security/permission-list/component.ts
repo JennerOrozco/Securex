@@ -3,11 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { SecurityService } from '@core/services/security.service';
-import { AddModalComponent } from '@shared/modals/add-modal/add-modal.component';
-import { EditModalComponent } from '@shared/modals/edit-modal/edit-modal.component';
+import { FormField } from '@shared/modals/modal.types';
+import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
-import { FormField } from '@shared/modals/modal.types';
 import { TreeTableComponent, TreeTableColumn } from '@shared/tree-table-component/tree-table-component.component';
 
 @Component({
@@ -17,8 +16,7 @@ import { TreeTableComponent, TreeTableColumn } from '@shared/tree-table-componen
     CommonModule,
     FormsModule,
     TreeTableComponent,
-    AddModalComponent,
-    EditModalComponent,
+    FormModalComponent,
     DeleteModalComponent
   ],
   templateUrl: './component.html',
@@ -39,10 +37,10 @@ export class SecurityPermissionCrudComponent implements OnInit {
   currentParentId: number | null = null;
 
   cols: TreeTableColumn[] = [
-    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', style: { width: '40%' } },
-    { field: 'type', header: 'Tipo', type: 'badge', style: { width: '15%' } },
-    { field: 'route', header: 'Referencia / Ruta', type: 'link', style: { width: '20%' } },
-    { field: 'sort_order', header: 'Orden', type: 'text', style: { width: '10%', textAlign: 'center' } },
+    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
+    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
+    { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },
+    { field: 'sort_order', header: 'Orden', type: 'text', sortable: true, style: { width: '10%', textAlign: 'center' } },
     { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
   ];
 
@@ -91,7 +89,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
 
   private mapToTreeNodes(data: any[]): TreeNode[] {
     return data.map(item => ({
-      data: item,
+      data: { ...item, _canAdd: item.type !== 'ACTION', _canEdit: true, _canDelete: true },
       children: item.children && item.children.length > 0 ? this.mapToTreeNodes(item.children) : [],
       expanded: false
     }));
@@ -192,6 +190,19 @@ export class SecurityPermissionCrudComponent implements OnInit {
         this.isSaving = false;
       },
       error: () => this.isSaving = false
+    });
+  }
+
+  handleNodeReorder(event: any) {
+    const node = event.dragNode;
+    const parent = event.dropNode;
+    const parentId = parent?.id || null;
+    this.securityService.reorderPermission(node.uuid, parentId, 0).subscribe({
+      next: () => {
+        this.load();
+        this.notificationService.notify('success', 'Permiso reordenado correctamente');
+      },
+      error: () => {}
     });
   }
 }

@@ -10,4 +10,6 @@ export interface TableColumn {
   style?: any;
   filterOptions?: any[];
   filterOptionLabel?: string;
+  filterOptionValue?: string;
+  filterMulti?: boolean;
 }

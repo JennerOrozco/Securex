@@ -2,40 +2,177 @@
   <div *ngIf="!hasPermission" class="access-denied">
     <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
     <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden gestionar los permisos de compañías.</p>
+    <p>Solo los administradores del sistema pueden gestionar los permisos de compa&ntilde;&iacute;as.</p>
   </div>
 
   <ng-container *ngIf="hasPermission">
-    <app-tree-table-component
-      title="Permisos por Compañía"
-      subtitle="Organizados por aplicación y compañía"
-      [nodes]="treeNodes"
-      [columns]="cols"
-      [loading]="loading"
-      addLabel="Asignar Permiso"
-      searchPlaceholder="Buscar permiso..."
-      (onAddRoot)="handleAdd()"
-      (onAddChild)="handleAddChild($event)"
-      (onEdit)="handleEdit($event)"
-      (onDelete)="handleDelete($event)">
-    </app-tree-table-component>
+    <div class="perm-card">
+      <!-- Toolbar Header -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <div>
+            <h2 class="toolbar-title">Permisos por Compa&ntilde;&iacute;a</h2>
+            <p class="toolbar-sub">Seleccione la aplicaci&oacute;n y la compa&ntilde;&iacute;a para administrar los permisos.</p>
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <button
+            *ngIf="selectedCompanyId && groups.length > 0"
+            class="btn-save"
+            [disabled]="isSaving"
+            (click)="savePermissions()">
+            <i class="pi" [class.pi-save]="!isSaving" [class.pi-spinner]="isSaving" [class.animate-spin]="isSaving"></i>
+            {{ isSaving ? 'Guardando...' : 'Guardar Permisos' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Selectors Bar -->
+      <div class="selectors-bar">
+        <div class="selector-group">
+          <label class="selector-label">Aplicaci&oacute;n</label>
+          <app-select
+            id="app-select"
+            placeholder="Seleccione una Aplicaci&oacute;n"
+            [options]="apps"
+            optionLabel="name"
+            optionValue="id"
+            [control]="appControl"
+            icon="pi pi-window-maximize">
+          </app-select>
+        </div>
+
+        <div class="selector-group">
+          <label class="selector-label">Compa&ntilde;&iacute;a</label>
+          <app-select
+            id="company-select"
+            placeholder="Seleccione una Compa&ntilde;&iacute;a"
+            [options]="companies"
+            optionLabel="name"
+            optionValue="id"
+            [control]="companyControl"
+            icon="pi pi-building">
+          </app-select>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="loading" class="flex flex-col items-center justify-center p-20 gap-4">
+        <div class="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+        <span class="text-xs font-medium text-slate-500">Cargando...</span>
+      </div>
+
+      <!-- Empty State: No Company Selected -->
+      <div *ngIf="selectedAppId && !selectedCompanyId && !loading" class="empty-state">
+        <i class="pi pi-building text-4xl text-slate-300 mb-3"></i>
+        <p class="text-slate-500 font-medium">Seleccione una compa&ntilde;&iacute;a para gestionar sus permisos.</p>
+      </div>
+
+      <!-- Permission Tree -->
+      <div *ngIf="selectedCompanyId && !loading && groups.length > 0" class="perm-body">
+        <!-- Search & Actions Bar -->
+        <div class="perm-actions-bar">
+          <div class="perm-search-wrap">
+            <i class="pi pi-search perm-search-icon"></i>
+            <input
+              class="perm-search"
+              type="text"
+              placeholder="Filtrar por m&oacute;dulo, submen&uacute; o acci&oacute;n..."
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearch()" />
+          </div>
+          <div class="perm-bulk-actions">
+            <button class="bulk-btn" (click)="selectAll()">Marcar Todo</button>
+            <button class="bulk-btn muted" (click)="clearAll()">Limpiar Todo</button>
+            <span class="perm-count">{{ selectedIds.size }} seleccionados</span>
+          </div>
+        </div>
+
+        <!-- TreeTable Container -->
+        <div class="gm-treetable">
+          <!-- Header -->
+          <div class="gm-tt-header">
+            <div class="gm-tt-col-name">Recurso / M&oacute;dulo / Permiso</div>
+            <div class="gm-tt-col-select">Estado de Acceso</div>
+          </div>
+
+          <!-- Body -->
+          <div class="gm-tt-body">
+            <ng-template #nodeTemplate let-node="node" let-depth="depth">
+              <div class="gm-tt-row" [ngClass]="'depth-' + depth">
+                <div class="gm-tt-col-name"
+                     (click)="node.children.length > 0 ? (node.expanded = !node.expanded) : toggleSingle(node.id)">
+                  <i *ngIf="node.children.length > 0"
+                     class="pi pi-chevron-right gm-tt-chevron"
+                     [class.open]="node.expanded"></i>
+                  <div *ngIf="node.children.length === 0" class="gm-tt-chevron-placeholder"></div>
+
+                  <div *ngIf="depth === 0" class="gm-tt-icon-wrap" [ngClass]="{
+                    'menu-type': node.type === 'MENU',
+                    'submenu-type': node.type === 'SUBMENU',
+                    'action-type': node.type === 'ACTION',
+                    'component-type': node.type === 'COMPONENT'
+                  }">
+                    <i [class]="getModuleIcon(node.name)"></i>
+                  </div>
+
+                  <i *ngIf="depth > 0" class="mr-2 text-[11px]"
+                     [class.pi-folder-open]="node.children.length > 0"
+                     [class.pi-cog]="node.children.length === 0"
+                     [class.icon-menu]="node.type === 'MENU'"
+                     [class.icon-submenu]="node.type === 'SUBMENU'"
+                     [class.icon-action]="node.type === 'ACTION'"
+                     [class.icon-component]="node.type === 'COMPONENT'"></i>
+
+                  <div class="flex flex-col min-w-0">
+                    <span class="gm-tt-name">{{ node.name }}</span>
+                    <span class="gm-tt-slug" *ngIf="node.slug">{{ node.slug }}</span>
+                  </div>
+                </div>
+                <div class="gm-tt-col-select">
+                  <div *ngIf="node.children.length > 0"
+                       class="gm-tt-checkbox"
+                       [class.all]="isAllSelected(node.allIds)"
+                       [class.partial]="isPartialSelected(node.allIds)"
+                       (click)="$event.stopPropagation(); toggle(node)">
+                    <i class="pi"
+                       [class.pi-check]="isAllSelected(node.allIds)"
+                       [class.pi-minus]="isPartialSelected(node.allIds)"></i>
+                  </div>
+                  <div *ngIf="node.children.length === 0"
+                       class="gm-tt-checkbox action"
+                       [class.all]="isSelected(node.id)"
+                       (click)="$event.stopPropagation(); toggleSingle(node.id)">
+                    <i class="pi" [class.pi-check]="isSelected(node.id)"></i>
+                  </div>
+                </div>
+              </div>
+
+              <ng-container *ngIf="node.expanded">
+                <ng-container *ngFor="let child of node.children">
+                  <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-template>
+
+            <ng-container *ngFor="let group of filteredGroups">
+              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Empty search results -->
+        <div *ngIf="filteredGroups.length === 0 && searchQuery" class="empty-state">
+          <i class="pi pi-filter-slash text-3xl text-slate-300 mb-2"></i>
+          <p class="text-slate-500">No se encontraron resultados para tu b&uacute;squeda.</p>
+        </div>
+      </div>
+
+      <!-- Empty state: no permissions for app -->
+      <div *ngIf="selectedCompanyId && !loading && groups.length === 0" class="empty-state">
+        <i class="pi pi-folder-open text-4xl text-slate-300 mb-3"></i>
+        <p class="text-slate-500 font-medium">No hay permisos disponibles para esta aplicaci&oacute;n.</p>
+      </div>
+    </div>
   </ng-container>
-
-  <app-add-modal
-    [visible]="modalVisible && modalMode === 'add'"
-    title="Asignar Permiso a Compañía"
-    [fields]="formFields"
-    [initialData]="preselectedCompanyId ? { company_id: preselectedCompanyId } : {}"
-    [loading]="isSaving"
-    (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-add-modal>
-
-  <app-delete-modal
-    [visible]="modalVisible && modalMode === 'delete'"
-    title="Remover Permiso"
-    [loading]="isSaving"
-    (onConfirm)="confirmDelete()"
-    (onClose)="modalVisible = false">
-  </app-delete-modal>
 </div>

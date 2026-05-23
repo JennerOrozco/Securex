@@ -1,8 +1,6 @@
 :host {
-  --navy: #047857;
-  /* Emerald 700 - Verde para cabeceras */
-  --navy-light: #059669;
-  /* Emerald 600 - Verde para hover */
+  --navy: #2c0707;
+  --navy-light: #4a0e0e;
   --blue-accent: #2b3a8b;
   --teal: #0d9488;
   --bg-page: #f1f5f9;
@@ -123,10 +121,11 @@
 ::ng-deep .users-table .p-datatable-thead>tr>th {
   background: var(--navy) !important;
   color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 11px !important;
+  font-size: 12px !important;
   font-weight: 700 !important;
   text-transform: uppercase !important;
-  padding: 10px 16px !important;
+  letter-spacing: 0.05em !important;
+  padding: 6px 12px !important;
   border: none !important;
 }
 

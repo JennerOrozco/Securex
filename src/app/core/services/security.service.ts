@@ -79,4 +79,8 @@ export class SecurityService {
   deletePermission(uuid: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/permissions/${uuid}`, { headers: this.headers });
   }
+
+  reorderPermission(uuid: string, parentId: number | null, index: number): Observable<any> {
+    return this.http.put(`${this.baseUrl}/permissions/reorder`, { uuid, parent_id: parentId, sort_order: index }, { headers: this.headers });
+  }
 }

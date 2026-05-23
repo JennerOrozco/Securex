@@ -4,6 +4,9 @@
    Los overrides de PrimeNG que afectan contenido proyectado (ng-content/tabs)
    están globalizados en styles.css bajo el scope .gm-dialog
 ===================================================== */
+
+
+
 :host ::ng-deep .gm-dialog .p-dialog {
   border-radius: 20px;
   overflow: hidden;
@@ -65,6 +68,10 @@
   backdrop-filter: blur(6px) brightness(0.92);
   -webkit-backdrop-filter: blur(6px) brightness(0.92);
   background: rgba(15, 23, 42, 0.28) !important;
+}
+
+.p-button {
+  font-size: 0.8rem !important;
 }
 
 @media (max-width: 480px) {

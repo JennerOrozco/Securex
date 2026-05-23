@@ -4,15 +4,14 @@ import { TableComponent, TableColumn } from '@shared/table-component/table-compo
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal.types';
-import { AddModalComponent } from '@shared/modals/add-modal/add-modal.component';
-import { EditModalComponent } from '@shared/modals/edit-modal/edit-modal.component';
+import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-admin-users',
   standalone: true,
-  imports: [CommonModule, TableComponent, AddModalComponent, EditModalComponent, DeleteModalComponent],
+  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.css'
 })

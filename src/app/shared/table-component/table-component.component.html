@@ -46,13 +46,22 @@
               <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
               @if (col.field !== 'actions') {
               @if (col.filterOptions && col.filterOptions.length > 0) {
-              <p-columnFilter [field]="col.field" matchMode="equals" display="menu" [showMatchModes]="false"
-                [showOperator]="false" [showAddButton]="false" class="ml-auto">
+              <p-columnFilter [field]="col.field" [matchMode]="col.filterMulti ? 'in' : 'equals'" display="menu"
+                [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
                 <ng-template pTemplate="filter" let-value let-filterCallback="filterCallback">
+                  @if (col.filterMulti) {
+                  <p-multiselect [ngModel]="value" [options]="col.filterOptions"
+                    (onChange)="filterCallback($event.value)" placeholder="Todos"
+                    [optionLabel]="col.filterOptionLabel || 'label'"
+                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true"
+                    [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom">
+                  </p-multiselect>
+                  } @else {
                   <p-select [ngModel]="value" [options]="col.filterOptions" (onChange)="filterCallback($event.value)"
                     placeholder="Todos" [optionLabel]="col.filterOptionLabel || 'label'"
                     [optionValue]="col.filterOptionValue || 'value'" [showClear]="true">
                   </p-select>
+                  }
                 </ng-template>
               </p-columnFilter>
               } @else if (col.type === 'date') {
@@ -245,15 +254,10 @@
   </div>
 </div>
 
-<p-dialog header="Seleccionar Columnas" [(visible)]="displayColumnsModal" [modal]="true" [style]="{width: '350px'}"
-  [breakpoints]="{ '480px': '90vw' }">
-  <div style="display: flex; flex-direction: column; gap: 1rem; padding: 1rem 0;">
-    @for (col of columns; track $index) {
-    <div style="display: flex; align-items: center; gap: 0.5rem;">
-      <p-checkbox name="columns" [value]="col" [(ngModel)]="selectedColumns" [inputId]="col.field"></p-checkbox>
-      <label [for]="col.field" style="cursor: pointer; font-size: 14px; color: var(--text-main);">{{ col.header
-        }}</label>
-    </div>
-    }
-  </div>
-</p-dialog>
+<app-columns-modal
+  [visible]="displayColumnsModal"
+  [columns]="columns"
+  [selected]="selectedColumns"
+  (onClose)="displayColumnsModal = false"
+  (onApply)="onApplyColumns($event)">
+</app-columns-modal>

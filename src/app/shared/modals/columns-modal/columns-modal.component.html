@@ -1,0 +1,58 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="{ '960px': '420px', '768px': '80vw', '480px': '92vw' }"
+  [style]="{ width: '400px' }"
+  (onHide)="onClose.emit()"
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="gm-dialog gm-dialog--view"
+  class="gm-dialog gm-dialog--view">
+
+  <ng-template pTemplate="header">
+    <div class="gm-header">
+      <div class="gm-header-icon gm-icon--view">
+        <i class="pi pi-th-large"></i>
+      </div>
+      <div class="gm-header-text">
+        <h2 class="gm-title">Mostrar / Ocultar Columnas</h2>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="gm-body">
+    <div class="flex items-center justify-between mb-3">
+      <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Columnas disponibles</span>
+      <span class="text-xs text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded-full">{{ selected.length }} / {{ columns.length }}</span>
+    </div>
+
+    <div class="column-list" *ngIf="columns.length > 0">
+      @for (col of columns; track $index) {
+      <div class="column-item" [class.active]="isSelected(col)" (click)="toggle(col)">
+        <div class="column-check" [class.checked]="isSelected(col)">
+          <i class="pi pi-check" *ngIf="isSelected(col)"></i>
+        </div>
+        <div class="column-info">
+          <span class="column-name">{{ col.header }}</span>
+          <span class="column-field">{{ col.field }}</span>
+        </div>
+        <div class="column-type-badge" *ngIf="col.type && col.type !== 'actions'">
+          <span class="type-badge" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
+        </div>
+      </div>
+      }
+    </div>
+
+    <div class="empty-columns" *ngIf="columns.length === 0">
+      <i class="pi pi-info-circle text-slate-300 text-xl"></i>
+      <span class="text-sm text-slate-400">No hay columnas disponibles</span>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="gm-footer">
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" styleClass="gm-btn gm-btn--cancel" (onClick)="onClose.emit()"></p-button>
+      <p-button label="Aplicar" icon="pi pi-check" severity="info" styleClass="gm-btn gm-btn--confirm" (onClick)="apply()"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>

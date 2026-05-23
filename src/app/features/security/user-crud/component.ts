@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurityService } from '@core/services/security.service';
 import { FormField } from '@shared/modals/modal.types';
-import { AddModalComponent } from '@shared/modals/add-modal/add-modal.component';
-import { EditModalComponent } from '@shared/modals/edit-modal/edit-modal.component';
+import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-security-user-crud',
   standalone: true,
-  imports: [CommonModule, TableComponent, AddModalComponent, EditModalComponent, DeleteModalComponent],
+  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './component.html',
   styleUrl: './component.css'
 })

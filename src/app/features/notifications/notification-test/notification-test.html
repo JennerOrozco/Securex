@@ -1,0 +1,145 @@
+<div class="space-y-6" *ngIf="hasPermission; else noPermission">
+  <div class="flex items-center justify-between">
+    <div>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Probar Notificaciones</h2>
+      <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+        Asistente para enviar notificaciones de prueba a usuarios específicos en tus aplicaciones.
+      </p>
+    </div>
+  </div>
+
+  <!-- Stepper Indicator -->
+  <div class="mb-8">
+    <ol class="flex items-center w-full text-sm font-medium text-center text-gray-500 dark:text-gray-400 sm:text-base">
+      <li class="flex md:w-full items-center" [ngClass]="{'text-blue-600 dark:text-blue-500': step >= 1}">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+          <span class="mr-2" *ngIf="step > 1"><i class="pi pi-check-circle"></i></span>
+          <span class="mr-2" *ngIf="step === 1"><i class="pi pi-circle-fill"></i></span>
+          <span class="mr-2" *ngIf="step < 1"><i class="pi pi-circle"></i></span>
+          Aplicación
+        </span>
+      </li>
+      <li class="flex md:w-full items-center" [ngClass]="{'text-blue-600 dark:text-blue-500': step >= 2}">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+          <span class="mr-2" *ngIf="step > 2"><i class="pi pi-check-circle"></i></span>
+          <span class="mr-2" *ngIf="step === 2"><i class="pi pi-circle-fill"></i></span>
+          <span class="mr-2" *ngIf="step < 2"><i class="pi pi-circle"></i></span>
+          Compañía
+        </span>
+      </li>
+      <li class="flex md:w-full items-center" [ngClass]="{'text-blue-600 dark:text-blue-500': step >= 3}">
+        <span class="flex items-center after:content-['/'] sm:after:hidden after:mx-2 after:text-gray-200 dark:after:text-gray-500">
+          <span class="mr-2" *ngIf="step > 3"><i class="pi pi-check-circle"></i></span>
+          <span class="mr-2" *ngIf="step === 3"><i class="pi pi-circle-fill"></i></span>
+          <span class="mr-2" *ngIf="step < 3"><i class="pi pi-circle"></i></span>
+          Usuario
+        </span>
+      </li>
+      <li class="flex items-center" [ngClass]="{'text-blue-600 dark:text-blue-500': step === 4}">
+        <span class="mr-2" *ngIf="step === 4"><i class="pi pi-circle-fill"></i></span>
+        <span class="mr-2" *ngIf="step < 4"><i class="pi pi-circle"></i></span>
+        Mensaje
+      </li>
+    </ol>
+  </div>
+
+  <!-- Step 1: Select App -->
+  <div *ngIf="step === 1" class="animate-fade-in">
+    <app-table-component title="1. Selecciona la Aplicación" subtitle="Elige a través de qué aplicación se enviará la notificación."
+      [columns]="appCols" [data]="apps" [loading]="loadingApps" [showAdd]="false" [showEdit]="false" [showDelete]="false">
+      <!-- We can use a custom action button to select -->
+      <ng-template #customActions let-item>
+        <p-button icon="pi pi-arrow-right" label="Seleccionar" severity="primary" size="small" (onClick)="selectApp(item)"></p-button>
+      </ng-template>
+    </app-table-component>
+  </div>
+
+  <!-- Step 2: Select Company -->
+  <div *ngIf="step === 2" class="animate-fade-in">
+    <div class="mb-4">
+      <p-button icon="pi pi-arrow-left" label="Volver a Aplicaciones" severity="secondary" variant="text" (onClick)="goBack()"></p-button>
+    </div>
+    <app-table-component title="2. Selecciona la Compañía" subtitle="Elige la compañía a la que pertenece el usuario destino."
+      [columns]="companyCols" [data]="companies" [loading]="loadingCompanies" [showAdd]="false" [showEdit]="false" [showDelete]="false">
+      <ng-template #customActions let-item>
+        <p-button icon="pi pi-arrow-right" label="Seleccionar" severity="primary" size="small" (onClick)="selectCompany(item)"></p-button>
+      </ng-template>
+    </app-table-component>
+  </div>
+
+  <!-- Step 3: Select User -->
+  <div *ngIf="step === 3" class="animate-fade-in">
+    <div class="mb-4">
+      <p-button icon="pi pi-arrow-left" label="Volver a Compañías" severity="secondary" variant="text" (onClick)="goBack()"></p-button>
+    </div>
+    <app-table-component title="3. Selecciona el Usuario" subtitle="Elige el destinatario de la notificación."
+      [columns]="userCols" [data]="users" [loading]="loadingUsers" [showAdd]="false" [showEdit]="false" [showDelete]="false">
+      <ng-template #customActions let-item>
+        <p-button icon="pi pi-arrow-right" label="Seleccionar" severity="primary" size="small" (onClick)="selectUser(item)"></p-button>
+      </ng-template>
+    </app-table-component>
+  </div>
+
+  <!-- Step 4: Notification Content -->
+  <div *ngIf="step === 4" class="animate-fade-in">
+    <div class="mb-4">
+      <p-button icon="pi pi-arrow-left" label="Volver a Usuarios" severity="secondary" variant="text" (onClick)="goBack()"></p-button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div class="md:col-span-1 space-y-4">
+        <!-- Resumen de Selección -->
+        <p-card header="Resumen de Envío">
+          <ul class="space-y-3 text-sm text-gray-700 dark:text-gray-300">
+            <li><strong>App:</strong> {{ selectedApp?.name }}</li>
+            <li><strong>Compañía:</strong> {{ selectedCompany?.name }}</li>
+            <li><strong>Usuario:</strong> {{ selectedUser?.first_name }} {{ selectedUser?.last_name }}</li>
+            <li><strong>Email:</strong> {{ selectedUser?.email }}</li>
+          </ul>
+        </p-card>
+      </div>
+
+      <div class="md:col-span-2">
+        <p-card header="4. Contenido del Mensaje">
+          <form [formGroup]="testForm" (ngSubmit)="sendTest()" class="space-y-4 mt-2">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título</label>
+              <input pInputText type="text" formControlName="title" class="w-full" placeholder="Ej. Alerta de Seguridad">
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mensaje</label>
+              <textarea pTextarea formControlName="message" rows="3" class="w-full" placeholder="Escribe tu mensaje..."></textarea>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
+                <p-select [options]="typeOptions" formControlName="type" class="w-full" styleClass="w-full" appendTo="body"></p-select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Canales</label>
+                <p-select [options]="channelOptions" formControlName="channels" class="w-full" styleClass="w-full" appendTo="body"></p-select>
+              </div>
+            </div>
+
+            <div class="pt-4 flex justify-end">
+              <p-button type="submit" label="Enviar Notificación" icon="pi pi-send" [loading]="isSending" [disabled]="testForm.invalid" severity="success"></p-button>
+            </div>
+          </form>
+        </p-card>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #noPermission>
+  <p-card>
+    <div class="text-center py-8">
+      <i class="pi pi-lock text-5xl text-gray-400 mb-4"></i>
+      <h3 class="text-xl font-medium text-gray-900 dark:text-white">Acceso restringido</h3>
+      <p class="text-gray-500 mt-2">No tienes permiso para utilizar la consola de prueba de notificaciones.</p>
+    </div>
+  </p-card>
+</ng-template>

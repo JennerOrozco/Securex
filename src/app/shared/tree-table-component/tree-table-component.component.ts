@@ -97,15 +97,17 @@ export interface TreeTableColumn {
           [rowsPerPageOptions]="[5, 10, 20, 50]"
           [resizableColumns]="true"
           columnResizeMode="expand"
+          [sortField]="sortField"
+          [sortOrder]="sortOrder"
           class="gm-treetable">
           <ng-template pTemplate="header">
             <tr>
               @for (col of columns; track $index) {
-                <th ttResizableColumn [style]="col.style" [class.sortable]="col.sortable">
+                <th ttResizableColumn [style]="col.style" [class.sortable]="col.sortable" (click)="col.sortable && sortByField(col.field, $event)">
                   <div class="th-content">
                     <span>{{ col.header }}</span>
                     @if (col.sortable) {
-                      <i class="pi pi-sort-alt"></i>
+                      <i class="pi" [class.pi-sort-alt]="sortField !== col.field" [class.pi-sort-up]="sortField === col.field && sortOrder === 1" [class.pi-sort-down]="sortField === col.field && sortOrder === -1"></i>
                     }
                   </div>
                 </th>
@@ -113,7 +115,13 @@ export interface TreeTableColumn {
             </tr>
           </ng-template>
           <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
-            <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
+            <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)"
+              [attr.draggable]="dragdrop && rowData._canReorder !== false ? true : null"
+              [class.drag-over]="dragOverNode === rowData"
+              (dragstart)="onRowDragStart($event, rowData)"
+              (dragover)="onRowDragOver($event, rowData)" 
+              (dragleave)="onRowDragLeave($event)"
+              (drop)="onRowDrop($event, rowData)">
               @for (col of columns; track $index; let first = $first) {
                 <td [style]="col.style">
                   @switch (col.type) {
@@ -139,48 +147,50 @@ export interface TreeTableColumn {
                       }
                     }
                     @case ('link') {
-                      <div class="flex flex-col gap-1">
+                      <div>
                         @if (rowData[col.field]) {
                           <a class="route-link" [pTooltip]="'Ir a ' + rowData[col.field]">
                             <i class="pi pi-external-link"></i>
                             <span>{{ rowData[col.field] }}</span>
                           </a>
-                        } @else if (rowData.type !== 'ACTION') {
-                          <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">
-                            No vinculado
-                          </span>
                         } @else {
-                          <span class="text-[10px] text-slate-400 italic">Lógica interna</span>
+                          <span class="body-text text-muted">-</span>
                         }
                       </div>
                     }
                     @case ('actions') {
                       <div class="actions justify-center">
-                        <button 
-                          class="act-btn view" 
-                          pTooltip="Agregar Sub-elemento"
-                          tooltipPosition="top"
-                          (click)="onAddChild.emit(rowData.id)">
-                          <i class="pi pi-plus"></i>
-                        </button>
-                        <button 
-                          class="act-btn edit" 
-                          pTooltip="Editar"
-                          tooltipPosition="top"
-                          (click)="onEdit.emit(rowData)">
-                          <i class="pi pi-pencil"></i>
-                        </button>
-                        <button 
-                          class="act-btn del" 
-                          pTooltip="Eliminar"
-                          tooltipPosition="top"
-                          (click)="onDelete.emit(rowData)">
-                          <i class="pi pi-trash"></i>
-                        </button>
+                        @if (rowData._canAdd !== false) {
+                          <button 
+                            class="act-btn view" 
+                            pTooltip="Agregar Sub-elemento"
+                            tooltipPosition="top"
+                            (click)="onAddChild.emit(rowData.id)">
+                            <i class="pi pi-plus"></i>
+                          </button>
+                        }
+                        @if (rowData._canEdit !== false) {
+                          <button 
+                            class="act-btn edit" 
+                            pTooltip="Editar"
+                            tooltipPosition="top"
+                            (click)="onEdit.emit(rowData)">
+                            <i class="pi pi-pencil"></i>
+                          </button>
+                        }
+                        @if (rowData._canDelete !== false) {
+                          <button 
+                            class="act-btn del" 
+                            pTooltip="Eliminar"
+                            tooltipPosition="top"
+                            (click)="onDelete.emit(rowData)">
+                            <i class="pi pi-trash"></i>
+                          </button>
+                        }
                       </div>
                     }
                     @default {
-                      <span class="text-sm font-medium text-slate-600">{{ rowData[col.field] }}</span>
+                      <span class="body-text">{{ rowData[col.field] }}</span>
                     }
                   }
                 </td>
@@ -211,18 +221,24 @@ export interface TreeTableColumn {
           <span class="menu-title">Acciones</span>
         </div>
         <ul class="menu-list">
-          <li (click)="executeAction('add-child')">
-            <i class="pi pi-plus text-indigo-500"></i>
-            <span>Agregar Sub-elemento</span>
-          </li>
-          <li (click)="executeAction('edit')">
-            <i class="pi pi-pencil text-teal-500"></i>
-            <span>Editar</span>
-          </li>
-          <li (click)="executeAction('delete')" class="menu-item-danger">
-            <i class="pi pi-trash text-red-500"></i>
-            <span>Eliminar</span>
-          </li>
+          @if (activeRow?._canAdd !== false) {
+            <li (click)="executeAction('add-child')">
+              <i class="pi pi-plus text-indigo-500"></i>
+              <span>Agregar Sub-elemento</span>
+            </li>
+          }
+          @if (activeRow?._canEdit !== false) {
+            <li (click)="executeAction('edit')">
+              <i class="pi pi-pencil text-teal-500"></i>
+              <span>Editar</span>
+            </li>
+          }
+          @if (activeRow?._canDelete !== false) {
+            <li (click)="executeAction('delete')" class="menu-item-danger">
+              <i class="pi pi-trash text-red-500"></i>
+              <span>Eliminar</span>
+            </li>
+          }
         </ul>
       </div>
 
@@ -238,18 +254,24 @@ export interface TreeTableColumn {
         </div>
         <div class="sheet-body">
           <ul class="sheet-list">
-            <li (click)="executeAction('add-child')">
-              <div class="sheet-item-icon view"><i class="pi pi-plus"></i></div>
-              <span>Agregar Sub-elemento</span>
-            </li>
-            <li (click)="executeAction('edit')">
-              <div class="sheet-item-icon edit"><i class="pi pi-pencil"></i></div>
-              <span>Editar</span>
-            </li>
-            <li (click)="executeAction('delete')" class="sheet-item-danger">
-              <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div>
-              <span>Eliminar</span>
-            </li>
+            @if (activeRow?._canAdd !== false) {
+              <li (click)="executeAction('add-child')">
+                <div class="sheet-item-icon view"><i class="pi pi-plus"></i></div>
+                <span>Agregar Sub-elemento</span>
+              </li>
+            }
+            @if (activeRow?._canEdit !== false) {
+              <li (click)="executeAction('edit')">
+                <div class="sheet-item-icon edit"><i class="pi pi-pencil"></i></div>
+                <span>Editar</span>
+              </li>
+            }
+            @if (activeRow?._canDelete !== false) {
+              <li (click)="executeAction('delete')" class="sheet-item-danger">
+                <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div>
+                <span>Eliminar</span>
+              </li>
+            }
           </ul>
           <button class="sheet-cancel-btn" (click)="closeMenus()">Cancelar</button>
         </div>
@@ -268,6 +290,7 @@ export class TreeTableComponent implements OnInit {
   @Input() addLabel: string = 'Nuevo';
   @Input() searchPlaceholder: string = 'Buscar...';
   @Input() showLegend: boolean = true;
+  @Input() dragdrop: boolean = false;
 
   @Output() onAddRoot = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<number>();
@@ -275,6 +298,54 @@ export class TreeTableComponent implements OnInit {
   @Output() onDelete = new EventEmitter<any>();
   @Output() onFilter = new EventEmitter<string>();
   @Output() onFilterType = new EventEmitter<string>();
+  @Output() onNodeReorder = new EventEmitter<any>();
+
+  // Sort state
+  sortField: string = '';
+  sortOrder: number = 1;
+
+  sortByField(field: string, event?: MouseEvent) {
+    if (event) {
+      const rect = (event.target as HTMLElement).closest('th')!.getBoundingClientRect();
+      const offsetX = event.clientX - rect.right;
+      if (offsetX > -10) return;
+    }
+    if (this.sortField === field) {
+      this.sortOrder = this.sortOrder === 1 ? -1 : 1;
+    } else {
+      this.sortField = field;
+      this.sortOrder = 1;
+    }
+  }
+
+  // Drag-drop state
+  draggedNode: any = null;
+  dragOverNode: any = null;
+
+  onRowDragStart(event: DragEvent, rowData: any) {
+    this.draggedNode = rowData;
+    event.dataTransfer!.effectAllowed = 'move';
+    event.dataTransfer!.setData('text/plain', '');
+  }
+
+  onRowDragOver(event: DragEvent, rowData: any) {
+    if (!this.draggedNode || this.draggedNode === rowData) return;
+    event.preventDefault();
+    this.dragOverNode = rowData;
+  }
+
+  onRowDragLeave(event: DragEvent) {
+    this.dragOverNode = null;
+  }
+
+  onRowDrop(event: DragEvent, rowData: any) {
+    event.preventDefault();
+    if (this.draggedNode && this.draggedNode !== rowData) {
+      this.onNodeReorder.emit({ dragNode: this.draggedNode, dropNode: rowData });
+    }
+    this.draggedNode = null;
+    this.dragOverNode = null;
+  }
 
   // Menu State
   contextMenuVisible = false;

@@ -31,6 +31,7 @@ export class SecurexService {
   createApp(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/apps`, data); }
   updateApp(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/apps/${uuid}`, data); }
   deleteApp(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/apps/${uuid}`); }
+  broadcastAppSync(): Observable<any> { return this.http.post(`${this.baseUrl}/admin/sync-apps-broadcast`, {}); }
 
   // === COMPANIES ===
   getCompanies(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/companies`); }
@@ -63,6 +64,7 @@ export class SecurexService {
   getCompanyPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/company-permissions`); }
   assignCompanyPermission(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/company-permissions`, data); }
   removeCompanyPermission(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/company-permissions/${id}`); }
+  syncCompanyPermissions(companyId: number, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/admin/companies/${companyId}/permissions`, { permission_ids: permissionIds }); }
 
   // === USER ACCESS ===
   getUserAccess(): Observable<any> { return this.http.get(`${this.baseUrl}/company/user-access`); }

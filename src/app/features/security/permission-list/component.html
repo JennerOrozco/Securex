@@ -6,6 +6,7 @@
     [columns]="cols"
     [loading]="loading"
     [showLegend]="true"
+    [dragdrop]="true"
     addLabel="Nuevo Módulo Raíz"
     searchPlaceholder="Buscar slug o nombre..."
     (onAddRoot)="handleAdd()"
@@ -13,28 +14,21 @@
     (onEdit)="handleEdit($event)"
     (onDelete)="handleDelete($event)"
     (onFilter)="filterTree($event)"
-    (onFilterType)="filterByType($event)">
+    (onFilterType)="filterByType($event)"
+    (onNodeReorder)="handleNodeReorder($event)">
   </app-tree-table-component>
 
   <!-- MODALS -->
-  <app-add-modal
-    [visible]="modalVisible && modalMode === 'add'"
-    title="Crear Nuevo Permiso"
+  <app-form-modal
+    [visible]="modalVisible && modalMode !== 'delete'"
+    [mode]="modalMode === 'add' ? 'add' : 'edit'"
+    title="{{ modalMode === 'add' ? 'Crear Nuevo Permiso' : 'Modificar Permiso' }}"
     [fields]="formFields"
+    [data]="modalMode === 'edit' ? selectedItem : null"
     [loading]="isSaving"
     (onConfirm)="save($event)"
     (onClose)="modalVisible = false">
-  </app-add-modal>
-
-  <app-edit-modal
-    [visible]="modalVisible && modalMode === 'edit'"
-    title="Modificar Permiso"
-    [fields]="formFields"
-    [data]="selectedItem"
-    [loading]="isSaving"
-    (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-edit-modal>
+  </app-form-modal>
 
   <app-delete-modal
     [visible]="modalVisible && modalMode === 'delete'"

@@ -18,9 +18,9 @@ export class AuditLogComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'event_type', header: 'Evento', type: 'badge', sortable: true },
-    { field: 'description', header: 'Descripción', type: 'text' },
-    { field: 'user_uuid', header: 'Usuario', type: 'text' },
-    { field: 'ip_address', header: 'IP', type: 'text' },
+    { field: 'description', header: 'Descripción', type: 'text', sortable: true },
+    { field: 'user_uuid', header: 'Usuario', type: 'text', sortable: true },
+    { field: 'ip_address', header: 'IP', type: 'text', sortable: true },
     { field: 'created_at', header: 'Fecha', type: 'date', sortable: true }
   ];
 

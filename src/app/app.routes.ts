@@ -103,6 +103,41 @@ export const routes: Routes = [
         path: 'security/webauthn-credentials',
         title: 'Credenciales WebAuthn',
         loadComponent: () => import('./features/security/user-webauthn-credentials/user-webauthn-credentials.component').then(m => m.UserWebauthnCredentials)
+      },
+      {
+        path: 'system-logs/api-status',
+        title: 'Estado de APIs',
+        loadComponent: () => import('./features/system-logs/api-status/api-status.component').then(m => m.ApiStatusComponent)
+      },
+      {
+        path: 'notifications/push-settings',
+        title: 'Configuraciones Push',
+        loadComponent: () => import('./features/notifications/push-settings/push-settings').then(m => m.PushSettingsComponent)
+      },
+      {
+        path: 'notifications/smtp-settings',
+        title: 'Configuraciones SMTP',
+        loadComponent: () => import('./features/notifications/smtp-settings/smtp-settings').then(m => m.SmtpSettingsComponent)
+      },
+      {
+        path: 'notifications/test',
+        title: 'Probar Notificaciones',
+        loadComponent: () => import('./features/notifications/notification-test/notification-test').then(m => m.NotificationTestComponent)
+      },
+      {
+        path: 'notifications/history',
+        title: 'Historial de Notificaciones',
+        loadComponent: () => import('./features/notifications/notifications-list/notifications-list').then(m => m.NotificationsListComponent)
+      },
+      {
+        path: 'notifications/devices',
+        title: 'Dispositivos de Usuario',
+        loadComponent: () => import('./features/notifications/user-devices/user-devices').then(m => m.UserDevicesComponent)
+      },
+      {
+        path: 'notifications/send-attempts',
+        title: 'Intentos de Envío',
+        loadComponent: () => import('./features/notifications/send-attempts/send-attempts').then(m => m.SendAttemptsComponent)
       }
     ]
   },

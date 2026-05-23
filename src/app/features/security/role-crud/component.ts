@@ -3,8 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurityService } from '@core/services/security.service';
 import { FormField } from '@shared/modals/modal.types';
-import { AddModalComponent } from '@shared/modals/add-modal/add-modal.component';
-import { EditModalComponent } from '@shared/modals/edit-modal/edit-modal.component';
+import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { RolePermissionsModalComponent } from '@shared/modals/role-permissions-modal/role-permissions-modal.component';
 import { NotificationService } from '@core/services/notification.service';
@@ -12,7 +11,7 @@ import { NotificationService } from '@core/services/notification.service';
 @Component({
   selector: 'app-security-role-crud',
   standalone: true,
-  imports: [CommonModule, TableComponent, AddModalComponent, EditModalComponent, DeleteModalComponent, RolePermissionsModalComponent],
+  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent, RolePermissionsModalComponent],
   templateUrl: './component.html',
   styleUrl: './component.css'
 })
@@ -36,7 +35,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'name', header: 'Rol', type: 'role', sortable: true },
-    { field: 'description', header: 'Descripción', type: 'text' },
+    { field: 'description', header: 'Descripción', type: 'text', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 

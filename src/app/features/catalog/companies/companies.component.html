@@ -14,14 +14,17 @@
     </app-table-component>
   </ng-container>
 
-  <app-add-modal [visible]="modalVisible && modalMode === 'add'" title="Nueva Compañía" [fields]="formFields"
-    [initialData]="preselectedAppId ? { app_id: preselectedAppId, is_active: 1 } : { is_active: 1 }"
-    [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
-  </app-add-modal>
-
-  <app-edit-modal [visible]="modalVisible && modalMode === 'edit'" title="Editar Compañía" [fields]="formFields"
-    [data]="selectedItem" [loading]="isSaving" (onConfirm)="save($event)" (onClose)="modalVisible = false">
-  </app-edit-modal>
+  <app-form-modal
+    [visible]="modalVisible && modalMode !== 'delete'"
+    [mode]="modalMode === 'add' ? 'add' : 'edit'"
+    title="{{ modalMode === 'add' ? 'Nueva Compañía' : 'Editar Compañía' }}"
+    [fields]="formFields"
+    [data]="modalMode === 'edit' ? selectedItem : null"
+    [initialData]="modalMode === 'add' ? (preselectedAppId ? { app_id: preselectedAppId, is_active: 1 } : { is_active: 1 }) : {}"
+    [loading]="isSaving"
+    (onConfirm)="save($event)"
+    (onClose)="modalVisible = false">
+  </app-form-modal>
 
   <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Compañía"
     [bodyMessage]="'¿Está seguro de que desea eliminar la compañía ' + selectedItem?.name + '?'" [loading]="isSaving"

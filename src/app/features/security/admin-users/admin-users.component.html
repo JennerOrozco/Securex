@@ -6,42 +6,19 @@
   </div>
 
   <ng-container *ngIf="hasPermission">
-    <app-table-component
-      title="Usuarios"
-      subtitle="Todos los usuarios del sistema"
-      [columns]="cols"
-      [data]="users"
-      [loading]="loading"
-      (onAdd)="handleAdd()"
-      (onEdit)="handleEdit($event)"
-      (onDelete)="handleDelete($event)">
+    <app-table-component title="Usuarios" subtitle="Todos los usuarios del sistema" [columns]="cols" [data]="users"
+      [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true" (onAdd)="handleAdd()"
+      (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
     </app-table-component>
   </ng-container>
 
-  <app-add-modal
-    [visible]="modalVisible && modalMode === 'add'"
-    title="Nuevo Usuario"
-    [fields]="formFields"
-    [loading]="isSaving"
-    (onConfirm)="save($event)"
+  <app-form-modal [visible]="modalVisible && modalMode !== 'delete'" [mode]="modalMode === 'add' ? 'add' : 'edit'"
+    title="{{ modalMode === 'add' ? 'Nuevo Usuario' : 'Editar Usuario' }}" [fields]="formFields"
+    [data]="modalMode === 'edit' ? selectedItem : null" [loading]="isSaving" (onConfirm)="save($event)"
     (onClose)="modalVisible = false">
-  </app-add-modal>
+  </app-form-modal>
 
-  <app-edit-modal
-    [visible]="modalVisible && modalMode === 'edit'"
-    title="Editar Usuario"
-    [fields]="formFields"
-    [data]="selectedItem"
-    [loading]="isSaving"
-    (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-edit-modal>
-
-  <app-delete-modal
-    [visible]="modalVisible && modalMode === 'delete'"
-    title="Eliminar Usuario"
-    [loading]="isSaving"
-    (onConfirm)="confirmDelete()"
-    (onClose)="modalVisible = false">
+  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Usuario" [loading]="isSaving"
+    (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
   </app-delete-modal>
 </div>

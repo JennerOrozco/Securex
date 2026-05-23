@@ -174,8 +174,14 @@ export class NotificationService {
   }
 
   notify(severity: 'success' | 'error' | 'info' | 'warn', message: string) {
-    console.log(`[${severity.toUpperCase()}] ${message}`);
-    this.messageService.add({ severity: severity, summary: 'Aviso', detail: message });
+    const config: Record<string, { summary: string; life: number; icon: string }> = {
+      success: { summary: 'Éxito', life: 2000, icon: 'pi pi-check-circle' },
+      error: { summary: 'Error', life: 3000, icon: 'pi pi-times-circle' },
+      info: { summary: 'Información', life: 2000, icon: 'pi pi-info-circle' },
+      warn: { summary: 'Advertencia', life: 2500, icon: 'pi pi-exclamation-triangle' },
+    };
+    const cfg = config[severity];
+    this.messageService.add({ severity, summary: cfg.summary, detail: message, life: cfg.life, icon: cfg.icon });
   }
 
   showError(message: string) {
