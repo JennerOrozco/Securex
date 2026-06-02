@@ -1,7 +1,7 @@
 export interface TableColumn {
   field: string;
   header: string;
-  type?: 'text' | 'user' | 'role' | 'status' | 'badge' | 'boolean' | 'date' | 'currency' | 'actions' | 'toggle' | 'filesize' | 'validation' | 'image';
+  type?: 'text' | 'user' | 'role' | 'status' | 'badge' | 'boolean' | 'date' | 'currency' | 'actions' | 'toggle' | 'filesize' | 'validation' | 'image' | 'tree' | 'link';
   subField?: string;
   sortable?: boolean;
   toggleTrueLabel?: string;

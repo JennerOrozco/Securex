@@ -1,0 +1,56 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [breakpoints]="breakpoints"
+  [style]="{ width: width }"
+  (onHide)="visibleChange.emit(false); onClose.emit()"
+  [draggable]="draggable"
+  [resizable]="false"
+  [styleClass]="'gm-dialog gm-dialog--' + iconType + ' ' + styleClass"
+  [class]="'gm-dialog gm-dialog--' + iconType + ' ' + styleClass">
+
+  <!-- Unified Header -->
+  <ng-template pTemplate="header">
+    <div class="gm-header w-full">
+      <div class="gm-header-icon" [ngClass]="'gm-icon--' + iconType">
+        <i [class]="icon"></i>
+      </div>
+      <div class="gm-header-text">
+        <h2 class="gm-title">{{ title }}</h2>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Project Body Content -->
+  <div class="gm-body" [class.p-0]="noPadding" [class.gm-body--no-padding]="noPadding">
+    <ng-content></ng-content>
+  </div>
+
+  <!-- Unified Footer with Customization Option -->
+  <ng-template pTemplate="footer" *ngIf="showFooter">
+    <div class="gm-footer" *ngIf="!customFooterTemplate; else customFooter">
+      <p-button 
+        [label]="cancelLabel" 
+        [icon]="cancelIcon" 
+        [text]="true" 
+        severity="secondary" 
+        styleClass="gm-btn gm-btn--cancel" 
+        (onClick)="onClose.emit()">
+      </p-button>
+      <p-button 
+        [label]="confirmLabel" 
+        [icon]="confirmIcon" 
+        [severity]="confirmSeverity" 
+        [loading]="loading" 
+        styleClass="gm-btn gm-btn--confirm" 
+        (onClick)="onConfirm.emit()">
+      </p-button>
+    </div>
+    
+    <ng-template #customFooter>
+      <div class="gm-footer">
+        <ng-container *ngTemplateOutlet="customFooterTemplate"></ng-container>
+      </div>
+    </ng-template>
+  </ng-template>
+</p-dialog>

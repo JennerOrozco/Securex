@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TreeTableComponent, TreeTableColumn } from '@shared/tree-table-component/tree-table-component.component';
+import { TreeTableComponent } from '@shared/tree-table-component/tree-table-component.component';
+import { TableColumn } from '@shared/table-component/table.types';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal.types';
@@ -43,7 +44,7 @@ export class AdminPermissionsComponent implements OnInit {
     ]}
   ];
 
-  cols: TreeTableColumn[] = [
+  cols: TableColumn[] = [
     { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
     { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
     { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },

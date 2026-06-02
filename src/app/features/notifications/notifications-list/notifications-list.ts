@@ -56,10 +56,10 @@ export class NotificationsListComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.apiService.getNotificationsHistory().subscribe({
+    this.apiService.getNotificationsHistory({ per_page: 1000 }).subscribe({
       next: (res: any) => {
         const d = res.data || res;
-        this.items = d.data || d; // Assuming pagination returns { data: [...] }
+        this.items = d.data || d;
         this.loading = false;
       },
       error: () => this.loading = false

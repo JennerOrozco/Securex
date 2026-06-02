@@ -8,12 +8,12 @@ import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
-import { ButtonModule } from 'primeng/button';
+import { ButtonComponent } from '@shared/components/button/button.component';
 
 @Component({
   selector: 'app-push-settings',
   standalone: true,
-  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent, ButtonModule],
+  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent, ButtonComponent],
   templateUrl: './push-settings.html'
 })
 export class PushSettingsComponent implements OnInit {

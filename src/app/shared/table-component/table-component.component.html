@@ -11,41 +11,38 @@
       [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'">
 
       <ng-template pTemplate="caption">
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <div>
-              <h2 class="toolbar-title">{{ title }}</h2>
-              <p class="toolbar-sub">{{ subtitle }}</p>
-            </div>
+        <app-toolbar
+          [title]="title"
+          [subtitle]="subtitle"
+          [searchPlaceholder]="searchPlaceholder"
+          [showSearch]="true"
+          [showAdd]="showAdd"
+          [addLabel]="addLabel"
+          (onSearch)="filterGlobal($event)"
+          (onAdd)="onAdd.emit()">
+          <div toolbar-actions-start>
+            <app-button
+              icon="pi pi-th-large"
+              class="p-button-navy"
+              tooltip="Mostrar/Ocultar Columnas"
+              tooltipPosition="top"
+              (onClick)="displayColumnsModal = true">
+            </app-button>
           </div>
-          <div class="toolbar-right">
-            <button class="btn-new" (click)="displayColumnsModal = true" pTooltip="Mostrar/Ocultar Columnas"
-              tooltipPosition="top">
-              <i class="pi pi-th-large"></i>
-            </button>
-            <div class="search-box">
-              <i class="pi pi-search search-ic"></i>
-              <input pInputText type="text" (input)="dt.filterGlobal($any($event.target).value, 'contains')"
-                [placeholder]="searchPlaceholder" class="search-inp" />
-            </div>
+          <div toolbar-actions>
             <ng-content select="[custom-toolbar-actions]"></ng-content>
-            @if (showAdd) {
-            <button class="btn-new" (click)="onAdd.emit()">
-              <i class="pi pi-plus"></i> {{ addLabel }}
-            </button>
-            }
           </div>
-        </div>
+        </app-toolbar>
       </ng-template>
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sortable ? col.field : undefined"
-            [style]="col.style">
+          <th *ngFor="let col of columns; trackBy: trackByField" pResizableColumn [pSortableColumn]="col.sortable ? col.field : undefined"
+            [style]="col.style" [ngClass]="{'th-actions': col.field === 'actions' || col.type === 'actions'}">
             <div class="th-content">
               <span>{{ col.header }}</span>
               <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
-              @if (col.field !== 'actions') {
+              @if (col.field !== 'actions' && col.type !== 'actions') {
               @if (col.filterOptions && col.filterOptions.length > 0) {
               <p-columnFilter [field]="col.field" [matchMode]="col.filterMulti ? 'in' : 'equals'" display="menu"
                 [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
@@ -66,7 +63,7 @@
                 </ng-template>
               </p-columnFilter>
               } @else if (col.type === 'date') {
-              <p-columnFilter type="date" [field]="col.field" display="menu" class="ml-auto"></p-columnFilter>
+              <p-columnFilter type="date" [field]="col.field" display="menu" class="ml-auto" [showMatchModes]="true" [showOperator]="false" [showAddButton]="true" matchMode="dateIs"></p-columnFilter>
               } @else {
               <p-columnFilter type="text" [field]="col.field" display="menu" [showMatchModes]="true"
                 [showOperator]="false" [showAddButton]="true" class="ml-auto"></p-columnFilter>
@@ -119,9 +116,9 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
           (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
-          <td *ngFor="let col of columns" [style]="col.style">
+          <td *ngFor="let col of columns; trackBy: trackByField" [style]="col.style" [ngClass]="{'td-actions': col.field === 'actions' || col.type === 'actions'}">
             @if (col.type === 'status') {
-            <span class="estado-badge" [ngClass]="rowData[col.field]?.toString()?.toLowerCase()">
+            <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
               <span class="edo-dot"></span>
               {{ rowData[col.field] }}
             </span>
@@ -139,20 +136,37 @@
               </div>
               }
             </div>
+            } @else if (col.type === 'date') {
+            <span class="text-sm text-slate-600">{{ rowData[col.field] | date:'dd/MM/yyyy HH:mm' }}</span>
+            } @else if (col.type === 'currency') {
+            <span class="font-semibold text-slate-700">{{ rowData[col.field] | currency:'GTQ':'symbol-narrow':'1.2-2' }}</span>
             } @else if (col.type === 'actions') {
             @if (customActionsTemplate) {
             <ng-template [ngTemplateOutlet]="customActionsTemplate" [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
             } @else {
-            <div class="actions">
-              <button *ngIf="showSelect" class="act-btn select" (click)="onSelect.emit(rowData); $event.stopPropagation()"><i
-                  class="pi pi-check-circle"></i></button>
-              <button *ngIf="showEdit" class="act-btn edit" (click)="onEdit.emit(rowData); $event.stopPropagation()"><i
-                  class="pi pi-pencil"></i></button>
-              <button *ngIf="showPermissions" class="act-btn perm"
-                (click)="onPermissions.emit(rowData); $event.stopPropagation()"><i class="pi pi-shield"></i></button>
-              <button *ngIf="showDelete" class="act-btn del"
-                (click)="onDelete.emit(rowData); $event.stopPropagation()"><i class="pi pi-trash"></i></button>
-            </div>
+            <app-table-actions
+              [rowData]="rowData"
+              [showSelect]="showSelect"
+              [showCreate]="showCreate"
+              [createLabel]="createLabel"
+              [createIcon]="createIcon"
+              [showView]="showView"
+              [showEdit]="showEdit"
+              [showPdf]="showPdf"
+              [showSend]="showSend"
+              [showDuplicate]="showDuplicate"
+              [showPermissions]="showPermissions"
+              [showDelete]="showDelete"
+              (onSelect)="onSelect.emit($event)"
+              (onCreate)="onCreate.emit($event)"
+              (onView)="onView.emit($event)"
+              (onEdit)="onEdit.emit($event)"
+              (onPdf)="onPdf.emit($event)"
+              (onSend)="onSend.emit($event)"
+              (onDuplicate)="onDuplicate.emit($event)"
+              (onPermissions)="onPermissions.emit($event)"
+              (onDelete)="onDelete.emit($event)">
+            </app-table-actions>
             }
             } @else {
             {{ rowData[col.field] }}
@@ -175,99 +189,19 @@
   </div>
 </div>
 
-<!-- Custom Context Menu for Desktop -->
-<div class="custom-context-menu" 
-     *ngIf="contextMenuVisible" 
-     [style.top.px]="menuPosition.y" 
-     [style.left.px]="menuPosition.x"
-     (click)="$event.stopPropagation()">
-  <div class="menu-header">
-    <span class="menu-title">Acciones</span>
-  </div>
-  <ul class="menu-list">
-    <li *ngIf="showSelect" (click)="executeAction('select')">
-      <i class="pi pi-check-circle text-emerald-500"></i>
-      <span>Seleccionar</span>
-    </li>
-    <li *ngIf="showView" (click)="executeAction('view')">
-      <i class="pi pi-eye text-indigo-500"></i>
-      <span>Visualizar</span>
-    </li>
-    <li *ngIf="showEdit" (click)="executeAction('edit')">
-      <i class="pi pi-pencil text-teal-500"></i>
-      <span>Editar</span>
-    </li>
-    <li *ngIf="showPdf" (click)="executeAction('pdf')">
-      <i class="pi pi-file-pdf text-red-500"></i>
-      <span>Descargar PDF</span>
-    </li>
-    <li *ngIf="showSend" (click)="executeAction('send')">
-      <i class="pi pi-send text-emerald-500"></i>
-      <span>Enviar Correo</span>
-    </li>
-    <li *ngIf="showDuplicate" (click)="executeAction('duplicate')">
-      <i class="pi pi-copy text-purple-500"></i>
-      <span>Duplicar</span>
-    </li>
-    <li *ngIf="showPermissions" (click)="executeAction('permissions')">
-      <i class="pi pi-shield text-amber-500"></i>
-      <span>Permisos</span>
-    </li>
-    <li *ngIf="showDelete" (click)="executeAction('delete')" class="menu-item-danger">
-      <i class="pi pi-trash text-red-500"></i>
-      <span>Eliminar</span>
-    </li>
-  </ul>
-</div>
+<app-context-menu
+  [visible]="contextMenuVisible"
+  [position]="menuPosition"
+  [items]="contextMenuItems"
+  (onAction)="executeAction($event)">
+</app-context-menu>
 
-<!-- Mobile Bottom Sheet for Actions -->
-<div class="mobile-sheet-backdrop" *ngIf="isMenuOpen" (click)="closeMenus()"></div>
-<div class="mobile-bottom-sheet" [class.show]="isMenuOpen" (click)="$event.stopPropagation()">
-  <div class="sheet-handle-container" (click)="closeMenus()">
-    <div class="sheet-handle"></div>
-  </div>
-  <div class="sheet-header">
-    <h3 class="sheet-title">Acciones de Fila</h3>
-    <p class="sheet-subtitle" *ngIf="activeRow">Selecciona una opción para el registro</p>
-  </div>
-  <div class="sheet-body">
-    <ul class="sheet-list">
-      <li *ngIf="showSelect" (click)="executeAction('select')">
-        <div class="sheet-item-icon select"><i class="pi pi-check-circle"></i></div>
-        <span>Seleccionar</span>
-      </li>
-      <li *ngIf="showView" (click)="executeAction('view')">
-        <div class="sheet-item-icon view"><i class="pi pi-eye"></i></div>
-        <span>Visualizar</span>
-      </li>
-      <li *ngIf="showEdit" (click)="executeAction('edit')">
-        <div class="sheet-item-icon edit"><i class="pi pi-pencil"></i></div>
-        <span>Editar</span>
-      </li>
-      <li *ngIf="showPdf" (click)="executeAction('pdf')">
-        <div class="sheet-item-icon pdf"><i class="pi pi-file-pdf"></i></div>
-        <span>Descargar PDF</span>
-      </li>
-      <li *ngIf="showSend" (click)="executeAction('send')">
-        <div class="sheet-item-icon send"><i class="pi pi-send"></i></div>
-        <span>Enviar Correo</span>
-      </li>
-      <li *ngIf="showDuplicate" (click)="executeAction('duplicate')">
-        <div class="sheet-item-icon duplicate"><i class="pi pi-copy"></i></div>
-        <span>Duplicar</span>
-      </li>
-      <li *ngIf="showPermissions" (click)="executeAction('permissions')">
-        <div class="sheet-item-icon perm"><i class="pi pi-shield"></i></div>
-        <span>Permisos</span>
-      </li>
-      <li *ngIf="showDelete" (click)="executeAction('delete')" class="sheet-item-danger">
-        <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div>
-        <span>Eliminar</span>
-      </li>
-    </ul>
-    <button class="sheet-cancel-btn" (click)="closeMenus()">Cancelar</button>
-  </div>
-</div>
+<app-bottom-sheet
+  [visible]="isMenuOpen"
+  [items]="sheetItems"
+  (onAction)="executeAction($event)"
+  (onClose)="closeMenus()">
+</app-bottom-sheet>
 
 <app-columns-modal
   [visible]="displayColumnsModal"

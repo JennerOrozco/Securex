@@ -2,6 +2,8 @@
   pButton
   [type]="type"
   [class]="'gm-btn ' + class"
+  [severity]="severity"
+  [outlined]="outlined"
   [disabled]="disabled"
   [loading]="loading"
   [routerLink]="routerLink"
@@ -10,7 +12,7 @@
   (click)="onClick.emit()"
 >
   @if (icon && !loading) {
-    <i [className]="icon + ' mr-2'"></i>
+    <i [className]="icon + (label ? ' mr-2' : '')"></i>
   }
   {{ label }}
 </button>

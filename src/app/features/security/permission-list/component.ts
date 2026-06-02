@@ -7,7 +7,8 @@ import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
-import { TreeTableComponent, TreeTableColumn } from '@shared/tree-table-component/tree-table-component.component';
+import { TreeTableComponent } from '@shared/tree-table-component/tree-table-component.component';
+import { TableColumn } from '@shared/table-component/table.types';
 
 @Component({
   selector: 'app-security-permission-crud',
@@ -36,7 +37,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
   selectedItem: any = null;
   currentParentId: number | null = null;
 
-  cols: TreeTableColumn[] = [
+  cols: TableColumn[] = [
     { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
     { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
     { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },

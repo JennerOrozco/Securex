@@ -1,0 +1,23 @@
+<div class="mobile-sheet-backdrop" *ngIf="visible" (click)="onClose.emit()"></div>
+<div class="mobile-bottom-sheet" [class.show]="visible" (click)="$event.stopPropagation()">
+  <div class="sheet-handle-container" (click)="onClose.emit()">
+    <div class="sheet-handle"></div>
+  </div>
+  <div class="sheet-header">
+    <h3 class="sheet-title">{{ title }}</h3>
+    <p class="sheet-subtitle" *ngIf="subtitle && activeRow">{{ subtitle }}</p>
+  </div>
+  <div class="sheet-body">
+    <ul class="sheet-list">
+      <li *ngFor="let item of visibleItems"
+          (click)="onAction.emit(item.action)"
+          [class.sheet-item-danger]="item.danger">
+        <div class="sheet-item-icon" [class]="item.iconClass || ''">
+          <i [class]="item.icon"></i>
+        </div>
+        <span>{{ item.label }}</span>
+      </li>
+    </ul>
+    <button class="sheet-cancel-btn" (click)="onClose.emit()">Cancelar</button>
+  </div>
+</div>

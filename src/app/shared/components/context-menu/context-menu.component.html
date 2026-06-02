@@ -1,0 +1,16 @@
+<div class="custom-context-menu"
+     *ngIf="visible"
+     (click)="$event.stopPropagation()"
+     (contextmenu)="$event.preventDefault(); $event.stopPropagation()">
+  <div class="menu-header">
+    <span class="menu-title">{{ title }}</span>
+  </div>
+  <ul class="menu-list">
+    <li *ngFor="let item of visibleItems"
+        (click)="onAction.emit(item.action)"
+        [class.menu-item-danger]="item.danger">
+      <i [class]="item.icon"></i>
+      <span>{{ item.label }}</span>
+    </li>
+  </ul>
+</div>

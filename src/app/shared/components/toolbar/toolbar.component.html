@@ -6,20 +6,27 @@
     </div>
   </div>
   <div class="toolbar-right">
-    <div class="search-box">
-      <i class="pi pi-search search-ic"></i>
-      <input
-        pInputText
-        type="text"
-        (input)="search($event)"
-        [placeholder]="searchPlaceholder"
-        class="search-inp"
-      />
-    </div>
+    <ng-content select="[toolbar-actions-start]"></ng-content>
+    @if (showSearch) {
+      <div class="search-box">
+        <i class="pi pi-search search-ic"></i>
+        <input
+          pInputText
+          type="text"
+          (input)="search($event)"
+          [placeholder]="searchPlaceholder"
+          class="search-inp"
+        />
+      </div>
+    }
+    <ng-content select="[toolbar-actions]"></ng-content>
     @if (showAdd) {
-      <button class="btn-new" (click)="onAdd.emit()">
-        <i class="pi pi-plus"></i> {{ addLabel }}
-      </button>
+      <app-button
+        [label]="addLabel"
+        icon="pi pi-plus"
+        class="p-button-navy"
+        (onClick)="onAdd.emit()"
+      ></app-button>
     }
   </div>
 </div>

@@ -38,6 +38,19 @@
         --ggts-light: 200 33% 65%;
         --ggts-white: 0 0% 100%;
 
+        /* GGTS Hex tokens (required by shared table components) */
+        --ggts-navy-hex: #250303;
+        --ggts-navy-light: #3b0808;
+        --ggts-blue-accent: #7f1d1d;
+        --ggts-teal: #dc2626;
+        --ggts-border: #e2e8f0;
+        --ggts-text-main: #0f172a;
+        --ggts-text-muted: #64748b;
+        --ggts-text-light: #94a3b8;
+        --ggts-bg-page: #f1f5f9;
+        --ggts-bg-card: #ffffff;
+        --ggts-indigo: #6366f1;
+
         /* Custom tokens */
         --gradient-primary: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(210 44% 59%) 100%);
         --gradient-hero: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(218 85% 15%) 100%);
@@ -372,6 +385,123 @@
 
 .p-multiselect-filter-custom .p-multiselect-token .p-multiselect-token-icon {
     color: #dc2626 !important;
+}
+
+/* =======================================================================
+   GLOBAL TOOLTIP OVERRIDES — Premium dark style, compact size
+   ======================================================================= */
+.p-tooltip .p-tooltip-text {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  padding: 0.3rem 0.65rem !important;
+  border-radius: 7px !important;
+  background: rgba(15, 23, 42, 0.88) !important;
+  color: #f1f5f9 !important;
+  letter-spacing: 0.01em !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), 0 1px 3px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  white-space: nowrap !important;
+}
+
+.p-tooltip .p-tooltip-arrow {
+  display: none !important;
+}
+
+.p-tooltip {
+  animation: tooltipFadeIn 0.15s ease !important;
+}
+
+@keyframes tooltipFadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* =======================================================================
+   GLOBAL GLASS MORPHISM DIALOG — PrimeNG dialogs render outside component
+   (appended to body), so :host ::ng-deep scoping does not reach them.
+   These global rules mirror style-modal.css from MIGRACION.
+   ======================================================================= */
+.gm-dialog .p-dialog {
+  border-radius: 20px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(1.6);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    0 8px 32px rgba(15, 23, 42, 0.14),
+    0 2px 8px rgba(15, 23, 42, 0.08),
+    0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.gm-dialog .p-dialog-header {
+  padding: 1.25rem 1.5rem 1rem;
+  background: rgba(255, 255, 255, 0.55);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.gm-dialog .p-dialog-content {
+  padding: 0;
+  background: rgba(255, 255, 255, 0.38);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.gm-dialog .p-dialog-footer {
+  padding: 0;
+  background: rgba(248, 250, 252, 0.55);
+  border-top: 1px solid rgba(226, 232, 240, 0.45);
+  backdrop-filter: blur(8px);
+  flex-shrink: 0;
+}
+
+.gm-dialog .p-dialog-title {
+  display: none;
+}
+
+.gm-dialog .p-dialog-header-icons {
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+.gm-dialog .p-dialog-header-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+@media (max-width: 480px) {
+  .gm-dialog .p-dialog {
+    width: 95vw !important;
+    margin: 0 auto !important;
+    max-height: 90vh !important;
+    border-radius: 16px !important;
+    position: relative !important;
+    transform: none !important;
+  }
+
+  .gm-dialog .p-dialog-header {
+    padding: 1rem 1.25rem 0.75rem !important;
+  }
+
+  .gm-dialog .p-dialog-content {
+    padding: 0 !important;
+  }
+
+  .gm-dialog .p-dialog-footer {
+    padding: 0 !important;
+  }
 }
 
 

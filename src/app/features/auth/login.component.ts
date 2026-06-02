@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef, ViewChild, NgZone, ChangeDetectorRef, HostListener, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, NgZone, ChangeDetectorRef, ViewEncapsulation, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -9,7 +9,7 @@ import { LoginFormComponent } from './login-form/login-form.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
 import { ForgotPasswordFormComponent } from './forgot-password-form/forgot-password-form.component';
 import { ResetPasswordFormComponent } from './reset-password-form/reset-password-form.component';
-import { forkJoin } from 'rxjs';
+import { forkJoin, timer } from 'rxjs';
 
 declare var google: any;
 
@@ -28,7 +28,7 @@ declare var google: any;
     ResetPasswordFormComponent
   ]
 })
-export class LoginComponent implements OnInit, AfterViewInit {
+export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('particlesContainer') set particles(content: ElementRef) {
     if (content) {
       this.particlesContainer = content;
@@ -36,24 +36,13 @@ export class LoginComponent implements OnInit, AfterViewInit {
     }
   }
   particlesContainer!: ElementRef;
+  @ViewChild('waveCanvas') waveCanvas!: ElementRef<HTMLCanvasElement>;
+  private waveAnimId: number = 0;
   loading = false;
+  loadingConfig = false;
   error: string | null = null;
-  isMobile = false;
 
-  // Credenciales para el formulario mobile
-  mobileCredentials = { email: '', password: '' };
 
-  // New properties for missing info flow
-  missingInfo = false;
-  missingInfoData: any = {
-    id: null,
-    name: '',
-    email: '',
-    phone: '',
-    date_of_birth: '',
-    gender: '',
-    role: 'user' // Default role
-  };
 
   toastMessage: string | null = null;
   toastType: 'success' | 'error' = 'error';
@@ -79,17 +68,68 @@ export class LoginComponent implements OnInit, AfterViewInit {
   private configService = inject(ConfigService);
   private notificationService = inject(NotificationService);
 
-  ngOnInit() {
-    this.checkMobile();
-  }
-
-  @HostListener('window:resize')
-  checkMobile(): void {
-    this.isMobile = window.innerWidth < 768;
-  }
+  ngOnInit() { }
 
   ngAfterViewInit() {
     this.initGoogleButton();
+    this.initWaves();
+  }
+
+  private initWaves() {
+    const canvas = this.waveCanvas?.nativeElement;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let t = 0;
+
+    const resize = () => {
+      const rect = canvas.getBoundingClientRect();
+      const h = canvas.clientHeight || 400;
+      canvas.width = Math.round(rect.width);
+      canvas.height = Math.round(h);
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const draw = () => {
+      const W = canvas.width;
+      const H = canvas.height;
+      const amp = H / 400;
+      ctx.clearRect(0, 0, W, H);
+
+      for (const layer of [
+        { freqs: [3.5, 5.5, 8], amps: [30 * amp, 16 * amp, 8 * amp], speeds: [0.8, -0.5, 1.2], fill: 'rgba(100,18,18,0.3)', stroke: 'rgba(100,18,18,0.18)' },
+        { freqs: [4.5, 7, 10], amps: [50 * amp, 28 * amp, 14 * amp], speeds: [1.3, -0.8, 0.5], fill: 'rgba(60,8,8,0.45)', stroke: 'rgba(60,8,8,0.25)' },
+      ]) {
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        for (let x = 0; x <= W; x++) {
+          const nx = x / W;
+          let y = 0.35;
+          for (let i = 0; i < layer.freqs.length; i++) {
+            y += Math.sin(nx * Math.PI * layer.freqs[i] + t * layer.speeds[i]) * layer.amps[i] / 400;
+          }
+          ctx.lineTo(x, y * H);
+        }
+        ctx.lineTo(W, H);
+        ctx.closePath();
+        ctx.fillStyle = layer.fill;
+        ctx.fill();
+        ctx.strokeStyle = layer.stroke;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+
+      t += 0.0015;
+      this.waveAnimId = requestAnimationFrame(draw);
+    };
+
+    draw();
+  }
+
+  ngOnDestroy() {
+    if (this.waveAnimId) cancelAnimationFrame(this.waveAnimId);
   }
 
   private initParticles() {
@@ -108,7 +148,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
         left:${Math.random() * 100}%;
         top:${Math.random() * 100}%;
         animation-delay:${Math.random() * 6}s;
-        animation-duration:${3 + Math.random() * 4}s;
+        animation-duration:${4 + Math.random() * 5}s;
       `;
       container.appendChild(d);
     }
@@ -172,32 +212,23 @@ export class LoginComponent implements OnInit, AfterViewInit {
               this.showCompanySelect = false;
               const user = res.user;
 
-              // Check if user has missing info (phone or date_of_birth)
-              // Note: We check if they are null, empty string, or '0000-00-00'
-              if (!user.phone || !user.date_of_birth || user.date_of_birth === '0000-00-00' || !user.gender) {
-                this.missingInfo = true;
-                this.missingInfoData = { ...user }; // Copy user data
-                // Ensure we don't display 'null' in the inputs
-                if (!this.missingInfoData.phone) this.missingInfoData.phone = '';
-                if (!this.missingInfoData.date_of_birth || this.missingInfoData.date_of_birth === '0000-00-00') this.missingInfoData.date_of_birth = '';
-                if (!this.missingInfoData.gender) this.missingInfoData.gender = '';
-
-                // Force change detection to ensure UI updates and avoid NG0100
-                this.cdr.detectChanges();
-              } else {
-                // All good, proceed to fetch profile and menu then redirect
-                forkJoin([
-                  this.authService.getUserProfile(),
-                  this.authService.refreshPermissions()
-                ]).subscribe({
-                  next: () => {
-                    this.redirectUser(user);
-                  },
-                  error: () => {
-                    this.redirectUser(user); // Fallback
-                  }
-                });
-              }
+              // All good, proceed to fetch profile and menu then redirect
+              this.loadingConfig = true;
+              this.cdr.detectChanges();
+              forkJoin([
+                this.authService.getUserProfile(),
+                this.authService.refreshPermissions(),
+                timer(2000)
+              ]).subscribe({
+                next: () => {
+                  this.loadingConfig = false;
+                  this.redirectUser(user);
+                },
+                error: () => {
+                  this.loadingConfig = false;
+                  this.redirectUser(user); // Fallback
+                }
+              });
             } else {
               this.error = res.error || 'Error al iniciar sesión con Google';
               this.cdr.detectChanges();
@@ -215,16 +246,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     });
   }
 
-  completeProfile() {
-    if (!this.missingInfoData.phone || !this.missingInfoData.date_of_birth || !this.missingInfoData.gender) {
-      this.error = 'Por favor completa todos los campos.';
-      return;
-    }
 
-    this.loading = true;
-    this.loading = false;
-    this.redirectUser(this.missingInfoData);
-  }
 
   redirectUser(user: any) {
     const firstRoute = this.authService.getFirstAccessibleRoute();
@@ -233,7 +255,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     } else {
       // Si no tiene acceso a nada, o bien va a home si es público, 
       // o se le desloguea según el requerimiento.
-      this.router.navigate(['/home']); 
+      this.router.navigate(['/home']);
     }
   }
 
@@ -369,16 +391,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
 
         if (res.success) {
           this.showCompanySelect = false;
+          this.loadingConfig = true;
+          this.cdr.detectChanges();
           forkJoin([
             this.authService.getUserProfile(),
-            this.authService.refreshPermissions()
+            this.authService.refreshPermissions(),
+            timer(2000)
           ]).subscribe({
             next: () => {
-              this.loading = false;
+              this.loadingConfig = false;
               this.redirectUser(res.user);
             },
             error: () => {
-              this.loading = false;
+              this.loadingConfig = false;
               this.redirectUser(res.user);
             }
           });
@@ -421,26 +446,22 @@ export class LoginComponent implements OnInit, AfterViewInit {
             this.showCompanySelect = false;
             this.authService.setUserCompanies(this.availableCompanies);
             const user = res.user;
-            if (!user.phone || !user.date_of_birth || user.date_of_birth === '0000-00-00' || !user.gender) {
-              this.missingInfo = true;
-              this.missingInfoData = { ...user };
-              if (!this.missingInfoData.phone) this.missingInfoData.phone = '';
-              if (!this.missingInfoData.date_of_birth || this.missingInfoData.date_of_birth === '0000-00-00') this.missingInfoData.date_of_birth = '';
-              if (!this.missingInfoData.gender) this.missingInfoData.gender = '';
-              this.cdr.detectChanges();
-            } else {
-              forkJoin([
-                this.authService.getUserProfile(),
-                this.authService.refreshPermissions()
-              ]).subscribe({
-                next: () => {
-                  this.redirectUser(user);
-                },
-                error: () => {
-                  this.redirectUser(user);
-                }
-              });
-            }
+            this.loadingConfig = true;
+            this.cdr.detectChanges();
+            forkJoin([
+              this.authService.getUserProfile(),
+              this.authService.refreshPermissions(),
+              timer(2000)
+            ]).subscribe({
+              next: () => {
+                this.loadingConfig = false;
+                this.redirectUser(user);
+              },
+              error: () => {
+                this.loadingConfig = false;
+                this.redirectUser(user);
+              }
+            });
           } else {
             this.error = res.error || 'Error al iniciar sesión.';
             this.cdr.detectChanges();
@@ -466,16 +487,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
           if (res.success) {
             this.showCompanySelect = false;
             this.authService.setUserCompanies(this.availableCompanies);
+            this.loadingConfig = true;
+            this.cdr.detectChanges();
             forkJoin([
               this.authService.getUserProfile(),
-              this.authService.refreshPermissions()
+              this.authService.refreshPermissions(),
+              timer(2000)
             ]).subscribe({
               next: () => {
-                this.loading = false;
+                this.loadingConfig = false;
                 this.redirectUser(res.user);
               },
               error: () => {
-                this.loading = false;
+                this.loadingConfig = false;
                 this.redirectUser(res.user);
               }
             });
@@ -575,14 +599,19 @@ export class LoginComponent implements OnInit, AfterViewInit {
             next: (res) => {
               this.loading = false;
               if (res.success) {
+                this.loadingConfig = true;
+                this.cdr.detectChanges();
                 forkJoin([
                   this.authService.getUserProfile(),
-                  this.authService.refreshPermissions()
+                  this.authService.refreshPermissions(),
+                  timer(2000)
                 ]).subscribe({
                   next: () => {
+                    this.loadingConfig = false;
                     this.redirectUser(res.user);
                   },
                   error: () => {
+                    this.loadingConfig = false;
                     this.redirectUser(res.user);
                   }
                 });

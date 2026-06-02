@@ -121,7 +121,9 @@ export class NotificationTestComponent implements OnInit {
     this.loadingCompanies = true;
     this.securexService.getCompanies().subscribe({
       next: (res: any) => {
-        this.companies = res.data || res;
+        this.companies = (res.data || res).filter((c: any) =>
+          c.app_uuid === this.selectedApp.uuid
+        );
         this.loadingCompanies = false;
       },
       error: () => this.loadingCompanies = false

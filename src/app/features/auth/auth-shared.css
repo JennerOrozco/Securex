@@ -5,10 +5,10 @@
    ===================================================== */
 
 :root {
-    --teal-darkest: #0a1628;
-    --teal-accent: #1a7a6e;
-    --teal-bright: #22c5a0;
-    --teal-dark: #0f3a52;
+    --teal-darkest: #0d0000;
+    --teal-accent: #7f1d1d;
+    --teal-bright: #dc2626;
+    --teal-dark: #1a0505;
     --font-head: 'Syne', sans-serif;
     --font-body: 'DM Sans', sans-serif;
 }
@@ -129,8 +129,8 @@
 .input-wrap input:focus,
 .input-wrap select:focus {
     border-color: var(--teal-bright);
-    background: rgba(34, 197, 160, 0.08);
-    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15);
+    background: rgba(220, 38, 38, 0.08);
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
 }
 
 .input-wrap:focus-within svg {
@@ -196,16 +196,16 @@
 .btn-login {
     width: 100%;
     padding: 14px;
-    background: linear-gradient(135deg, #dc2626 0%, #880c0c 100%);
+    background: linear-gradient(135deg, var(--teal-bright) 0%, #880c0c 100%);
     border: none;
     border-radius: 14px;
     font-family: var(--font-head);
     font-size: 1rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--teal-darkest);
     cursor: pointer;
     letter-spacing: 0.02em;
-    transition: transform 0.15s, box-shadow 0.2s;
+    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
     box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
     display: flex;
     align-items: center;
@@ -215,9 +215,23 @@
     overflow: hidden;
 }
 
+.btn-login::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
 .btn-login:hover {
     transform: translateY(-2px);
     box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
+    filter: brightness(1.08);
+}
+
+.btn-login:hover::after {
+    opacity: 1;
 }
 
 .btn-login:active {
@@ -229,6 +243,39 @@
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
+}
+
+/* ── Biometric button ── */
+.btn-biometric {
+    padding: 0 1.2rem;
+    background: linear-gradient(135deg, var(--teal-bright) 0%, #880c0c 100%);
+    color: var(--teal-darkest);
+    border: none;
+    border-radius: 14px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
+}
+
+.btn-biometric:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
+    filter: brightness(1.08);
+}
+
+.btn-biometric:active:not(:disabled) {
+    transform: scale(0.95);
+}
+
+.btn-biometric:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
 }
 
 /* Spinner inside button */
@@ -246,13 +293,8 @@
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* ═══════════════════════════════════════
@@ -339,7 +381,7 @@
     .m-sheet .card-title {
         font-family: var(--font-head);
         font-size: 1.9rem;
-        color: #0a1628;
+        color: #0d0000;
         margin: 0 0 4px;
         letter-spacing: -0.03em;
     }
@@ -356,7 +398,7 @@
     }
 
     .m-sheet .form-icon svg {
-        color: #22c5a0;
+        color: #dc2626;
     }
 
     .m-sheet .field label {
@@ -380,13 +422,13 @@
 
     .m-sheet .input-wrap input:focus,
     .m-sheet .input-wrap select:focus {
-        border-color: #22c5a0;
+        border-color: #dc2626;
         background: #fff;
-        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12);
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
     }
 
     .m-sheet .input-wrap:focus-within svg {
-        color: #22c5a0;
+        color: #dc2626;
     }
 
     :host-context(.m-sheet) .input-wrap select option {
@@ -413,7 +455,7 @@
     }
 
     .m-sheet .btn-login {
-        box-shadow: 0 8px 24px rgba(34, 197, 160, 0.3);
+        box-shadow: 0 8px 24px rgba(220, 38, 38, 0.3);
     }
 
     .m-sheet .error-box {
@@ -482,8 +524,8 @@
 
 .auth-field-wrap .gm-input:focus {
     border-color: var(--teal-bright) !important;
-    background: rgba(34, 197, 160, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+    background: rgba(220, 38, 38, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
 }
 
 /* ─── Field icon (pi icon on left) ─── */
@@ -533,8 +575,8 @@
 
 .auth-field-wrap ::ng-deep .p-password .p-inputtext:focus {
     border-color: var(--teal-bright) !important;
-    background: rgba(34, 197, 160, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+    background: rgba(220, 38, 38, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
 }
 
 /* Toggle mask icon color */
@@ -564,8 +606,8 @@
 
 .auth-field-wrap ::ng-deep .p-select:focus-within {
     border-color: var(--teal-bright) !important;
-    background: rgba(34, 197, 160, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.15) !important;
+    background: rgba(220, 38, 38, 0.08) !important;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
 }
 
 .auth-field-wrap ::ng-deep .p-select .p-select-dropdown {
@@ -593,7 +635,7 @@
     :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-input:focus {
         border-color: var(--teal-bright) !important;
         background: #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
 
     :host-context(.m-sheet) .auth-field-wrap ::ng-deep .gm-field-icon {
@@ -624,7 +666,7 @@
     :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password-input:focus {
         border-color: var(--teal-bright) !important;
         background: #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
 
     :host-context(.m-sheet) .auth-field-wrap ::ng-deep .p-password .p-password-toggle-mask-icon,
@@ -648,7 +690,7 @@
     .m-sheet .auth-field-wrap ::ng-deep .p-select:focus-within {
         border-color: var(--teal-bright) !important;
         background: #ffffff !important;
-        box-shadow: 0 0 0 3px rgba(34, 197, 160, 0.12) !important;
+        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
 
     .m-sheet .auth-field-wrap ::ng-deep .p-select .p-select-dropdown {

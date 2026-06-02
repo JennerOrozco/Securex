@@ -11,19 +11,14 @@
       (onRowExpand)="onRowExpand($event)"
     >
       <ng-template pTemplate="caption">
-        <div class="toolbar">
-          <div class="toolbar-left">
-            <div>
-              <h2 class="toolbar-title">{{ title }}</h2>
-              <p class="toolbar-sub">{{ subtitle }}</p>
-            </div>
-          </div>
-          <div class="toolbar-right">
-            <button class="btn-new" type="button" (click)="onAdd.emit()">
-              <i class="pi pi-plus"></i> Agregar Línea
-            </button>
-          </div>
-        </div>
+        <app-toolbar
+          [title]="title"
+          [subtitle]="subtitle"
+          [showSearch]="false"
+          [showAdd]="true"
+          addLabel="Agregar Línea"
+          (onAdd)="onAdd.emit()">
+        </app-toolbar>
       </ng-template>
 
       <ng-template pTemplate="header">

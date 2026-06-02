@@ -8,15 +8,11 @@ import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 import { TreeNode } from 'primeng/api';
-
-export interface TreeTableColumn {
-  field: string;
-  header: string;
-  type?: 'text' | 'tree' | 'badge' | 'actions' | 'link' | 'status' | 'image' | 'date' | 'boolean';
-  sortable?: boolean;
-  filterOptions?: any[];
-  style?: any;
-}
+import type { TableColumn } from '../table-component/table.types';
+import { ContextMenuComponent } from '../components/context-menu/context-menu.component';
+import { BottomSheetComponent } from '../components/bottom-sheet/bottom-sheet.component';
+import { ActionItem } from '../components/action-menu.types';
+import { ToolbarComponent } from '../components/toolbar/toolbar.component';
 
 @Component({
   selector: 'app-tree-table-component',
@@ -29,35 +25,25 @@ export interface TreeTableColumn {
     TooltipModule,
     IconFieldModule,
     InputIconModule,
-    InputTextModule
+    InputTextModule,
+    ContextMenuComponent,
+    BottomSheetComponent,
+    ToolbarComponent
   ],
   styleUrls: ['./tree-table-component.component.css'],
   template: `
     <div class="perm-card">
       <!-- HEADER -->
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div>
-            <h2 class="toolbar-title">{{ title }}</h2>
-            <p class="toolbar-sub">{{ subtitle }}</p>
-          </div>
-        </div>
-        <div class="toolbar-right">
-          <div class="search-box">
-            <i class="pi pi-search search-ic"></i>
-            <input
-              pInputText
-              type="text"
-              (input)="onSearch($event)"
-              [placeholder]="searchPlaceholder"
-              class="search-inp"
-            />
-          </div>
-          <button class="btn-new" (click)="onAddRoot.emit()">
-            <i class="pi pi-plus"></i> {{ addLabel }}
-          </button>
-        </div>
-      </div>
+      <app-toolbar
+        [title]="title"
+        [subtitle]="subtitle"
+        [searchPlaceholder]="searchPlaceholder"
+        [showSearch]="true"
+        [showAdd]="true"
+        [addLabel]="addLabel"
+        (onSearch)="onFilter.emit($event)"
+        (onAdd)="onAddRoot.emit()">
+      </app-toolbar>
 
       <!-- LEGEND / ACTION TYPES THEAD -->
       @if (showLegend) {
@@ -222,71 +208,19 @@ export interface TreeTableColumn {
         </div>
       }
 
-      <!-- Custom Context Menu for Desktop -->
-      <div class="custom-context-menu" 
-           *ngIf="contextMenuVisible" 
-           [style.top.px]="menuPosition.y" 
-           [style.left.px]="menuPosition.x"
-           (click)="$event.stopPropagation()">
-        <div class="menu-header">
-          <span class="menu-title">Acciones</span>
-        </div>
-        <ul class="menu-list">
-          @if (activeRow?._canAdd !== false) {
-            <li (click)="executeAction('add-child')">
-              <i class="pi pi-plus text-indigo-500"></i>
-              <span>Agregar Sub-elemento</span>
-            </li>
-          }
-          @if (activeRow?._canEdit !== false) {
-            <li (click)="executeAction('edit')">
-              <i class="pi pi-pencil text-teal-500"></i>
-              <span>Editar</span>
-            </li>
-          }
-          @if (activeRow?._canDelete !== false) {
-            <li (click)="executeAction('delete')" class="menu-item-danger">
-              <i class="pi pi-trash text-red-500"></i>
-              <span>Eliminar</span>
-            </li>
-          }
-        </ul>
-      </div>
+      <app-context-menu
+        [visible]="contextMenuVisible"
+        [position]="menuPosition"
+        [items]="contextMenuItems"
+        (onAction)="executeAction($event)">
+      </app-context-menu>
 
-      <!-- Mobile Bottom Sheet for Actions -->
-      <div class="mobile-sheet-backdrop" *ngIf="mobileMenuVisible" (click)="closeMenus()"></div>
-      <div class="mobile-bottom-sheet" [class.show]="mobileMenuVisible" (click)="$event.stopPropagation()">
-        <div class="sheet-handle-container" (click)="closeMenus()">
-          <div class="sheet-handle"></div>
-        </div>
-        <div class="sheet-header">
-          <h3 class="sheet-title">Acciones de Fila</h3>
-          <p class="sheet-subtitle" *ngIf="activeRow">Selecciona una opción para el registro</p>
-        </div>
-        <div class="sheet-body">
-          <ul class="sheet-list">
-            @if (activeRow?._canAdd !== false) {
-              <li (click)="executeAction('add-child')">
-                <div class="sheet-item-icon view"><i class="pi pi-plus"></i></div>
-                <span>Agregar Sub-elemento</span>
-              </li>
-            }
-            @if (activeRow?._canEdit !== false) {
-              <li (click)="executeAction('edit')">
-                <div class="sheet-item-icon edit"><i class="pi pi-pencil"></i></div>
-                <span>Editar</span>
-              </li>
-            }
-            @if (activeRow?._canDelete !== false) {
-              <li (click)="executeAction('delete')" class="sheet-item-danger">
-                <div class="sheet-item-icon del"><i class="pi pi-trash"></i></div>
-                <span>Eliminar</span>
-              </li>
-            }
-          </ul>
-          <button class="sheet-cancel-btn" (click)="closeMenus()">Cancelar</button>
-        </div>
-      </div>
+      <app-bottom-sheet
+        [visible]="mobileMenuVisible"
+        [items]="contextMenuItems"
+        (onAction)="executeAction($event)"
+        (onClose)="closeMenus()">
+      </app-bottom-sheet>
     </div>
   `
 })
@@ -294,7 +228,7 @@ export class TreeTableComponent implements OnInit {
   @Input() title: string = 'Gestión Jerárquica';
   @Input() subtitle: string = 'Administra la estructura del sistema';
   @Input() nodes: TreeNode[] = [];
-  @Input() columns: TreeTableColumn[] = [];
+  @Input() columns: TableColumn[] = [];
   @Input() loading: boolean = false;
   @Input() scrollHeight: string = 'calc(100vh - 300px)';
   @Input() rows: number = 10;
@@ -383,6 +317,14 @@ export class TreeTableComponent implements OnInit {
   menuPosition = { x: 0, y: 0 };
   activeRow: any = null;
 
+  get contextMenuItems(): ActionItem[] {
+    return [
+      { action: 'add-child', label: 'Agregar Sub-elemento', icon: 'pi pi-plus', iconClass: 'view', visible: this.activeRow?._canAdd !== false },
+      { action: 'edit', label: 'Editar', icon: 'pi pi-pencil', iconClass: 'edit', visible: this.activeRow?._canEdit !== false },
+      { action: 'delete', label: 'Eliminar', icon: 'pi pi-trash', iconClass: 'del', danger: true, visible: this.activeRow?._canDelete !== false },
+    ];
+  }
+
   ngOnInit() {}
 
   onSearch(event: any) {
@@ -463,7 +405,7 @@ export class TreeTableComponent implements OnInit {
   @HostListener('document:contextmenu', ['$event'])
   onDocumentContextMenu(event: MouseEvent) {
     const target = event.target as HTMLElement;
-    if (!target.closest('.custom-context-menu') && !target.closest('tr')) {
+    if (!target.closest('app-context-menu') && !target.closest('tr')) {
       this.closeMenus();
     }
   }

@@ -14,6 +14,9 @@ import { InputTextModule } from 'primeng/inputtext';
 import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 
+import { ToolbarComponent } from '../components/toolbar/toolbar.component';
+import { TableComponent } from '../table-component/table-component.component';
+
 export interface TableEditColumn {
   field: string;
   header: string;
@@ -25,8 +28,6 @@ export interface TableEditColumn {
   placeholder?: string;
   format?: 'currency' | 'number';
 }
-
-import { TableComponent } from '../table-component/table-component.component';
 
 @Component({
   selector: 'app-table-edit',
@@ -41,6 +42,7 @@ import { TableComponent } from '../table-component/table-component.component';
     SelectComponent,
     InputNumberComponent,
     InputComponent,
+    ToolbarComponent,
     TableComponent
   ],
   styleUrls: ['./table-edit.component.css'],

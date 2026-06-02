@@ -2,12 +2,19 @@
    SHARED BUTTON — Base Styles
    ===================================================== */
 :host {
+  --navy:        var(--ggts-navy-hex);
+  --navy-light:  var(--ggts-navy-light);
   display: inline-block;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 0 !important;
 }
 
 :host ::ng-deep .gm-btn.p-button,
 :host ::ng-deep .p-button.gm-btn {
-  border-radius: 15x;
+  border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
   min-height: 34px;
@@ -17,6 +24,26 @@
   justify-content: center;
   gap: 0.35rem;
   white-space: nowrap;
+}
+
+/* =====================================================
+   VARIANTE NAVY — Réplica del botón "btn-new" original
+   ===================================================== */
+:host ::ng-deep .gm-btn.p-button-navy,
+:host ::ng-deep .p-button.gm-btn.p-button-navy {
+  background: var(--navy-light) !important;
+  border-color: var(--navy-light) !important;
+  color: #ffffff !important;
+  height: 36px;
+  padding: 0 1rem;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+:host ::ng-deep .gm-btn.p-button-navy:hover,
+:host ::ng-deep .p-button.gm-btn.p-button-navy:hover {
+  background: var(--navy) !important;
+  border-color: var(--navy) !important;
 }
 
 /* =====================================================

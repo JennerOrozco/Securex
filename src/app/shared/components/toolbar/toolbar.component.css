@@ -1,11 +1,13 @@
 :host {
-  --navy:        #2c0707;
-  --navy-light:  #4a0e0e;
-  --teal:        #0d9488;
-  --border:      #e2e8f0;
-  --text-main:   #0f172a;
-  --text-muted:  #64748b;
-  --text-light:  #94a3b8;
+  display: block;
+  width: 100%;
+  --navy:        var(--ggts-navy-hex);
+  --navy-light:  var(--ggts-navy-light);
+  --teal:        var(--ggts-teal);
+  --border:      var(--ggts-border);
+  --text-main:   var(--ggts-text-main);
+  --text-muted:  var(--ggts-text-muted);
+  --text-light:  var(--ggts-text-light);
 }
 
 .toolbar {
@@ -21,31 +23,25 @@
 
 @media (max-width: 768px) {
   .toolbar {
-    display: grid !important;
-    grid-template-columns: 1fr auto !important;
-    grid-template-areas:
-      "header action"
-      "search search" !important;
+    display: flex !important;
+    flex-direction: column !important;
     gap: 0.75rem !important;
     padding: 1rem !important;
+    align-items: stretch !important;
   }
   .toolbar-left {
-    grid-area: header !important;
+    width: 100% !important;
   }
   .toolbar-right {
-    display: contents !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    width: 100% !important;
+    gap: 0.5rem;
   }
   .search-box {
-    grid-area: search !important;
     width: 100% !important;
+    max-width: 100% !important;
     margin-top: 0.25rem;
-  }
-  .btn-new {
-    grid-area: action !important;
-    height: 32px !important;
-    padding: 0 0.75rem !important;
-    font-size: 11px !important;
-    align-self: center !important;
   }
 }
 
@@ -128,13 +124,5 @@
   .search-inp { width: 200px; }
 }
 
-/* Button */
-.btn-new {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 36px; padding: 0 1rem;
-  background: var(--navy); border: none; border-radius: 8px;
-  color: white; font-size: 13px; font-weight: 600;
-  cursor: pointer; white-space: nowrap;
-  transition: all 0.2s;
-}
-.btn-new:hover { background: var(--navy-light); }
+
+

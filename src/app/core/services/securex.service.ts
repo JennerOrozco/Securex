@@ -1,7 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
+import { GraphqlService } from '../graphql/graphql.service';
+import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.queries';
 
 export interface ApiResponse<T> {
   status: string;
@@ -13,6 +16,7 @@ export interface ApiResponse<T> {
 export class SecurexService {
   private http = inject(HttpClient);
   private configService = inject(ConfigService);
+  private gql = inject(GraphqlService);
 
   private get baseUrl(): string {
     return this.configService.apiUrl;
@@ -112,7 +116,128 @@ export class SecurexService {
   getPasswordResets(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/admin/password-resets`, { params }); }
   deletePasswordReset(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/password-resets/${id}`); }
 
-  // === USER WEBAUTHN CREDENTIALS ===
-  getUserWebauthnCredentials(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/admin/user-webauthn-credentials`, { params }); }
-  deleteUserWebauthnCredential(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/user-webauthn-credentials/${id}`); }
+  // === USER WEBAUTHN CREDENTIALS (GraphQL) ===
+  getUserWebauthnCredentials(params?: any): Observable<any> {
+    return this.gql.query<{ userWebauthnCredentials: any[] }>('security', SECUREX_QUERIES.USER_WEBAUTHN_CREDENTIALS, params).pipe(
+      map(d => d.userWebauthnCredentials)
+    );
+  }
+  deleteUserWebauthnCredential(id: number): Observable<any> {
+    return this.gql.query<{ deleteUserWebauthnCredential: boolean }>('security', SECUREX_MUTATIONS.DELETE_WEBAUTHN_CREDENTIAL, { id }).pipe(
+      map(d => d.deleteUserWebauthnCredential)
+    );
+  }
+
+  // ─── GraphQL: Nested reads ───
+
+  getUsersWithRoles(): Observable<any[]> {
+    return this.gql.query<{ users: any[] }>('security', SECUREX_QUERIES.USERS).pipe(map(d => d.users));
+  }
+
+  getUserWithAccess(uuid: string): Observable<any> {
+    return this.gql.query<{ user: any }>('security', SECUREX_QUERIES.USER, { uuid }).pipe(map(d => d.user));
+  }
+
+  getRolesWithPermissions(): Observable<any[]> {
+    return this.gql.query<{ roles: any[] }>('security', SECUREX_QUERIES.ROLES).pipe(map(d => d.roles));
+  }
+
+  getRoleWithPermissions(uuid: string): Observable<any> {
+    return this.gql.query<{ role: any }>('security', SECUREX_QUERIES.ROLE, { uuid }).pipe(map(d => d.role));
+  }
+
+  getPermissionsTree(): Observable<any[]> {
+    return this.gql.query<{ permissions: any[] }>('security', SECUREX_QUERIES.PERMISSIONS).pipe(map(d => d.permissions));
+  }
+
+  getCompaniesWithBranches(): Observable<any[]> {
+    return this.gql.query<{ companies: any[] }>('security', SECUREX_QUERIES.COMPANIES).pipe(map(d => d.companies));
+  }
+
+  getCompanyWithBranches(uuid: string): Observable<any> {
+    return this.gql.query<{ company: any }>('security', SECUREX_QUERIES.COMPANY, { uuid }).pipe(map(d => d.company));
+  }
+
+  getBranchesList(): Observable<any[]> {
+    return this.gql.query<{ branches: any[] }>('security', SECUREX_QUERIES.BRANCHES).pipe(map(d => d.branches));
+  }
+
+  getAppsWithCompanies(): Observable<any[]> {
+    return this.gql.query<{ apps: any[] }>('security', SECUREX_QUERIES.APPS).pipe(map(d => d.apps));
+  }
+
+  getUserAccessesWithRoles(): Observable<any[]> {
+    return this.gql.query<{ userAccesses: any[] }>('security', SECUREX_QUERIES.USER_ACCESSES).pipe(map(d => d.userAccesses));
+  }
+
+  getSecurityAuditLogs(): Observable<any[]> {
+    return this.gql.query<{ securityAuditLogs: any[] }>('security', SECUREX_QUERIES.SECURITY_AUDIT_LOGS).pipe(map(d => d.securityAuditLogs));
+  }
+
+  getLoginAttemptsGql(): Observable<any[]> {
+    return this.gql.query<{ loginAttempts: any[] }>('security', SECUREX_QUERIES.LOGIN_ATTEMPTS).pipe(map(d => d.loginAttempts));
+  }
+
+  // ─── GraphQL Mutations ───
+
+  createUserGql(data: any): Observable<any> {
+    return this.gql.query<{ createUser: any }>('security', SECUREX_MUTATIONS.CREATE_USER, {
+      full_name: data.full_name, email: data.email, status: data.status,
+      is_super_admin: data.is_super_admin, auth_provider: data.auth_provider,
+    }).pipe(map(d => d.createUser));
+  }
+
+  updateUserGql(uuid: string, data: any): Observable<any> {
+    return this.gql.query<{ updateUser: any }>('security', SECUREX_MUTATIONS.UPDATE_USER, { uuid, ...data }).pipe(map(d => d.updateUser));
+  }
+
+  deleteUserGql(uuid: string): Observable<any> {
+    return this.gql.query<{ deleteUser: boolean }>('security', SECUREX_MUTATIONS.DELETE_USER, { uuid }).pipe(map(d => d.deleteUser));
+  }
+
+  createRoleGql(data: any): Observable<any> {
+    return this.gql.query<{ createRole: any }>('security', SECUREX_MUTATIONS.CREATE_ROLE, {
+      name: data.name, slug: data.slug, description: data.description, is_active: data.is_active,
+    }).pipe(map(d => d.createRole));
+  }
+
+  updateRoleGql(uuid: string, data: any): Observable<any> {
+    return this.gql.query<{ updateRole: any }>('security', SECUREX_MUTATIONS.UPDATE_ROLE, { uuid, ...data }).pipe(map(d => d.updateRole));
+  }
+
+  deleteRoleGql(uuid: string): Observable<any> {
+    return this.gql.query<{ deleteRole: boolean }>('security', SECUREX_MUTATIONS.DELETE_ROLE, { uuid }).pipe(map(d => d.deleteRole));
+  }
+
+  syncRolePermissionsGql(uuid: string, permissionIds: number[]): Observable<any> {
+    return this.gql.query<{ syncRolePermissions: any }>('security', SECUREX_MUTATIONS.SYNC_ROLE_PERMISSIONS, { uuid, permissionIds }).pipe(map(d => d.syncRolePermissions));
+  }
+
+  createCompanyGql(data: any): Observable<any> {
+    return this.gql.query<{ createCompany: any }>('security', SECUREX_MUTATIONS.CREATE_COMPANY, {
+      name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: data.is_active,
+    }).pipe(map(d => d.createCompany));
+  }
+
+  updateCompanyGql(uuid: string, data: any): Observable<any> {
+    return this.gql.query<{ updateCompany: any }>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, { uuid, ...data }).pipe(map(d => d.updateCompany));
+  }
+
+  deleteCompanyGql(uuid: string): Observable<any> {
+    return this.gql.query<{ deleteCompany: boolean }>('security', SECUREX_MUTATIONS.DELETE_COMPANY, { uuid }).pipe(map(d => d.deleteCompany));
+  }
+
+  createBranchGql(data: any): Observable<any> {
+    return this.gql.query<{ createBranch: any }>('security', SECUREX_MUTATIONS.CREATE_BRANCH, {
+      name: data.name, company_id: data.company_id, address: data.address, phone: data.phone, is_active: data.is_active,
+    }).pipe(map(d => d.createBranch));
+  }
+
+  updateBranchGql(uuid: string, data: any): Observable<any> {
+    return this.gql.query<{ updateBranch: any }>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, { uuid, ...data }).pipe(map(d => d.updateBranch));
+  }
+
+  deleteBranchGql(uuid: string): Observable<any> {
+    return this.gql.query<{ deleteBranch: boolean }>('security', SECUREX_MUTATIONS.DELETE_BRANCH, { uuid }).pipe(map(d => d.deleteBranch));
+  }
 }

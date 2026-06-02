@@ -1,20 +1,20 @@
 :host {
-  --navy: #2c0707;
-  --navy-light: #4a0e0e;
-  --blue-accent: #2b3a8b;
-  --teal: #0d9488;
-  --bg-page: #f1f5f9;
-  --bg-card: #ffffff;
-  --border: #e2e8f0;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-light: #94a3b8;
+  --navy:        var(--ggts-navy-hex);
+  --navy-light:  var(--ggts-navy-light);
+  --blue-accent: var(--ggts-blue-accent);
+  --teal:        var(--ggts-teal);
+  --bg-page:     var(--ggts-bg-page);
+  --bg-card:     var(--ggts-bg-card);
+  --border:      var(--ggts-border);
+  --text-main:   var(--ggts-text-main);
+  --text-muted:  var(--ggts-text-muted);
+  --text-light:  var(--ggts-text-light);
 }
 
 /* Page */
 .page-wrapper {
   background: transparent;
-  padding: 0.2rem;
+  padding: 0;
   font-family: 'Inter', sans-serif;
 }
 
@@ -26,6 +26,10 @@
 }
 
 ::ng-deep .table-card .p-card-body {
+  padding: 0 !important;
+}
+
+::ng-deep .users-table .p-datatable-header {
   padding: 0 !important;
 }
 
@@ -47,74 +51,6 @@
 
 ::ng-deep .users-table tr.p-datatable-row-expansion {
   background: #f8fafc;
-}
-
-/* Toolbar */
-.toolbar {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-}
-
-@media (max-width: 768px) {
-  .toolbar {
-    padding: 0.2rem 0.2rem;
-  }
-}
-
-.toolbar-left {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-.toolbar-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin: 0;
-  letter-spacing: -0.01em;
-}
-
-.toolbar-sub {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.toolbar-right {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Button */
-.btn-new {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  height: 32px;
-  padding: 0 1rem;
-  background: var(--navy);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.btn-new:hover {
-  background: var(--navy-light);
 }
 
 /* Table Styling */

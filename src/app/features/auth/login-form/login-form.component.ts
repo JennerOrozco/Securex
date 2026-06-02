@@ -15,37 +15,10 @@ import { PasswordComponent } from '@shared/components/password/password.componen
       gap: 0.5rem;
       margin-top: 0.75rem;
       width: 100%;
-      align-items: stretch; /* Ensure both buttons have the same height */
+      align-items: stretch;
     }
     .btn-login {
       flex: 1;
-    }
-    .btn-biometric {
-      padding: 0 1.2rem;
-      background: linear-gradient(135deg, #dc2626 0%, #880c0c 100%);
-      color: #ffffff;
-      border: none;
-      border-radius: 14px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: transform 0.15s, box-shadow 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
-    }
-    .btn-biometric:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
-    }
-    .btn-biometric:active:not(:disabled) {
-      transform: scale(0.95);
-    }
-    .btn-biometric:disabled {
-      opacity: 0.55;
-      cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
     }
   `],
   standalone: true
@@ -64,7 +37,7 @@ export class LoginFormComponent implements OnInit {
   rememberMe = false;
 
   ngOnInit() {
-    const saved = localStorage.getItem('ggts_remembered_email');
+    const saved = localStorage.getItem('securex_remembered_email');
     if (saved) {
       this.loginForm.patchValue({ email: saved });
       this.rememberMe = true;
@@ -96,9 +69,9 @@ export class LoginFormComponent implements OnInit {
   private saveEmailIfNeeded(): void {
     const email = this.loginForm.value.email ?? '';
     if (this.rememberMe && email) {
-      localStorage.setItem('ggts_remembered_email', email);
+      localStorage.setItem('securex_remembered_email', email);
     } else if (!this.rememberMe) {
-      localStorage.removeItem('ggts_remembered_email');
+      localStorage.removeItem('securex_remembered_email');
     }
   }
 }

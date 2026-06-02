@@ -21,6 +21,8 @@ export class ButtonComponent {
   @Input() routerLink: any;
   @Input() tooltip: string = '';
   @Input() tooltipPosition: string = 'top';
+  @Input() severity: 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'help' | 'contrast' | undefined;
+  @Input() outlined: boolean = false;
 
   @Output() onClick = new EventEmitter<void>();
 }
