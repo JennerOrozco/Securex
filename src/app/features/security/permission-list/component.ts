@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
-import { SecurityService } from '@core/services/security.service';
+import { SecurexService } from '@core/services/securex.service';
 import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
@@ -24,7 +24,7 @@ import { TableColumn } from '@shared/table-component/table.types';
   styleUrl: './component.css'
 })
 export class SecurityPermissionCrudComponent implements OnInit {
-  private securityService = inject(SecurityService);
+  private securexService = inject(SecurexService);
   private notificationService = inject(NotificationService);
 
   rawPermissions: any[] = [];
@@ -78,7 +78,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securityService.getPermissions().subscribe({
+    this.securexService.getPermissions().subscribe({
       next: (res) => {
         this.rawPermissions = res;
         this.permissionNodes = this.mapToTreeNodes(res);
@@ -167,8 +167,8 @@ export class SecurityPermissionCrudComponent implements OnInit {
     }
 
     const obs = this.modalMode === 'add'
-      ? this.securityService.createPermission(data)
-      : this.securityService.updatePermission(this.selectedItem.uuid, data);
+      ? this.securexService.createPermission(data)
+      : this.securexService.updatePermission(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -183,7 +183,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securityService.deletePermission(this.selectedItem.uuid).subscribe({
+    this.securexService.deletePermission(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Permiso eliminado de forma permanente');
         this.load();
@@ -198,7 +198,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
     const node = event.dragNode;
     const parent = event.dropNode;
     const parentId = parent?.id || null;
-    this.securityService.reorderPermission(node.uuid, parentId, 0).subscribe({
+    this.securexService.reorderPermission(node.uuid, parentId, 0).subscribe({
       next: () => {
         this.load();
         this.notificationService.notify('success', 'Permiso reordenado correctamente');

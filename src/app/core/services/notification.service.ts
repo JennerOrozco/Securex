@@ -59,17 +59,12 @@ export class NotificationService {
       const sub = await firstValueFrom(this.swPush.subscription);
 
       if (sub) {
-        const token = localStorage.getItem('accessToken');
-        const headers = new HttpHeaders({
-          'Authorization': `Bearer ${token}`
-        });
-
         const payload = {
           device_token: JSON.stringify(sub)
         };
 
         // Llamar al backend para eliminar el registro
-        this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { headers, body: payload }).subscribe({
+        this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { body: payload }).subscribe({
           next: () => console.log('Device unsubscribed in backend'),
           error: (err) => console.error('Failed to unsubscribe device in backend:', err)
         });
@@ -83,17 +78,12 @@ export class NotificationService {
   }
 
   private sendSubscriptionToApi(sub: PushSubscription) {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
     const payload = {
       device_token: JSON.stringify(sub),
       device_type: this.getDeviceType()
     };
 
-    return this.http.post(`${this.configService.notificationApiUrl}/notifications/devices`, payload, { headers });
+    return this.http.post(`${this.configService.notificationApiUrl}/notifications/devices`, payload);
   }
 
   private getDeviceType(): string {
@@ -107,11 +97,6 @@ export class NotificationService {
    * Envía una notificación de prueba (solo para testing/QA)
    */
   sendTestNotification(userUuid: string, companyUuid: string) {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
     const payload = {
       user_uuid: userUuid,
       app_uuid: this.configService.appUuid,
@@ -121,18 +106,13 @@ export class NotificationService {
       channels: 'PUSH'
     };
 
-    return this.http.post(`${this.configService.notificationApiUrl}/notifications/send`, payload, { headers });
+    return this.http.post(`${this.configService.notificationApiUrl}/notifications/send`, payload);
   }
 
   /**
    * Actualiza las preferencias de notificación del usuario (Email/Push).
    */
   updatePreferences(emailEnabled: boolean, pushEnabled: boolean, companyUuid: string) {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-
     const payload = {
       app_uuid: this.configService.appUuid,
       company_uuid: companyUuid,
@@ -140,36 +120,24 @@ export class NotificationService {
       push_enabled: pushEnabled
     };
 
-    return this.http.put(`${this.configService.notificationApiUrl}/notifications/preferences`, payload, { headers });
+    return this.http.put(`${this.configService.notificationApiUrl}/notifications/preferences`, payload);
   }
 
   getNotifications(): Observable<AppNotification[]> {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
     return this.http.get<AppNotification[]>(
-      `${this.configService.notificationApiUrl}/notifications`, { headers }
+      `${this.configService.notificationApiUrl}/notifications`
     );
   }
 
   markAsRead(id: number): Observable<{ status: string; data: null; message: string }> {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
     return this.http.put<{ status: string; data: null; message: string }>(
-      `${this.configService.notificationApiUrl}/notifications/${id}/read`, null, { headers }
+      `${this.configService.notificationApiUrl}/notifications/${id}/read`, null
     );
   }
 
   deleteNotification(id: number): Observable<{ status: string; data: null; message: string }> {
-    const token = localStorage.getItem('accessToken');
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
     return this.http.delete<{ status: string; data: null; message: string }>(
-      `${this.configService.notificationApiUrl}/notifications/${id}`, { headers }
+      `${this.configService.notificationApiUrl}/notifications/${id}`
     );
   }
 

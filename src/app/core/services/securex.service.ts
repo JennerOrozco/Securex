@@ -26,7 +26,7 @@ export class SecurexService {
   getUsers(): Observable<any> { return this.http.get(`${this.baseUrl}/company/users`); }
   getUsersPaginated(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/company/users-paginated`, { params }); }
   createUser(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/users`, data); }
-  updateUserRole(uuid: string, roleId: number): Observable<any> { return this.http.put(`${this.baseUrl}/company/users/${uuid}/role`, { role_id: roleId }); }
+  updateUserRole(uuid: string, roleId: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/users/${uuid}/role`, { role_id: roleId }); }
   deleteUser(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/users/${uuid}`); }
 
   // === APPS ===
@@ -55,14 +55,15 @@ export class SecurexService {
   createRole(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles`, data); }
   updateRole(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/roles/${uuid}`, data); }
   deleteRole(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/roles/${uuid}`); }
-  getRolePermissions(roleId: number): Observable<any> { return this.http.get(`${this.baseUrl}/company/roles/${roleId}/permissions`); }
-  syncRolePermissions(roleId: number, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles/${roleId}/permissions`, { permission_ids: permissionIds }); }
+  getRolePermissions(roleId: any): Observable<any> { return this.http.get(`${this.baseUrl}/company/roles/${roleId}/permissions`); }
+  syncRolePermissions(roleId: any, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles/${roleId}/permissions`, { permission_ids: permissionIds }); }
 
   // === PERMISSIONS ===
   getPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/company/permissions`); }
   createPermission(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/permissions`, data); }
   updatePermission(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/permissions/${uuid}`, data); }
   deletePermission(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/permissions/${uuid}`); }
+  reorderPermission(uuid: string, parentId: number | null, index: number): Observable<any> { return this.http.put(`${this.baseUrl}/company/permissions/reorder`, { uuid, parent_id: parentId, sort_order: index }); }
 
   // === ADMIN COMPANY PERMISSIONS ===
   getCompanyPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/company-permissions`); }

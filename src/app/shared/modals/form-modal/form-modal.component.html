@@ -22,114 +22,129 @@
 
   <div class="gm-body" [class.gm-body--no-padding]="noPadding">
     <form *ngIf="fields && fields.length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
-      <div *ngFor="let field of fields; let i = index" class="gm-field" [style.animation-delay]="i * 40 + 'ms'">
-        <label [for]="field.name" class="gm-label">
-          {{ field.label }}
-          <span *ngIf="field.required && mode !== 'view'" class="gm-required">*</span>
-          <i *ngIf="field.hint && mode !== 'view'" class="pi pi-info-circle gm-hint-icon" [pTooltip]="field.hint" tooltipPosition="top"></i>
-        </label>
-
-        <div class="gm-control-wrap" [ngClass]="{ 'has-error': showError(field.name), 'gm-has-icon': !!field.icon && field.type !== 'select' && field.type !== 'file' }">
-          <span *ngIf="field.icon && mode !== 'view' && field.type !== 'select' && field.type !== 'file'" class="gm-field-icon"><i [class]="field.icon"></i></span>
-
-          <ng-container [ngSwitch]="field.type">
-            <div *ngSwitchCase="'text'" class="w-full">
-              <input pInputText [formControlName]="field.name" [placeholder]="field.placeholder || ''" [class]="'gm-input' + (field.icon ? ' gm-input--icon' : '')" style="width: 100%;" />
-              @if (field.name === 'logo_url' && form.get(field.name)?.value) {
-                <div class="logo-preview-modal-container">
-                  <img [src]="form.get(field.name)?.value" alt="Vista previa del logo" class="logo-preview-modal-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
-                  <div class="logo-preview-modal-fallback" style="display: none;">
-                    <i class="pi pi-building"></i>
-                  </div>
-                </div>
-              }
+      <ng-container *ngFor="let field of fields; let i = index">
+        
+        <!-- Text and Email fields using shared app-input component -->
+        <app-input
+          *ngIf="field.type === 'text' || field.type === 'email'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [type]="field.type"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          [style.animation-delay]="i * 40 + 'ms'"
+          [style.display]="'block'"
+        ></app-input>
+        
+        <!-- Logo Preview container for company logo URL -->
+        <div *ngIf="field.name === 'logo_url' && form.get(field.name)?.value && (field.type === 'text' || field.type === 'email')" class="w-full mb-3" style="margin-top: -0.25rem;">
+          <div class="logo-preview-modal-container">
+            <img [src]="form.get(field.name)?.value" alt="Vista previa del logo" class="logo-preview-modal-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
+            <div class="logo-preview-modal-fallback" style="display: none;">
+              <i class="pi pi-building"></i>
             </div>
-            <input *ngSwitchCase="'email'" pInputText [formControlName]="field.name" type="email" [placeholder]="field.placeholder || 'correo@ejemplo.com'" [class]="'gm-input' + (field.icon ? ' gm-input--icon' : '')" />
-            
-            <p-password *ngSwitchCase="'password'" [formControlName]="field.name" [feedback]="false" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full gm-input" [placeholder]="field.placeholder || ''"></p-password>
-            
-            <p-inputNumber *ngSwitchCase="'number'" [formControlName]="field.name" styleClass="gm-inputnumber" class="w-full" [placeholder]="field.placeholder || ''" [minFractionDigits]="0" [maxFractionDigits]="2"></p-inputNumber>
+          </div>
+        </div>
 
-            <app-select
-              *ngSwitchCase="'select'"
-              [id]="field.name"
-              [options]="field.options || []"
-              [optionLabel]="'label'"
-              [optionValue]="'value'"
-              [placeholder]="field.placeholder || 'Seleccione'"
-              [control]="form.get(field.name)"
-              [icon]="field.icon || ''"
-            ></app-select>
+        <!-- Other fields using inline elements -->
+        <div *ngIf="field.type !== 'text' && field.type !== 'email'" class="gm-field" [style.animation-delay]="i * 40 + 'ms'">
+          <label [for]="field.name" class="gm-label">
+            {{ field.label }}
+            <span *ngIf="field.required && mode !== 'view'" class="gm-required">*</span>
+            <i *ngIf="field.hint && mode !== 'view'" class="pi pi-info-circle gm-hint-icon" [pTooltip]="field.hint" tooltipPosition="top"></i>
+          </label>
 
-            <p-datepicker *ngSwitchCase="'date'" [formControlName]="field.name" [showIcon]="true" appendTo="body" class="w-full" styleClass="gm-datepicker"></p-datepicker>
-            <textarea *ngSwitchCase="'textarea'" pTextarea [formControlName]="field.name" rows="3" class="gm-textarea" [autoResize]="true" [placeholder]="field.placeholder || ''"></textarea>
+          <div class="gm-control-wrap" [ngClass]="{ 'has-error': showError(field.name), 'gm-has-icon': !!field.icon && field.type !== 'select' && field.type !== 'file' }">
+            <span *ngIf="field.icon && mode !== 'view' && field.type !== 'select' && field.type !== 'file'" class="gm-field-icon"><i [class]="field.icon"></i></span>
 
-            <div *ngSwitchCase="'file'" class="gm-file-wrap">
-              <div class="file-drop-zone"
-                   [class.has-file]="filePayloads[field.name] || form.get(field.name)?.value"
-                   [class.drag-over]="dragOverFields.has(field.name)"
-                   (click)="fileInput.click()"
-                   (dragover)="onDragOver($event, field.name)"
-                   (dragleave)="onDragLeave($event, field.name)"
-                   (drop)="onDrop($event, field.name)">
+            <ng-container [ngSwitch]="field.type">
+              <p-password *ngSwitchCase="'password'" [formControlName]="field.name" [feedback]="false" [toggleMask]="true" styleClass="w-full" inputStyleClass="w-full gm-input" [placeholder]="field.placeholder || ''"></p-password>
+              
+              <p-inputNumber *ngSwitchCase="'number'" [formControlName]="field.name" styleClass="gm-inputnumber" class="w-full" [placeholder]="field.placeholder || ''" [minFractionDigits]="0" [maxFractionDigits]="2"></p-inputNumber>
 
-                @if (!filePayloads[field.name] && !form.get(field.name)?.value) {
-                  <div class="file-drop-content">
-                    <i class="pi pi-cloud-upload file-drop-icon"></i>
-                    <span class="file-drop-text">Arrastre un archivo o haga clic para seleccionar</span>
-                    <span class="file-drop-hint">{{ field.accept?.replace(/,/g, ', ') || 'Todos los archivos' }}</span>
-                  </div>
-                } @else {
-                  <div class="file-preview-row">
-                    @if (filePayloads[field.name]) {
-                      @if (localPreviews[field.name]) {
-                        <div class="file-image-preview-container">
-                          <img [src]="localPreviews[field.name]" alt="Preview" class="file-image-preview-img" />
+              <app-select
+                *ngSwitchCase="'select'"
+                [id]="field.name"
+                [options]="field.options || []"
+                [optionLabel]="'label'"
+                [optionValue]="'value'"
+                [placeholder]="field.placeholder || 'Seleccione'"
+                [control]="form.get(field.name)"
+                [icon]="field.icon || ''"
+              ></app-select>
+
+              <p-datepicker *ngSwitchCase="'date'" [formControlName]="field.name" [showIcon]="true" appendTo="body" class="w-full" styleClass="gm-datepicker"></p-datepicker>
+              <textarea *ngSwitchCase="'textarea'" pTextarea [formControlName]="field.name" rows="3" class="gm-textarea" [autoResize]="true" [placeholder]="field.placeholder || ''"></textarea>
+
+              <div *ngSwitchCase="'file'" class="gm-file-wrap">
+                <div class="file-drop-zone"
+                     [class.has-file]="filePayloads[field.name] || form.get(field.name)?.value"
+                     [class.drag-over]="dragOverFields.has(field.name)"
+                     (click)="fileInput.click()"
+                     (dragover)="onDragOver($event, field.name)"
+                     (dragleave)="onDragLeave($event, field.name)"
+                     (drop)="onDrop($event, field.name)">
+
+                  @if (!filePayloads[field.name] && !form.get(field.name)?.value) {
+                    <div class="file-drop-content">
+                      <i class="pi pi-cloud-upload file-drop-icon"></i>
+                      <span class="file-drop-text">Arrastre un archivo o haga clic para seleccionar</span>
+                      <span class="file-drop-hint">{{ field.accept?.replace(/,/g, ', ') || 'Todos los archivos' }}</span>
+                    </div>
+                  } @else {
+                    <div class="file-preview-row">
+                      @if (filePayloads[field.name]) {
+                        @if (localPreviews[field.name]) {
+                          <div class="file-image-preview-container">
+                            <img [src]="localPreviews[field.name]" alt="Preview" class="file-image-preview-img" />
+                          </div>
+                        } @else {
+                          <div class="file-icon" [class]="getFileIconClass(filePayloads[field.name])">
+                            <i [class]="getFileIcon(filePayloads[field.name])"></i>
+                          </div>
+                        }
+                        <div class="file-details">
+                          <span class="file-name">{{ filePayloads[field.name].name }}</span>
+                          <span class="file-size">{{ formatFileSize(filePayloads[field.name].size) }}</span>
                         </div>
                       } @else {
-                        <div class="file-icon" [class]="getFileIconClass(filePayloads[field.name])">
-                          <i [class]="getFileIcon(filePayloads[field.name])"></i>
+                        <div class="file-image-preview-container">
+                          <img [src]="form.get(field.name)?.value" alt="Preview" class="file-image-preview-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
+                          <div class="logo-preview-modal-fallback" style="display: none; width: 48px; height: 48px; border-radius: 8px; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.05); color: #64748b;">
+                            <i class="pi pi-building" style="font-size: 1.5rem;"></i>
+                          </div>
+                        </div>
+                        <div class="file-details">
+                          <span class="file-name">Logo actual</span>
+                          <span class="file-size">Existente</span>
                         </div>
                       }
-                      <div class="file-details">
-                        <span class="file-name">{{ filePayloads[field.name].name }}</span>
-                        <span class="file-size">{{ formatFileSize(filePayloads[field.name].size) }}</span>
-                      </div>
-                    } @else {
-                      <div class="file-image-preview-container">
-                        <img [src]="form.get(field.name)?.value" alt="Preview" class="file-image-preview-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
-                        <div class="logo-preview-modal-fallback" style="display: none; width: 48px; height: 48px; border-radius: 8px; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.05); color: #64748b;">
-                          <i class="pi pi-building" style="font-size: 1.5rem;"></i>
-                        </div>
-                      </div>
-                      <div class="file-details">
-                        <span class="file-name">Logo actual</span>
-                        <span class="file-size">Existente</span>
-                      </div>
-                    }
-                    <button *ngIf="mode !== 'view'" type="button" class="remove-btn" (click)="removeFile(field.name, $event)">
-                      <i class="pi pi-times"></i>
-                    </button>
-                  </div>
-                }
+                      <button *ngIf="mode !== 'view'" type="button" class="remove-btn" (click)="removeFile(field.name, $event)">
+                        <i class="pi pi-times"></i>
+                      </button>
+                    </div>
+                  }
+                </div>
+
+                <input
+                  #fileInput
+                  type="file"
+                  [accept]="field.accept || '*'"
+                  (change)="onFileChange($event, field.name)"
+                  style="display: none"
+                />
               </div>
+            </ng-container>
 
-              <input
-                #fileInput
-                type="file"
-                [accept]="field.accept || '*'"
-                (change)="onFileChange($event, field.name)"
-                style="display: none"
-              />
-            </div>
-          </ng-container>
-
-          <span *ngIf="mode !== 'view' && !isFieldPristine(field.name) && field.type !== 'select' && field.type !== 'file'" class="gm-status-icon" [class.gm-status-icon--empty]="!form.get(field.name)?.value">
-            <i [class]="isFieldValid(field.name) ? 'pi pi-check gm-valid' : 'pi pi-times gm-invalid'"></i>
-          </span>
+            <span *ngIf="mode !== 'view' && !isFieldPristine(field.name) && field.type !== 'select' && field.type !== 'file'" class="gm-status-icon" [class.gm-status-icon--empty]="!form.get(field.name)?.value">
+              <i [class]="isFieldValid(field.name) ? 'pi pi-check gm-valid' : 'pi pi-times gm-invalid'"></i>
+            </span>
+          </div>
+          <p *ngIf="mode !== 'view' && showError(field.name)" class="gm-error-msg"><i class="pi pi-exclamation-circle"></i> {{ getErrorMessage(field) }}</p>
         </div>
-        <p *ngIf="mode !== 'view' && showError(field.name)" class="gm-error-msg"><i class="pi pi-exclamation-circle"></i> {{ getErrorMessage(field) }}</p>
-      </div>
+      </ng-container>
     </form>
     <ng-content></ng-content>
   </div>

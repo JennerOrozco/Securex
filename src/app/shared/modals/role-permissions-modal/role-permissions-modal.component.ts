@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
-import { SecurityService } from '../../../core/services/security.service';
+import { SecurexService } from '../../../core/services/securex.service';
 
 interface ProcessedGroup {
   id: number;
@@ -33,7 +33,7 @@ export class RolePermissionsModalComponent implements OnChanges {
   @Output() onSave = new EventEmitter<number[]>();
   @Output() onClose = new EventEmitter<void>();
 
-  private securityService = inject(SecurityService);
+  private securexService = inject(SecurexService);
 
   isLoading = false;
   searchQuery = '';
@@ -63,7 +63,7 @@ export class RolePermissionsModalComponent implements OnChanges {
     this.isLoading = true;
     this.selectedIds = new Set();
     this.submenuIds = new Set();
-    this.securityService.getRolePermissions(this.roleId).subscribe({
+    this.securexService.getRolePermissions(this.roleId).subscribe({
       next: (res) => {
         this.processPermissions(res);
         this.isLoading = false;

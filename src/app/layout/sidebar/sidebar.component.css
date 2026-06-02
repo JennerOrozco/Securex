@@ -16,12 +16,11 @@
 }
 
 .sidebar-header {
-  padding: 1rem 0.6rem;
+  padding: 1.25rem 0.6rem;
   color: white !important;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
+  justify-content: center;
 }
 
 .collapse-all-header-btn {
@@ -67,23 +66,16 @@
 .logo-wrapper {
   display: flex;
   align-items: center;
-  gap: 0.875rem;
+  justify-content: center;
+  gap: 0.75rem;
   text-decoration: none;
 }
 
-.logo-icon-container {
-  background: white;
-  padding: 0.5rem;
-  border-radius: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .logo-img {
-  height: 2.25rem;
+  height: 3.5rem;
   width: auto;
   object-fit: contain;
+  border-radius: 18px;
 }
 
 .logo-text {

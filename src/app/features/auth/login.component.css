@@ -155,8 +155,9 @@
 }
 
 .form-logo-img {
-    width: 56px;
+    width: 88px;
     height: auto;
+    border-radius: 20px;
 }
 
 .logo-icon {
@@ -486,7 +487,8 @@
     }
 
     .form-logo-img {
-        width: 44px;
+        width: 64px;
+        border-radius: 16px;
     }
 
     .logo-area h1 {

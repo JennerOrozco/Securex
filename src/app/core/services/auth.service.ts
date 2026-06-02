@@ -439,12 +439,7 @@ export class AuthService {
      * Obtiene el perfil del usuario actual desde /auth/me.
      */
     getUserProfile(): Observable<any> {
-        const token = localStorage.getItem('accessToken');
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/me`, { headers })
+        return this.http.get<any>(`${this.configService.apiUrl}/auth/me`)
             .pipe(
                 tap(response => {
                     const data = response.data || response;
@@ -476,11 +471,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/menu`, { headers })
+        return this.http.get<any>(`${this.configService.apiUrl}/auth/menu`)
             .pipe(
                 tap(response => {
                     const data = response.data || response;
@@ -519,11 +510,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/components`, { headers });
+        return this.http.get<any>(`${this.configService.apiUrl}/auth/components`);
     }
 
     /**
@@ -533,11 +520,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/change-password`, data, { headers });
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/change-password`, data);
     }
 
     /**
@@ -547,11 +530,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register-options`, {}, { headers });
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register-options`, {});
     }
 
     /**
@@ -561,11 +540,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register`, data, { headers });
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register`, data);
     }
 
     /**
@@ -575,11 +550,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/webauthn/credentials`, { headers });
+        return this.http.get<any>(`${this.configService.apiUrl}/auth/webauthn/credentials`);
     }
 
     /**
@@ -589,11 +560,7 @@ export class AuthService {
         const token = localStorage.getItem('accessToken');
         if (!token) return of(null);
 
-        const headers = new HttpHeaders({
-            'Authorization': `Bearer ${token}`
-        });
-
-        return this.http.delete<any>(`${this.configService.apiUrl}/auth/webauthn/credentials/${id}`, { headers });
+        return this.http.delete<any>(`${this.configService.apiUrl}/auth/webauthn/credentials/${id}`);
     }
 
     /**
@@ -703,9 +670,8 @@ export class AuthService {
 
         // Revocar en backend (fire & forget — no bloquear el logout)
         if (refreshToken && accessToken) {
-            const headers = new HttpHeaders({ 'Authorization': `Bearer ${accessToken}` });
             this.http.post(`${this.configService.apiUrl}/auth/logout`,
-                { refresh_token: refreshToken }, { headers }
+                { refresh_token: refreshToken }
             ).subscribe({ error: () => {} });
         }
 

@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
-import { SecurityService } from '@core/services/security.service';
+import { SecurexService } from '@core/services/securex.service';
 import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
@@ -15,7 +15,7 @@ import { NotificationService } from '@core/services/notification.service';
   styleUrl: './component.css'
 })
 export class SecurityUserCrudComponent implements OnInit {
-  private securityService = inject(SecurityService);
+  private securexService = inject(SecurexService);
   private notificationService = inject(NotificationService);
 
   users: any[] = [];
@@ -55,7 +55,7 @@ export class SecurityUserCrudComponent implements OnInit {
       return;
     }
 
-    this.securityService.getRoles().subscribe({
+    this.securexService.getRoles().subscribe({
       next: (res) => {
         this.roles = res;
         const options = this.roles.map(r => ({ label: r.name, value: r.id }));
@@ -68,7 +68,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   loadUsers() {
     this.loading = true;
-    this.securityService.getUsers().subscribe({
+    this.securexService.getUsers().subscribe({
       next: (res) => {
         this.users = res.map((u: any) => ({
           ...u,
@@ -102,12 +102,12 @@ export class SecurityUserCrudComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     if (this.modalMode === 'add') {
-      this.securityService.createUser(data).subscribe({
+      this.securexService.createUser(data).subscribe({
         next: () => this.handleSuccess('Usuario invitado correctamente'),
         error: () => this.isSaving = false
       });
     } else {
-      this.securityService.updateUserRole(this.selectedItem.uuid, data.role_id).subscribe({
+      this.securexService.updateUserRole(this.selectedItem.uuid, data.role_id).subscribe({
         next: () => this.handleSuccess('Rol actualizado'),
         error: () => this.isSaving = false
       });
@@ -116,7 +116,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securityService.deleteUser(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteUser(this.selectedItem.uuid).subscribe({
       next: () => this.handleSuccess('Acceso eliminado'),
       error: () => this.isSaving = false
     });

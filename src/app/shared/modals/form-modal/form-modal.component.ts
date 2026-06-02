@@ -14,6 +14,7 @@ import { SelectModule } from 'primeng/select';
 import { PasswordModule } from 'primeng/password';
 import { FormField } from '../modal.types';
 import { SelectComponent } from '../../components/select/select.component';
+import { InputComponent } from '../../components/input/input.component';
 import { getFileIcon, getFileIconClass, formatFileSize } from '../modals.utils';
 
 @Component({
@@ -22,7 +23,7 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../modals.utils';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DialogModule, ButtonModule,
     InputTextModule, InputNumberModule, AutoCompleteModule, DatePickerModule,
-    TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule
+    TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule, InputComponent
   ],
   templateUrl: './form-modal.component.html',
   styleUrls: ['../modals.css', './form-modal.component.css']

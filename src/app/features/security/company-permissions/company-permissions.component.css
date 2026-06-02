@@ -11,28 +11,6 @@
   --text-light: #94a3b8;
 }
 
-.access-denied {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem 2rem;
-  text-align: center;
-  color: #64748b;
-}
-
-.access-denied h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
-}
-
-.access-denied p {
-  font-size: 0.9rem;
-  color: #94a3b8;
-}
-
 /* Card */
 .perm-card {
   background: var(--bg-card);

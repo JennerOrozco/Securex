@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
-import { SecurityService } from '@core/services/security.service';
+import { SecurexService } from '@core/services/securex.service';
 import { FormField } from '@shared/modals/modal.types';
 import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
@@ -16,7 +16,7 @@ import { NotificationService } from '@core/services/notification.service';
   styleUrl: './component.css'
 })
 export class SecurityRoleCrudComponent implements OnInit {
-  private securityService = inject(SecurityService);
+  private securexService = inject(SecurexService);
   private notificationService = inject(NotificationService);
 
   roles: any[] = [];
@@ -43,7 +43,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securityService.getRoles().subscribe({
+    this.securexService.getRoles().subscribe({
       next: (res) => { this.roles = res; this.loading = false; },
       error: () => this.loading = false
     });
@@ -61,8 +61,8 @@ export class SecurityRoleCrudComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securityService.createRole(data)
-      : this.securityService.updateRole(this.selectedItem.uuid, data);
+      ? this.securexService.createRole(data)
+      : this.securexService.updateRole(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -77,7 +77,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securityService.deleteRole(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteRole(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Rol eliminado');
         this.load();
@@ -90,7 +90,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   syncPermissions(ids: number[]) {
     this.isSaving = true;
-    this.securityService.syncRolePermissions(this.selectedItem.id, ids).subscribe({
+    this.securexService.syncRolePermissions(this.selectedItem.id, ids).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Permisos sincronizados correctamente');
         this.permModalVisible = false;
