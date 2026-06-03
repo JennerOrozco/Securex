@@ -89,7 +89,11 @@ export const SECUREX_QUERIES = {
   USER_ACCESSES: `
     query UserAccesses {
       userAccesses {
-        uuid user_id app_id company_id branch_id role_id status
+        uuid status user_id app_id company_id branch_id role_id
+        user { uuid full_name email }
+        app { uuid name }
+        company { uuid name }
+        branch { uuid name }
         role { uuid name slug }
       }
     }
