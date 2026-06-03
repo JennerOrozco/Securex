@@ -2,10 +2,6 @@ import {
   BaseEditableHolder
 } from "./chunk-OWZ6W2IQ.js";
 import {
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-RFQW2N6Q.js";
-import {
   CheckIcon,
   MinusIcon
 } from "./chunk-6IRPPLDO.js";
@@ -13,12 +9,12 @@ import {
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
 import {
+  BaseStyle
+} from "./chunk-BG5BLPKF.js";
+import {
   Bind,
   BindModule
 } from "./chunk-HIXY6DNM.js";
-import {
-  BaseStyle
-} from "./chunk-BG5BLPKF.js";
 import {
   PrimeTemplate,
   SharedModule
@@ -27,6 +23,10 @@ import {
   k2 as k,
   q
 } from "./chunk-ZGIVYFBQ.js";
+import {
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-RFQW2N6Q.js";
 import {
   CommonModule,
   NgClass,
@@ -768,4 +768,4 @@ export {
   Checkbox,
   CheckboxModule
 };
-//# sourceMappingURL=chunk-OVUN7MG4.js.map
+//# sourceMappingURL=chunk-XLR74GQP.js.map

@@ -32,11 +32,22 @@ export class AdminUsersComponent implements OnInit {
   formFields: FormField[] = [
     { name: 'full_name', label: 'Nombre completo', type: 'text', required: true, icon: 'pi pi-user' },
     { name: 'email', label: 'Correo electrónico', type: 'email', required: true, icon: 'pi pi-envelope' },
-    { name: 'status', label: 'Estado', type: 'select', required: true, options: [
-      { label: 'Activo', value: 'active' },
-      { label: 'Inactivo', value: 'inactive' },
-      { label: 'Suspendido', value: 'suspended' }
-    ]}
+    {
+      name: 'is_super_admin', label: '¿Es Super Admin?', type: 'select', required: true, icon: 'pi pi-shield',
+      options: [
+        { label: 'No', value: false },
+        { label: 'Sí', value: true }
+      ]
+    },
+    {
+      name: 'auth_provider', label: 'Proveedor de Autenticación', type: 'select', required: true, icon: 'pi pi-key',
+      options: [
+        { label: 'Local', value: 'Local' },
+        { label: 'Google', value: 'Google' },
+        { label: 'Microsoft', value: 'Microsoft' },
+        { label: 'GitHub', value: 'GitHub' }
+      ]
+    }
   ];
 
   cols: TableColumn[] = [
@@ -44,7 +55,6 @@ export class AdminUsersComponent implements OnInit {
     { field: 'email', header: 'Email', type: 'text', sortable: true },
     { field: 'is_super_admin', header: 'Super Admin', type: 'boolean', sortable: true },
     { field: 'auth_provider', header: 'Auth Provider', type: 'text', sortable: true },
-    { field: 'status', header: 'Estado', type: 'status', sortable: true },
     { field: 'created_at', header: 'Creado', type: 'date', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
@@ -61,16 +71,13 @@ export class AdminUsersComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getAdminUsers({ per_page: 50 }).subscribe({
+    this.securexService.getAdminUsersGql({ per_page: 50 }).subscribe({
       next: (res: any) => {
-        const d = res.data || res;
-        const raw = d.data || d || [];
-        this.users = raw.map((u: any) => ({
+        this.users = (res || []).map((u: any) => ({
           ...u,
           auth_provider: u.auth_provider || 'Local',
           created_at: u.created_at || u.createdAt
         }));
-        this.total = d.total || 0;
         this.loading = false;
       },
       error: () => this.loading = false
@@ -84,8 +91,8 @@ export class AdminUsersComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securexService.createAdminUser(data)
-      : this.securexService.updateAdminUser(this.selectedItem.uuid, data);
+      ? this.securexService.createUserGql(data)
+      : this.securexService.updateUserGql(this.selectedItem.uuid, data);
     obs.subscribe({
       next: () => {
         this.notificationService.success(`Usuario ${this.modalMode === 'add' ? 'creado' : 'actualizado'} correctamente`);
@@ -99,7 +106,7 @@ export class AdminUsersComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteAdminUser(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteUserGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.success('Usuario eliminado');
         this.load();

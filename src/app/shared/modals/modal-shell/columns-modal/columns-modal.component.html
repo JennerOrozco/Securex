@@ -4,13 +4,14 @@
   icon="pi pi-th-large"
   iconType="view"
   width="400px"
+  [noPadding]="true"
   confirmLabel="Aplicar"
   confirmIcon="pi pi-check"
   confirmSeverity="info"
   (onConfirm)="apply()"
   (onClose)="onClose.emit()">
 
-  <div class="column-table-wrapper" *ngIf="columns.length > 0">
+  <div class="column-table-wrapper" *ngIf="displayableColumns.length > 0">
     <table class="column-table">
       <thead>
         <tr>
@@ -21,7 +22,7 @@
         </tr>
       </thead>
       <tbody>
-        @for (col of columns; track $index) {
+        @for (col of displayableColumns; track $index) {
         <tr class="column-row" [class.active]="isSelected(col)" (click)="toggle(col)">
           <td class="col-check">
             <div class="column-check" [class.checked]="isSelected(col)">
@@ -35,7 +36,7 @@
             <span class="column-field">{{ col.field }}</span>
           </td>
           <td class="col-type">
-            <span class="type-badge" *ngIf="col.type && col.type !== 'actions'" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
+            <span class="type-badge" *ngIf="col.type" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
           </td>
         </tr>
         }
@@ -44,7 +45,7 @@
         <tr>
           <td colspan="4">
             <div class="column-footer">
-              <span class="column-footer-count">{{ selected.length }} / {{ columns.length }} seleccionadas</span>
+              <span class="column-footer-count">{{ displayableColumns.length }} columnas disponibles</span>
             </div>
           </td>
         </tr>
@@ -52,7 +53,7 @@
     </table>
   </div>
 
-  <div class="empty-columns" *ngIf="columns.length === 0">
+  <div class="empty-columns" *ngIf="displayableColumns.length === 0">
     <i class="pi pi-info-circle text-slate-300 text-xl"></i>
     <span class="text-sm text-slate-400">No hay columnas disponibles</span>
   </div>

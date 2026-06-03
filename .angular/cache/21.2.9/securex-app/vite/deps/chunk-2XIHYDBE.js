@@ -6,11 +6,11 @@ import {
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
 import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
-import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
+import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
 import {
   PrimeTemplate,
   SharedModule,
@@ -653,4 +653,4 @@ var ChipModule = class _ChipModule {
 export {
   Chip
 };
-//# sourceMappingURL=chunk-FKOSL2Y2.js.map
+//# sourceMappingURL=chunk-2XIHYDBE.js.map

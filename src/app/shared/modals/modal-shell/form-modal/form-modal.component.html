@@ -35,6 +35,7 @@
               [required]="field.required || false"
               [control]="$any(form.get(field.name))"
               [accept]="field.accept || '*'"
+              [fallbackIcon]="field.fallbackIcon || (field.name === 'icon' ? 'pi-image' : 'pi-building')"
               [mode]="mode"
             ></app-file-input>
 

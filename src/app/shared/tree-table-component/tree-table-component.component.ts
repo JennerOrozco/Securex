@@ -39,7 +39,7 @@ import { ToolbarComponent } from '../components/toolbar/toolbar.component';
         [subtitle]="subtitle"
         [searchPlaceholder]="searchPlaceholder"
         [showSearch]="true"
-        [showAdd]="true"
+        [showAdd]="showAdd"
         [addLabel]="addLabel"
         (onSearch)="onFilter.emit($event)"
         (onAdd)="onAddRoot.emit()">
@@ -104,6 +104,7 @@ import { ToolbarComponent } from '../components/toolbar/toolbar.component';
             <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)"
               [attr.draggable]="dragdrop && rowData._canReorder !== false ? true : null"
               [class.drag-over]="dragOverNode === rowData"
+              [ngClass]="getRowClass(rowData.type)"
               (dragstart)="onRowDragStart($event, rowData)"
               (dragover)="onRowDragOver($event, rowData)" 
               (dragleave)="onRowDragLeave($event)"
@@ -236,6 +237,8 @@ export class TreeTableComponent implements OnInit {
   @Input() searchPlaceholder: string = 'Buscar...';
   @Input() showLegend: boolean = true;
   @Input() dragdrop: boolean = false;
+  @Input() showAdd: boolean = true;
+  @Input() colorRows: boolean = false;
 
   @Output() onAddRoot = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<number>();
@@ -342,6 +345,17 @@ export class TreeTableComponent implements OnInit {
       case 'ACTION': return 'bg-amber';
       case 'COMPONENT': return 'bg-rose';
       default: return 'bg-slate';
+    }
+  }
+
+  getRowClass(type: string): string {
+    if (!this.colorRows) return '';
+    switch (type?.toUpperCase()) {
+      case 'MENU': return 'row-menu';
+      case 'SUBMENU': return 'row-submenu';
+      case 'ACTION': return 'row-action';
+      case 'COMPONENT': return 'row-component';
+      default: return '';
     }
   }
 

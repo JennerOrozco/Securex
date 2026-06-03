@@ -53,9 +53,6 @@ export class FormModalComponent implements OnInit, OnChanges {
   @Output() onClose = new EventEmitter<void>();
 
   form!: FormGroup;
-  filePayloads: Record<string, File> = {};
-  localPreviews: Record<string, string> = {};
-  dragOverFields: Set<string> = new Set();
 
   constructor(private fb: FormBuilder) {}
 
@@ -88,9 +85,6 @@ export class FormModalComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['visible']?.currentValue === true || changes['fields'] || changes['data']) {
-      this.filePayloads = {};
-      this.localPreviews = {};
-      this.dragOverFields.clear();
       this.initForm();
     }
   }
@@ -98,7 +92,6 @@ export class FormModalComponent implements OnInit, OnChanges {
   initForm() {
     const group: any = {};
     this.fields.forEach(field => {
-      if (field.type === 'file') return;
       let value = this.mode === 'add' ? (this.initialData?.[field.name] ?? '') : (this.data?.[field.name] ?? '');
       const validators: any[] = [];
       if (field.required && this.mode !== 'view') validators.push(Validators.required);
@@ -107,64 +100,6 @@ export class FormModalComponent implements OnInit, OnChanges {
       group[field.name] = [{ value, disabled: isDisabled }, validators];
     });
     this.form = this.fb.group(group);
-  }
-
-  onFileChange(event: Event, fieldName: string) {
-    const input = event.target as HTMLInputElement;
-    const files = input.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      this.filePayloads[fieldName] = file;
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = () => { this.localPreviews[fieldName] = reader.result as string; };
-        reader.readAsDataURL(file);
-      } else {
-        delete this.localPreviews[fieldName];
-      }
-      this.form.get(fieldName)?.setValue(file);
-      this.form.get(fieldName)?.markAsDirty();
-    }
-  }
-
-  onDragOver(event: DragEvent, fieldName: string) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.dragOverFields.add(fieldName);
-  }
-
-  onDragLeave(event: DragEvent, fieldName: string) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.dragOverFields.delete(fieldName);
-  }
-
-  onDrop(event: DragEvent, fieldName: string) {
-    event.preventDefault();
-    event.stopPropagation();
-    this.dragOverFields.delete(fieldName);
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      const file = files[0];
-      this.filePayloads[fieldName] = file;
-      if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = () => { this.localPreviews[fieldName] = reader.result as string; };
-        reader.readAsDataURL(file);
-      } else {
-        delete this.localPreviews[fieldName];
-      }
-      this.form.get(fieldName)?.setValue(file);
-      this.form.get(fieldName)?.markAsDirty();
-    }
-  }
-
-  removeFile(fieldName: string, event: Event) {
-    event.stopPropagation();
-    delete this.filePayloads[fieldName];
-    delete this.localPreviews[fieldName];
-    this.form.get(fieldName)?.setValue('');
-    this.form.get(fieldName)?.markAsDirty();
   }
 
   isFieldPristine(name: string) { return this.form.get(name)?.pristine; }
@@ -183,17 +118,17 @@ export class FormModalComponent implements OnInit, OnChanges {
       const raw = this.form.getRawValue();
       const payload: any = {};
       this.fields.forEach(f => {
+        const val = raw[f.name];
         if (f.type === 'file') {
-          if (this.filePayloads[f.name]) {
-            payload[f.name] = this.filePayloads[f.name];
-          } else if (this.form.get(f.name)?.value && typeof this.form.get(f.name)?.value === 'string') {
-            payload[f.name] = this.form.get(f.name)?.value;
+          if (val instanceof File) {
+            payload[f.name] = val;
+          } else if (typeof val === 'string' && val) {
+            payload[f.name] = val;
           } else {
             payload[f.name] = null;
           }
           return;
         }
-        const val = raw[f.name];
         if (f.type === 'select') {
           payload[f.name] = (val && typeof val === 'object' && 'value' in val) ? val.value : val;
         } else {

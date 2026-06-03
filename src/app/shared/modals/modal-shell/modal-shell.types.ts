@@ -9,6 +9,7 @@ export interface FormField {
   hint?: string;
   icon?: string;
   accept?: string;
+  fallbackIcon?: string;
 }
 
 export type ModalMode = 'add' | 'edit' | 'delete' | 'view';

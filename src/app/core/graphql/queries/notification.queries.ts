@@ -31,7 +31,7 @@ export const NOTIFICATION_QUERIES = {
   PUSH_SETTINGS: `
     query PushSettings {
       pushSettings {
-        id app_uuid vapid_public_key vapid_subject url_base icon
+        id app_uuid vapid_public_key vapid_private_key vapid_subject url_base icon
         app { name }
       }
     }
@@ -39,7 +39,7 @@ export const NOTIFICATION_QUERIES = {
   SMTP_SETTINGS: `
     query SmtpSettings {
       smtpSettings {
-        id app_uuid smtp_host smtp_port smtp_user smtp_encryption from_email from_name
+        id app_uuid smtp_host smtp_port smtp_user smtp_pass smtp_encryption from_email from_name
         app { name }
       }
     }

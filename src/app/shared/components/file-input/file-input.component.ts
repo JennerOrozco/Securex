@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormFieldComponent } from '../form-field/form-field.component';
@@ -10,7 +10,8 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../../modals/moda
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, FormFieldComponent],
   templateUrl: './file-input.component.html',
-  styleUrls: ['./file-input.component.css']
+  styleUrls: ['./file-input.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class FileInputComponent extends BaseFormControl implements OnInit, OnChanges {
   protected prefix = 'file-';
@@ -23,6 +24,7 @@ export class FileInputComponent extends BaseFormControl implements OnInit, OnCha
   @Input() override control!: any;
   @Input() accept: string = '*';
   @Input() mode: 'add' | 'edit' | 'view' = 'add';
+  @Input() fallbackIcon: string = 'pi-file';
 
   filePayload: File | null = null;
   localPreview: string | null = null;

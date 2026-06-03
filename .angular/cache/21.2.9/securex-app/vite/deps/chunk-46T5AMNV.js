@@ -3,12 +3,12 @@ import {
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
 import {
+  BaseStyle
+} from "./chunk-BG5BLPKF.js";
+import {
   Bind,
   BindModule
 } from "./chunk-HIXY6DNM.js";
-import {
-  BaseStyle
-} from "./chunk-BG5BLPKF.js";
 import {
   SharedModule
 } from "./chunk-4MRKV7VW.js";
@@ -695,4 +695,4 @@ export {
   Badge,
   BadgeModule
 };
-//# sourceMappingURL=chunk-LBXZVMZ4.js.map
+//# sourceMappingURL=chunk-46T5AMNV.js.map

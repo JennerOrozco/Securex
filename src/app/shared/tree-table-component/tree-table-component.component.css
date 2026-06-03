@@ -124,6 +124,162 @@
   background: #f8fafc !important;
 }
 
+/* Custom row background colors (All rows white with standard hovers and black text) */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu:hover,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu:hover,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action:hover,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component:hover {
+  background-color: #f8fafc !important;
+}
+
+/* Ensure all text inside the table body is black */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .node-name,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .node-name,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action .node-name,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component .node-name,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .body-text,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .body-text,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action .body-text,
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component .body-text {
+  color: #000000 !important;
+}
+
+/* Hierarchical Breathing Room (adaptive padding) */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu > td {
+  padding: 12px 14px !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu > td {
+  padding: 10px 14px !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action > td {
+  padding: 8px 14px !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component > td {
+  padding: 6px 14px !important;
+}
+
+/* Visual Depth Level Indicators (left borders) */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu > td:first-child {
+  border-left: 4px solid #170000 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu > td:first-child {
+  border-left: 4px solid #350a06 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action > td:first-child {
+  border-left: 4px solid #56070c !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component > td:first-child {
+  border-left: 4px solid #e2e8f0 !important;
+}
+
+/* Tree connecting dashed lines */
+:host ::ng-deep .gm-treetable .p-treetable-tbody > tr > td {
+  overflow: visible !important;
+}
+
+:host ::ng-deep .gm-treetable .p-treetable-toggler-spacer {
+  position: relative;
+  display: inline-block;
+  width: 1.5rem;
+  height: 100%;
+  vertical-align: middle;
+}
+
+:host ::ng-deep .gm-treetable .p-treetable-toggler-spacer::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  bottom: -20px;
+  left: 50%;
+  border-left: 1px dashed #cbd5e1;
+  z-index: 1;
+}
+
+/* Horizontal connecting lines to toggler button */
+:host ::ng-deep .gm-treetable .p-treetable-toggler {
+  position: relative;
+  z-index: 2;
+  margin-right: 8px !important;
+}
+
+:host ::ng-deep .gm-treetable .p-treetable-toggler::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -0.75rem;
+  width: 0.75rem;
+  border-top: 1px dashed #cbd5e1;
+  z-index: 1;
+}
+
+/* Horizontal connecting lines to icon wrapper for leaf nodes */
+:host ::ng-deep .gm-treetable .p-treetable-toggler-spacer + .node-icon-wrap {
+  position: relative;
+}
+
+:host ::ng-deep .gm-treetable .p-treetable-toggler-spacer + .node-icon-wrap::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -0.75rem;
+  width: 0.75rem;
+  border-top: 1px dashed #cbd5e1;
+  z-index: 1;
+}
+
+/* Level 1: MENU (#170000) Toggler & Icon Styling */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .p-treetable-toggler {
+  color: #170000 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .node-icon-wrap {
+  background: rgba(23, 0, 0, 0.05) !important;
+  border: 1px solid rgba(23, 0, 0, 0.15) !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .node-icon-wrap i {
+  color: #170000 !important;
+}
+
+/* Level 2: SUBMENU (#350a06) Toggler & Icon Styling */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .p-treetable-toggler {
+  color: #350a06 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .node-icon-wrap {
+  background: rgba(53, 10, 6, 0.05) !important;
+  border: 1px solid rgba(53, 10, 6, 0.15) !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .node-icon-wrap i {
+  color: #350a06 !important;
+}
+
+/* Level 3: ACTION (#56070c) Toggler & Icon Styling */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action .p-treetable-toggler {
+  color: #56070c !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action .node-icon-wrap {
+  background: rgba(86, 7, 12, 0.05) !important;
+  border: 1px solid rgba(86, 7, 12, 0.15) !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action .node-icon-wrap i {
+  color: #56070c !important;
+}
+
+/* Level 4: COMPONENT (Detail - White Icon Box, Slate Gray Icon) */
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component .node-icon-wrap {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component .node-icon-wrap i {
+  color: #64748b !important;
+}
+
 tr.drag-over {
   outline: 2px dashed var(--blue-accent) !important;
   outline-offset: -2px;

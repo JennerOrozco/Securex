@@ -93,6 +93,7 @@ export class SecurityUserCrudComponent implements OnInit {
       next: (res) => {
         this.users = res.map((u: any) => ({
           ...u,
+          access_uuid: u.access?.[0]?.uuid,
           role_name: u.access?.[0]?.role?.name || 'Sin Rol',
           role_id: u.access?.[0]?.role?.id,
           branch_name: u.access?.[0]?.branch?.name || 'Sin Sucursal',
@@ -133,10 +134,16 @@ export class SecurityUserCrudComponent implements OnInit {
     } else {
       const updateData = {
         role_id: data.role_id,
-        branch_id: data.branch_id,
+        branch_id: data.branch_id ?? null,
         status: data.status
       };
-      this.securexService.updateUserRole(this.selectedItem.uuid, updateData).subscribe({
+      const accessUuid = this.selectedItem.access_uuid;
+      if (!accessUuid) {
+        this.notificationService.notify('error', 'No se encontró el registro de acceso del usuario');
+        this.isSaving = false;
+        return;
+      }
+      this.securexService.updateUserAccess(accessUuid, updateData).subscribe({
         next: () => this.handleSuccess('Usuario actualizado'),
         error: () => this.isSaving = false
       });

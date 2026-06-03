@@ -85,12 +85,13 @@ export class PushSettingsComponent implements OnInit {
         label: 'Aplicación Asociada',
         type: 'select',
         required: true,
+        icon: 'pi pi-th-large',
         options: this.apps.map(app => ({ label: app.name, value: app.uuid }))
       },
       { name: 'vapid_public_key', label: 'VAPID Public Key', type: 'text', required: true, icon: 'pi pi-key' },
       { name: 'vapid_private_key', label: 'VAPID Private Key', type: 'text', required: true, icon: 'pi pi-key' },
       { name: 'vapid_subject', label: 'VAPID Subject', type: 'text', required: false, icon: 'pi pi-envelope' },
-      { name: 'icon', label: 'Icon', type: 'file', required: false, accept: 'image/*' },
+      { name: 'icon', label: 'Icono de Notificación', type: 'file', required: false, accept: 'image/*', icon: 'pi pi-image', fallbackIcon: 'pi-bell' },
       { name: 'url_base', label: 'URL Base', type: 'text', required: false, icon: 'pi pi-link' }
     ];
   }
@@ -119,33 +120,35 @@ export class PushSettingsComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const id = this.modalMode === 'add' ? null : this.selectedItem.id;
+    const payload: FormData | any = data.icon instanceof File ? new FormData() : { ...data };
 
-    const proceedWithSave = (finalData: any) => {
-      this.apiService.savePushSetting(id, finalData).subscribe({
-        next: () => {
-          this.notificationService.showSuccess(`Configuración ${this.modalMode === 'add' ? 'creada' : 'actualizada'} correctamente`);
-          this.load();
-          this.modalVisible = false;
-          this.isSaving = false;
-        },
-        error: () => this.isSaving = false
+    if (payload instanceof FormData) {
+      Object.entries(data).forEach(([key, value]) => {
+        if (value === null || value === undefined) return;
+        if (key === 'icon' && value instanceof File) {
+          payload.append('icon', value, value.name);
+        } else {
+          payload.append(key, String(value));
+        }
       });
-    };
-
-    if (data.icon instanceof File) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        data.icon = reader.result as string;
-        proceedWithSave(data);
-      };
-      reader.onerror = () => {
-        this.notificationService.showError('Error al procesar la imagen del ícono');
-        this.isSaving = false;
-      };
-      reader.readAsDataURL(data.icon);
-    } else {
-      proceedWithSave(data);
     }
+
+    this.apiService.savePushSetting(id, payload).subscribe({
+      next: () => {
+        this.notificationService.showSuccess(
+          `Configuración ${this.modalMode === 'add' ? 'creada' : 'actualizada'} correctamente`
+        );
+        this.load();
+        this.modalVisible = false;
+        this.isSaving = false;
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.notificationService.showError(
+          err?.error?.message || 'Error al guardar la configuración'
+        );
+      }
+    });
   }
 
   confirmDelete() {

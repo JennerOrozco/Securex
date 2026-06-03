@@ -64,9 +64,9 @@ export class AdminPermissionsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getApps().subscribe({
+    this.securexService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
-        this.apps = res.data || res || [];
+        this.apps = res || [];
         this.loadPermissions();
       },
       error: () => this.loading = false
@@ -74,9 +74,9 @@ export class AdminPermissionsComponent implements OnInit {
   }
 
   private loadPermissions() {
-    this.securexService.getAdminPermissions().subscribe({
+    this.securexService.getAdminPermissionsGql().subscribe({
       next: (res: any) => {
-        this.permissions = res.data || res || [];
+        this.permissions = res || [];
         this.buildTree();
         this.loading = false;
       },
@@ -142,8 +142,8 @@ export class AdminPermissionsComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securexService.createAdminPermission(data)
-      : this.securexService.updateAdminPermission(this.selectedItem.uuid, data);
+      ? this.securexService.createPermissionGql(data)
+      : this.securexService.updatePermissionGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -158,7 +158,7 @@ export class AdminPermissionsComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteAdminPermission(this.selectedItem.uuid).subscribe({
+    this.securexService.deletePermissionGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.success('Permiso eliminado');
         this.load();

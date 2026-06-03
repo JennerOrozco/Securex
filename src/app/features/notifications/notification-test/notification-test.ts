@@ -108,9 +108,9 @@ export class NotificationTestComponent implements OnInit {
 
   loadApps() {
     this.loadingApps = true;
-    this.securexService.getApps().subscribe({
+    this.securexService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
-        this.apps = res.data || res;
+        this.apps = res || [];
         this.loadingApps = false;
       },
       error: () => this.loadingApps = false
@@ -119,10 +119,10 @@ export class NotificationTestComponent implements OnInit {
 
   loadCompanies() {
     this.loadingCompanies = true;
-    this.securexService.getCompanies().subscribe({
+    this.securexService.getCompaniesWithBranches().subscribe({
       next: (res: any) => {
-        this.companies = (res.data || res).filter((c: any) =>
-          c.app_uuid === this.selectedApp.uuid
+        this.companies = (res || []).filter((c: any) =>
+          c.app_id === this.selectedApp.id
         );
         this.loadingCompanies = false;
       },
@@ -132,10 +132,9 @@ export class NotificationTestComponent implements OnInit {
 
   loadUsers() {
     this.loadingUsers = true;
-    this.securexService.getAdminUsers({ company_uuid: this.selectedCompany.uuid }).subscribe({
+    this.securexService.getAdminUsersGql({ company_uuid: this.selectedCompany.uuid }).subscribe({
       next: (res: any) => {
-        const data = res.data || res;
-        this.users = data.data || data;
+        this.users = res || [];
         this.loadingUsers = false;
       },
       error: () => this.loadingUsers = false

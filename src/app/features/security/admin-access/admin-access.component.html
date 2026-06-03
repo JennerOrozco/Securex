@@ -1,35 +1,39 @@
-<div class="page-container">
-  <div *ngIf="!hasPermission" class="access-denied">
-    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-    <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden gestionar accesos.</p>
-  </div>
-
-  <ng-container *ngIf="hasPermission">
-
-
-    <app-table-component title="Accesos de Usuario" subtitle="Organizados por compañía" [data]="tableData"
-      [columns]="cols" [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true"
-      addLabel="Asignar Acceso" searchPlaceholder="Buscar acceso..." [enableRowGroup]="true" groupRowsBy="company_name"
-      groupHeaderLabel="Compañía:" [showAddChild]="true" [expandableRowGroups]="true" (onAdd)="handleAdd()"
-      (onAddChild)="handleAddChild($event.company_id)" (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
-    </app-table-component>
-  </ng-container>
+<div class="p-1 md:p-2">
+  <app-tree-table-component
+    title="Accesos de Usuario"
+    subtitle="Jerarquía de aplicaciones, compañías, sucursales y usuarios asignados."
+    [nodes]="accessNodes"
+    [columns]="cols"
+    [loading]="loading"
+    [showLegend]="false"
+    [showAdd]="false"
+    [colorRows]="true"
+    [addLabel]="'Asignar Acceso'"
+    searchPlaceholder="Buscar usuario, rol o nodo..."
+    (onAddChild)="handleAddUnderBranch($event)"
+    (onEdit)="handleEdit($event)"
+    (onDelete)="handleDelete($event)"
+    (onFilter)="filterTree($event)">
+  </app-tree-table-component>
 
   <app-form-modal
     [visible]="modalVisible && modalMode !== 'delete'"
     [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    title="{{ modalMode === 'add' ? 'Asignar Acceso' : 'Editar Acceso' }}"
+    title="{{ modalMode === 'add' ? 'Editar Acceso' : 'Editar Acceso' }}"
     [fields]="formFields"
     [data]="modalMode === 'edit' ? selectedItem : null"
-    [initialData]="modalMode === 'add' ? (preselectedCompanyId ? { company_id: preselectedCompanyId } : {}) : {}"
+    [initialData]="modalMode === 'add' ? selectedItem : {}"
     [loading]="isSaving"
     (onConfirm)="save($event)"
     (onClose)="modalVisible = false">
   </app-form-modal>
 
-  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Acceso"
-    [bodyMessage]="'¿Está seguro de que desea eliminar el acceso de ' + selectedItem?.user_name + '?'"
-    [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    [title]="'Eliminar acceso'"
+    [bodyMessage]="'¿Está seguro de que desea eliminar este acceso?'"
+    [loading]="isSaving"
+    (onConfirm)="confirmDelete()"
+    (onClose)="modalVisible = false">
   </app-delete-modal>
 </div>

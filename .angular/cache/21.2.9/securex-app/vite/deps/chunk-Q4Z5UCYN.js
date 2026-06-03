@@ -3,11 +3,11 @@ import {
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
 import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
-import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
+import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
 import {
   CommonModule
 } from "./chunk-MM7N2GXU.js";
@@ -163,4 +163,4 @@ var FluidModule = class _FluidModule {
 export {
   Fluid
 };
-//# sourceMappingURL=chunk-GZQIK2DP.js.map
+//# sourceMappingURL=chunk-Q4Z5UCYN.js.map

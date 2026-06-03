@@ -23,8 +23,10 @@ export class ColumnsModalComponent implements OnChanges {
   private workingSelected: TableColumn[] = [];
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['selected']) {
-      this.workingSelected = [...(this.selected || [])];
+    if (changes['visible']?.currentValue === true || changes['selected']) {
+      this.workingSelected = (this.selected || []).filter(
+        c => c.type !== 'actions' && c.field !== 'actions' && c.field !== 'acciones'
+      );
     }
   }
 
@@ -41,7 +43,16 @@ export class ColumnsModalComponent implements OnChanges {
     }
   }
 
+  get displayableColumns(): TableColumn[] {
+    return (this.columns || []).filter(
+      c => c.type !== 'actions' && c.field !== 'actions' && c.field !== 'acciones'
+    );
+  }
+
   apply() {
-    this.onApply.emit(this.workingSelected);
+    const lockedActions = (this.columns || []).filter(
+      c => c.type === 'actions' || c.field === 'actions' || c.field === 'acciones'
+    );
+    this.onApply.emit([...this.workingSelected, ...lockedActions]);
   }
 }

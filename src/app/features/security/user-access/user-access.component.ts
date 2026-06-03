@@ -21,17 +21,25 @@ export class UserAccessComponent implements OnInit {
   private notificationService = inject(NotificationService);
 
   records: any[] = [];
-  users: any[] = [];
-  apps: any[] = [];
-  currentAppId: number | null = null;
   loading = false;
   isSaving = false;
+  currentAppId: number | null = null;
 
   modalVisible = false;
   modalMode: 'add' | 'edit' | 'delete' = 'add';
   selectedItem: any = null;
 
   formFields: FormField[] = [];
+
+  private cachedUserOpts: { label: string; value: any }[] = [];
+  private cachedAppOpts: { label: string; value: any }[] = [];
+  private cachedCompanyOpts: { label: string; value: any }[] = [];
+  private cachedBranchOpts: { label: string; value: any }[] = [];
+  private statusOptions = [
+    { label: 'Aprobado', value: 'APPROVED' },
+    { label: 'Pendiente', value: 'PENDING' },
+    { label: 'Rechazado', value: 'REJECTED' }
+  ];
 
   cols: TableColumn[] = [
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
@@ -44,98 +52,63 @@ export class UserAccessComponent implements OnInit {
 
   load() {
     this.loading = true;
+    this.securexService.getUserAccessPageData().subscribe({
+      next: (data) => {
+        const { userAccesses, users, apps, companies, branches } = data;
 
-    this.securexService.getUserAccess().subscribe({
-      next: (res: any) => { this.records = res.data || res || []; this.loading = false; },
-      error: () => this.loading = false
-    });
+        this.records = (userAccesses || []).map((item: any) => ({
+          ...item,
+          user_name: item.user?.full_name || item.user_id,
+          app_name: item.app?.name || item.app_id
+        }));
 
-    this.securexService.getUsers().subscribe({
-      next: (res: any) => {
-        const data = res.data || res || [];
-        this.users = data;
-      }
-    });
+        this.cachedUserOpts = (users || []).map((u: any) => ({ label: u.full_name || u.email, value: u.id }));
+        this.cachedAppOpts = (apps || []).map((a: any) => ({ label: a.name, value: a.id }));
 
-    this.securexService.getApps().subscribe({
-      next: (res: any) => {
-        const data = res.data || res || [];
-        this.apps = data;
-        const currentApp = data.find((a: any) => a.uuid === this.configService.appUuid);
+        const currentApp = (apps || []).find((a: any) => a.uuid === this.configService.appUuid);
         this.currentAppId = currentApp ? currentApp.id : null;
-      }
+
+        const appCompanies = (companies || []).filter((c: any) => c.app_id === this.currentAppId);
+        this.cachedCompanyOpts = appCompanies.map((c: any) => ({ label: c.name, value: c.id }));
+
+        const companyIds = appCompanies.map((c: any) => c.id);
+        this.cachedBranchOpts = (branches || [])
+          .filter((b: any) => companyIds.includes(b.company_id))
+          .map((b: any) => ({ label: b.name, value: b.id }));
+
+        this.loading = false;
+      },
+      error: () => this.loading = false
     });
   }
 
   handleAdd() {
     this.modalMode = 'add';
     this.selectedItem = null;
-    this.buildFormFields('add', () => {
-      this.modalVisible = true;
-    });
+    this.formFields = [
+      { name: 'user_id', label: 'Usuario', type: 'select', required: true, options: this.cachedUserOpts },
+      { name: 'app_id', label: 'Aplicación', type: 'select', required: true, options: this.cachedAppOpts, disabled: true },
+      { name: 'company_id', label: 'Compañía', type: 'select', required: false, options: this.cachedCompanyOpts },
+      { name: 'branch_id', label: 'Sucursal', type: 'select', required: false, options: this.cachedBranchOpts },
+      { name: 'status', label: 'Estado', type: 'select', required: true, options: this.statusOptions }
+    ];
+    this.modalVisible = true;
   }
 
   handleEdit(item: any) {
     this.modalMode = 'edit';
     this.selectedItem = { ...item };
-    this.buildFormFields('edit', () => {
-      this.modalVisible = true;
-    });
+    this.formFields = [
+      { name: 'user_id', label: 'Usuario', type: 'select', required: true, options: this.cachedUserOpts },
+      { name: 'app_id', label: 'Aplicación', type: 'select', required: true, options: this.cachedAppOpts },
+      { name: 'company_id', label: 'Compañía', type: 'select', required: false, options: this.cachedCompanyOpts },
+      { name: 'branch_id', label: 'Sucursal', type: 'select', required: false, options: this.cachedBranchOpts },
+      { name: 'status', label: 'Estado', type: 'select', required: true, options: this.statusOptions }
+    ];
+    this.modalVisible = true;
   }
 
   handleDelete(item: any) { this.modalMode = 'delete'; this.selectedItem = item; this.modalVisible = true; }
-
-  private buildFormFields(mode: 'add' | 'edit', onReady: () => void) {
-    const appOptions = this.apps.map((a: any) => ({ label: a.name, value: a.id }));
-    const statusOptions = [
-      { label: 'Aprobado', value: 'APPROVED' },
-      { label: 'Pendiente', value: 'PENDING' },
-      { label: 'Rechazado', value: 'REJECTED' }
-    ];
-
-    const userOptions = this.users.map((u: any) => ({ label: u.full_name || u.email, value: u.id }));
-
-    const baseFields: FormField[] = [
-      { name: 'user_id', label: 'Usuario', type: 'select', required: true, options: userOptions },
-      { name: 'app_id', label: 'Aplicación', type: 'select', required: true, options: appOptions, disabled: mode === 'add' },
-    ];
-
-    this.securexService.getCompanies().subscribe({
-      next: (res: any) => {
-        const data = res.data || res || [];
-        const appCompanies = data.filter((c: any) => c.app_id === this.currentAppId);
-        const companyOptions = appCompanies.map((c: any) => ({ label: c.name, value: c.id }));
-        const companyIds = appCompanies.map((c: any) => c.id);
-
-        this.securexService.getBranches().subscribe({
-          next: (branchRes: any) => {
-            const branches = (branchRes.data || branchRes || []).filter((b: any) => companyIds.includes(b.company_id));
-            const branchOptions = branches.map((b: any) => ({ label: b.name, value: b.id }));
-
-            baseFields.push(
-              { name: 'company_id', label: 'Compañía', type: 'select', required: false, options: companyOptions },
-              { name: 'branch_id', label: 'Sucursal', type: 'select', required: false, options: branchOptions },
-            );
-
-            baseFields.push({ name: 'status', label: 'Estado', type: 'select', required: true, options: statusOptions });
-
-            this.formFields = baseFields;
-            onReady();
-          },
-          error: () => {
-            baseFields.push({ name: 'status', label: 'Estado', type: 'select', required: true, options: statusOptions });
-            this.formFields = baseFields;
-            onReady();
-          }
-        });
-      },
-      error: () => {
-        baseFields.push({ name: 'status', label: 'Estado', type: 'select', required: true, options: statusOptions });
-        this.formFields = baseFields;
-        onReady();
-      }
-    });
-  }
 
   save(data: any) {
     this.isSaving = true;
@@ -143,8 +116,8 @@ export class UserAccessComponent implements OnInit {
       data.app_id = this.currentAppId;
     }
     const obs = this.modalMode === 'add'
-      ? this.securexService.createUserAccess(data)
-      : this.securexService.updateUserAccess(this.selectedItem.uuid, data);
+      ? this.securexService.createUserAccessGql(data)
+      : this.securexService.updateUserAccessGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -159,7 +132,7 @@ export class UserAccessComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteUserAccess(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteUserAccessGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.success('Acceso eliminado');
         this.load();
