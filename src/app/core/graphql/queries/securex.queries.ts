@@ -189,15 +189,15 @@ export const SECUREX_QUERIES = {
 
 export const SECUREX_MUTATIONS = {
   CREATE_USER: `
-    mutation CreateUser($full_name: String!, $email: String!, $status: String, $is_super_admin: Boolean, $auth_provider: String) {
-      createUser(full_name: $full_name, email: $email, status: $status, is_super_admin: $is_super_admin, auth_provider: $auth_provider) {
+    mutation CreateUser($full_name: String!, $email: String!, $is_super_admin: Boolean, $auth_provider: String) {
+      createUser(full_name: $full_name, email: $email, is_super_admin: $is_super_admin, auth_provider: $auth_provider) {
         uuid full_name email status
       }
     }
   `,
   UPDATE_USER: `
-    mutation UpdateUser($uuid: String!, $full_name: String, $email: String, $status: String, $is_super_admin: Boolean) {
-      updateUser(uuid: $uuid, full_name: $full_name, email: $email, status: $status, is_super_admin: $is_super_admin) {
+    mutation UpdateUser($uuid: String!, $full_name: String, $email: String, $is_super_admin: Boolean) {
+      updateUser(uuid: $uuid, full_name: $full_name, email: $email, is_super_admin: $is_super_admin) {
         uuid full_name email status
       }
     }
