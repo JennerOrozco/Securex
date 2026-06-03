@@ -335,7 +335,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onRegister(data: any) {
-    if (!data.name || !data.email || !data.password || !data.gender) {
+    if (!data.name || !data.email || !data.password) {
       this.error = 'Por favor completa los campos obligatorios.';
       return;
     }
