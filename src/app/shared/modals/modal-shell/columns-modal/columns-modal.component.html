@@ -10,26 +10,46 @@
   (onConfirm)="apply()"
   (onClose)="onClose.emit()">
 
-  <div class="flex items-center justify-between mb-3">
-    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Columnas disponibles</span>
-    <span class="text-xs text-slate-500 font-medium bg-slate-100 px-2 py-0.5 rounded-full">{{ selected.length }} / {{ columns.length }}</span>
-  </div>
-
-  <div class="column-list" *ngIf="columns.length > 0">
-    @for (col of columns; track $index) {
-    <div class="column-item" [class.active]="isSelected(col)" (click)="toggle(col)">
-      <div class="column-check" [class.checked]="isSelected(col)">
-        <i class="pi pi-check" *ngIf="isSelected(col)"></i>
-      </div>
-      <div class="column-info">
-        <span class="column-name">{{ col.header }}</span>
-        <span class="column-field">{{ col.field }}</span>
-      </div>
-      <div class="column-type-badge" *ngIf="col.type && col.type !== 'actions'">
-        <span class="type-badge" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
-      </div>
-    </div>
-    }
+  <div class="column-table-wrapper" *ngIf="columns.length > 0">
+    <table class="column-table">
+      <thead>
+        <tr>
+          <th class="col-check"></th>
+          <th class="col-header">Columna</th>
+          <th class="col-field">Campo</th>
+          <th class="col-type">Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (col of columns; track $index) {
+        <tr class="column-row" [class.active]="isSelected(col)" (click)="toggle(col)">
+          <td class="col-check">
+            <div class="column-check" [class.checked]="isSelected(col)">
+              <i class="pi pi-check" *ngIf="isSelected(col)"></i>
+            </div>
+          </td>
+          <td class="col-header">
+            <span class="column-name">{{ col.header }}</span>
+          </td>
+          <td class="col-field">
+            <span class="column-field">{{ col.field }}</span>
+          </td>
+          <td class="col-type">
+            <span class="type-badge" *ngIf="col.type && col.type !== 'actions'" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
+          </td>
+        </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4">
+            <div class="column-footer">
+              <span class="column-footer-count">{{ selected.length }} / {{ columns.length }} seleccionadas</span>
+            </div>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
   </div>
 
   <div class="empty-columns" *ngIf="columns.length === 0">

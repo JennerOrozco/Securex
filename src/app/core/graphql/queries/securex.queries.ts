@@ -58,7 +58,7 @@ export const SECUREX_QUERIES = {
   COMPANIES: `
     query Companies {
       companies {
-        id uuid tax_id name logo_url is_active
+        id uuid app_id tax_id name logo_url is_active
         branches { id uuid name address phone is_active }
       }
     }
@@ -81,7 +81,7 @@ export const SECUREX_QUERIES = {
   APPS: `
     query Apps {
       apps {
-        id uuid name slug is_active
+        id uuid name slug api_key is_active
         companies { id uuid name is_active branches { id uuid name } }
       }
     }
@@ -121,6 +121,20 @@ export const SECUREX_QUERIES = {
         sign_count
         created_at
         updated_at
+      }
+    }
+  `,
+  PASSWORD_RESETS: `
+    query PasswordResets {
+      passwordResets {
+        id email token created_at
+      }
+    }
+  `,
+  REFRESH_TOKENS: `
+    query RefreshTokens {
+      refreshTokens {
+        id user_uuid token expires_at revoked created_at updated_at
       }
     }
   `,
@@ -213,6 +227,44 @@ export const SECUREX_MUTATIONS = {
   DELETE_WEBAUTHN_CREDENTIAL: `
     mutation DeleteUserWebauthnCredential($id: Int!) {
       deleteUserWebauthnCredential(id: $id)
+    }
+  `,
+  CREATE_PERMISSION: `
+    mutation CreatePermission($name: String!, $slug: String!, $type: String, $icon: String, $route: String, $parent_id: Int, $sort_order: Int, $is_visible: Boolean) {
+      createPermission(name: $name, slug: $slug, type: $type, icon: $icon, route: $route, parent_id: $parent_id, sort_order: $sort_order, is_visible: $is_visible) {
+        id uuid name slug route type icon sort_order is_visible
+      }
+    }
+  `,
+  UPDATE_PERMISSION: `
+    mutation UpdatePermission($uuid: String!, $name: String, $slug: String, $type: String, $icon: String, $route: String, $sort_order: Int, $is_visible: Boolean) {
+      updatePermission(uuid: $uuid, name: $name, slug: $slug, type: $type, icon: $icon, route: $route, sort_order: $sort_order, is_visible: $is_visible) {
+        id uuid name slug route type icon sort_order is_visible
+      }
+    }
+  `,
+  DELETE_PERMISSION: `
+    mutation DeletePermission($uuid: String!) {
+      deletePermission(uuid: $uuid)
+    }
+  `,
+  CREATE_APP: `
+    mutation CreateApp($name: String!, $slug: String!, $is_active: Boolean) {
+      createApp(name: $name, slug: $slug, is_active: $is_active) {
+        id uuid name slug is_active
+      }
+    }
+  `,
+  UPDATE_APP: `
+    mutation UpdateApp($uuid: String!, $name: String, $slug: String, $is_active: Boolean) {
+      updateApp(uuid: $uuid, name: $name, slug: $slug, is_active: $is_active) {
+        id uuid name slug is_active
+      }
+    }
+  `,
+  DELETE_APP: `
+    mutation DeleteApp($uuid: String!) {
+      deleteApp(uuid: $uuid)
     }
   `,
 };

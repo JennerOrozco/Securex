@@ -2,9 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurexService } from '@core/services/securex.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -55,7 +55,7 @@ export class SecurityUserCrudComponent implements OnInit {
       return;
     }
 
-    this.securexService.getRoles().subscribe({
+    this.securexService.getRolesWithPermissions().subscribe({
       next: (res) => {
         this.roles = res;
         const options = this.roles.map(r => ({ label: r.name, value: r.id }));
@@ -68,7 +68,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   loadUsers() {
     this.loading = true;
-    this.securexService.getUsers().subscribe({
+    this.securexService.getUsersWithRoles().subscribe({
       next: (res) => {
         this.users = res.map((u: any) => ({
           ...u,
@@ -102,7 +102,7 @@ export class SecurityUserCrudComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     if (this.modalMode === 'add') {
-      this.securexService.createUser(data).subscribe({
+      this.securexService.createUserGql(data).subscribe({
         next: () => this.handleSuccess('Usuario invitado correctamente'),
         error: () => this.isSaving = false
       });
@@ -116,7 +116,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteUser(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteUserGql(this.selectedItem.uuid).subscribe({
       next: () => this.handleSuccess('Acceso eliminado'),
       error: () => this.isSaving = false
     });

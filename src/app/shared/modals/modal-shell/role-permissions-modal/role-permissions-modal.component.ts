@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
-import { SecurexService } from '../../../core/services/securex.service';
+import { SecurexService } from '../../../../core/services/securex.service';
 
 interface ProcessedGroup {
   id: number;
@@ -22,7 +22,7 @@ interface ProcessedGroup {
   standalone: true,
   imports: [CommonModule, FormsModule, DialogModule, ButtonModule, TooltipModule, CheckboxModule],
   templateUrl: './role-permissions-modal.component.html',
-  styleUrls: ['../modals.css', './role-permissions-modal.component.css']
+  styleUrls: ['../../modals.css', './role-permissions-modal.component.css']
 })
 export class RolePermissionsModalComponent implements OnChanges {
   @Input() visible = false;

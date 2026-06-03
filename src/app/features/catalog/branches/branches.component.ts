@@ -4,9 +4,9 @@ import { TableComponent } from '@shared/table-component/table-component.componen
 import { TableColumn } from '@shared/table-component/table.types';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class BranchesComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getCompanies().subscribe({
+    this.securexService.getCompaniesWithBranches().subscribe({
       next: (res: any) => {
         this.companies = res.data || res || [];
         this.updateFormFields();
@@ -80,7 +80,7 @@ export class BranchesComponent implements OnInit {
   }
 
   private loadBranches() {
-    this.securexService.getBranches().subscribe({
+    this.securexService.getBranchesList().subscribe({
       next: (res: any) => {
         const branchesList = res.data || res || [];
         this.tableData = branchesList.map((branch: any) => {
@@ -145,8 +145,8 @@ export class BranchesComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securexService.createBranch(data)
-      : this.securexService.updateBranch(this.selectedItem.uuid, data);
+      ? this.securexService.createBranchGql(data)
+      : this.securexService.updateBranchGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -161,7 +161,7 @@ export class BranchesComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteBranch(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteBranchGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.success('Sucursal eliminada');
         this.load();

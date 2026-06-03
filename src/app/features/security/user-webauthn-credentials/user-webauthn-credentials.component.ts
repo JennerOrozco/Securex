@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurexService } from '@core/services/securex.service';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({

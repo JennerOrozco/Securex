@@ -12,10 +12,10 @@ import { TooltipModule } from 'primeng/tooltip';
 import { RippleModule } from 'primeng/ripple';
 import { SelectModule } from 'primeng/select';
 import { PasswordModule } from 'primeng/password';
-import { FormField } from '../modal.types';
-import { SelectComponent } from '../../components/select/select.component';
-import { InputComponent } from '../../components/input/input.component';
-import { getFileIcon, getFileIconClass, formatFileSize } from '../modals.utils';
+import { FormField } from '../modal-shell.types';
+import { SelectComponent } from '../../../components/select/select.component';
+import { InputComponent } from '../../../components/input/input.component';
+import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.utils';
 
 @Component({
   selector: 'app-form-modal',
@@ -26,7 +26,7 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../modals.utils';
     TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule, InputComponent
   ],
   templateUrl: './form-modal.component.html',
-  styleUrls: ['../modals.css', './form-modal.component.css']
+  styleUrls: ['../../modals.css', './form-modal.component.css']
 })
 export class FormModalComponent implements OnInit, OnChanges {
   @Input() visible = false;

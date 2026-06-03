@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AuthService } from '@core/services/auth.service';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -45,7 +45,7 @@ export class NotificationsListComponent implements OnInit {
   ];
 
   get hasPermission(): boolean {
-    return this.authService.checkPermission('securex.notifications.history'); // Admin access
+    return this.authService.checkPermission('securex.notifications.history');
   }
 
   ngOnInit() {
@@ -56,10 +56,14 @@ export class NotificationsListComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.apiService.getNotificationsHistory({ per_page: 1000 }).subscribe({
-      next: (res: any) => {
-        const d = res.data || res;
-        this.items = d.data || d;
+    this.apiService.getNotificationsHistoryGql().subscribe({
+      next: (data: any) => {
+        this.items = (data || []).map((item: any) => ({
+          ...item,
+          app_name: item.app?.name || item.app_uuid,
+          user_name: item.user?.full_name || item.user_email || item.user_uuid,
+          status: item.is_read ? 'Leída' : 'Pendiente'
+        }));
         this.loading = false;
       },
       error: () => this.loading = false
@@ -70,7 +74,7 @@ export class NotificationsListComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.apiService.deleteNotificationHistory(this.selectedItem.id).subscribe({
+    this.apiService.deleteNotificationHistoryGql(this.selectedItem.id).subscribe({
       next: () => {
         this.notificationService.showSuccess('Notificación eliminada');
         this.load();

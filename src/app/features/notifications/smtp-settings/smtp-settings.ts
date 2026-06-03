@@ -4,9 +4,9 @@ import { TableComponent, TableColumn } from '@shared/table-component/table-compo
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -53,7 +53,7 @@ export class SmtpSettingsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getApps().subscribe({
+    this.securexService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
         this.apps = res.data || res || [];
         this.updateFormFields();
@@ -64,16 +64,12 @@ export class SmtpSettingsComponent implements OnInit {
   }
 
   loadSettings() {
-    this.apiService.getSmtpSettings().subscribe({
-      next: (res: any) => {
-        const d = res.data || res;
-        this.items = (d || []).map((item: any) => {
-          const app = this.apps.find((a: any) => a.uuid === item.app_uuid);
-          return {
-            ...item,
-            app_name: app ? app.name : item.app_uuid
-          };
-        });
+    this.apiService.getSmtpSettingsGql().subscribe({
+      next: (data: any) => {
+        this.items = (data || []).map((item: any) => ({
+          ...item,
+          app_name: item.app?.name || item.app_uuid
+        }));
         this.total = this.items.length;
         this.loading = false;
       },

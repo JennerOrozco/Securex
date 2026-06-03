@@ -2,10 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurexService } from '@core/services/securex.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
-import { RolePermissionsModalComponent } from '@shared/modals/role-permissions-modal/role-permissions-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
+import { RolePermissionsModalComponent } from '@shared/modals/modal-shell/role-permissions-modal/role-permissions-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -43,7 +43,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getRoles().subscribe({
+    this.securexService.getRolesWithPermissions().subscribe({
       next: (res) => { this.roles = res; this.loading = false; },
       error: () => this.loading = false
     });
@@ -61,8 +61,8 @@ export class SecurityRoleCrudComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securexService.createRole(data)
-      : this.securexService.updateRole(this.selectedItem.uuid, data);
+      ? this.securexService.createRoleGql(data)
+      : this.securexService.updateRoleGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -77,7 +77,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteRole(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteRoleGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Rol eliminado');
         this.load();
@@ -90,7 +90,7 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   syncPermissions(ids: number[]) {
     this.isSaving = true;
-    this.securexService.syncRolePermissions(this.selectedItem.id, ids).subscribe({
+    this.securexService.syncRolePermissionsGql(this.selectedItem.uuid, ids).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Permisos sincronizados correctamente');
         this.permModalVisible = false;

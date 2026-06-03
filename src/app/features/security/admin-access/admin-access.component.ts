@@ -4,9 +4,9 @@ import { TableComponent } from '@shared/table-component/table-component.componen
 import { TableColumn } from '@shared/table-component/table.types';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 import { forkJoin } from 'rxjs';
 

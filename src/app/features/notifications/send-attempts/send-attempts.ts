@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AuthService } from '@core/services/auth.service';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -43,7 +43,7 @@ export class SendAttemptsComponent implements OnInit {
   ];
 
   get hasPermission(): boolean {
-    return this.authService.checkPermission('securex.notifications.send-attempts'); // Admin access
+    return this.authService.checkPermission('securex.notifications.send-attempts');
   }
 
   ngOnInit() {
@@ -54,10 +54,13 @@ export class SendAttemptsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.apiService.getSendAttempts().subscribe({
-      next: (res: any) => {
-        const d = res.data || res;
-        this.items = d.data || d; // Assuming pagination returns { data: [...] }
+    this.apiService.getSendAttemptsGql().subscribe({
+      next: (data: any) => {
+        this.items = (data || []).map((item: any) => ({
+          ...item,
+          app_name: item.app?.name || item.app_uuid,
+          user_name: item.user?.full_name || item.user_uuid
+        }));
         this.loading = false;
       },
       error: () => this.loading = false
@@ -68,7 +71,7 @@ export class SendAttemptsComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.apiService.deleteSendAttempt(this.selectedItem.id).subscribe({
+    this.apiService.deleteSendAttemptGql(this.selectedItem.id).subscribe({
       next: () => {
         this.notificationService.showSuccess('Registro eliminado');
         this.load();

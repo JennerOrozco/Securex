@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
@@ -62,7 +62,7 @@ export class AppsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getApps().subscribe({
+    this.securexService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
         this.data = (res.data || res || []).map((app: any) => {
           return {
@@ -100,8 +100,8 @@ export class AppsComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     const obs = this.modalMode === 'add'
-      ? this.securexService.createApp(data)
-      : this.securexService.updateApp(this.selectedItem.uuid, data);
+      ? this.securexService.createAppGql(data)
+      : this.securexService.updateAppGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -116,7 +116,7 @@ export class AppsComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteApp(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteAppGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.success('Aplicación eliminada');
         this.load();

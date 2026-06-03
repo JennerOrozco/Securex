@@ -3,9 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { SecurexService } from '@core/services/securex.service';
-import { FormField } from '@shared/modals/modal.types';
-import { FormModalComponent } from '@shared/modals/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/delete-modal/delete-modal.component';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
+import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 import { TreeTableComponent } from '@shared/tree-table-component/tree-table-component.component';
 import { TableColumn } from '@shared/table-component/table.types';
@@ -78,7 +78,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getPermissions().subscribe({
+    this.securexService.getPermissionsTree().subscribe({
       next: (res) => {
         this.rawPermissions = res;
         this.permissionNodes = this.mapToTreeNodes(res);
@@ -167,8 +167,8 @@ export class SecurityPermissionCrudComponent implements OnInit {
     }
 
     const obs = this.modalMode === 'add'
-      ? this.securexService.createPermission(data)
-      : this.securexService.updatePermission(this.selectedItem.uuid, data);
+      ? this.securexService.createPermissionGql(data)
+      : this.securexService.updatePermissionGql(this.selectedItem.uuid, data);
 
     obs.subscribe({
       next: () => {
@@ -183,7 +183,7 @@ export class SecurityPermissionCrudComponent implements OnInit {
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deletePermission(this.selectedItem.uuid).subscribe({
+    this.securexService.deletePermissionGql(this.selectedItem.uuid).subscribe({
       next: () => {
         this.notificationService.notify('success', 'Permiso eliminado de forma permanente');
         this.load();
