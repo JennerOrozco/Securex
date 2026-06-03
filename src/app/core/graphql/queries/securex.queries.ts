@@ -3,7 +3,7 @@ export const SECUREX_QUERIES = {
     query Users {
       users {
         uuid full_name email status is_super_admin auth_provider
-        access { uuid status role { uuid name slug permissions { uuid name slug } } }
+        access { uuid status branch_id branch { uuid name } role { id uuid name slug } }
       }
     }
   `,
@@ -138,6 +138,49 @@ export const SECUREX_QUERIES = {
       }
     }
   `,
+  ADMIN_USERS: `
+    query AdminUsers($page: Int, $per_page: Int, $company_uuid: String, $app_uuid: String) {
+      adminUsers(page: $page, per_page: $per_page, company_uuid: $company_uuid, app_uuid: $app_uuid) {
+        id uuid full_name email status is_super_admin auth_provider created_at
+      }
+    }
+  `,
+  ROLES_BY_COMPANY: `
+    query RolesByCompany($appId: Int!, $companyUuid: String) {
+      rolesByCompany(app_id: $appId, company_uuid: $companyUuid) {
+        id uuid name slug description is_active company_uuid
+        company {
+          name
+        }
+      }
+    }
+  `,
+  ADMIN_PERMISSIONS: `
+    query AdminPermissions {
+      adminPermissions {
+        id uuid parent_id name slug route type icon sort_order is_visible
+        children { id uuid parent_id name slug route type icon sort_order is_visible
+          children { id uuid parent_id name slug route type icon sort_order is_visible }
+        }
+      }
+    }
+  `,
+  USER_ACCESS_PAGE: `
+    query UserAccessPage {
+      userAccesses {
+        uuid status user_id app_id company_id branch_id role_id
+        user { uuid full_name email }
+        app { uuid name }
+        company { uuid name }
+        branch { uuid name }
+        role { uuid name }
+      }
+      users { id uuid full_name email }
+      apps { id uuid name }
+      companies { id uuid name app_id }
+      branches { id uuid name company_id }
+    }
+  `,
 };
 
 export const SECUREX_MUTATIONS = {
@@ -265,6 +308,25 @@ export const SECUREX_MUTATIONS = {
   DELETE_APP: `
     mutation DeleteApp($uuid: String!) {
       deleteApp(uuid: $uuid)
+    }
+  `,
+  CREATE_USER_ACCESS: `
+    mutation CreateUserAccess($user_id: Int!, $app_id: Int!, $company_id: Int, $branch_id: Int, $role_id: Int, $status: String) {
+      createUserAccess(user_id: $user_id, app_id: $app_id, company_id: $company_id, branch_id: $branch_id, role_id: $role_id, status: $status) {
+        uuid status
+      }
+    }
+  `,
+  UPDATE_USER_ACCESS: `
+    mutation UpdateUserAccess($uuid: String!, $user_id: Int, $app_id: Int, $company_id: Int, $branch_id: Int, $role_id: Int, $status: String) {
+      updateUserAccess(uuid: $uuid, user_id: $user_id, app_id: $app_id, company_id: $company_id, branch_id: $branch_id, role_id: $role_id, status: $status) {
+        uuid status
+      }
+    }
+  `,
+  DELETE_USER_ACCESS: `
+    mutation DeleteUserAccess($uuid: String!) {
+      deleteUserAccess(uuid: $uuid)
     }
   `,
 };

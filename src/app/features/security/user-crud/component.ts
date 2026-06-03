@@ -6,6 +6,7 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-security-user-crud',
@@ -20,6 +21,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   users: any[] = [];
   roles: any[] = [];
+  branches: any[] = [];
   loading = false;
   isSaving = false;
 
@@ -30,18 +32,26 @@ export class SecurityUserCrudComponent implements OnInit {
   addFormFields: FormField[] = [
     { name: 'full_name', label: 'Nombre Completo', type: 'text', required: true, icon: 'pi pi-user' },
     { name: 'email', label: 'Correo Electrónico', type: 'email', required: true, icon: 'pi pi-envelope' },
-    { name: 'password', label: 'Contraseña Temporal', type: 'text', required: true, icon: 'pi pi-key' },
-    { name: 'role_id', label: 'Rol Asignado', type: 'select', required: true, options: [] }
+    { name: 'role_id', label: 'Rol Asignado', type: 'select', required: true, options: [] },
+    { name: 'branch_id', label: 'Sucursal', type: 'select', options: [] }
   ];
 
   editFormFields: FormField[] = [
     { name: 'full_name', label: 'Usuario', type: 'text', disabled: true, icon: 'pi pi-user' },
-    { name: 'role_id', label: 'Nuevo Rol', type: 'select', required: true, options: [] }
+    { name: 'role_id', label: 'Rol Asignado', type: 'select', required: true, options: [] },
+    { name: 'branch_id', label: 'Sucursal', type: 'select', options: [] },
+    { name: 'status', label: 'Estado', type: 'select', required: true, options: [
+      { label: 'Aprobado (APPROVED)', value: 'APPROVED' },
+      { label: 'Pendiente (PENDING)', value: 'PENDING' },
+      { label: 'Rechazado (REJECTED)', value: 'REJECTED' }
+    ] }
   ];
 
   cols: TableColumn[] = [
     { field: 'full_name', header: 'Usuario', type: 'user', subField: 'email', sortable: true },
     { field: 'role_name', header: 'Rol Actual', type: 'role', sortable: true },
+    { field: 'branch_name', header: 'Sucursal', type: 'text', sortable: true },
+    { field: 'status', header: 'Estado', type: 'status', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
@@ -49,18 +59,29 @@ export class SecurityUserCrudComponent implements OnInit {
     this.loadUsers();
   }
 
-  private ensureRolesLoaded(callback: () => void) {
-    if (this.roles.length > 0) {
+  private ensureRolesAndBranchesLoaded(callback: () => void) {
+    if (this.roles.length > 0 && this.branches.length > 0) {
       callback();
       return;
     }
 
-    this.securexService.getRolesWithPermissions().subscribe({
+    forkJoin({
+      roles: this.securexService.getRolesWithPermissions(),
+      branches: this.securexService.getCompanyBranches()
+    }).subscribe({
       next: (res) => {
-        this.roles = res;
-        const options = this.roles.map(r => ({ label: r.name, value: r.id }));
-        this.addFormFields.find(f => f.name === 'role_id')!.options = options;
-        this.editFormFields.find(f => f.name === 'role_id')!.options = options;
+        this.roles = res.roles;
+        const roleOptions = this.roles.map(r => ({ label: r.name, value: r.id }));
+        this.addFormFields.find(f => f.name === 'role_id')!.options = roleOptions;
+        this.editFormFields.find(f => f.name === 'role_id')!.options = roleOptions;
+
+        const branchList = res.branches.data ?? res.branches;
+        this.branches = branchList;
+        const branchOptions = branchList.map((b: any) => ({ label: b.name, value: b.id }));
+        const finalBranchOptions = [{ label: 'Ninguna (Sin Sucursal)', value: null }, ...branchOptions];
+        this.addFormFields.find(f => f.name === 'branch_id')!.options = finalBranchOptions;
+        this.editFormFields.find(f => f.name === 'branch_id')!.options = finalBranchOptions;
+
         callback();
       }
     });
@@ -73,7 +94,10 @@ export class SecurityUserCrudComponent implements OnInit {
         this.users = res.map((u: any) => ({
           ...u,
           role_name: u.access?.[0]?.role?.name || 'Sin Rol',
-          role_id: u.access?.[0]?.role?.id
+          role_id: u.access?.[0]?.role?.id,
+          branch_name: u.access?.[0]?.branch?.name || 'Sin Sucursal',
+          branch_id: u.access?.[0]?.branch_id,
+          status: u.access?.[0]?.status || 'PENDING'
         }));
         this.loading = false;
       },
@@ -82,7 +106,7 @@ export class SecurityUserCrudComponent implements OnInit {
   }
 
   handleAdd() {
-    this.ensureRolesLoaded(() => {
+    this.ensureRolesAndBranchesLoaded(() => {
       this.modalMode = 'add';
       this.selectedItem = null;
       this.modalVisible = true;
@@ -90,7 +114,7 @@ export class SecurityUserCrudComponent implements OnInit {
   }
 
   handleEdit(item: any) {
-    this.ensureRolesLoaded(() => {
+    this.ensureRolesAndBranchesLoaded(() => {
       this.modalMode = 'edit';
       this.selectedItem = { ...item };
       this.modalVisible = true;
@@ -102,13 +126,18 @@ export class SecurityUserCrudComponent implements OnInit {
   save(data: any) {
     this.isSaving = true;
     if (this.modalMode === 'add') {
-      this.securexService.createUserGql(data).subscribe({
-        next: () => this.handleSuccess('Usuario invitado correctamente'),
+      this.securexService.createUser(data).subscribe({
+        next: () => this.handleSuccess('Usuario invitado. Se ha enviado un correo con su código de activación.'),
         error: () => this.isSaving = false
       });
     } else {
-      this.securexService.updateUserRole(this.selectedItem.uuid, data.role_id).subscribe({
-        next: () => this.handleSuccess('Rol actualizado'),
+      const updateData = {
+        role_id: data.role_id,
+        branch_id: data.branch_id,
+        status: data.status
+      };
+      this.securexService.updateUserRole(this.selectedItem.uuid, updateData).subscribe({
+        next: () => this.handleSuccess('Usuario actualizado'),
         error: () => this.isSaving = false
       });
     }

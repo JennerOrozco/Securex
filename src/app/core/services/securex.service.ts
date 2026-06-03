@@ -26,7 +26,7 @@ export class SecurexService {
   getUsers(): Observable<any> { return this.http.get(`${this.baseUrl}/company/users`); }
   getUsersPaginated(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/company/users-paginated`, { params }); }
   createUser(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/users`, data); }
-  updateUserRole(uuid: string, roleId: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/users/${uuid}/role`, { role_id: roleId }); }
+  updateUserRole(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/users/${uuid}/role`, data); }
   deleteUser(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/users/${uuid}`); }
 
   // === APPS ===
@@ -45,6 +45,7 @@ export class SecurexService {
 
   // === BRANCHES ===
   getBranches(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/branches`); }
+  getCompanyBranches(): Observable<any> { return this.http.get(`${this.baseUrl}/company/branches`); }
   createBranch(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/branches`, data); }
   updateBranch(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/branches/${uuid}`, data); }
   deleteBranch(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/branches/${uuid}`); }
@@ -131,8 +132,12 @@ export class SecurexService {
 
   // ─── GraphQL: Nested reads ───
 
-  getUsersWithRoles(): Observable<any[]> {
-    return this.gql.query<{ users: any[] }>('security', SECUREX_QUERIES.USERS).pipe(map(d => d.users));
+  getUsersWithRoles(params?: any): Observable<any[]> {
+    return this.gql.query<{ users: any[] }>('security', SECUREX_QUERIES.USERS, params).pipe(map(d => d.users));
+  }
+
+  getAdminUsersGql(params?: any): Observable<any[]> {
+    return this.gql.query<{ adminUsers: any[] }>('security', SECUREX_QUERIES.ADMIN_USERS, params).pipe(map(d => d.adminUsers));
   }
 
   getUserWithAccess(uuid: string): Observable<any> {
@@ -143,12 +148,20 @@ export class SecurexService {
     return this.gql.query<{ roles: any[] }>('security', SECUREX_QUERIES.ROLES).pipe(map(d => d.roles));
   }
 
+  getRolesByCompany(appId: number, companyUuid?: string | null): Observable<any[]> {
+    return this.gql.query<{ rolesByCompany: any[] }>('security', SECUREX_QUERIES.ROLES_BY_COMPANY, { appId, companyUuid }).pipe(map(d => d.rolesByCompany));
+  }
+
   getRoleWithPermissions(uuid: string): Observable<any> {
     return this.gql.query<{ role: any }>('security', SECUREX_QUERIES.ROLE, { uuid }).pipe(map(d => d.role));
   }
 
   getPermissionsTree(): Observable<any[]> {
     return this.gql.query<{ permissions: any[] }>('security', SECUREX_QUERIES.PERMISSIONS).pipe(map(d => d.permissions));
+  }
+
+  getAdminPermissionsGql(): Observable<any[]> {
+    return this.gql.query<{ adminPermissions: any[] }>('security', SECUREX_QUERIES.ADMIN_PERMISSIONS).pipe(map(d => d.adminPermissions));
   }
 
   getCompaniesWithBranches(): Observable<any[]> {
@@ -171,6 +184,22 @@ export class SecurexService {
     return this.gql.query<{ userAccesses: any[] }>('security', SECUREX_QUERIES.USER_ACCESSES).pipe(map(d => d.userAccesses));
   }
 
+  getUserAccessPageData(): Observable<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }> {
+    return this.gql.query<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }>('security', SECUREX_QUERIES.USER_ACCESS_PAGE);
+  }
+
+  createUserAccessGql(data: any): Observable<any> {
+    return this.gql.query<{ createUserAccess: any }>('security', SECUREX_MUTATIONS.CREATE_USER_ACCESS, data).pipe(map(d => d.createUserAccess));
+  }
+
+  updateUserAccessGql(uuid: string, data: any): Observable<any> {
+    return this.gql.query<{ updateUserAccess: any }>('security', SECUREX_MUTATIONS.UPDATE_USER_ACCESS, { uuid, ...data }).pipe(map(d => d.updateUserAccess));
+  }
+
+  deleteUserAccessGql(uuid: string): Observable<any> {
+    return this.gql.query<{ deleteUserAccess: boolean }>('security', SECUREX_MUTATIONS.DELETE_USER_ACCESS, { uuid }).pipe(map(d => d.deleteUserAccess));
+  }
+
   getSecurityAuditLogs(): Observable<any[]> {
     return this.gql.query<{ securityAuditLogs: any[] }>('security', SECUREX_QUERIES.SECURITY_AUDIT_LOGS).pipe(map(d => d.securityAuditLogs));
   }
@@ -183,7 +212,7 @@ export class SecurexService {
 
   createUserGql(data: any): Observable<any> {
     return this.gql.query<{ createUser: any }>('security', SECUREX_MUTATIONS.CREATE_USER, {
-      full_name: data.full_name, email: data.email, status: data.status,
+      full_name: data.full_name, email: data.email,
       is_super_admin: !!data.is_super_admin, auth_provider: data.auth_provider,
     }).pipe(map(d => d.createUser));
   }
