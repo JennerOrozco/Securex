@@ -1,7 +1,7 @@
 import {
   Motion,
   MotionModule
-} from "./chunk-4JR776N2.js";
+} from "./chunk-DRZVOXWO.js";
 import {
   ObjectUtils,
   zindexutils
@@ -14,6 +14,9 @@ import {
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
 import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
+import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
 import {
@@ -21,9 +24,6 @@ import {
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import {
   D,
   I,
@@ -1285,4 +1285,4 @@ var OverlayModule = class _OverlayModule {
 export {
   Overlay
 };
-//# sourceMappingURL=chunk-LV33Z6R5.js.map
+//# sourceMappingURL=chunk-OZFY444D.js.map

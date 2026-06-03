@@ -1,0 +1,93 @@
+<div class="h-full flex flex-col gap-3">
+  <!-- Formulario de Notas con Textarea (ARRIBA) -->
+  <div class="gm-sticky-note-new-container mb-2">
+    <textarea
+      [(ngModel)]="newNoteText"
+      [ngModelOptions]="{standalone: true}"
+      placeholder="Escribe una nueva nota de seguimiento..."
+      rows="2"
+      class="gm-sticky-note-new-input"></textarea>
+    <div class="gm-sticky-note-new-actions">
+      <span class="text-[10.5px] text-slate-400 flex items-center gap-1">
+        <i class="pi pi-info-circle text-[9px]"></i> Visibles por todo el equipo
+      </span>
+      <button class="gm-sticky-note-new-btn" 
+              [disabled]="!newNoteText() || !newNoteText().trim() || saving" 
+              (click)="addNote()">
+        <i class="pi pi-plus"></i>
+        {{ saving ? 'Agregando...' : 'Agregar Nota' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Listado de Notas (Scrollable Grid) (ABAJO) -->
+  <p-scrollpanel [style]="{ flex: '1', width: '100%' }" styleClass="gm-notes-scroll">
+    <div class="flex flex-col gap-2 pr-2">
+      
+      <div *ngIf="loading" class="flex items-center justify-center py-10">
+        <i class="pi pi-spin pi-spinner text-xl text-slate-300"></i>
+      </div>
+
+      <div *ngIf="!loading && notes.length === 0" class="flex flex-col items-center justify-center py-12 text-center">
+        <div class="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center mb-3">
+          <i class="pi pi-file text-lg text-slate-400"></i>
+        </div>
+        <span class="text-xs font-semibold text-slate-500">Sin notas aún</span>
+        <span class="text-[11px] text-slate-400 mt-1">Escribe la primera nota en el formulario de arriba.</span>
+      </div>
+
+      <div *ngIf="!loading && notes.length > 0" class="gm-sticky-notes-grid">
+        <div *ngFor="let note of notes; let i = index" 
+             class="gm-sticky-note" 
+             [ngClass]="'gm-sticky-note--' + ['yellow', 'blue', 'green', 'rose', 'purple'][i % 5]"
+             [class.editing]="editingNoteId() === note.uuid">
+          
+          <!-- Header with Author & Actions Menu -->
+          <div class="gm-sticky-note-header">
+            <div class="gm-sticky-note-author">
+              <div class="gm-sticky-note-avatar">{{ (note.created_by_user_name || 'A')[0] }}</div>
+              <span class="gm-sticky-note-author-name" [pTooltip]="note.created_by_user_name || 'Agente'" tooltipPosition="top">
+                {{ note.created_by_user_name || 'Agente' }}
+              </span>
+            </div>
+            
+            <div class="gm-sticky-note-menu" (click)="toggleNoteMenu(note.uuid); $event.stopPropagation()">
+              <span class="gm-sticky-note-menu-btn">
+                <i class="pi pi-ellipsis-v text-[10px]"></i>
+              </span>
+              
+              <div class="gm-sticky-note-dropdown" *ngIf="openNoteMenuId() === note.uuid" (click)="$event.stopPropagation()">
+                <button (click)="startEditNote(note); closeNoteMenu()">
+                  <i class="pi pi-pencil text-slate-500"></i> Editar
+                </button>
+                <button class="danger" (click)="deleteNote(note.uuid); closeNoteMenu()">
+                  <i class="pi pi-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Read-only Body -->
+          <div *ngIf="editingNoteId() !== note.uuid" class="gm-sticky-note-body">
+            {{ note.note_content }}
+          </div>
+
+          <!-- Edit Mode Body -->
+          <div *ngIf="editingNoteId() === note.uuid" class="gm-sticky-note-edit">
+            <textarea [(ngModel)]="editNoteText" [ngModelOptions]="{standalone: true}" class="gm-sticky-note-textarea" rows="3"></textarea>
+            <div class="gm-sticky-note-edit-actions">
+              <button class="gm-sticky-note-btn-cancel" (click)="cancelEditNote()">Cancelar</button>
+              <button class="gm-sticky-note-btn-save" (click)="saveEditNote()">Guardar</button>
+            </div>
+          </div>
+
+          <!-- Footer with Date -->
+          <div class="gm-sticky-note-footer" *ngIf="editingNoteId() !== note.uuid">
+            <span class="gm-sticky-note-date">{{ note.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </p-scrollpanel>
+</div>

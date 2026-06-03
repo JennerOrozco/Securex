@@ -72,7 +72,7 @@ export class CompaniesComponent implements OnInit {
   private updateFormFields() {
     this.formFields = [
       { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true },
-      { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'text', required: true },
+      { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true },
       {
         name: 'app_id',
         label: 'Aplicación Asociada',

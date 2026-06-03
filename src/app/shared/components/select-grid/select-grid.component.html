@@ -1,0 +1,39 @@
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
+  <p-select
+    [id]="id"
+    [options]="options"
+    [optionLabel]="optionLabel"
+    [optionValue]="optionValue"
+    [placeholder]="placeholder"
+    [formControl]="$any(control)"
+    [filter]="true"
+    [filterBy]="filterBy || optionLabel"
+    [showClear]="showClear && !!control.value"
+    appendTo="body"
+    (onChange)="onChange.emit($event)">
+    <ng-template pTemplate="selectedItem" let-selected>
+      <span class="text-sm font-medium truncate">{{ selected[optionLabel] }}</span>
+    </ng-template>
+    <ng-template pTemplate="item" let-item>
+      <div class="sg-item">
+        <span class="sg-item-main">{{ item[optionLabel] }}</span>
+        <div class="sg-item-details">
+          @for (col of columns; track col.field) {
+            <span class="sg-item-col" [style.width]="col.width || 'auto'">
+              @if (col.icon) { <i [class]="col.icon + ' sg-item-col-icon'"></i> }
+              <span [class.sg-item-col-muted]="col.field !== optionLabel">{{ item[col.field] || '—' }}</span>
+            </span>
+          }
+        </div>
+      </div>
+    </ng-template>
+    <ng-template pTemplate="emptyfilter">
+      <div class="sg-empty">
+        <span>No se encontraron resultados</span>
+        <button type="button" (click)="onEmptyFilterAction.emit(); $event.stopPropagation()">
+          <i [class]="emptyFilterIcon + ' mr-1'"></i> {{ emptyFilterLabel }}
+        </button>
+      </div>
+    </ng-template>
+  </p-select>
+</app-form-field>

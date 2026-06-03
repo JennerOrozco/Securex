@@ -1,0 +1,24 @@
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
+  <input
+    pInputText
+    [id]="id"
+    class="gm-input"
+    type="text"
+    [placeholder]="placeholder"
+    [formControl]="control"
+  />
+
+  @if (control?.value) {
+    <div class="logo-preview-modal-container" style="margin-top: 8px;">
+      <img
+        [src]="control.value"
+        [alt]="altText"
+        class="logo-preview-modal-img"
+        (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'"
+      />
+      <div class="logo-preview-modal-fallback" style="display: none;">
+        <i [class]="fallbackIcon"></i>
+      </div>
+    </div>
+  }
+</app-form-field>

@@ -184,12 +184,12 @@ export class SecurexService {
   createUserGql(data: any): Observable<any> {
     return this.gql.query<{ createUser: any }>('security', SECUREX_MUTATIONS.CREATE_USER, {
       full_name: data.full_name, email: data.email, status: data.status,
-      is_super_admin: data.is_super_admin, auth_provider: data.auth_provider,
+      is_super_admin: !!data.is_super_admin, auth_provider: data.auth_provider,
     }).pipe(map(d => d.createUser));
   }
 
   updateUserGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateUser: any }>('security', SECUREX_MUTATIONS.UPDATE_USER, { uuid, ...data }).pipe(map(d => d.updateUser));
+    return this.gql.query<{ updateUser: any }>('security', SECUREX_MUTATIONS.UPDATE_USER, { uuid, ...this.bool(data) }).pipe(map(d => d.updateUser));
   }
 
   deleteUserGql(uuid: string): Observable<any> {
@@ -198,12 +198,12 @@ export class SecurexService {
 
   createRoleGql(data: any): Observable<any> {
     return this.gql.query<{ createRole: any }>('security', SECUREX_MUTATIONS.CREATE_ROLE, {
-      name: data.name, slug: data.slug, description: data.description, is_active: data.is_active,
+      name: data.name, slug: data.slug, description: data.description, is_active: !!data.is_active,
     }).pipe(map(d => d.createRole));
   }
 
   updateRoleGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateRole: any }>('security', SECUREX_MUTATIONS.UPDATE_ROLE, { uuid, ...data }).pipe(map(d => d.updateRole));
+    return this.gql.query<{ updateRole: any }>('security', SECUREX_MUTATIONS.UPDATE_ROLE, { uuid, ...this.bool(data) }).pipe(map(d => d.updateRole));
   }
 
   deleteRoleGql(uuid: string): Observable<any> {
@@ -215,14 +215,14 @@ export class SecurexService {
   }
 
   createPermissionGql(data: any): Observable<any> {
-    return this.gql.query<{ createPermission: any }>('security', SECUREX_MUTATIONS.CREATE_PERMISSION, {
+    return this.gql.query<{ createPermission: any }>('security', SECUREX_MUTATIONS.CREATE_PERMISSION, this.bool({
       name: data.name, slug: data.slug, type: data.type, icon: data.icon,
       route: data.route, parent_id: data.parent_id, sort_order: data.sort_order, is_visible: data.is_visible,
-    }).pipe(map(d => d.createPermission));
+    })).pipe(map(d => d.createPermission));
   }
 
   updatePermissionGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updatePermission: any }>('security', SECUREX_MUTATIONS.UPDATE_PERMISSION, { uuid, ...data }).pipe(map(d => d.updatePermission));
+    return this.gql.query<{ updatePermission: any }>('security', SECUREX_MUTATIONS.UPDATE_PERMISSION, { uuid, ...this.bool(data) }).pipe(map(d => d.updatePermission));
   }
 
   deletePermissionGql(uuid: string): Observable<any> {
@@ -231,12 +231,12 @@ export class SecurexService {
 
   createCompanyGql(data: any): Observable<any> {
     return this.gql.query<{ createCompany: any }>('security', SECUREX_MUTATIONS.CREATE_COMPANY, {
-      name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: data.is_active,
+      name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: !!data.is_active,
     }).pipe(map(d => d.createCompany));
   }
 
   updateCompanyGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateCompany: any }>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, { uuid, ...data }).pipe(map(d => d.updateCompany));
+    return this.gql.query<{ updateCompany: any }>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, { uuid, ...this.bool(data) }).pipe(map(d => d.updateCompany));
   }
 
   deleteCompanyGql(uuid: string): Observable<any> {
@@ -245,12 +245,12 @@ export class SecurexService {
 
   createBranchGql(data: any): Observable<any> {
     return this.gql.query<{ createBranch: any }>('security', SECUREX_MUTATIONS.CREATE_BRANCH, {
-      name: data.name, company_id: data.company_id, address: data.address, phone: data.phone, is_active: data.is_active,
+      name: data.name, company_id: data.company_id, address: data.address, phone: data.phone, is_active: !!data.is_active,
     }).pipe(map(d => d.createBranch));
   }
 
   updateBranchGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateBranch: any }>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, { uuid, ...data }).pipe(map(d => d.updateBranch));
+    return this.gql.query<{ updateBranch: any }>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, { uuid, ...this.bool(data) }).pipe(map(d => d.updateBranch));
   }
 
   deleteBranchGql(uuid: string): Observable<any> {
@@ -259,12 +259,12 @@ export class SecurexService {
 
   createAppGql(data: any): Observable<any> {
     return this.gql.query<{ createApp: any }>('security', SECUREX_MUTATIONS.CREATE_APP, {
-      name: data.name, slug: data.slug, is_active: data.is_active,
+      name: data.name, slug: data.slug, is_active: !!data.is_active,
     }).pipe(map(d => d.createApp));
   }
 
   updateAppGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateApp: any }>('security', SECUREX_MUTATIONS.UPDATE_APP, { uuid, ...data }).pipe(map(d => d.updateApp));
+    return this.gql.query<{ updateApp: any }>('security', SECUREX_MUTATIONS.UPDATE_APP, { uuid, ...this.bool(data) }).pipe(map(d => d.updateApp));
   }
 
   deleteAppGql(uuid: string): Observable<any> {
@@ -277,5 +277,18 @@ export class SecurexService {
 
   getRefreshTokensGql(): Observable<any[]> {
     return this.gql.query<{ refreshTokens: any[] }>('security', SECUREX_QUERIES.REFRESH_TOKENS).pipe(map(d => d.refreshTokens));
+  }
+
+  private bool(data: any): any {
+    const out: any = {};
+    for (const key of Object.keys(data)) {
+      const val = data[key];
+      if (key === 'is_active' || key === 'is_visible' || key === 'is_super_admin') {
+        out[key] = !!val;
+      } else {
+        out[key] = val;
+      }
+    }
+    return out;
   }
 }

@@ -15,6 +15,14 @@ import { PasswordModule } from 'primeng/password';
 import { FormField } from '../modal-shell.types';
 import { SelectComponent } from '../../../components/select/select.component';
 import { InputComponent } from '../../../components/input/input.component';
+import { PhoneInputComponent } from '../../../components/phone-input/phone-input.component';
+import { NitInputComponent } from '../../../components/nit-input/nit-input.component';
+import { FileInputComponent } from '../../../components/file-input/file-input.component';
+import { InputImageComponent } from '../../../components/input-image/input-image.component';
+import { PasswordComponent } from '../../../components/password/password.component';
+import { InputNumberComponent } from '../../../components/input-number/input-number.component';
+import { DatepickerComponent } from '../../../components/datepicker/datepicker.component';
+import { TextareaComponent } from '../../../components/textarea/textarea.component';
 import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.utils';
 
 @Component({
@@ -23,7 +31,9 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.ut
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule, DialogModule, ButtonModule,
     InputTextModule, InputNumberModule, AutoCompleteModule, DatePickerModule,
-    TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule, InputComponent
+    TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule,
+    InputComponent, PhoneInputComponent, NitInputComponent, FileInputComponent,
+    InputImageComponent, PasswordComponent, InputNumberComponent, DatepickerComponent, TextareaComponent
   ],
   templateUrl: './form-modal.component.html',
   styleUrls: ['../../modals.css', './form-modal.component.css']

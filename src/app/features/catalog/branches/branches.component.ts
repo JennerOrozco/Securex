@@ -71,7 +71,7 @@ export class BranchesComponent implements OnInit {
         options: this.companies.map((c: any) => ({ label: c.name, value: c.id }))
       },
       { name: 'address',    label: 'Dirección',          type: 'text',   icon: 'pi pi-map-marker' },
-      { name: 'phone',      label: 'Teléfono',           type: 'text',   icon: 'pi pi-phone' },
+      { name: 'phone',      label: 'Teléfono',           type: 'phone',  icon: 'pi pi-phone' },
       {
         name: 'is_active',  label: '¿Activa?',           type: 'select', required: true,
         options: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }]

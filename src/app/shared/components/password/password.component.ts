@@ -14,6 +14,7 @@ export class PasswordComponent {
   @Input() id: string = 'password-' + Math.random().toString(36).substr(2, 9);
   @Input() label: string = '';
   @Input() placeholder: string = '';
+  @Input() icon: string = '';
   @Input() required: boolean = false;
   @Input() feedback: boolean = false; // Mostrar indicador de fuerza
   @Input() toggleMask: boolean = true; // Mostrar/ocultar contraseña

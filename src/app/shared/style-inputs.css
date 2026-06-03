@@ -1,0 +1,410 @@
+/* ════════════════════════════════════════════
+   STYLE-INPUTS.CSS
+   All form control styles: labels, icons, inputs,
+   textareas, selects, and component-specific overrides.
+   ════════════════════════════════════════════ */
+
+.gm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: field-in 0.25s ease both;
+}
+
+@keyframes field-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* === LABELS === */
+.gm-label,
+.gm-dialog .gm-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: #000000;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.gm-required { color: #e11d48; font-size: 0.75rem; line-height: 1; }
+
+/* === FIELD ICONS === */
+.gm-control-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.gm-field-icon,
+i.gm-field-icon,
+span.gm-field-icon,
+.gm-dialog .gm-field-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: #94a3b8;
+  font-size: 0.75rem;
+  pointer-events: none;
+}
+
+/* === STATUS ICONS === */
+.gm-status-icon {
+  position: absolute;
+  right: 10px;
+  z-index: 2;
+  font-size: 0.8rem;
+  pointer-events: none;
+  transition: right 0.2s ease;
+}
+.gm-valid { color: #059669; }
+.gm-invalid { color: #e11d48; }
+
+/* === ERROR MESSAGE === */
+.gm-error-msg {
+  font-size: 0.65rem;
+  color: #e11d48;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  animation: error-in 0.18s ease both;
+}
+@keyframes error-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+/* === INPUT BASE — applies to ALL form controls === */
+.gm-input.p-inputtext,
+.gm-input.p-inputtext.p-component,
+.gm-dialog .p-inputtext,
+.gm-dialog .gm-inputnumber .p-inputtext,
+.gm-dialog .gm-datepicker .p-datepicker-input,
+.gm-dialog .gm-autocomplete .p-autocomplete-input,
+.gm-dialog .gm-datepicker .p-inputtext,
+.gm-autocomplete .p-autocomplete-input,
+.gm-inputnumber .p-inputtext,
+.gm-datepicker .p-datepicker-input,
+.gm-datepicker .p-inputtext,
+.p-password-input {
+    width: 100% !important;
+    min-height: 32px !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    border-radius: 8px !important;
+    padding: 0.4rem 2.0rem !important;
+    font-size: 0.85rem !important;
+    color: #0f172a !important;
+    background: #ffffff !important;
+    backdrop-filter: blur(4px);
+    transition: all 0.2s !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* === FOCUS === */
+.gm-input.p-inputtext:focus,
+.gm-input.p-inputtext.p-component:focus,
+.gm-dialog .p-inputtext:focus,
+.gm-dialog .gm-inputnumber .p-inputtext:focus,
+.gm-dialog .gm-datepicker .p-datepicker-input:focus,
+.gm-dialog .gm-autocomplete .p-autocomplete-input:focus,
+.gm-dialog .gm-datepicker .p-inputtext:focus,
+.gm-autocomplete .p-autocomplete-input:focus,
+.gm-inputnumber .p-inputtext:focus,
+.gm-datepicker .p-datepicker-input:focus,
+.gm-datepicker .p-inputtext:focus,
+.p-password-input:focus {
+    border-color: #6366f1 !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08) !important;
+}
+
+/* === PLACEHOLDER === */
+.gm-dialog .p-inputtext::placeholder,
+.gm-dialog .p-textarea::placeholder,
+.gm-input.p-inputtext::placeholder,
+.p-inputtext::placeholder,
+.p-textarea::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* === ICON PADDING === */
+.gm-has-icon .gm-input.p-inputtext,
+.gm-has-icon .gm-input.p-inputtext.p-component,
+.gm-dialog .gm-has-icon .p-inputtext,
+.gm-dialog .gm-has-icon .gm-inputnumber .p-inputtext,
+.gm-dialog .gm-has-icon .gm-autocomplete .p-autocomplete-input,
+.gm-has-icon .p-autocomplete-input,
+.gm-has-icon .gm-inputnumber .p-inputtext,
+.gm-has-icon .p-datepicker-input,
+.gm-has-icon .p-inputtext,
+.gm-input--icon.p-inputtext,
+.gm-input--icon.p-inputtext.p-component {
+    padding-left: 2rem !important;
+}
+
+/* === TEXTAREA === */
+.gm-textarea,
+.gm-textarea.p-textarea,
+.p-textarea.gm-textarea {
+  width: 100%;
+  min-height: 32px;
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 8px;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.85rem !important;
+  color: #0f172a;
+  background: #ffffff;
+  backdrop-filter: blur(4px);
+  transition: all 0.2s;
+  outline: none;
+  resize: vertical;
+}
+.gm-has-icon .gm-textarea {
+  padding-left: 2rem !important;
+}
+.gm-textarea:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+}
+.gm-textarea::placeholder {
+  font-size: 0.85rem;
+  color: #94a3b8 !important;
+}
+
+/* p-inputNumber wrapper */
+.gm-dialog .p-inputnumber,
+.gm-dialog .gm-inputnumber .p-inputnumber,
+.gm-dialog .p-inputnumber-input {
+    width: 100% !important;
+}
+.gm-dialog .p-inputnumber-input.p-inputtext {
+    border-radius: 8px !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    background: #ffffff !important;
+    font-size: 0.85rem !important;
+    min-height: 32px !important;
+}
+
+/* ════════════════════════════════════════════
+   SELECT (app-select)
+   ════════════════════════════════════════════ */
+
+app-select {
+  display: block;
+  width: 100%;
+}
+
+app-select .gm-field,
+app-select .gm-control-wrap {
+  width: 100%;
+}
+
+.gm-select .p-select:focus-within {
+  border-color: #6366f1;
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+}
+
+.gm-select .p-select-label {
+  font-size: 0.85rem;
+  color: #0f172a;
+  padding: 0.15rem 0.65rem;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.p-select .p-select-placeholder,
+.p-select .p-placeholder {
+  color: #94a3b8 !important;
+}
+
+.p-select .p-select-dropdown {
+  background: rgba(226, 232, 240, 0.5) !important;
+  border-left: 1px solid rgba(226, 232, 240, 0.9) !important;
+  width: 32px !important;
+  align-self: stretch !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #64748b !important;
+}
+
+.p-select .p-select-clear-icon {
+  right: 48px !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  margin: auto 0 !important;
+  font-size: 0.45rem !important;
+  height: 50% !important;
+  width: auto !important;
+  aspect-ratio: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 4px;
+  color: #94a3b8 !important;
+  transition: all 0.15s ease;
+}
+
+.p-select .p-select-clear-icon:hover {
+  color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-radius: 6px;
+}
+
+.p-select .p-select-clear {
+  right: 52px !important;
+}
+
+.p-select {
+  height: 32px !important;
+  font-size: 0.85rem !important;
+  box-sizing: border-box !important;
+}
+
+.p-select-label {
+  padding: 0.15rem 2.5rem 0.15rem 0.65rem !important;
+  font-size: 0.85rem !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.p-select .p-select-clear-icon,
+.p-select .p-select-clear {
+  right: 36px !important;
+}
+
+.p-select-overlay {
+  font-size: 0.85rem !important;
+}
+
+.p-select-panel .p-select-item,
+.p-select-panel .p-select-option {
+  padding: 0.35rem 0.65rem !important;
+}
+
+.p-select-overlay .p-select-filter.p-inputtext {
+  font-size: xx-small !important;
+}
+
+.p-select-panel .p-select-filter {
+  padding: 0.3rem 0.5rem !important;
+}
+
+.p-select-panel .p-select-filter-container {
+  padding: 0.35rem !important;
+}
+
+.p-select-panel .p-select-empty-message {
+  padding: 0.35rem 0.65rem !important;
+}
+
+/* ════════════════════════════════════════════
+   PHONE INPUT COUNTRY SELECT
+   ════════════════════════════════════════════ */
+
+.gm-phone-wrap { min-height: 32px; }
+
+.gm-phone-country-select {
+  min-width: 100px !important;
+  max-width: 120px !important;
+  height: 32px !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  border-radius: 8px !important;
+  background: #fff !important;
+  transition: all 0.2s;
+}
+.gm-phone-country-select .p-select-label-container { flex: none !important; }
+.gm-phone-country-select .p-select-label { padding-inline: 0.5rem !important; font-size: 0.85rem; }
+.gm-phone-country-select .p-select-dropdown { width: 20px !important; }
+.gm-phone-country-select:not(.p-disabled):hover { border-color: #6366f1 !important; }
+.gm-phone-country-select.p-select.p-focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08) !important;
+}
+
+/* ════════════════════════════════════════════
+   PASSWORD
+   ════════════════════════════════════════════ */
+
+.p-password { width: 100%; }
+
+/* ════════════════════════════════════════════
+   SELECT GRID
+   ════════════════════════════════════════════ */
+
+app-select-grid {
+  display: block;
+  width: 100%;
+}
+
+app-select-grid .p-select {
+  width: 100% !important;
+}
+
+.sg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 0;
+}
+
+.sg-item-main {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.sg-item-details {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.sg-item-col {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.72rem;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+.sg-item-col-icon {
+  font-size: 0.65rem;
+  color: #94a3b8;
+}
+
+.sg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.sg-empty button {
+  padding: 5px 12px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #0284c7;
+  background: #f0f9ff;
+  border: 1px solid #bae6fd;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sg-empty button:hover {
+  background: #e0f2fe;
+  border-color: #7dd3fc;
+}

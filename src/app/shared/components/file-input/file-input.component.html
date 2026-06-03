@@ -1,0 +1,62 @@
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
+  <div class="gm-file-wrap">
+    <div class="file-drop-zone"
+         [class.has-file]="filePayload || control?.value"
+         [class.drag-over]="dragOver"
+         (click)="mode !== 'view' && fileInput.click()"
+         (dragover)="mode !== 'view' && onDragOver($event)"
+         (dragleave)="mode !== 'view' && onDragLeave($event)"
+         (drop)="mode !== 'view' && onDrop($event)">
+
+      @if (!filePayload && !control?.value) {
+        <div class="file-drop-content">
+          <i class="pi pi-cloud-upload file-drop-icon"></i>
+          <span class="file-drop-text">Arrastre un archivo o haga clic para seleccionar</span>
+          <span class="file-drop-hint">{{ accept.replace(',', ', ') || 'Todos los archivos' }}</span>
+        </div>
+      } @else {
+        <div class="file-preview-row">
+          @if (filePayload) {
+            @if (localPreview) {
+              <div class="file-image-preview-container">
+                <img [src]="localPreview" alt="Preview" class="file-image-preview-img" />
+              </div>
+            } @else {
+              <div class="file-icon" [class]="getFileIconClass(filePayload)">
+                <i [class]="getFileIcon(filePayload)"></i>
+              </div>
+            }
+            <div class="file-details">
+              <span class="file-name">{{ filePayload.name }}</span>
+              <span class="file-size">{{ formatFileSize(filePayload.size) }}</span>
+            </div>
+          } @else {
+            <div class="file-image-preview-container">
+              <img [src]="control?.value" alt="Preview" class="file-image-preview-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
+              <div class="logo-preview-modal-fallback" style="display: none; width: 48px; height: 48px; border-radius: 8px; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.05); color: #64748b;">
+                <i class="pi pi-building" style="font-size: 1.5rem;"></i>
+              </div>
+            </div>
+            <div class="file-details">
+              <span class="file-name">Archivo actual</span>
+              <span class="file-size">Existente</span>
+            </div>
+          }
+          @if (mode !== 'view') {
+            <button type="button" class="remove-btn" (click)="removeFile($event)">
+              <i class="pi pi-times"></i>
+            </button>
+          }
+        </div>
+      }
+    </div>
+
+    <input
+      #fileInput
+      type="file"
+      [accept]="accept"
+      (change)="onFileChange($event)"
+      style="display: none"
+    />
+  </div>
+</app-form-field>

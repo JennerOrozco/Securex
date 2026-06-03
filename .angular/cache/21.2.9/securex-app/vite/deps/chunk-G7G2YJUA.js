@@ -1,7 +1,10 @@
 import {
   Badge,
   BadgeModule
-} from "./chunk-2LINKKEO.js";
+} from "./chunk-LBXZVMZ4.js";
+import {
+  Ripple
+} from "./chunk-3DRLJCNM.js";
 import {
   AutoFocus
 } from "./chunk-BXHGJUTT.js";
@@ -10,14 +13,14 @@ import {
 } from "./chunk-F4AFAYMT.js";
 import {
   Fluid
-} from "./chunk-Q4Z5UCYN.js";
-import {
-  Ripple
-} from "./chunk-3DRLJCNM.js";
+} from "./chunk-GZQIK2DP.js";
 import {
   BaseComponent,
   PARENT_INSTANCE
 } from "./chunk-HYZLEJEF.js";
+import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
 import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
@@ -25,9 +28,6 @@ import {
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import {
   U,
   W,
@@ -2358,4 +2358,4 @@ export {
   Button,
   ButtonModule
 };
-//# sourceMappingURL=chunk-IFHZLR5K.js.map
+//# sourceMappingURL=chunk-G7G2YJUA.js.map

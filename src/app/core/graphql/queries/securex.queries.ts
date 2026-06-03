@@ -81,7 +81,7 @@ export const SECUREX_QUERIES = {
   APPS: `
     query Apps {
       apps {
-        id uuid name slug api_key is_active
+        id uuid name slug api_key api_secret google_client_id google_client_secret is_active
         companies { id uuid name is_active branches { id uuid name } }
       }
     }

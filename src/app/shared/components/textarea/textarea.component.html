@@ -1,0 +1,12 @@
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
+  <textarea
+    pTextarea
+    [id]="id"
+    class="gm-textarea"
+    [rows]="rows"
+    [autoResize]="autoResize"
+    [placeholder]="placeholder"
+    [formControl]="control"
+    (input)="onInput.emit($event)"
+  ></textarea>
+</app-form-field>
