@@ -98,7 +98,7 @@ export class AdminPermissionsComponent implements OnInit {
 
     this.treeNodes = this.apps.map(app => ({
       label: app.name,
-      data: { ...app, name: app.name, slug: app.slug || '', type: '', _canAdd: true, _canEdit: false, _canDelete: false },
+      data: { ...app, name: app.name, slug: app.slug || '', type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false },
       icon: 'pi pi-th-large',
       expanded: true,
       leaf: this.permissions.length === 0,

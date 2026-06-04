@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from '@shared/table-component/table-component.component';
 import { TableColumn } from '@shared/table-component/table.types';
 import { SecurexService } from '@core/services/securex.service';
 import { AuthService } from '@core/services/auth.service';
@@ -8,11 +7,13 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
+import { TreeTableComponent } from '@shared/tree-table-component/tree-table-component.component';
+import { TreeNode } from 'primeng/api';
 
 @Component({
   selector: 'app-security-branches',
   standalone: true,
-  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
+  imports: [CommonModule, TreeTableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './branches.component.html',
   styleUrl: './branches.component.css'
 })
@@ -21,7 +22,7 @@ export class BranchesComponent implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
-  tableData: any[] = [];
+  treeNodes: TreeNode[] = [];
   companies: any[] = [];
   loading = false;
   isSaving = false;
@@ -29,16 +30,16 @@ export class BranchesComponent implements OnInit {
   modalVisible = false;
   modalMode: 'add' | 'edit' | 'delete' = 'add';
   selectedItem: any = null;
-  preselectedCompanyId: number | null = null;
+  currentCompanyId: number | null = null;
 
   formFields: FormField[] = [];
 
   cols: TableColumn[] = [
-    { field: 'name',         header: 'Nombre',     type: 'text',    sortable: true },
-    { field: 'address',      header: 'Dirección',  type: 'text',    sortable: true },
-    { field: 'phone',        header: 'Teléfono',   type: 'text',    sortable: true },
-    { field: 'status',       header: 'Estado',     type: 'status',  sortable: true },
-    { field: 'actions',      header: 'Acciones',   type: 'actions', style: { width: '8rem', 'text-align': 'center' } }
+    { field: 'name', header: 'Nombre', type: 'tree', sortable: true, style: { width: '30%' } },
+    { field: 'address', header: 'Dirección', type: 'text', sortable: true, style: { width: '25%' } },
+    { field: 'phone', header: 'Teléfono', type: 'text', sortable: true, style: { width: '20%' } },
+    { field: 'status', header: 'Estado', type: 'status', style: { width: '10%' } },
+    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '15%', 'text-align': 'center' } }
   ];
 
   get hasPermission(): boolean {
@@ -46,93 +47,75 @@ export class BranchesComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.hasPermission) {
-      this.load();
-    }
+    if (this.hasPermission) { this.load(); }
   }
 
   load() {
     this.loading = true;
-    this.securexService.getCompaniesWithBranches().subscribe({
-      next: (res: any) => {
-        this.companies = res.data || res || [];
+    this.securexService.getBranchesPageData().subscribe({
+      next: (data) => {
+        const { companies, branches } = data;
+        this.companies = companies || [];
+        this.treeNodes = this.buildTree(companies || [], branches || []);
         this.updateFormFields();
-        this.loadBranches();
-      },
-      error: () => (this.loading = false)
-    });
-  }
-
-  private updateFormFields() {
-    this.formFields = [
-      { name: 'name',       label: 'Nombre de Sucursal', type: 'text',   required: true,  icon: 'pi pi-sitemap' },
-      {
-        name: 'company_id', label: 'Compañía',           type: 'select', required: true,
-        options: this.companies.map((c: any) => ({ label: c.name, value: c.id }))
-      },
-      { name: 'address',    label: 'Dirección',          type: 'text',   icon: 'pi pi-map-marker' },
-      { name: 'phone',      label: 'Teléfono',           type: 'phone',  icon: 'pi pi-phone' },
-      {
-        name: 'is_active',  label: '¿Activa?',           type: 'select', required: true,
-        options: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }]
-      }
-    ];
-  }
-
-  private loadBranches() {
-    this.securexService.getBranchesList().subscribe({
-      next: (res: any) => {
-        const branchesList = res.data || res || [];
-        this.tableData = branchesList.map((branch: any) => {
-          const company = this.companies.find((c: any) => c.id === branch.company_id);
-          return {
-            ...branch,
-            company_name: company ? company.name : 'Sin Compañía',
-            status: branch.is_active ? 'Activo' : 'Inactivo'
-          };
-        });
         this.loading = false;
       },
       error: () => (this.loading = false)
     });
   }
 
-  handleAdd() {
+  private buildTree(companies: any[], branches: any[]): TreeNode[] {
+    return companies.map(company => ({
+      data: { ...company, name: company.name, type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false, icon: 'pi pi-building' },
+      expanded: true,
+      children: branches
+        .filter(b => b.company_id === company.id)
+        .map(branch => ({
+          data: {
+            ...branch,
+            type: 'SUBMENU',
+            status: branch.is_active ? 'ACTIVO' : 'INACTIVO',
+            icon: 'pi pi-sitemap',
+            _canAdd: false,
+            _canEdit: true,
+            _canDelete: true
+          }
+        }))
+    }));
+  }
+
+  private updateFormFields() {
+    this.formFields = [
+      { name: 'name', label: 'Nombre de Sucursal', type: 'text', required: true, icon: 'pi pi-sitemap' },
+      { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: this.companies.map((c: any) => ({ label: c.name, value: c.id })) },
+      { name: 'address', label: 'Dirección', type: 'text', icon: 'pi pi-map-marker' },
+      { name: 'phone', label: 'Teléfono', type: 'text', icon: 'pi pi-phone' },
+      { name: 'is_active', label: '¿Activa?', type: 'select', required: true, options: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }] }
+    ];
+  }
+
+  handleAddRoot() {
     this.modalMode = 'add';
     this.selectedItem = null;
-    this.preselectedCompanyId = null;
+    this.currentCompanyId = null;
     this.modalVisible = true;
   }
 
   handleAddChild(companyId: number) {
     this.modalMode = 'add';
     this.selectedItem = null;
-    this.preselectedCompanyId = companyId;
+    this.currentCompanyId = companyId;
     this.modalVisible = true;
   }
 
   handleEdit(data: any) {
     this.modalMode = 'edit';
-
-    let companyIdVal: number | null = null;
-    if (data.company_id != null) {
-      companyIdVal = Number(data.company_id);
-      if (isNaN(companyIdVal)) companyIdVal = null;
-    }
-
-    let isActiveVal = 0;
+    const id = data.company_id != null ? Number(data.company_id) : null;
+    let isActive = 0;
     if (data.is_active != null) {
-      if (typeof data.is_active === 'boolean') {
-        isActiveVal = data.is_active ? 1 : 0;
-      } else if (typeof data.is_active === 'number') {
-        isActiveVal = data.is_active !== 0 ? 1 : 0;
-      } else if (typeof data.is_active === 'string') {
-        const lv = data.is_active.toLowerCase().trim();
-        isActiveVal = ['true', '1', 'sí', 'si', 'yes'].includes(lv) ? 1 : 0;
-      }
+      isActive = data.is_active ? 1 : 0;
     }
-
-    this.selectedItem = { ...data, company_id: companyIdVal, is_active: isActiveVal };
+    this.selectedItem = { ...data, company_id: isNaN(id as any) ? null : id, is_active: isActive };
     this.modalVisible = true;
   }
 
@@ -144,10 +127,12 @@ export class BranchesComponent implements OnInit {
 
   save(data: any) {
     this.isSaving = true;
+    if (this.modalMode === 'add' && this.currentCompanyId) {
+      data.company_id = this.currentCompanyId;
+    }
     const obs = this.modalMode === 'add'
       ? this.securexService.createBranchGql(data)
       : this.securexService.updateBranchGql(this.selectedItem.uuid, data);
-
     obs.subscribe({
       next: () => {
         this.notificationService.success(`Sucursal ${this.modalMode === 'add' ? 'creada' : 'actualizada'} correctamente`);
