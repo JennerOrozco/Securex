@@ -50,7 +50,6 @@ export class NotificationTestComponent implements OnInit {
 
   appCols: TableColumn[] = [
     { field: 'name', header: 'Nombre', type: 'text', sortable: true },
-    { field: 'uuid', header: 'UUID', type: 'text' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
@@ -63,7 +62,6 @@ export class NotificationTestComponent implements OnInit {
   userCols: TableColumn[] = [
     { field: 'full_name', header: 'Nombre', type: 'text', sortable: true },
     { field: 'email', header: 'Email', type: 'text', sortable: true },
-    { field: 'uuid', header: 'UUID', type: 'text' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
