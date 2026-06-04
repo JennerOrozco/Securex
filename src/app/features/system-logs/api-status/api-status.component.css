@@ -3,7 +3,27 @@
 }
 
 .api-status-body {
-  padding: 1.5rem;
+  padding: 0.25rem;
+}
+
+@media (min-width: 768px) {
+  .api-status-body {
+    padding: 0.5rem;
+  }
+}
+
+/* Custom Refresh button (gray background, darker gray hover, white border/text) */
+::ng-deep .btn-refrescar .p-button {
+  background: #64748b !important;
+  border: 1px solid #ffffff !important;
+  color: #ffffff !important;
+  transition: all 0.2s ease;
+}
+
+::ng-deep .btn-refrescar .p-button:hover {
+  background: #475569 !important;
+  border-color: #ffffff !important;
+  color: #ffffff !important;
 }
 
 .api-card-panel {

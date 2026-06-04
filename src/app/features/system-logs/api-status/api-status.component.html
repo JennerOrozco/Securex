@@ -7,8 +7,8 @@
           <p class="api-toolbar-sub">Monitoreo de microservicios y herramientas de sincronización global</p>
         </div>
         <div class="api-toolbar-right">
-          <app-button label="Refrescar Estado" icon="pi pi-refresh" class="p-button-outlined" (onClick)="checkAllHealth()"></app-button>
-          <app-button label="Sincronizar Apps" icon="pi pi-sync" tooltip="Envía el catálogo de Apps a todos los microservicios" [loading]="isSyncing()" (onClick)="syncApps()"></app-button>
+          <app-button label="Refrescar Estado" icon="pi pi-refresh" class="btn-refrescar" (onClick)="checkAllHealth()"></app-button>
+          <app-button label="Sincronizar Apps" icon="pi pi-sync" class="p-button-navy" tooltip="Envía el catálogo de Apps a todos los microservicios" [loading]="isSyncing()" (onClick)="syncApps()"></app-button>
         </div>
       </div>
 
@@ -41,7 +41,7 @@
             </div>
 
             <div class="api-card-footer">
-              <app-button label="Métricas" icon="pi pi-chart-bar" class="p-button-outlined p-button-sm" (onClick)="openMetrics(api)"></app-button>
+              <app-button label="Métricas" icon="pi pi-chart-bar" class="p-button-navy" (onClick)="openMetrics(api)"></app-button>
             </div>
 
             @if (api.error) {
