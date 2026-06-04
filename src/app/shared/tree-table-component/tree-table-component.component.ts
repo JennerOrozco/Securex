@@ -13,6 +13,7 @@ import { ContextMenuComponent } from '../components/context-menu/context-menu.co
 import { BottomSheetComponent } from '../components/bottom-sheet/bottom-sheet.component';
 import { ActionItem } from '../components/action-menu.types';
 import { ToolbarComponent } from '../components/toolbar/toolbar.component';
+import { StatusClassPipe } from '../table-component/status-class.pipe';
 
 @Component({
   selector: 'app-tree-table-component',
@@ -28,7 +29,8 @@ import { ToolbarComponent } from '../components/toolbar/toolbar.component';
     InputTextModule,
     ContextMenuComponent,
     BottomSheetComponent,
-    ToolbarComponent
+    ToolbarComponent,
+    StatusClassPipe
   ],
   styleUrls: ['./tree-table-component.component.css'],
   template: `
@@ -132,6 +134,12 @@ import { ToolbarComponent } from '../components/toolbar/toolbar.component';
                           {{ rowData[col.field] }}
                         </span>
                       }
+                    }
+                    @case ('status') {
+                      <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
+                        <span class="edo-dot"></span>
+                        {{ rowData[col.field] }}
+                      </span>
                     }
                     @case ('link') {
                       <div>
@@ -344,6 +352,8 @@ export class TreeTableComponent implements OnInit {
       case 'SUBMENU': return 'bg-emerald';
       case 'ACTION': return 'bg-amber';
       case 'COMPONENT': return 'bg-rose';
+      case 'APP': return 'bg-indigo';
+      case 'COMPANY': return 'bg-emerald';
       default: return 'bg-slate';
     }
   }
@@ -355,6 +365,8 @@ export class TreeTableComponent implements OnInit {
       case 'SUBMENU': return 'row-submenu';
       case 'ACTION': return 'row-action';
       case 'COMPONENT': return 'row-component';
+      case 'APP': return 'row-app';
+      case 'COMPANY': return 'row-company';
       default: return '';
     }
   }

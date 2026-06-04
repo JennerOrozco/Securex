@@ -6,27 +6,15 @@
   </div>
 
   <ng-container *ngIf="hasPermission">
-    <app-table-component
+    <app-tree-table-component
       title="Sucursales"
       subtitle="Organizadas por compañía"
-      [data]="tableData"
-      [columns]="cols"
-      [loading]="loading"
-      [showAdd]="true"
-      [showEdit]="true"
-      [showDelete]="true"
-      addLabel="Nueva Sucursal"
-      searchPlaceholder="Buscar sucursal..."
-      [enableRowGroup]="true"
-      groupRowsBy="company_name"
-      groupHeaderLabel="Compañía:"
-      [showAddChild]="true"
-      [expandableRowGroups]="true"
-      (onAdd)="handleAdd()"
-      (onAddChild)="handleAddChild($event.company_id)"
-      (onEdit)="handleEdit($event)"
-      (onDelete)="handleDelete($event)">
-    </app-table-component>
+      [nodes]="treeNodes" [columns]="cols" [loading]="loading"
+      [showAdd]="true" addLabel="Nueva Sucursal" [showLegend]="false"
+      [colorRows]="true"
+      (onAddRoot)="handleAddRoot()" (onAddChild)="handleAddChild($event)"
+      (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
+    </app-tree-table-component>
   </ng-container>
 
   <app-form-modal
@@ -35,7 +23,7 @@
     title="{{ modalMode === 'add' ? 'Nueva Sucursal' : 'Editar Sucursal' }}"
     [fields]="formFields"
     [data]="modalMode === 'edit' ? selectedItem : null"
-    [initialData]="modalMode === 'add' ? (preselectedCompanyId ? { company_id: preselectedCompanyId, is_active: 1 } : { is_active: 1 }) : {}"
+    [initialData]="modalMode === 'add' ? { company_id: currentCompanyId, is_active: 1 } : {}"
     [loading]="isSaving"
     (onConfirm)="save($event)"
     (onClose)="modalVisible = false">

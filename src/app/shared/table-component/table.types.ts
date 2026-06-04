@@ -12,4 +12,5 @@ export interface TableColumn {
   filterOptionLabel?: string;
   filterOptionValue?: string;
   filterMulti?: boolean;
+  fallbackIcon?: string;
 }

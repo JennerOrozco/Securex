@@ -128,11 +128,11 @@
               <img [src]="rowData[col.field]" alt="Logo" class="table-logo-img"
                 (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
               <div class="table-logo-fallback" style="display: none;">
-                <i class="pi pi-building"></i>
+                <i [class]="col.fallbackIcon || 'pi pi-building'"></i>
               </div>
               } @else {
               <div class="table-logo-fallback">
-                <i class="pi pi-building"></i>
+                <i [class]="col.fallbackIcon || 'pi pi-building'"></i>
               </div>
               }
             </div>

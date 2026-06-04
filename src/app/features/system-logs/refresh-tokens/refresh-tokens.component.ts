@@ -30,12 +30,14 @@ export class RefreshTokens implements OnInit {
   selectedItem: any = null;
 
   cols: TableColumn[] = [
-    { field: 'token_hash', header: 'Hash del Token', type: 'text', style: { width: '25%' }, sortable: false },
-    { field: 'ip_address', header: 'IP', type: 'text', style: { width: '15%' }, sortable: true },
+    { field: 'user_name', header: 'Usuario', type: 'text', style: { width: '15%' }, sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', style: { width: '12%' }, sortable: true },
+    { field: 'token_hash', header: 'Hash del Token', type: 'text', style: { width: '20%' }, sortable: false },
+    { field: 'ip_address', header: 'IP', type: 'text', style: { width: '12%' }, sortable: true },
     { field: 'is_revoked', header: 'Revocado', type: 'status', style: { width: '10%', textAlign: 'center' }, sortable: true, filterOptions: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }], filterOptionLabel: 'label' },
-    { field: 'issued_at', header: 'Emitido', type: 'text', style: { width: '15%' }, sortable: true },
-    { field: 'expires_at', header: 'Expira', type: 'text', style: { width: '15%' }, sortable: true },
-    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '10%', textAlign: 'center' } }
+    { field: 'issued_at', header: 'Emitido', type: 'text', style: { width: '12%' }, sortable: true },
+    { field: 'expires_at', header: 'Expira', type: 'text', style: { width: '12%' }, sortable: true },
+    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '7%', textAlign: 'center' } }
   ];
 
   get hasPermission(): boolean {
@@ -50,11 +52,12 @@ export class RefreshTokens implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getRefreshTokens().subscribe({
+    this.securexService.getRefreshTokensGql().subscribe({
       next: (res: any) => {
-        const rawData = (res.data || res || []);
-        this.data = rawData.map((item: any) => ({
+        this.data = (res || []).map((item: any) => ({
           ...item,
+          user_name: item.user?.full_name || item.user_id,
+          app_name: item.app?.name || item.app_id,
           issued_at: item.issued_at && item.issued_at !== '0000-00-00 00:00:00' ? this.datePipe.transform(item.issued_at, 'yyyy-MM-dd HH:mm:ss') : '-',
           expires_at: item.expires_at && item.expires_at !== '0000-00-00 00:00:00' ? this.datePipe.transform(item.expires_at, 'yyyy-MM-dd HH:mm:ss') : '-'
         }));

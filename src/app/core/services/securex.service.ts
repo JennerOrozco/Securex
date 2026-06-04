@@ -168,12 +168,20 @@ export class SecurexService {
     return this.gql.query<{ companies: any[] }>('security', SECUREX_QUERIES.COMPANIES).pipe(map(d => d.companies));
   }
 
+  getCompaniesPageData(): Observable<{ apps: any[]; companies: any[] }> {
+    return this.gql.query<{ apps: any[]; companies: any[] }>('security', SECUREX_QUERIES.COMPANIES_PAGE);
+  }
+
   getCompanyWithBranches(uuid: string): Observable<any> {
     return this.gql.query<{ company: any }>('security', SECUREX_QUERIES.COMPANY, { uuid }).pipe(map(d => d.company));
   }
 
   getBranchesList(): Observable<any[]> {
     return this.gql.query<{ branches: any[] }>('security', SECUREX_QUERIES.BRANCHES).pipe(map(d => d.branches));
+  }
+
+  getBranchesPageData(): Observable<{ companies: any[]; branches: any[] }> {
+    return this.gql.query<{ companies: any[]; branches: any[] }>('security', SECUREX_QUERIES.BRANCHES_PAGE);
   }
 
   getAppsWithCompanies(): Observable<any[]> {
@@ -203,6 +211,8 @@ export class SecurexService {
   getSecurityAuditLogs(): Observable<any[]> {
     return this.gql.query<{ securityAuditLogs: any[] }>('security', SECUREX_QUERIES.SECURITY_AUDIT_LOGS).pipe(map(d => d.securityAuditLogs));
   }
+
+  deleteSecurityAuditLog(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/security-audit/${uuid}`); }
 
   getLoginAttemptsGql(): Observable<any[]> {
     return this.gql.query<{ loginAttempts: any[] }>('security', SECUREX_QUERIES.LOGIN_ATTEMPTS).pipe(map(d => d.loginAttempts));

@@ -63,6 +63,17 @@ export const SECUREX_QUERIES = {
       }
     }
   `,
+  COMPANIES_PAGE: `
+    query CompaniesPage {
+      apps {
+        id name
+      }
+      companies {
+        id uuid app_id tax_id name logo_url is_active
+        branches { id uuid name address phone is_active }
+      }
+    }
+  `,
   COMPANY: `
     query Company($uuid: String!) {
       company(uuid: $uuid) {
@@ -73,6 +84,16 @@ export const SECUREX_QUERIES = {
   `,
   BRANCHES: `
     query Branches {
+      branches {
+        id uuid company_id name address phone is_active
+      }
+    }
+  `,
+  BRANCHES_PAGE: `
+    query BranchesPage {
+      companies {
+        id name
+      }
       branches {
         id uuid company_id name address phone is_active
       }
@@ -101,14 +122,16 @@ export const SECUREX_QUERIES = {
   SECURITY_AUDIT_LOGS: `
     query SecurityAuditLogs {
       securityAuditLogs {
-        user_uuid user_name event_type description ip_address
+        uuid user_uuid user_name event_type description ip_address
+        app { name }
       }
     }
   `,
   LOGIN_ATTEMPTS: `
     query LoginAttempts {
       loginAttempts {
-        email app_uuid ip_address user_agent successful created_at
+        id email app_uuid ip_address user_agent successful created_at
+        app { name }
       }
     }
   `,
@@ -132,13 +155,16 @@ export const SECUREX_QUERIES = {
     query PasswordResets {
       passwordResets {
         id email token created_at
+        app { name }
       }
     }
   `,
   REFRESH_TOKENS: `
     query RefreshTokens {
       refreshTokens {
-        id user_uuid token expires_at revoked created_at updated_at
+        id user_id app_id token_hash is_revoked issued_at revoked_at expires_at ip_address user_agent
+        user { uuid full_name }
+        app { name }
       }
     }
   `,

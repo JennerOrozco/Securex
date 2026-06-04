@@ -1,6 +1,6 @@
 <div class="px-4 pb-4 animate-fade-in" *ngIf="hasPermission">
   <app-table-component title="Tokens de Refresco" description="Historial de tokens de autenticación activos y revocados"
-    [data]="data" [columns]="cols" [loading]="loading" [showDelete]="true" (onRefresh)="load()"
+    [data]="data" [columns]="cols" [loading]="loading" [showAdd]="false" [showEdit]="false" [showDelete]="true" (onRefresh)="load()"
     (onDelete)="handleDelete($event)"></app-table-component>
 </div>
 

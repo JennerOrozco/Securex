@@ -38,7 +38,7 @@ export class PushSettingsComponent implements OnInit {
   cols: TableColumn[] = [
     { field: 'app_name', header: 'App Asociada', type: 'text', sortable: true },
     { field: 'vapid_subject', header: 'Subject', type: 'text', sortable: true },
-    { field: 'icon', header: 'Icon', type: 'image', style: { width: '80px', 'text-align': 'center' } },
+    { field: 'icon', header: 'Icon', type: 'image', style: { width: '80px', 'text-align': 'center' }, fallbackIcon: 'pi pi-send' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 

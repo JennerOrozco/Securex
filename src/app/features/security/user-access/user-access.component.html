@@ -1,6 +1,6 @@
 <div class="p-2">
   <app-table-component title="Accesos de Usuario" subtitle="Gestión de accesos a aplicaciones"
-    [columns]="cols" [data]="records" [loading]="loading" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
+    [columns]="cols" [data]="records" [loading]="loading" [minimalMode]="true" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
     (onDelete)="handleDelete($event)">
   </app-table-component>
 

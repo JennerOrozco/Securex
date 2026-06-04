@@ -30,7 +30,8 @@ export class PasswordResets implements OnInit {
   selectedItem: any = null;
 
   cols: TableColumn[] = [
-    { field: 'email', header: 'Email', type: 'text', style: { width: '45%' }, sortable: true },
+    { field: 'email', header: 'Email', type: 'text', style: { width: '30%' }, sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', style: { width: '15%' }, sortable: true },
     { field: 'token', header: 'Token', type: 'text', style: { width: '30%' }, sortable: false },
     { field: 'created_at', header: 'Fecha de Solicitud', type: 'date', style: { width: '15%' }, sortable: true },
     { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '10%', textAlign: 'center' } }
@@ -48,11 +49,11 @@ export class PasswordResets implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getPasswordResets().subscribe({
+    this.securexService.getPasswordResetsGql().subscribe({
       next: (res: any) => {
-        const rawData = (res.data || res || []);
-        this.data = rawData.map((item: any) => ({
+        this.data = (res || []).map((item: any) => ({
           ...item,
+          app_name: item.app?.name || item.app_uuid,
           created_at: item.created_at && item.created_at !== '0000-00-00 00:00:00' ? this.datePipe.transform(item.created_at, 'yyyy-MM-dd HH:mm:ss') : '-'
         }));
         this.loading = false;

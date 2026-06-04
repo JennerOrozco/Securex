@@ -30,12 +30,13 @@ export class LoginAttempts implements OnInit {
   selectedItem: any = null;
 
   cols: TableColumn[] = [
-    { field: 'email', header: 'Email', type: 'text', style: { width: '25%' }, sortable: true },
-    { field: 'ip_address', header: 'IP', type: 'text', style: { width: '15%' }, sortable: true },
-    { field: 'user_agent', header: 'User Agent', type: 'text', style: { width: '25%' }, sortable: false },
+    { field: 'email', header: 'Email', type: 'text', style: { width: '20%' }, sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', style: { width: '15%' }, sortable: true },
+    { field: 'ip_address', header: 'IP', type: 'text', style: { width: '12%' }, sortable: true },
+    { field: 'user_agent', header: 'User Agent', type: 'text', style: { width: '20%' }, sortable: false },
     { field: 'successful', header: 'Exitoso', type: 'status', style: { width: '10%', textAlign: 'center' }, sortable: true, filterOptions: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }], filterOptionLabel: 'label' },
     { field: 'created_at', header: 'Fecha', type: 'text', style: { width: '15%' }, sortable: true },
-    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '10%', textAlign: 'center' } }
+    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '8%', textAlign: 'center' } }
   ];
 
   get hasPermission(): boolean {
@@ -50,11 +51,11 @@ export class LoginAttempts implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getLoginAttempts().subscribe({
+    this.securexService.getLoginAttemptsGql().subscribe({
       next: (res: any) => {
-        const rawData = (res.data || res || []);
-        this.data = rawData.map((item: any) => ({
+        this.data = (res || []).map((item: any) => ({
           ...item,
+          app_name: item.app?.name || item.app_uuid,
           created_at: item.created_at && item.created_at !== '0000-00-00 00:00:00' ? this.datePipe.transform(item.created_at, 'yyyy-MM-dd HH:mm:ss') : '-'
         }));
         this.loading = false;

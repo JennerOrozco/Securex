@@ -28,7 +28,6 @@ export class UserWebauthnCredentials implements OnInit {
     { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
     { field: 'device_name', header: 'Dispositivo', type: 'text', sortable: true },
     { field: 'credential_id', header: 'Credential ID', type: 'text' },
-    { field: 'sign_count', header: 'Usos', type: 'text', sortable: true },
     { field: 'created_at', header: 'Registrado', type: 'date', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];

@@ -11,7 +11,14 @@
       subtitle="Registro de eventos de seguridad del sistema"
       [columns]="cols"
       [data]="logs"
-      [loading]="loading">
+      [loading]="loading"
+      [showAdd]="false" [showEdit]="false" [showDelete]="true"
+      (onDelete)="handleDelete($event)">
     </app-table-component>
   </ng-container>
+
+  <app-delete-modal [visible]="modalVisible" title="Eliminar Log de Auditoría"
+    [bodyMessage]="'¿Estás seguro de eliminar este registro de auditoría?'"
+    [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
+  </app-delete-modal>
 </div>
