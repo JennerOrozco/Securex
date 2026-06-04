@@ -285,6 +285,10 @@ export class AdminAccessComponent implements OnInit {
           { label: 'Todas las sucursales', value: null },
           ...companyBranches.map((b: any) => ({ label: b.name, value: b.id }))
         ];
+        
+        // Enable branch select if user does not have a branch assigned (e.g. branch_id is null/undefined)
+        const hasNoBranch = this.selectedItem?.branch_id === null || this.selectedItem?.branch_id === undefined;
+        branchField.disabled = !hasNoBranch;
 
         const userField = this.formFields.find(f => f.name === 'user_id')!;
         userField.options = (users || []).map((u: any) => ({
