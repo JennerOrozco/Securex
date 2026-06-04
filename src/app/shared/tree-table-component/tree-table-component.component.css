@@ -72,7 +72,7 @@
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em;
-  padding: 15px 21px !important;
+  padding: 6px 12px !important;
   border: none !important;
   position: relative;
 }
@@ -140,6 +140,24 @@
   background-color: #f8fafc !important;
 }
 
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-app {
+  background-color: #f1f5f9 !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-app > td {
+  font-weight: 600 !important;
+  color: #1e293b !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-app:hover {
+  background-color: #e2e8f0 !important;
+}
+
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-company {
+  background-color: #ffffff !important;
+}
+:host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-company:hover {
+  background-color: #f8fafc !important;
+}
+
 /* Ensure all text inside the table body is black */
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu .node-name,
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu .node-name,
@@ -154,16 +172,16 @@
 
 /* Hierarchical Breathing Room (adaptive padding) */
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-menu > td {
-  padding: 12px 14px !important;
+  padding: 6px 12px !important;
 }
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-submenu > td {
-  padding: 10px 14px !important;
+  padding: 5px 12px !important;
 }
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-action > td {
-  padding: 8px 14px !important;
+  padding: 4px 12px !important;
 }
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr.row-component > td {
-  padding: 6px 14px !important;
+  padding: 4px 12px !important;
 }
 
 /* Visual Depth Level Indicators (left borders) */
@@ -287,7 +305,7 @@ tr.drag-over {
 }
 
 :host ::ng-deep .p-treetable .p-treetable-tbody > tr > td {
-  padding: 6px 12px !important;
+  padding: 5px 12px !important;
   border-bottom: 1px solid var(--border) !important;
 }
 
@@ -330,8 +348,8 @@ tr.drag-over {
   padding: 0.15rem 0.5rem;
   border-radius: 6px;
   letter-spacing: 0.03em;
-  background: #f1f5f9 !important;
-  color: #475569 !important;
+  background: #f1f5f9;
+  color: #475569;
   border: 1px solid #e2e8f0;
   text-transform: uppercase;
 }
@@ -348,6 +366,20 @@ tr.drag-over {
 .type-submenu::before { background: #10b981; }    /* Emerald dot */
 .type-action::before { background: #f59e0b; }     /* Amber dot */
 .type-component::before { background: #f43f5e; }  /* Rose dot */
+
+.type-activo {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #bbf7d0 !important;
+}
+.type-activo::before { background: #16a34a; }
+
+.type-inactivo {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+  border-color: #fecaca !important;
+}
+.type-inactivo::before { background: #dc2626; }
 
 .route-link {
   display: inline-flex;
@@ -460,8 +492,7 @@ tr.drag-over {
   
   :host ::ng-deep .gm-treetable .p-treetable-thead > tr > th:last-child,
   :host ::ng-deep .gm-treetable .p-treetable-tbody > tr > td:last-child {
-    min-width: 120px !important;
-    text-align: center !important;
+    display: none !important;
   }
 }
 
@@ -501,6 +532,41 @@ tr.drag-over {
 
 .root-drop-zone i {
   font-size: 1rem;
+}
+
+/* Status badge styles */
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.estado-badge.activo,
+.estado-badge.approved {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.estado-badge.inactivo,
+.estado-badge.rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.estado-badge.pending {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.edo-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 
