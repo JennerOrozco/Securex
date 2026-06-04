@@ -1,21 +1,8 @@
 /* =====================================================
-   IMPORT FONTS
+   LOGIN COMPONENT — desktop / mobile shell + effects
+   All form-input / button / divider / dark-theme overrides
+   live in src/styles.css (formerly auth-shared.css).
    ===================================================== */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
-@import './auth-shared.css';
-
-:root {
-    --teal-darkest: #0d0000;
-    --teal-dark: #1a0505;
-    --teal-mid: #2d0a0a;
-    --white: #ffffff;
-    --white-60: rgba(255, 255, 255, 0.6);
-    --white-20: rgba(255, 255, 255, 0.2);
-    --white-10: rgba(255, 255, 255, 0.1);
-    --white-05: rgba(255, 255, 255, 0.05);
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-}
 
 *,
 *::before,
@@ -27,7 +14,7 @@
 
 /* ═══════════════════════════════════════
    DESKTOP
-═══════════════════════════════════════ */
+   ═══════════════════════════════════════ */
 
 .desktop-shell {
     display: flex;
@@ -181,7 +168,7 @@
     font-family: var(--font-head);
     font-size: 1.9rem;
     font-weight: 700;
-    color: var(--white);
+    color: var(--auth-white);
     letter-spacing: -0.03em;
     line-height: 1;
 }
@@ -205,179 +192,6 @@
     max-width: 420px;
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.07);
     animation: fadeUp 0.8s cubic-bezier(.22, .68, 0, 1.2) 0.1s both;
-}
-
-.card-title {
-    font-family: var(--font-head);
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--white);
-    margin-bottom: 6px;
-    letter-spacing: -0.02em;
-}
-
-.card-sub {
-    font-size: 0.83rem;
-    color: rgba(255, 255, 255, 0.48);
-    margin-bottom: 28px;
-}
-
-/* Form fields */
-.field {
-    margin-bottom: 18px;
-}
-
-.field label {
-    display: block;
-    font-size: 0.76rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.55);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 7px;
-}
-
-.input-wrap {
-    position: relative;
-}
-
-.input-wrap svg {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    color: rgba(255, 255, 255, 0.3);
-    pointer-events: none;
-    transition: color 0.2s;
-}
-
-.input-wrap input {
-    width: 100%;
-    padding: 13px 14px 13px 42px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 12px;
-    color: var(--white);
-    font-family: var(--font-body);
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
-}
-
-.input-wrap input::placeholder {
-    color: rgba(255, 255, 255, 0.22);
-}
-
-.input-wrap input:focus {
-    border-color: var(--teal-bright);
-    background: rgba(220, 38, 38, 0.08);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
-}
-
-.input-wrap:focus-within svg {
-    color: var(--teal-bright);
-}
-
-/* Remember / Forgot row */
-.row-options {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 4px 0 26px;
-}
-
-.remember {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
-    cursor: pointer;
-}
-
-.remember input[type="checkbox"] {
-    accent-color: var(--teal-bright);
-    width: 14px;
-    height: 14px;
-}
-
-.forgot-link {
-    font-size: 0.8rem;
-    font-weight: 500;
-    color: var(--teal-bright);
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s;
-}
-
-.forgot-link:hover {
-    opacity: 0.75;
-}
-
-/* Login button */
-.btn-login {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, var(--teal-bright) 0%, #880c0c 100%);
-    border: none;
-    border-radius: 14px;
-    font-family: var(--font-head);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--teal-darkest);
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-login::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
-    filter: brightness(1.08);
-}
-
-.btn-login:hover::after {
-    opacity: 1;
-}
-
-.btn-login:active {
-    transform: scale(0.98);
-}
-
-/* Divider */
-.divider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 22px 0;
-}
-
-.divider::before,
-.divider::after {
-    content: '';
-    flex: 1;
-    height: 1px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.divider span {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.35);
-    letter-spacing: 0.06em;
 }
 
 /* Google button */
@@ -547,130 +361,8 @@
 }
 
 /* ════════════════════════════════════════════════════
-   GLOBAL OVERRIDES FOR SHARED COMPONENTS (gm-* classes)
-   ════════════════════════════════════════════════════ */
-
-/* ── Desktop (dark glass-card context) ── */
-.glass-card .auth-field-wrap .gm-label {
-    color: rgba(255, 255, 255, 0.55) !important;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-}
-
-.glass-card .auth-field-wrap .gm-required {
-    color: #f87171 !important;
-}
-
-.glass-card .auth-field-wrap .gm-input {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 12px !important;
-    color: #ffffff !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-    padding: 13px 14px 13px 2rem !important;
-    min-height: 44px !important;
-}
-
-.glass-card .auth-field-wrap .gm-input::placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
-}
-
-.glass-card .auth-field-wrap .gm-input:focus {
-    border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
-}
-
-.glass-card .auth-field-wrap .gm-field-icon {
-    color: rgba(255, 255, 255, 0.3) !important;
-    font-size: 0.85rem !important;
-}
-
-.glass-card .auth-field-wrap .gm-field:focus-within .gm-field-icon {
-    color: var(--teal-bright) !important;
-}
-
-.glass-card .auth-field-wrap .gm-valid {
-    color: var(--teal-bright) !important;
-}
-
-.glass-card .auth-field-wrap .gm-invalid {
-    color: #f87171 !important;
-}
-
-.glass-card .auth-field-wrap .gm-error-msg {
-    color: #fca5a5 !important;
-}
-
-/* Password (PrimeNG p-password) inside glass-card */
-.glass-card .auth-field-wrap .p-password,
-.glass-card .auth-field-wrap .p-password-input {
-    display: flex !important;
-    width: 100% !important;
-}
-
-.glass-card .auth-field-wrap .p-password .p-inputtext {
-    width: 100% !important;
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 12px !important;
-    color: #ffffff !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-    padding: 13px 14px !important;
-    min-height: 44px !important;
-}
-
-.glass-card .auth-field-wrap .p-password .p-inputtext::placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
-}
-
-.glass-card .auth-field-wrap .p-password .p-inputtext:focus {
-    border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
-}
-
-.glass-card .auth-field-wrap .p-password-toggle-mask-icon,
-.glass-card .auth-field-wrap .p-password .p-icon {
-    color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* Select (PrimeNG p-select) inside glass-card */
-.glass-card .auth-field-wrap .p-select {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
-    border-radius: 12px !important;
-    min-height: 44px !important;
-    height: 44px !important;
-}
-
-.glass-card .auth-field-wrap .p-select-label {
-    color: #ffffff !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-}
-
-.glass-card .auth-field-wrap .p-select .p-select-placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
-}
-
-.glass-card .auth-field-wrap .p-select:focus-within {
-    border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
-}
-
-.glass-card .auth-field-wrap .p-select .p-select-dropdown {
-    background: rgba(255, 255, 255, 0.05) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
-    color: rgba(255, 255, 255, 0.4) !important;
-}
-
-/* =====================================================
    MULTITENANT COMPANY SELECTION STYLES
-   ===================================================== */
+   ════════════════════════════════════════════════════ */
 .company-list-container {
     display: flex;
     flex-direction: column;
@@ -685,14 +377,17 @@
 .company-list-container::-webkit-scrollbar {
     width: 6px;
 }
+
 .company-list-container::-webkit-scrollbar-track {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 10px;
 }
+
 .company-list-container::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.15);
     border-radius: 10px;
 }
+
 .company-list-container::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.3);
 }
@@ -730,7 +425,7 @@
     font-family: var(--font-head);
     font-size: 0.9rem;
     font-weight: 600;
-    color: var(--white);
+    color: var(--auth-white);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -755,8 +450,13 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .company-actions-row {
@@ -793,9 +493,9 @@
     margin: 0;
 }
 
-/* =====================================================
+/* ════════════════════════════════════════════════════
    CONFIG LOADING TRANSITION
-   ===================================================== */
+   ════════════════════════════════════════════════════ */
 .config-loading-container {
     display: flex;
     flex-direction: column;
@@ -814,6 +514,7 @@
     height: 80px;
     margin-bottom: 24px;
 }
+
 .loader-ring div {
     box-sizing: border-box;
     display: block;
@@ -826,22 +527,28 @@
     animation: loader-ring-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-top-color: var(--teal-bright);
 }
+
 .loader-ring div:nth-child(1) {
     animation-delay: -0.45s;
     border-top-color: var(--teal-accent);
 }
+
 .loader-ring div:nth-child(2) {
     animation-delay: -0.3s;
-    border-top-color: #3b82f6; /* Blue accent */
+    border-top-color: #3b82f6;
+    /* Blue accent */
 }
+
 .loader-ring div:nth-child(3) {
     animation-delay: -0.15s;
     border-top-color: var(--teal-bright);
 }
+
 @keyframes loader-ring-spin {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -856,19 +563,25 @@
     width: 80px;
     height: 80px;
     margin-bottom: 24px;
-    transform: translateY(-80px); /* Align with the loader ring */
+    transform: translateY(-80px);
+    /* Align with the loader ring */
     pointer-events: none;
 }
+
 .loader-shield {
     font-size: 1.8rem;
     color: var(--teal-bright);
     animation: loader-shield-pulse 2s infinite ease-in-out;
 }
+
 @keyframes loader-shield-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         opacity: 0.8;
     }
+
     50% {
         transform: scale(1.1);
         opacity: 1;
@@ -880,7 +593,7 @@
     font-family: var(--font-head);
     font-size: 1.4rem;
     font-weight: 700;
-    color: var(--white);
+    color: var(--auth-white);
     margin-bottom: 8px;
     letter-spacing: -0.01em;
 }
@@ -895,7 +608,7 @@
 .step-text {
     font-size: 0.9rem;
     font-weight: 500;
-    color: var(--white-60);
+    color: var(--auth-white-60);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -909,6 +622,3 @@
 .animate-fade-in {
     animation: fadeIn 0.4s ease-out both;
 }
-
-
-

@@ -20,8 +20,7 @@ import { RippleModule } from 'primeng/ripple';
     ButtonModule,
     RippleModule,
   ],
-  templateUrl: './delete-modal.component.html',
-  styleUrls: ['../../modals.css']
+  templateUrl: './delete-modal.component.html'
 })
 export class DeleteModalComponent {
   @Input() visible = false;

@@ -9,6 +9,7 @@ import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/de
 import { NotificationService } from '@core/services/notification.service';
 import { TreeTableComponent } from '@shared/tree-table-component/tree-table-component.component';
 import { TableColumn } from '@shared/table-component/table.types';
+import { mapToTreeNodes, filterTreeByQuery } from '@shared/utils/tree-utils';
 
 @Component({
   selector: 'app-security-permission-crud',
@@ -21,7 +22,7 @@ import { TableColumn } from '@shared/table-component/table.types';
     DeleteModalComponent
   ],
   templateUrl: './component.html',
-  styleUrl: './component.css'
+
 })
 export class SecurityPermissionCrudComponent implements OnInit {
   private securexService = inject(SecurexService);
@@ -81,64 +82,35 @@ export class SecurityPermissionCrudComponent implements OnInit {
     this.securexService.getPermissionsTree().subscribe({
       next: (res) => {
         this.rawPermissions = res;
-        this.permissionNodes = this.mapToTreeNodes(res);
+        this.permissionNodes = this.buildTree(res);
         this.loading = false;
       },
       error: () => this.loading = false
     });
   }
 
-  private mapToTreeNodes(data: any[]): TreeNode[] {
-    return data.map(item => ({
-      data: { ...item, _canAdd: item.type !== 'ACTION', _canEdit: true, _canDelete: true },
-      children: item.children && item.children.length > 0 ? this.mapToTreeNodes(item.children) : [],
-      expanded: false
-    }));
+  private buildTree(items: any[]): TreeNode[] {
+    return mapToTreeNodes(items, {
+      canAdd: (p) => p.type !== 'ACTION',
+      expanded: () => false
+    });
   }
 
   filterTree(query: string) {
-    const q = query.toLowerCase();
-    if (!q) {
-      this.permissionNodes = this.mapToTreeNodes(this.rawPermissions);
-      return;
-    }
-
-    const filterNode = (nodes: any[]): any[] => {
-      return nodes.reduce((acc, node) => {
-        const matches = node.name.toLowerCase().includes(q) || node.slug.toLowerCase().includes(q);
-        const children = node.children && node.children.length > 0 ? filterNode(node.children) : [];
-
-        if (matches || children.length > 0) {
-          acc.push({ ...node, children });
-        }
-        return acc;
-      }, []);
-    };
-
-    const filtered = filterNode(this.rawPermissions);
-    this.permissionNodes = this.mapToTreeNodes(filtered);
+    const filtered = filterTreeByQuery(this.rawPermissions, query);
+    this.permissionNodes = this.buildTree(filtered);
   }
 
   filterByType(type: string) {
     if (!type) {
-      this.permissionNodes = this.mapToTreeNodes(this.rawPermissions);
+      this.permissionNodes = this.buildTree(this.rawPermissions);
       return;
     }
-
-    const filterNode = (nodes: any[]): any[] => {
-      return nodes.reduce((acc, node) => {
-        const matches = node.type === type;
-        const children = node.children && node.children.length > 0 ? filterNode(node.children) : [];
-
-        if (matches || children.length > 0) {
-          acc.push({ ...node, children });
-        }
-        return acc;
-      }, []);
-    };
-
-    const filtered = filterNode(this.rawPermissions);
-    this.permissionNodes = this.mapToTreeNodes(filtered);
+    const filtered = filterTreeByQuery(
+      this.rawPermissions,
+      type
+    ).filter((p: any) => p.type === type);
+    this.permissionNodes = this.buildTree(filtered);
   }
 
   handleAdd(parentId: number | null = null) {

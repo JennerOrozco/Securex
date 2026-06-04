@@ -36,6 +36,7 @@ export class NotificationsListComponent implements OnInit {
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
     { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'company_name', header: 'Compañía', type: 'text', sortable: true },
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'title', header: 'Título', type: 'text', sortable: true },
     { field: 'channels', header: 'Canales', type: 'text', sortable: true },
@@ -62,6 +63,7 @@ export class NotificationsListComponent implements OnInit {
           ...item,
           app_name: item.app?.name || item.app_uuid,
           user_name: item.user?.full_name || item.user_email || item.user_uuid,
+          company_name: item.company?.name || item.company_uuid,
           status: item.is_read ? 'Leída' : 'Pendiente'
         }));
         this.loading = false;

@@ -12,7 +12,7 @@ export { nitValidator } from './nit-input.utils';
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule],
   templateUrl: './nit-input.component.html',
-  styleUrls: ['./nit-input.component.css']
+
 })
 export class NitInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() id: string = 'nit-' + Math.random().toString(36).substr(2, 9);

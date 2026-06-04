@@ -10,7 +10,7 @@ import { BaseFormControl } from '../base-form-control';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, TextareaModule, FormFieldComponent],
   templateUrl: './textarea.component.html',
-  styleUrls: ['./textarea.component.css']
+
 })
 export class TextareaComponent extends BaseFormControl {
   protected prefix = 'textarea-';

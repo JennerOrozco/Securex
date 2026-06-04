@@ -1,24 +1,20 @@
-<div class="p-2">
-  <div *ngIf="!hasPermission" class="access-denied">
-    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-    <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden gestionar configuraciones SMTP.</p>
-  </div>
-
-  <ng-container *ngIf="hasPermission">
-    <app-table-component title="Configuraciones SMTP" subtitle="Servidores y credenciales para envío de emails" [columns]="cols" [data]="items"
-      [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true" (onAdd)="handleAdd()"
-      (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
-    </app-table-component>
-  </ng-container>
-
-  <app-form-modal [visible]="modalVisible && modalMode !== 'delete'" [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    title="{{ modalMode === 'add' ? 'Nueva Configuración SMTP' : 'Editar Configuración SMTP' }}" [fields]="formFields"
-    [data]="modalMode === 'edit' ? selectedItem : null" [loading]="isSaving" (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-form-modal>
-
-  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Configuración" [loading]="isSaving"
-    (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
-  </app-delete-modal>
-</div>
+<app-crud-page
+  permission="securex.notifications.smtp"
+  title="Configuraciones SMTP"
+  subtitle="Servidores y credenciales para envío de emails"
+  [data]="items"
+  [columns]="cols"
+  [loading]="loading"
+  [isSaving]="isSaving"
+  [formFields]="formFields"
+  formAddTitle="Nueva Configuración SMTP"
+  formEditTitle="Editar Configuración SMTP"
+  deleteTitle="Eliminar Configuración"
+  deleteMessage="¿Estás seguro de eliminar esta configuración?"
+  (onSave)="save($event.data, $event.mode)"
+  (onConfirmDelete)="confirmDelete()"
+  (onRefresh)="load()"
+  (onAdd)="handleAdd()"
+  (onEdit)="handleEdit($event)"
+  (onDelete)="handleDelete($event)"
+></app-crud-page>

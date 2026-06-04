@@ -8,7 +8,7 @@ import { SecurexService } from '@core/services/securex.service';
   standalone: true,
   imports: [CommonModule, TableComponent],
   templateUrl: './audit-log.component.html',
-  styleUrl: './audit-log.component.css'
+
 })
 export class AuditLogComponent implements OnInit {
   private securexService = inject(SecurexService);

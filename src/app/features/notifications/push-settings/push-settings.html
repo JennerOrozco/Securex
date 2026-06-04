@@ -1,27 +1,24 @@
-<div class="p-2">
-  <div *ngIf="!hasPermission" class="access-denied">
-    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-    <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden gestionar configuraciones Push.</p>
+<app-crud-page
+  permission="securex.notifications.push"
+  title="Configuraciones Push"
+  subtitle="Llaves VAPID y parámetros para notificaciones web"
+  [data]="items"
+  [columns]="cols"
+  [loading]="loading"
+  [isSaving]="isSaving"
+  [formFields]="formFields"
+  [formExtraData]="initialData"
+  formAddTitle="Nueva Configuración"
+  formEditTitle="Editar Configuración"
+  deleteTitle="Eliminar Configuración"
+  (onSave)="save($event.data, $event.mode)"
+  (onConfirmDelete)="confirmDelete()"
+  (onRefresh)="load()"
+  (onAdd)="handleAdd()"
+  (onEdit)="handleEdit($event)"
+  (onDelete)="handleDelete($event)"
+>
+  <div custom-toolbar-actions>
+    <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy" (onClick)="handleGenerateVapid()"></app-button>
   </div>
-
-  <ng-container *ngIf="hasPermission">
-    <app-table-component title="Configuraciones Push" subtitle="Llaves VAPID y parámetros para notificaciones web" [columns]="cols" [data]="items"
-      [loading]="loading" [showAdd]="true" [showEdit]="true" [showDelete]="true" (onAdd)="handleAdd()"
-      (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)">
-      <div custom-toolbar-actions>
-        <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy" (onClick)="handleGenerateVapid()"></app-button>
-      </div>
-    </app-table-component>
-  </ng-container>
-
-  <app-form-modal [visible]="modalVisible && modalMode !== 'delete'" [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    title="{{ modalMode === 'add' ? 'Nueva Configuración' : 'Editar Configuración' }}" [fields]="formFields"
-    [data]="selectedItem" [initialData]="initialData" [loading]="isSaving" (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-form-modal>
-
-  <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" title="Eliminar Configuración" [loading]="isSaving"
-    (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
-  </app-delete-modal>
-</div>
+</app-crud-page>

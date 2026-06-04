@@ -136,10 +136,12 @@ import { StatusClassPipe } from '../table-component/status-class.pipe';
                       }
                     }
                     @case ('status') {
-                      <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
-                        <span class="edo-dot"></span>
-                        {{ rowData[col.field] }}
-                      </span>
+                      @if (rowData[col.field]) {
+                        <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
+                          <span class="edo-dot"></span>
+                          {{ rowData[col.field] }}
+                        </span>
+                      }
                     }
                     @case ('link') {
                       <div>

@@ -11,7 +11,7 @@ import { SelectGridColumn } from './select-grid.types';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SelectModule, ButtonModule, FormFieldComponent],
   templateUrl: './select-grid.component.html',
-  styleUrls: ['./select-grid.component.css']
+
 })
 export class SelectGridComponent {
   @Input() id: string = 'sg-' + Math.random().toString(36).substr(2, 9);

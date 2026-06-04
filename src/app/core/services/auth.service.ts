@@ -1,7 +1,7 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of, tap, map, catchError, finalize, ReplaySubject, take, timeout } from 'rxjs';
+import { Observable, of, tap, map, catchError, finalize, ReplaySubject, take, timeout, firstValueFrom } from 'rxjs';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
 import { NotificationService } from './notification.service';
@@ -664,9 +664,25 @@ export class AuthService {
         return null;
     }
 
-    logout(): void {
+    async logout() {
         const refreshToken = sessionStorage.getItem('refreshToken');
         const accessToken = localStorage.getItem('accessToken');
+
+        // Revocar dispositivo push en el backend
+        try {
+            const sub = await firstValueFrom(this.swPush.subscription);
+            if (sub) {
+                const payload = {
+                    device_token: JSON.stringify(sub)
+                };
+                await firstValueFrom(
+                    this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { body: payload })
+                );
+                console.log('Push device unsubscribed in backend successfully.');
+            }
+        } catch (err) {
+            console.error('Failed to unsubscribe push device in backend during logout:', err);
+        }
 
         // Revocar en backend (fire & forget — no bloquear el logout)
         if (refreshToken && accessToken) {

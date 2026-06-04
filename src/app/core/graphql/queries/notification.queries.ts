@@ -2,9 +2,10 @@ export const NOTIFICATION_QUERIES = {
   SEND_ATTEMPTS: `
     query SendAttempts {
       sendAttempts {
-        id user_uuid app_uuid ip_address created_at
+        id user_uuid app_uuid company_uuid ip_address created_at
         app { name }
         user { full_name }
+        company { name }
       }
     }
   `,
@@ -16,15 +17,17 @@ export const NOTIFICATION_QUERIES = {
         type created_at
         app { name }
         user { full_name }
+        company { name }
       }
     }
   `,
   USER_DEVICES: `
     query UserDevices {
       userDevices {
-        id user_uuid app_uuid device_token device_type
+        id user_uuid app_uuid company_uuid device_token device_type
         app { name }
         user { full_name }
+        company { name }
       }
     }
   `,

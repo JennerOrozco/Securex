@@ -77,11 +77,28 @@ export class NotificationService {
     }
   }
 
+  private getCompanyUuid(): string | null {
+    const storedCompany = localStorage.getItem('currentCompany');
+    if (storedCompany) {
+      try {
+        const company = JSON.parse(storedCompany);
+        return company?.uuid || null;
+      } catch (e) {
+        console.error('Error parsing company from localStorage', e);
+      }
+    }
+    return null;
+  }
+
   private sendSubscriptionToApi(sub: PushSubscription) {
-    const payload = {
+    const payload: any = {
       device_token: JSON.stringify(sub),
       device_type: this.getDeviceType()
     };
+    const companyUuid = this.getCompanyUuid();
+    if (companyUuid) {
+      payload.company_uuid = companyUuid;
+    }
 
     return this.http.post(`${this.configService.notificationApiUrl}/notifications/devices`, payload);
   }

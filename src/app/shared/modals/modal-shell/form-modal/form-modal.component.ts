@@ -36,7 +36,7 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.ut
     InputImageComponent, PasswordComponent, InputNumberComponent, DatepickerComponent, TextareaComponent
   ],
   templateUrl: './form-modal.component.html',
-  styleUrls: ['../../modals.css', './form-modal.component.css']
+  styleUrls: ['./form-modal.component.css']
 })
 export class FormModalComponent implements OnInit, OnChanges {
   @Input() visible = false;

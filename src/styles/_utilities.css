@@ -1,0 +1,392 @@
+/* =======================================================================
+   UTILITIES — global utility classes
+   Generic one-off utility classes used across the app.
+   Imported from src/styles.css.
+   ======================================================================= */
+
+/* ─────────────────────────────────────────────────────────────
+   ACCESS DENIED
+   ───────────────────────────────────────────────────────────── */
+.access-denied {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #64748b;
+}
+
+.access-denied i {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+    color: #94a3b8;
+}
+
+.access-denied h2,
+.access-denied h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.5rem;
+}
+
+.access-denied p {
+    font-size: 0.9rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   ANIMATIONS — fadeIn / fadeUp
+   ───────────────────────────────────────────────────────────── */
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MINIMALIST PREMIUM STICKY NOTES (used by follow-up-notes)
+   ───────────────────────────────────────────────────────────── */
+.gm-sticky-notes-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px 2px 10px;
+}
+
+.gm-sticky-note {
+    position: relative;
+    background: #fffdf0 !important;
+    border: 1.5px dashed rgba(202, 138, 4, 0.3) !important;
+    border-radius: 8px !important;
+    padding: 0;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+    cursor: default;
+    overflow: hidden;
+}
+
+.gm-sticky-note:hover {
+    transform: translateY(-2px) !important;
+    box-shadow:
+        0 6px 12px rgba(202, 138, 4, 0.06),
+        0 2px 4px rgba(0, 0, 0, 0.02) !important;
+    border-color: rgba(202, 138, 4, 0.45) !important;
+    z-index: 10 !important;
+}
+
+.gm-sticky-note.editing {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06) !important;
+    border-color: rgba(202, 138, 4, 0.6) !important;
+    z-index: 20 !important;
+}
+
+.gm-sticky-note-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #fef08a !important;
+    border-bottom: 1.5px dashed rgba(202, 138, 4, 0.25) !important;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 5;
+}
+
+.gm-sticky-note-author {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.gm-sticky-note-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    font-size: 9.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    background: #ca8a04 !important;
+    color: #fff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.gm-sticky-note-author-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #713f12 !important;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.gm-sticky-note-menu {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.gm-sticky-note-menu-btn {
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #854d0e !important;
+    transition: background 0.15s;
+}
+
+.gm-sticky-note-menu-btn:hover {
+    background: rgba(202, 138, 4, 0.15) !important;
+}
+
+.gm-sticky-note-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 4px;
+    background: #fff !important;
+    border: 1px solid rgba(226, 232, 240, 0.9) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.15) !important;
+    z-index: 100;
+    min-width: 130px;
+    padding: 4px;
+    animation: stickyMenuIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes stickyMenuIn {
+    from { opacity: 0; transform: translateY(-4px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.gm-sticky-note-dropdown button {
+    width: 100% !important;
+    padding: 6px 10px !important;
+    border: none !important;
+    background: none !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    border-radius: 6px !important;
+    transition: background 0.1s, color 0.1s !important;
+    font-family: inherit !important;
+    text-align: left !important;
+}
+
+.gm-sticky-note-dropdown button:hover {
+    background: #f1f5f9 !important;
+    color: #0f172a !important;
+}
+
+.gm-sticky-note-dropdown button.danger {
+    color: #ef4444 !important;
+}
+
+.gm-sticky-note-dropdown button.danger:hover {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+}
+
+.gm-sticky-note-body {
+    padding: 10px 12px 8px !important;
+    font-size: 12.5px !important;
+    line-height: 1.55 !important;
+    color: #000000 !important;
+    white-space: pre-wrap;
+    word-break: break-word;
+    flex-grow: 1;
+    font-family: 'Inter', system-ui, sans-serif !important;
+    overflow-y: auto;
+    background: #fffdf0 !important;
+}
+
+.gm-sticky-note-footer {
+    padding: 4px 12px 8px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-shrink: 0;
+    background: #fffdf0 !important;
+}
+
+.gm-sticky-note-date {
+    font-size: 9px;
+    font-weight: 500;
+    color: #94a3b8 !important;
+}
+
+.gm-sticky-note-edit {
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex-grow: 1;
+    background: #fffdf0 !important;
+}
+
+.gm-sticky-note-textarea {
+    width: 100% !important;
+    padding: 6px 8px !important;
+    border: 1px dashed rgba(202, 138, 4, 0.4) !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-family: inherit !important;
+    background: #fff !important;
+    outline: none !important;
+    resize: vertical !important;
+    line-height: 1.45 !important;
+    color: #000000 !important;
+    min-height: 70px !important;
+    max-height: 130px !important;
+    transition: all 0.2s !important;
+}
+
+.gm-sticky-note-textarea:focus {
+    border-color: #ca8a04 !important;
+    box-shadow: 0 0 0 2px rgba(254, 240, 138, 0.4) !important;
+}
+
+.gm-sticky-note-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.gm-sticky-note-btn-cancel,
+.gm-sticky-note-btn-save {
+    padding: 3px 8px !important;
+    border-radius: 5px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    transition: all 0.15s !important;
+}
+
+.gm-sticky-note-btn-cancel {
+    border: 1px solid rgba(202, 138, 4, 0.3) !important;
+    background: #fff !important;
+    color: #854d0e !important;
+}
+
+.gm-sticky-note-btn-cancel:hover {
+    background: #fffbeb !important;
+}
+
+.gm-sticky-note-btn-save {
+    border: none !important;
+    background: #ca8a04 !important;
+    color: #fff !important;
+    box-shadow: 0 1px 3px rgba(202, 138, 4, 0.2);
+}
+
+.gm-sticky-note-btn-save:hover {
+    background: #a16207 !important;
+}
+
+.gm-sticky-note::before,
+.gm-sticky-note::after {
+    display: none !important;
+}
+
+.gm-sticky-note-new-container {
+    background: #fff;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gm-sticky-note-new-container:focus-within {
+    border-color: #6366f1;
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.08);
+}
+
+.gm-sticky-note-new-input {
+    width: 100% !important;
+    padding: 4px 6px !important;
+    border: none !important;
+    outline: none !important;
+    resize: none !important;
+    font-size: 12.5px !important;
+    color: #0f172a !important;
+    background: transparent !important;
+    line-height: 1.5 !important;
+    min-height: 56px !important;
+}
+
+.gm-sticky-note-new-input::placeholder {
+    color: #94a3b8 !important;
+}
+
+.gm-sticky-note-new-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.gm-sticky-note-new-btn {
+    padding: 6px 14px !important;
+    border: none !important;
+    border-radius: 6px !important;
+    background: #6366f1 !important;
+    color: #fff !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    font-family: inherit !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: all 0.15s !important;
+    box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2) !important;
+}
+
+.gm-sticky-note-new-btn:hover:not(:disabled) {
+    background: #4f46e5 !important;
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.35) !important;
+}
+
+.gm-sticky-note-new-btn:disabled {
+    background: #e2e8f0 !important;
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+}

@@ -8,7 +8,7 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, AutoCompleteModule],
   templateUrl: './autocomplete.component.html',
-  styleUrls: ['./autocomplete.component.css']
+
 })
 export class AutocompleteComponent {
   @Input() id: string = 'ac-' + Math.random().toString(36).substr(2, 9);

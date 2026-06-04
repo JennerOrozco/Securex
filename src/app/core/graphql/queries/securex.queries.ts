@@ -103,7 +103,7 @@ export const SECUREX_QUERIES = {
     query Apps {
       apps {
         id uuid name slug api_key api_secret google_client_id google_client_secret is_active
-        companies { id uuid name is_active branches { id uuid name } }
+        companies { id uuid tax_id name is_active branches { id uuid name } }
       }
     }
   `,
@@ -122,8 +122,9 @@ export const SECUREX_QUERIES = {
   SECURITY_AUDIT_LOGS: `
     query SecurityAuditLogs {
       securityAuditLogs {
-        uuid user_uuid user_name event_type description ip_address
+        uuid user_uuid user_name event_type description ip_address company_uuid
         app { name }
+        company { name }
       }
     }
   `,

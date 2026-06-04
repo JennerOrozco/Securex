@@ -22,7 +22,7 @@ interface ProcessedGroup {
   standalone: true,
   imports: [CommonModule, FormsModule, DialogModule, ButtonModule, TooltipModule, CheckboxModule],
   templateUrl: './role-permissions-modal.component.html',
-  styleUrls: ['../../modals.css', './role-permissions-modal.component.css']
+  styleUrls: ['./role-permissions-modal.component.css']
 })
 export class RolePermissionsModalComponent implements OnChanges {
   @Input() visible = false;

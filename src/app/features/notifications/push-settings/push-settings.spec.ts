@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PushSettings } from './push-settings';
+import { PushSettingsComponent } from './push-settings';
 
-describe('PushSettings', () => {
-  let component: PushSettings;
-  let fixture: ComponentFixture<PushSettings>;
+describe('PushSettingsComponent', () => {
+  let component: PushSettingsComponent;
+  let fixture: ComponentFixture<PushSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PushSettings]
+      imports: [PushSettingsComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PushSettings);
+    fixture = TestBed.createComponent(PushSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

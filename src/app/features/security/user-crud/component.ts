@@ -13,7 +13,7 @@ import { forkJoin } from 'rxjs';
   standalone: true,
   imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './component.html',
-  styleUrl: './component.css'
+
 })
 export class SecurityUserCrudComponent implements OnInit {
   private securexService = inject(SecurexService);

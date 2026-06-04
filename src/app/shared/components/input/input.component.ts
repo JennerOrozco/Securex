@@ -8,7 +8,7 @@ import { InputTextModule } from 'primeng/inputtext';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, InputTextModule],
   templateUrl: './input.component.html',
-  styleUrls: ['./input.component.css']
+
 })
 export class InputComponent {
   @Input() id: string = 'input-' + Math.random().toString(36).substr(2, 9);

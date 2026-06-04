@@ -87,17 +87,17 @@ export const routes: Routes = [
       {
         path: 'system-logs/login-attempts',
         title: 'Intentos de Acceso',
-        loadComponent: () => import('./features/system-logs/login-attempts/login-attempts.component').then(m => m.LoginAttempts)
+        loadComponent: () => import('./features/system-logs/login-attempts/login-attempts.component').then(m => m.LoginAttemptsComponent)
       },
       {
         path: 'system-logs/password-resets',
         title: 'Restablecimientos de Contraseña',
-        loadComponent: () => import('./features/system-logs/password-resets/password-resets.component').then(m => m.PasswordResets)
+        loadComponent: () => import('./features/system-logs/password-resets/password-resets.component').then(m => m.PasswordResetsComponent)
       },
       {
         path: 'system-logs/refresh-tokens',
         title: 'Tokens de Refresco',
-        loadComponent: () => import('./features/system-logs/refresh-tokens/refresh-tokens.component').then(m => m.RefreshTokens)
+        loadComponent: () => import('./features/system-logs/refresh-tokens/refresh-tokens.component').then(m => m.RefreshTokensComponent)
       },
       {
         path: 'security/webauthn-credentials',

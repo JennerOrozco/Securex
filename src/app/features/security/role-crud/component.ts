@@ -13,7 +13,7 @@ import { NotificationService } from '@core/services/notification.service';
   standalone: true,
   imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent, RolePermissionsModalComponent],
   templateUrl: './component.html',
-  styleUrl: './component.css'
+
 })
 export class SecurityRoleCrudComponent implements OnInit {
   private securexService = inject(SecurexService);

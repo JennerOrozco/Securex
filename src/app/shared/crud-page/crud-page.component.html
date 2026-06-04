@@ -1,0 +1,57 @@
+<div class="p-2">
+  <!-- Permission gate (optional) -->
+  <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
+    <i class="pi pi-lock"></i>
+    <h2>Acceso restringido</h2>
+    <p>No tienes permisos para acceder a este módulo.</p>
+  </div>
+
+  <ng-container *ngIf="hidePermissionGate || hasPermission">
+    <app-table-component
+      [title]="title"
+      [subtitle]="subtitle"
+      [data]="data"
+      [columns]="columns"
+      [loading]="loading"
+      [showAdd]="showAdd"
+      [showEdit]="showEdit"
+      [showDelete]="showDelete"
+      [addLabel]="addLabel"
+      (onAdd)="handleAdd()"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)"
+      (onRefresh)="onRefresh.emit()"
+    >
+      <!-- Extra toolbar actions can be projected here -->
+      <ng-content select="[custom-toolbar-actions]"></ng-content>
+    </app-table-component>
+  </ng-container>
+
+  <!-- Form modal (add / edit) -->
+  <app-form-modal
+    *ngIf="formFields && formFields.length"
+    [visible]="modalVisible && modalMode !== 'delete'"
+    [mode]="modalMode === 'add' ? 'add' : 'edit'"
+    [title]="resolvedFormTitle"
+    [fields]="formFields"
+    [data]="resolvedFormData"
+    [initialData]="formExtraData"
+    [loading]="isSaving"
+    [customFormValid]="customFormValid"
+    (onConfirm)="handleSave($event)"
+    (onClose)="handleCloseModal()"
+  ></app-form-modal>
+
+  <!-- Delete modal -->
+  <app-delete-modal
+    [visible]="modalVisible && modalMode === 'delete'"
+    [title]="deleteTitle"
+    [bodyMessage]="resolvedDeleteMessage"
+    [loading]="isSaving"
+    (onConfirm)="handleConfirmDelete()"
+    (onClose)="handleCloseModal()"
+  ></app-delete-modal>
+
+  <!-- Extra modals (e.g. role-permissions) can be projected here -->
+  <ng-content select="[extra-modals]"></ng-content>
+</div>

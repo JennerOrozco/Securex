@@ -11,7 +11,6 @@ import { ToastModule } from 'primeng/toast';
   selector: 'app-root',
   templateUrl: './app.html',
   standalone: true,
-  styleUrl: './app.css',
   imports: [
     CommonModule,
     RouterOutlet,

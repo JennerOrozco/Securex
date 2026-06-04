@@ -1,4 +1,5 @@
-@import "../../../shared/modals/modals.css";
+/* Modal / dialog / form styles are loaded globally from src/styles/_modals.css
+   Toolbar / save button styles are loaded globally from src/styles/_tree-tables.css */
 
 :host {
   display: block;

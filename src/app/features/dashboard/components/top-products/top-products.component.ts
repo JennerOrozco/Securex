@@ -7,7 +7,7 @@ import { TableComponent, TableColumn } from '../../../../shared/table-component/
   standalone: true,
   imports: [CommonModule, TableComponent],
   templateUrl: './top-products.component.html',
-  styleUrls: ['./top-products.component.scss']
+
 })
 export class TopProductsComponent {
   @Input() data: any[] = [];

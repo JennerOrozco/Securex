@@ -1,24 +1,15 @@
-<div class="p-2">
-  <div *ngIf="!hasPermission" class="access-denied">
-    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-    <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden ver la auditoría de seguridad.</p>
-  </div>
-
-  <ng-container *ngIf="hasPermission">
-    <app-table-component
-      title="Auditoría de Seguridad"
-      subtitle="Registro de eventos de seguridad del sistema"
-      [columns]="cols"
-      [data]="logs"
-      [loading]="loading"
-      [showAdd]="false" [showEdit]="false" [showDelete]="true"
-      (onDelete)="handleDelete($event)">
-    </app-table-component>
-  </ng-container>
-
-  <app-delete-modal [visible]="modalVisible" title="Eliminar Log de Auditoría"
-    [bodyMessage]="'¿Estás seguro de eliminar este registro de auditoría?'"
-    [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
-  </app-delete-modal>
-</div>
+<app-crud-page
+  permission="securex.security"
+  title="Auditoría de Seguridad"
+  subtitle="Registro de eventos de seguridad del sistema"
+  [data]="logs"
+  [columns]="cols"
+  [loading]="loading"
+  [isSaving]="isSaving"
+  [showAdd]="false"
+  [showEdit]="false"
+  deleteTitle="Eliminar Log de Auditoría"
+  deleteMessage="¿Estás seguro de eliminar este registro de auditoría?"
+  (onConfirmDelete)="onConfirmDelete($event)"
+  (onRefresh)="load()"
+></app-crud-page>

@@ -1,0 +1,279 @@
+/* =======================================================================
+   TOAST — global toast/notification styles
+   Imported from src/styles.css.
+   ======================================================================= */
+
+.p-button {
+    font-size: 0.8rem !important;
+}
+
+.app-toast .p-toast-message {
+    border-radius: 12px !important;
+    backdrop-filter: blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+    margin-bottom: 0.5rem !important;
+    padding: 0.65rem 0.875rem !important;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+.app-toast .p-toast-message::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 3px !important;
+    height: 100% !important;
+    border-radius: 3px 0 0 3px !important;
+}
+
+.app-toast .p-toast-message:hover {
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.35),
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    transform: translateY(-1px) !important;
+}
+
+.app-toast .p-toast-message-content {
+    gap: 0.65rem !important;
+    align-items: center !important;
+}
+
+.app-toast .p-toast-message-icon {
+    font-size: 1.1rem !important;
+    flex-shrink: 0 !important;
+}
+
+.app-toast .p-toast-summary {
+    font-weight: 650 !important;
+    font-size: 0.8rem !important;
+    letter-spacing: 0.01em !important;
+    margin-bottom: 0 !important;
+}
+
+.app-toast .p-toast-detail {
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+    color: inherit !important;
+    opacity: 0.7 !important;
+}
+
+.app-toast .p-toast-close-icon {
+    font-size: 0.65rem !important;
+    opacity: 0.35 !important;
+    transition: all 0.2s ease !important;
+    border-radius: 4px !important;
+    padding: 2px !important;
+}
+
+.app-toast .p-toast-close-icon:hover {
+    opacity: 1 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Severity tones */
+.app-toast .p-toast-message.p-toast-message-success {
+    background: linear-gradient(135deg, rgba(22, 101, 52, 0.88), rgba(20, 83, 45, 0.82)) !important;
+    color: #e5f5e5 !important;
+    border-color: rgba(34, 197, 94, 0.2) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-success::before {
+    background: linear-gradient(180deg, #4ade80, #22c55e) !important;
+    box-shadow: 0 0 8px rgba(74, 222, 128, 0.4) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-success .p-toast-message-icon {
+    color: #4ade80 !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-error {
+    background: linear-gradient(135deg, rgba(153, 27, 27, 0.88), rgba(127, 29, 29, 0.82)) !important;
+    color: #fce4e4 !important;
+    border-color: rgba(239, 68, 68, 0.2) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-error::before {
+    background: linear-gradient(180deg, #f87171, #ef4444) !important;
+    box-shadow: 0 0 8px rgba(248, 113, 113, 0.4) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-error .p-toast-message-icon {
+    color: #f87171 !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-info {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.82)) !important;
+    color: #dbeafe !important;
+    border-color: rgba(59, 130, 246, 0.2) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-info::before {
+    background: linear-gradient(180deg, #60a5fa, #3b82f6) !important;
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.4) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-info .p-toast-message-icon {
+    color: #60a5fa !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-warn {
+    background: linear-gradient(135deg, rgba(146, 64, 14, 0.88), rgba(120, 53, 15, 0.82)) !important;
+    color: #fef3c7 !important;
+    border-color: rgba(245, 158, 11, 0.2) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-warn::before {
+    background: linear-gradient(180deg, #fbbf24, #f59e0b) !important;
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.4) !important;
+}
+
+.app-toast .p-toast-message.p-toast-message-warn .p-toast-message-icon {
+    color: #fbbf24 !important;
+}
+
+@media (max-width: 640px) {
+    .p-toast {
+        width: 92vw !important;
+        left: 4vw !important;
+        right: 4vw !important;
+    }
+    .app-toast .p-toast-message {
+        padding: 0.6rem 0.75rem !important;
+        border-radius: 10px !important;
+        margin-bottom: 0.4rem !important;
+    }
+    .app-toast .p-toast-message-content {
+        gap: 0.5rem !important;
+    }
+    .app-toast .p-toast-message-icon {
+        font-size: 1rem !important;
+    }
+    .app-toast .p-toast-summary {
+        font-size: 0.78rem !important;
+    }
+    .app-toast .p-toast-detail {
+        font-size: 0.72rem !important;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   TOOLTIPS — premium dark style, compact size
+   ───────────────────────────────────────────────────────────── */
+.p-tooltip .p-tooltip-text {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    line-height: 1.4 !important;
+    padding: 0.3rem 0.65rem !important;
+    border-radius: 7px !important;
+    background: rgba(15, 23, 42, 0.88) !important;
+    color: #f1f5f9 !important;
+    letter-spacing: 0.01em !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.25),
+        0 1px 3px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    white-space: nowrap !important;
+}
+
+.p-tooltip .p-tooltip-arrow {
+    display: none !important;
+}
+
+.p-tooltip {
+    animation: tooltipFadeIn 0.15s ease !important;
+}
+
+@keyframes tooltipFadeIn {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PrimeNG FILTER OVERLAY — red palette (replaces default green)
+   ───────────────────────────────────────────────────────────── */
+.p-datatable-filter-overlay,
+.p-multiselect-panel,
+.p-select-overlay {
+    --p-primary-50:  #fef2f2;
+    --p-primary-100: #fee2e2;
+    --p-primary-200: #fecaca;
+    --p-primary-300: #fca5a5;
+    --p-primary-400: #f87171;
+    --p-primary-500: #ef4444;
+    --p-primary-600: #dc2626;
+    --p-primary-700: #b91c1c;
+    --p-primary-800: #991b1b;
+    --p-primary-900: #7f1d1d;
+    --p-primary-950: #450a0a;
+    --p-highlight-background: #fef2f2;
+    --p-highlight-focus-background: #fee2e2;
+    --p-highlight-color: #b91c1c;
+    --p-highlight-focus-color: #991b1b;
+    --p-primary-contrast-color: #ffffff;
+    --p-primary-hover-color: #dc2626;
+    --p-primary-active-color: #b91c1c;
+}
+
+.my-app-dark .p-datatable-filter-overlay,
+.my-app-dark .p-multiselect-panel,
+.my-app-dark .p-select-overlay {
+    --p-primary-50:  #fef2f2;
+    --p-primary-100: #fee2e2;
+    --p-primary-200: #fecaca;
+    --p-primary-300: #fca5a5;
+    --p-primary-400: #f87171;
+    --p-primary-500: #ef4444;
+    --p-primary-600: #dc2626;
+    --p-primary-700: #b91c1c;
+    --p-primary-800: #991b1b;
+    --p-primary-900: #7f1d1d;
+    --p-primary-950: #450a0a;
+    --p-highlight-background: color-mix(in srgb, #ef4444, transparent 84%);
+    --p-highlight-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-highlight-color: rgba(255, 255, 255, 0.87);
+    --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
+    --p-primary-contrast-color: #ffffff;
+    --p-primary-hover-color: #dc2626;
+    --p-primary-active-color: #b91c1c;
+}
+
+.p-multiselect-filter-custom .p-multiselect-token {
+    background: rgba(239, 68, 68, 0.12) !important;
+    color: #dc2626 !important;
+    border-radius: 6px !important;
+    font-size: 0.72rem !important;
+    padding: 0.15rem 0.4rem !important;
+}
+
+.p-multiselect-filter-custom .p-multiselect-token .p-multiselect-token-icon {
+    color: #dc2626 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PrimeNG PAGINATOR (red palette, also defined in tables.css)
+   ───────────────────────────────────────────────────────────── */
+.p-paginator .p-paginator-pages .p-paginator-page.p-paginator-page-selected,
+.p-paginator .p-paginator-page-selected,
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight,
+.p-paginator .p-link.p-highlight {
+    background: #fef2f2 !important;
+    color: #b91c1c !important;
+    font-weight: 700 !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-paginator-page-selected:hover,
+.p-paginator .p-paginator-page-selected:hover,
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight:hover,
+.p-paginator .p-link.p-highlight:hover {
+    background: #fee2e2 !important;
+}

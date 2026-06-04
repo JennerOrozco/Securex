@@ -116,21 +116,16 @@ export class NotificationTestComponent implements OnInit {
   }
 
   loadCompanies() {
-    this.loadingCompanies = true;
-    this.securexService.getCompaniesWithBranches().subscribe({
-      next: (res: any) => {
-        this.companies = (res || []).filter((c: any) =>
-          c.app_id === this.selectedApp.id
-        );
-        this.loadingCompanies = false;
-      },
-      error: () => this.loadingCompanies = false
-    });
+    // Las compañías ya vienen precargadas dentro de la app seleccionada
+    this.companies = this.selectedApp?.companies || [];
   }
 
   loadUsers() {
     this.loadingUsers = true;
-    this.securexService.getAdminUsersGql({ company_uuid: this.selectedCompany.uuid }).subscribe({
+    this.securexService.getAdminUsersGql({
+      company_uuid: this.selectedCompany.uuid,
+      app_uuid: this.selectedApp.uuid
+    }).subscribe({
       next: (res: any) => {
         this.users = res || [];
         this.loadingUsers = false;
@@ -142,9 +137,7 @@ export class NotificationTestComponent implements OnInit {
   selectApp(app: any) {
     this.selectedApp = app;
     this.step = 2;
-    if (this.companies.length === 0) {
-      this.loadCompanies();
-    }
+    this.companies = app.companies || [];
   }
 
   selectCompany(company: any) {

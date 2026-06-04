@@ -8,7 +8,7 @@ import { SelectModule } from 'primeng/select';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SelectModule],
   templateUrl: './select.component.html',
-  styleUrls: ['./select.component.css']
+
 })
 export class SelectComponent {
   @Input() id: string = 'select-' + Math.random().toString(36).substr(2, 9);

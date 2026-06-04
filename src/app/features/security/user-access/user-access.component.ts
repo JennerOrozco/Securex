@@ -13,7 +13,7 @@ import { NotificationService } from '@core/services/notification.service';
   standalone: true,
   imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './user-access.component.html',
-  styleUrl: './user-access.component.css'
+
 })
 export class UserAccessComponent implements OnInit {
   private securexService = inject(SecurexService);

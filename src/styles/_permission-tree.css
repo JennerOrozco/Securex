@@ -1,0 +1,220 @@
+/* =======================================================================
+   PERMISSION-TREE — custom HTML tree table (not PrimeNG)
+   Used by CompanyPermissions page and RolePermissionsModal.
+   Distinct from src/styles/_tree-tables.css which is for the
+   PrimeNG TreeTable in <app-tree-table-component>.
+   Imported from src/styles.css.
+   ======================================================================= */
+
+.gm-treetable {
+    width: 100%;
+    overflow: hidden;
+}
+
+.gm-tt-header,
+.gm-tt-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    transition: background-color 0.2s;
+}
+
+.gm-tt-header {
+    background: var(--ggts-navy-hex);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.9);
+    height: 38px;
+}
+
+.gm-tt-row {
+    height: 44px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.45);
+    background: rgba(255, 255, 255, 0.25);
+}
+
+.gm-tt-row:last-child {
+    border-bottom: none;
+}
+
+.gm-tt-row:hover {
+    background: rgba(99, 102, 241, 0.03);
+}
+
+.gm-tt-col-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding-left: 16px;
+    min-width: 0;
+    height: 100%;
+    cursor: pointer;
+    user-select: none;
+}
+
+.gm-tt-col-select {
+    width: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    height: 100%;
+    border-left: 1px solid rgba(226, 232, 240, 0.45);
+}
+
+/* Depths / Indentations */
+.gm-tt-row.depth-0 { padding-left: 0px;   background: rgba(248, 250, 252, 0.55); font-weight: 700; }
+.gm-tt-row.depth-1 { padding-left: 28px;  font-weight: 600; }
+.gm-tt-row.depth-2 { padding-left: 56px;  font-weight: 500; }
+.gm-tt-row.depth-3 { padding-left: 84px;  font-weight: 500; }
+.gm-tt-row.depth-4 { padding-left: 112px; font-weight: 400; }
+.gm-tt-row.depth-5 { padding-left: 140px; font-weight: 400; }
+
+/* Chevrons */
+.gm-tt-chevron {
+    font-size: 0.62rem;
+    color: #94a3b8;
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    display: grid;
+    place-items: center;
+    margin-right: 6px;
+    border-radius: 4px;
+    transition: transform 0.2s, background-color 0.15s;
+    flex-shrink: 0;
+}
+
+.gm-tt-chevron:hover {
+    background: rgba(148, 163, 184, 0.15);
+    color: #475569;
+}
+
+.gm-tt-chevron.open {
+    transform: rotate(90deg);
+}
+
+.gm-tt-chevron-placeholder {
+    width: 20px;
+    margin-right: 6px;
+    flex-shrink: 0;
+}
+
+/* Checkbox Select */
+.gm-tt-checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+    border: 1.5px solid #cbd5e1;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.65rem;
+    background: white;
+    color: transparent;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.gm-tt-checkbox:hover {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.gm-tt-checkbox.all {
+    background: #323462;
+    border-color: #323462;
+    color: white;
+    box-shadow: 0 2px 6px rgba(50, 52, 98, 0.25);
+}
+
+.gm-tt-checkbox.partial {
+    background: rgba(50, 52, 98, 0.12);
+    border-color: #323462;
+    color: #323462;
+}
+
+.gm-tt-checkbox.action.all {
+    background: #10b981;
+    border-color: #10b981;
+    color: white;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
+}
+
+/* Icon wrappers per type */
+.gm-tt-icon-wrap {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 0.75rem;
+    margin-right: 10px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.22)) !important;
+    border: 1px solid rgba(99, 102, 241, 0.25) !important;
+    color: #6366f1 !important;
+}
+
+.gm-tt-icon-wrap.menu-type {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.22)) !important;
+    border: 1px solid rgba(99, 102, 241, 0.25) !important;
+    color: #6366f1 !important;
+}
+
+.gm-tt-icon-wrap.submenu-type {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.22)) !important;
+    border: 1px solid rgba(16, 185, 129, 0.25) !important;
+    color: #10b981 !important;
+}
+
+.gm-tt-icon-wrap.action-type {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.22)) !important;
+    border: 1px solid rgba(245, 158, 11, 0.25) !important;
+    color: #f59e0b !important;
+}
+
+.gm-tt-icon-wrap.component-type {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.22)) !important;
+    border: 1px solid rgba(239, 68, 68, 0.25) !important;
+    color: #ef4444 !important;
+}
+
+/* Module color classes (used by role-permissions-modal) */
+.mod-purple { background: linear-gradient(135deg,#e0e7ff,#c7d2fe); color: #323462; }
+.mod-blue   { background: linear-gradient(135deg,#dbeafe,#bfdbfe); color: #1e40af; }
+.mod-green  { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color: #065f46; }
+.mod-orange { background: linear-gradient(135deg,#fff7ed,#fed7aa); color: #9a3412; }
+.mod-pink   { background: linear-gradient(135deg,#fce7f3,#fbcfe8); color: #9d174d; }
+.mod-teal   { background: linear-gradient(135deg,#ccfbf1,#99f6e4); color: #134e4a; }
+.mod-red    { background: linear-gradient(135deg,#ffe4e6,#fecdd3); color: #9f1239; }
+.mod-slate  { background: linear-gradient(135deg,#f1f5f9,#e2e8f0); color: #334155; }
+
+/* Type icons (company-permissions scope color coding) */
+.icon-menu      { color: #6366f1 !important; }
+.icon-submenu   { color: #10b981 !important; }
+.icon-action    { color: #f59e0b !important; }
+.icon-component { color: #ef4444 !important; }
+
+/* Text */
+.gm-tt-name {
+    font-size: 0.78rem;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.depth-2 .gm-tt-name {
+    color: #475569;
+}
+
+.gm-tt-slug {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--ggts-text-light);
+    font-weight: 500;
+    margin-top: 1px;
+}

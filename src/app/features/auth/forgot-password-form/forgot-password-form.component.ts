@@ -7,7 +7,6 @@ import { InputComponent } from '@shared/components/input/input.component';
   imports: [CommonModule, ReactiveFormsModule, FormsModule, InputComponent],
   selector: 'app-forgot-password-form',
   templateUrl: './forgot-password-form.component.html',
-  styleUrls: ['../auth-shared.css'],
   standalone: true
 })
 export class ForgotPasswordFormComponent {

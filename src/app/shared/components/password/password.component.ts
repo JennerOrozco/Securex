@@ -8,7 +8,7 @@ import { PasswordModule } from 'primeng/password';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, PasswordModule],
   templateUrl: './password.component.html',
-  styleUrl: './password.component.scss'
+
 })
 export class PasswordComponent {
   @Input() id: string = 'password-' + Math.random().toString(36).substr(2, 9);

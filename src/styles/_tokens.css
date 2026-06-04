@@ -1,0 +1,168 @@
+/* =======================================================================
+   TOKENS — design tokens (CSS custom properties)
+   Loaded from src/styles.css.
+   ======================================================================= */
+
+:root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.75rem;
+
+    /* Custom NC Colors */
+    --nc-navy: 222 47% 11%;
+    --nc-red: 350 70% 50%;
+    --padel-orange: 18 61% 47%;
+
+    /* GGTS - Group Global Trading Services Brand Colors */
+    --ggts-navy: 218 85% 8%;
+    --ggts-primary: 210 44% 59%;
+    --ggts-light: 200 33% 65%;
+    --ggts-white: 0 0% 100%;
+
+    /* GGTS Hex tokens (required by shared table components) */
+    --ggts-navy-hex: #250303;
+    --ggts-navy-light: #3b0808;
+    --ggts-blue-accent: #7f1d1d;
+    --ggts-teal: #dc2626;
+    --ggts-border: #e2e8f0;
+    --ggts-text-main: #0f172a;
+    --ggts-text-muted: #64748b;
+    --ggts-text-light: #94a3b8;
+    --ggts-bg-page: #f1f5f9;
+    --ggts-bg-card: #ffffff;
+    --ggts-indigo: #6366f1;
+
+    /* Auth form theme tokens (formerly in features/auth/auth-shared.css) */
+    --teal-darkest: #0d0000;
+    --teal-accent: #7f1d1d;
+    --teal-bright: #dc2626;
+    --teal-dark: #1a0505;
+    --teal-mid: #2d0a0a;
+    --auth-white: #ffffff;
+    --auth-white-60: rgba(255, 255, 255, 0.6);
+    --auth-white-20: rgba(255, 255, 255, 0.2);
+    --auth-white-10: rgba(255, 255, 255, 0.1);
+    --auth-white-05: rgba(255, 255, 255, 0.05);
+    --font-head: 'Syne', sans-serif;
+    --font-body: 'DM Sans', sans-serif;
+
+    /* Custom tokens */
+    --gradient-primary: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(210 44% 59%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(218 85% 15%) 100%);
+    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
+    --shadow-soft: 0 4px 20px -2px hsl(218 85% 8% / 0.08);
+    --shadow-medium: 0 8px 30px -4px hsl(218 85% 8% / 0.12);
+    --shadow-glow: 0 0 40px hsl(210 44% 59% / 0.15);
+}
+
+body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* Modern Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background-color: hsla(var(--muted-foreground), 0.2);
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: hsla(var(--muted-foreground), 0.4);
+}
+
+/* Mobile Navigation */
+.mobile-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4rem;
+    background-color: hsl(var(--card));
+    border-top: 1px solid hsl(var(--border));
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (min-width: 768px) {
+    .mobile-bottom-nav {
+        display: none;
+    }
+}
+
+.mobile-nav-items {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    height: 100%;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    color: hsl(var(--muted-foreground));
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-nav-item svg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.mobile-nav-item span {
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.mobile-nav-item.active {
+    color: hsl(var(--primary));
+}
+
+.sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgb(0 0 0 / 0.5);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+.sidebar-overlay.open {
+    opacity: 1;
+    pointer-events: auto;
+}

@@ -1,0 +1,271 @@
+/* =======================================================================
+   DASHBOARD — global styles
+   Shared styles for the dashboard sub-components (category-chart,
+   sales-chart, summary-card, cost-centers, top-products).
+   Imported from src/styles.css.
+   ======================================================================= */
+
+/* ─────────────────────────────────────────────────────────────
+   DASHBOARD PAGE SHELL
+   ───────────────────────────────────────────────────────────── */
+.dashboard-page {
+    display: block;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 2.5rem;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    --canvas:        #f0f2f7;
+    --surface:       #ffffff;
+    --surface-2:     #f7f8fb;
+    --border:        rgba(180, 190, 215, 0.45);
+    --text-primary:  #1a1d2e;
+    --text-secondary:#5a6278;
+    --text-muted:    #9099b2;
+}
+
+@media (max-width: 640px) {
+    .dashboard-page {
+        padding: 1.5rem;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   WELCOME CARD (empty / first-login dashboard)
+   ───────────────────────────────────────────────────────────── */
+.dashboard-welcome-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.welcome-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 24px;
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.04),
+        0 1px 3px rgba(0, 0, 0, 0.02),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition:
+        transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+        box-shadow 0.3s ease;
+}
+
+.welcome-card:hover {
+    transform: translateY(-8px);
+    box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.06),
+        0 1px 5px rgba(0, 0, 0, 0.02);
+}
+
+.welcome-avatar {
+    background: linear-gradient(135deg, hsl(var(--primary, 175, 84%, 32%)) 0%, hsl(var(--primary-dark, 175, 84%, 25%)) 100%);
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25);
+    animation: pulse-avatar 3s infinite;
+}
+
+.welcome-avatar-icon {
+    font-size: 2.2rem;
+    color: #ffffff;
+}
+
+.welcome-badge {
+    display: inline-block;
+    background-color: rgba(13, 148, 136, 0.08);
+    color: #0d9488;
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.35rem 1rem;
+    border-radius: 100px;
+    margin-bottom: 1rem;
+}
+
+.welcome-title {
+    color: #1e293b;
+    font-size: 2.25rem;
+    font-weight: 800;
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.welcome-subtitle {
+    color: #64748b;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0 0 1.5rem 0;
+}
+
+.welcome-divider {
+    width: 60px;
+    height: 4px;
+    background-color: #e2e8f0;
+    border-radius: 2px;
+    margin: 0.5rem auto 1.5rem auto;
+}
+
+.welcome-footer-text {
+    color: #475569;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+}
+
+@keyframes pulse-avatar {
+    0%   { transform: scale(1);    box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25); }
+    50%  { transform: scale(1.05); box-shadow: 0 12px 24px rgba(13, 148, 136, 0.4); }
+    100% { transform: scale(1);    box-shadow: 0 8px 16px rgba(13, 148, 136, 0.25); }
+}
+
+@media (max-width: 640px) {
+    .welcome-card {
+        padding: 2rem 1.5rem;
+    }
+    .welcome-title {
+        font-size: 1.75rem;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SECTION CARD (used by every dashboard chart sub-component)
+   ───────────────────────────────────────────────────────────── */
+.section-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+}
+
+.section-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.section-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.section-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin: 0.125rem 0 0;
+}
+
+@media (max-width: 640px) {
+    .section-card { padding: 1rem; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   FREQUENCY BUTTONS (chart period selector)
+   ───────────────────────────────────────────────────────────── */
+.frequency-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.15s;
+    line-height: 1;
+}
+
+.frequency-btn.active {
+    background: #0d9488;
+    color: #fff;
+    border-color: #0d9488;
+}
+
+.frequency-btn:not(.active) {
+    background: var(--surface-2);
+    color: var(--text-secondary);
+}
+
+.frequency-btn:not(.active):hover {
+    background: #eef0f6;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SUMMARY CARD (compact metric card)
+   ───────────────────────────────────────────────────────────── */
+.summary-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 12px;
+}
+
+.summary-card-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin: 0 0 0.25rem;
+}
+
+.summary-card-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+}
+
+.summary-card-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.summary-card-states {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+    .summary-card { padding: 1rem; }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CHART CONTAINER (shared chart sizing)
+   ───────────────────────────────────────────────────────────── */
+.chart-container {
+    height: 300px;
+}

@@ -15,7 +15,7 @@ import { TreeNode } from 'primeng/api';
   standalone: true,
   imports: [CommonModule, TreeTableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './branches.component.html',
-  styleUrl: './branches.component.css'
+
 })
 export class BranchesComponent implements OnInit {
   private securexService = inject(SecurexService);

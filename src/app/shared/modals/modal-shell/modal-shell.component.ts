@@ -17,8 +17,7 @@ import { RippleModule } from 'primeng/ripple';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, DialogModule, ButtonModule, RippleModule],
-  templateUrl: './modal-shell.component.html',
-  styleUrls: ['../modals.css']
+  templateUrl: './modal-shell.component.html'
 })
 export class ModalShellComponent {
   @Input() visible = false;

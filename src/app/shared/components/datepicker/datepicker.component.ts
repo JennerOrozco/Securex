@@ -8,7 +8,7 @@ import { DatePickerModule } from 'primeng/datepicker';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, DatePickerModule],
   templateUrl: './datepicker.component.html',
-  styleUrls: ['./datepicker.component.css']
+
 })
 export class DatepickerComponent {
   @Input() id: string = 'dp-' + Math.random().toString(36).substr(2, 9);

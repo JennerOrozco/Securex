@@ -8,7 +8,6 @@ import { PasswordComponent } from '@shared/components/password/password.componen
   imports: [CommonModule, ReactiveFormsModule, FormsModule, InputComponent, PasswordComponent],
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
-  styleUrls: ['../auth-shared.css'],
   styles: [`
     .actions-wrap {
       display: flex;
@@ -17,7 +16,7 @@ import { PasswordComponent } from '@shared/components/password/password.componen
       width: 100%;
       align-items: stretch;
     }
-    .btn-login {
+    .actions-wrap .btn-login {
       flex: 1;
     }
   `],

@@ -1,16 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
+import { TableColumn } from '@shared/table-component/table-component.component';
 import { SecurexService } from '@core/services/securex.service';
-import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-user-webauthn-credentials',
   standalone: true,
-  imports: [CommonModule, TableComponent, DeleteModalComponent],
+  imports: [CommonModule, CrudPageComponent],
   templateUrl: './user-webauthn-credentials.component.html',
-  styleUrl: './user-webauthn-credentials.component.css'
 })
 export class UserWebauthnCredentials implements OnInit {
   private securexService = inject(SecurexService);
@@ -19,8 +18,6 @@ export class UserWebauthnCredentials implements OnInit {
   credentials: any[] = [];
   loading = false;
   isSaving = false;
-  modalVisible = false;
-  selectedItem: any = null;
 
   columns: TableColumn[] = [
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
@@ -32,7 +29,9 @@ export class UserWebauthnCredentials implements OnInit {
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
-  ngOnInit() { this.load(); }
+  ngOnInit() {
+    this.load();
+  }
 
   load() {
     this.loading = true;
@@ -41,22 +40,18 @@ export class UserWebauthnCredentials implements OnInit {
         this.credentials = Array.isArray(data) ? data : (data?.data || []);
         this.loading = false;
       },
-      error: () => { this.loading = false; }
+      error: () => {
+        this.loading = false;
+      }
     });
   }
 
-  handleDelete(item: any) {
-    this.selectedItem = item;
-    this.modalVisible = true;
-  }
-
-  confirmDelete() {
+  onConfirmDelete(item: any) {
     this.isSaving = true;
-    this.securexService.deleteUserWebauthnCredential(this.selectedItem.id).subscribe({
+    this.securexService.deleteUserWebauthnCredential(item.id).subscribe({
       next: () => {
         this.notificationService.success('Credencial WebAuthn eliminada');
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => {

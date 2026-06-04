@@ -8,7 +8,6 @@ import { PasswordComponent } from '@shared/components/password/password.componen
   imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent],
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
-  styleUrls: ['../auth-shared.css'],
   standalone: true
 })
 export class RegisterFormComponent implements OnInit, OnDestroy {

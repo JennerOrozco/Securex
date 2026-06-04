@@ -36,6 +36,7 @@ export class UserDevicesComponent implements OnInit {
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
     { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'company_name', header: 'Compañía', type: 'text', sortable: true },
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'device_type', header: 'Tipo', type: 'text', sortable: true },
     { field: 'last_active', header: 'Última Actividad', type: 'date', sortable: true },
@@ -59,7 +60,8 @@ export class UserDevicesComponent implements OnInit {
         this.items = (data || []).map((item: any) => ({
           ...item,
           app_name: item.app?.name || item.app_uuid,
-          user_name: item.user?.full_name || item.user_uuid
+          user_name: item.user?.full_name || item.user_uuid,
+          company_name: item.company?.name || item.company_uuid
         }));
         this.loading = false;
       },

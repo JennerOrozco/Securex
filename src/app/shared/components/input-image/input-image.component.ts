@@ -10,7 +10,7 @@ import { BaseFormControl } from '../base-form-control';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, InputTextModule, FormFieldComponent],
   templateUrl: './input-image.component.html',
-  styleUrls: ['./input-image.component.css']
+
 })
 export class InputImageComponent extends BaseFormControl {
   protected prefix = 'img-input-';

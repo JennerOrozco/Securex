@@ -8,7 +8,6 @@ import { PasswordComponent } from '@shared/components/password/password.componen
   imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent],
   selector: 'app-reset-password-form',
   templateUrl: './reset-password-form.component.html',
-  styleUrls: ['../auth-shared.css'],
   standalone: true
 })
 export class ResetPasswordFormComponent {

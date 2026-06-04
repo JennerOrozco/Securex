@@ -118,10 +118,12 @@
           (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
           <td *ngFor="let col of columns; trackBy: trackByField" [style]="col.style" [ngClass]="{'td-actions': col.field === 'actions' || col.type === 'actions'}">
             @if (col.type === 'status') {
-            <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
-              <span class="edo-dot"></span>
-              {{ rowData[col.field] }}
-            </span>
+              @if (rowData[col.field]) {
+                <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
+                  <span class="edo-dot"></span>
+                  {{ rowData[col.field] }}
+                </span>
+              }
             } @else if (col.type === 'image') {
             <div class="table-logo-container">
               @if (rowData[col.field]) {

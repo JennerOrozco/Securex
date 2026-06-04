@@ -42,7 +42,7 @@ const COUNTRIES_LIST: Country[] = [
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectModule, InputTextModule],
   templateUrl: './phone-input.component.html',
-  styleUrls: ['./phone-input.component.css']
+
 })
 export class PhoneInputComponent implements OnInit, OnChanges, OnDestroy {
   @Input() id: string = 'phone-' + Math.random().toString(36).substr(2, 9);

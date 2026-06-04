@@ -9,7 +9,7 @@ import { TooltipModule } from 'primeng/tooltip';
   standalone: true,
   imports: [CommonModule, FormsModule, ScrollPanelModule, TooltipModule],
   templateUrl: './follow-up-notes.component.html',
-  styleUrls: ['./follow-up-notes.component.css']
+
 })
 export class FollowUpNotesComponent {
   @Input() notes: any[] = [];
