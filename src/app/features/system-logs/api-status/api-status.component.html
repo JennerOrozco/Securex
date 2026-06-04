@@ -57,32 +57,62 @@
 </div>
 
 <p-dialog
-  header="Métricas: {{ selectedApiForMetrics()?.name }}"
   [(visible)]="showMetricsDialog"
   [modal]="true"
-  [style]="{ width: '50vw' }"
-  [breakpoints]="{ '960px': '75vw', '640px': '90vw' }"
+  [style]="{ width: '600px' }"
+  [breakpoints]="{ '960px': '80vw', '768px': '92vw', '480px': '96vw' }"
   [draggable]="false"
-  [resizable]="false">
-  @if (isLoadingMetrics()) {
-    <div class="metrics-loading">
-      <i class="pi pi-spin pi-spinner"></i>
+  [resizable]="false"
+  [styleClass]="'gm-dialog gm-dialog--view'"
+  [class]="'gm-dialog gm-dialog--view'">
+
+  <ng-template pTemplate="header">
+    <div class="gm-header">
+      <div class="gm-header-icon gm-icon--view">
+        <i class="pi pi-chart-bar"></i>
+      </div>
+      <div class="gm-header-text">
+        <h2 class="gm-title">Métricas: {{ selectedApiForMetrics()?.name }}</h2>
+      </div>
     </div>
-  }
-  @if (!isLoadingMetrics() && metricsData()) {
-    @if (metricsData().error) {
-      <div class="metrics-error">{{ metricsData().error }}</div>
-    } @else {
-      <div class="metrics-grid">
-        @for (item of metricsData() | keyvalue; track item.key) {
-          <div class="metrics-item">
-            <div class="metrics-item-label">{{ item.key.toString().replace(/_/g, ' ') }}</div>
-            <div class="metrics-item-value">{{ item.value }}</div>
-          </div>
-        }
+  </ng-template>
+
+  <div class="gm-body">
+    @if (isLoadingMetrics()) {
+      <div class="metrics-loading flex justify-center items-center py-6 gap-2">
+        <i class="pi pi-spin pi-spinner text-2xl"></i>
+        <span class="text-slate-500 text-sm">Cargando métricas...</span>
       </div>
     }
-  }
+    @if (!isLoadingMetrics() && metricsData()) {
+      @if (metricsData().error) {
+        <div class="metrics-error">
+          <i class="pi pi-exclamation-triangle"></i>
+          <span>{{ metricsData().error }}</span>
+        </div>
+      } @else {
+        <div class="metrics-grid">
+          @for (item of metricsData() | keyvalue; track item.key) {
+            <div class="metrics-item">
+              <div class="metrics-item-label">{{ item.key.toString().replace(/_/g, ' ') }}</div>
+              <div class="metrics-item-value">{{ item.value }}</div>
+            </div>
+          }
+        </div>
+      }
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="gm-footer">
+      <app-button
+        label="Cerrar"
+        icon="pi pi-times"
+        class="p-button-secondary"
+        (onClick)="showMetricsDialog.set(false)">
+      </app-button>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <ng-template #noPermission>
