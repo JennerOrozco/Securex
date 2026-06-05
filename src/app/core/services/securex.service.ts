@@ -188,12 +188,12 @@ export class SecurexService {
     return this.gql.query<{ apps: any[] }>('security', SECUREX_QUERIES.APPS).pipe(map(d => d.apps));
   }
 
-  getUserAccessesWithRoles(): Observable<any[]> {
-    return this.gql.query<{ userAccesses: any[] }>('security', SECUREX_QUERIES.USER_ACCESSES).pipe(map(d => d.userAccesses));
+  getUserAccessesWithRoles(params?: any): Observable<any[]> {
+    return this.gql.query<{ userAccesses: any[] }>('security', SECUREX_QUERIES.USER_ACCESSES, params).pipe(map(d => d.userAccesses));
   }
 
-  getUserAccessPageData(): Observable<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }> {
-    return this.gql.query<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }>('security', SECUREX_QUERIES.USER_ACCESS_PAGE);
+  getUserAccessPageData(params?: any): Observable<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }> {
+    return this.gql.query<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[] }>('security', SECUREX_QUERIES.USER_ACCESS_PAGE, params);
   }
 
   createUserAccessGql(data: any): Observable<any> {

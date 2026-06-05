@@ -1,9 +1,9 @@
 <div class="p-2">
   <app-table-component
-    title="Gestión de Usuarios"
-    subtitle="Administra los accesos y roles de los usuarios en tu empresa"
+    title="Accesos de Usuarios"
+    subtitle="Filtrados por tu app y compañía actual (sede central)"
     [columns]="cols"
-    [data]="users"
+    [data]="accesses"
     [loading]="loading"
     [showAdd]="true"
     [showEdit]="true"
@@ -16,8 +16,8 @@
   <app-form-modal
     [visible]="modalVisible && modalMode !== 'delete'"
     [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    title="{{ modalMode === 'add' ? 'Invitar Usuario' : 'Cambiar Rol de Usuario' }}"
-    [fields]="modalMode === 'add' ? addFormFields : editFormFields"
+    title="{{ modalMode === 'add' ? 'Nuevo Acceso' : 'Editar Acceso' }}"
+    [fields]="formFields"
     [data]="modalMode === 'edit' ? selectedItem : null"
     [loading]="isSaving"
     (onConfirm)="save($event)"
@@ -27,6 +27,7 @@
   <app-delete-modal
     [visible]="modalVisible && modalMode === 'delete'"
     title="Eliminar Acceso"
+    [bodyMessage]="'¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal.'"
     [loading]="isSaving"
     (onConfirm)="confirmDelete()"
     (onClose)="modalVisible = false">

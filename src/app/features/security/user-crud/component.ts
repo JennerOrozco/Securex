@@ -6,22 +6,24 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-security-user-crud',
   standalone: true,
   imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
   templateUrl: './component.html',
-
 })
 export class SecurityUserCrudComponent implements OnInit {
   private securexService = inject(SecurexService);
   private notificationService = inject(NotificationService);
 
+  accesses: any[] = [];
   users: any[] = [];
-  roles: any[] = [];
+  apps: any[] = [];
+  companies: any[] = [];
   branches: any[] = [];
+  roles: any[] = [];
+
   loading = false;
   isSaving = false;
 
@@ -29,138 +31,139 @@ export class SecurityUserCrudComponent implements OnInit {
   modalMode: 'add' | 'edit' | 'delete' = 'add';
   selectedItem: any = null;
 
-  addFormFields: FormField[] = [
-    { name: 'full_name', label: 'Nombre Completo', type: 'text', required: true, icon: 'pi pi-user' },
-    { name: 'email', label: 'Correo Electrónico', type: 'email', required: true, icon: 'pi pi-envelope' },
-    { name: 'role_id', label: 'Rol Asignado', type: 'select', required: true, options: [] },
-    { name: 'branch_id', label: 'Sucursal', type: 'select', options: [] }
-  ];
-
-  editFormFields: FormField[] = [
-    { name: 'full_name', label: 'Usuario', type: 'text', disabled: true, icon: 'pi pi-user' },
-    { name: 'role_id', label: 'Rol Asignado', type: 'select', required: true, options: [] },
+  formFields: FormField[] = [
+    { name: 'user_id', label: 'Usuario', type: 'select', required: true, options: [] },
+    { name: 'app_id', label: 'Aplicación', type: 'select', required: true, options: [], disabled: true },
+    { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: [] },
     { name: 'branch_id', label: 'Sucursal', type: 'select', options: [] },
+    { name: 'role_id', label: 'Rol', type: 'select', required: true, options: [] },
     { name: 'status', label: 'Estado', type: 'select', required: true, options: [
-      { label: 'Aprobado (APPROVED)', value: 'APPROVED' },
-      { label: 'Pendiente (PENDING)', value: 'PENDING' },
-      { label: 'Rechazado (REJECTED)', value: 'REJECTED' }
+      { label: 'Pendiente', value: 'PENDING' },
+      { label: 'Aprobado', value: 'APPROVED' },
+      { label: 'Rechazado', value: 'REJECTED' }
     ] }
   ];
 
   cols: TableColumn[] = [
-    { field: 'full_name', header: 'Usuario', type: 'user', subField: 'email', sortable: true },
-    { field: 'role_name', header: 'Rol Actual', type: 'role', sortable: true },
+    { field: 'user_name', header: 'Usuario', type: 'user', subField: 'user_email', sortable: true },
+    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'company_name', header: 'Compañía', type: 'text', sortable: true },
     { field: 'branch_name', header: 'Sucursal', type: 'text', sortable: true },
-    { field: 'status', header: 'Estado', type: 'status', sortable: true },
+    { field: 'role_name', header: 'Rol', type: 'text', sortable: true },
+    { field: 'status', header: 'Estado', type: 'status', sortable: true,
+      filterOptions: [
+        { label: 'Aprobado', value: 'APPROVED' },
+        { label: 'Pendiente', value: 'PENDING' },
+        { label: 'Rechazado', value: 'REJECTED' }
+      ], filterOptionLabel: 'label' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
   ngOnInit() {
-    this.loadUsers();
+    this.load();
   }
 
-  private ensureRolesAndBranchesLoaded(callback: () => void) {
-    if (this.roles.length > 0 && this.branches.length > 0) {
-      callback();
-      return;
-    }
-
-    forkJoin({
-      roles: this.securexService.getRolesWithPermissions(),
-      branches: this.securexService.getCompanyBranches()
-    }).subscribe({
+  load() {
+    this.loading = true;
+    this.securexService.getUserAccessPageData().subscribe({
       next: (res) => {
-        this.roles = res.roles;
-        const roleOptions = this.roles.map(r => ({ label: r.name, value: r.id }));
-        this.addFormFields.find(f => f.name === 'role_id')!.options = roleOptions;
-        this.editFormFields.find(f => f.name === 'role_id')!.options = roleOptions;
+        this.users     = res.users     || [];
+        this.apps      = res.apps      || [];
+        this.companies = res.companies || [];
+        this.branches  = res.branches  || [];
+        this.roles     = this.rolesFromAccesses(res.userAccesses);
 
-        const branchList = res.branches.data ?? res.branches;
-        this.branches = branchList;
-        const branchOptions = branchList.map((b: any) => ({ label: b.name, value: b.id }));
-        const finalBranchOptions = [{ label: 'Ninguna (Sin Sucursal)', value: null }, ...branchOptions];
-        this.addFormFields.find(f => f.name === 'branch_id')!.options = finalBranchOptions;
-        this.editFormFields.find(f => f.name === 'branch_id')!.options = finalBranchOptions;
-
-        callback();
-      }
+        this.accesses = (res.userAccesses || []).map((a: any) => ({
+          ...a,
+          user_name:    a.user?.full_name  || a.user?.name || '-',
+          user_email:   a.user?.email      || '-',
+          app_name:     a.app?.name        || '-',
+          company_name: a.company?.name    || '-',
+          branch_name:  a.branch?.name     || 'Todas',
+          role_name:    a.role?.name       || '-',
+          status:       (a.status || 'PENDING').toString().toUpperCase()
+        }));
+        this.refreshFormOptions();
+        this.loading = false;
+      },
+      error: () => (this.loading = false)
     });
   }
 
-  loadUsers() {
-    this.loading = true;
-    this.securexService.getUsersWithRoles().subscribe({
-      next: (res) => {
-        this.users = res.map((u: any) => ({
-          ...u,
-          access_uuid: u.access?.[0]?.uuid,
-          role_name: u.access?.[0]?.role?.name || 'Sin Rol',
-          role_id: u.access?.[0]?.role?.id,
-          branch_name: u.access?.[0]?.branch?.name || 'Sin Sucursal',
-          branch_id: u.access?.[0]?.branch_id,
-          status: u.access?.[0]?.status || 'PENDING'
-        }));
-        this.loading = false;
-      },
-      error: () => this.loading = false
+  private rolesFromAccesses(accesses: any[]): any[] {
+    const seen = new Map<number, any>();
+    for (const a of accesses || []) {
+      if (a.role?.id && !seen.has(a.role.id)) {
+        seen.set(a.role.id, a.role);
+      }
+    }
+    return Array.from(seen.values());
+  }
+
+  private refreshFormOptions() {
+    this.formFields = this.formFields.map((f) => {
+      if (f.name === 'user_id')   return { ...f, options: this.users.map((u) => ({ label: `${u.full_name} (${u.email})`, value: u.id })) };
+      if (f.name === 'app_id')    return { ...f, options: this.apps.map((a) => ({ label: a.name, value: a.id })) };
+      if (f.name === 'company_id')return { ...f, options: this.companies.map((c) => ({ label: c.name, value: c.id })) };
+      if (f.name === 'branch_id') return { ...f, options: [{ label: 'Todas (Sin Sucursal)', value: null }, ...this.branches.map((b) => ({ label: b.name, value: b.id }))] };
+      if (f.name === 'role_id')   return { ...f, options: this.roles.map((r) => ({ label: r.name, value: r.id })) };
+      return f;
     });
   }
 
   handleAdd() {
-    this.ensureRolesAndBranchesLoaded(() => {
-      this.modalMode = 'add';
-      this.selectedItem = null;
-      this.modalVisible = true;
-    });
+    this.modalMode = 'add';
+    this.selectedItem = null;
+    this.modalVisible = true;
   }
 
   handleEdit(item: any) {
-    this.ensureRolesAndBranchesLoaded(() => {
-      this.modalMode = 'edit';
-      this.selectedItem = { ...item };
-      this.modalVisible = true;
-    });
+    this.modalMode = 'edit';
+    this.selectedItem = { ...item };
+    this.modalVisible = true;
   }
 
-  handleDelete(item: any) { this.modalMode = 'delete'; this.selectedItem = item; this.modalVisible = true; }
+  handleDelete(item: any) {
+    this.modalMode = 'delete';
+    this.selectedItem = item;
+    this.modalVisible = true;
+  }
 
   save(data: any) {
     this.isSaving = true;
+    const payload = {
+      user_id:    data.user_id    != null ? Number(data.user_id)    : undefined,
+      app_id:     data.app_id     != null ? Number(data.app_id)     : undefined,
+      company_id: data.company_id != null ? Number(data.company_id) : null,
+      branch_id:  data.branch_id  != null ? Number(data.branch_id)  : null,
+      role_id:    data.role_id    != null ? Number(data.role_id)    : undefined,
+      status:     data.status
+    };
+
     if (this.modalMode === 'add') {
-      this.securexService.createUser(data).subscribe({
-        next: () => this.handleSuccess('Usuario invitado. Se ha enviado un correo con su código de activación.'),
-        error: () => this.isSaving = false
+      this.securexService.createUserAccessGql(payload).subscribe({
+        next: () => this.handleSuccess('Acceso creado'),
+        error: () => (this.isSaving = false)
       });
     } else {
-      const updateData = {
-        role_id: data.role_id,
-        branch_id: data.branch_id ?? null,
-        status: data.status
-      };
-      const accessUuid = this.selectedItem.access_uuid;
-      if (!accessUuid) {
-        this.notificationService.notify('error', 'No se encontró el registro de acceso del usuario');
-        this.isSaving = false;
-        return;
-      }
-      this.securexService.updateUserAccess(accessUuid, updateData).subscribe({
-        next: () => this.handleSuccess('Usuario actualizado'),
-        error: () => this.isSaving = false
+      this.securexService.updateUserAccessGql(this.selectedItem.uuid, payload).subscribe({
+        next: () => this.handleSuccess('Acceso actualizado'),
+        error: () => (this.isSaving = false)
       });
     }
   }
 
   confirmDelete() {
     this.isSaving = true;
-    this.securexService.deleteUserGql(this.selectedItem.uuid).subscribe({
+    this.securexService.deleteUserAccessGql(this.selectedItem.uuid).subscribe({
       next: () => this.handleSuccess('Acceso eliminado'),
-      error: () => this.isSaving = false
+      error: () => (this.isSaving = false)
     });
   }
 
   private handleSuccess(msg: string) {
     this.notificationService.notify('success', msg);
-    this.loadUsers();
+    this.load();
     this.modalVisible = false;
     this.isSaving = false;
   }

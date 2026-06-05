@@ -1,8 +1,8 @@
 export const SECUREX_QUERIES = {
   USERS: `
-    query Users {
-      users {
-        uuid full_name email status is_super_admin auth_provider
+    query Users($all: Boolean) {
+      users(all: $all) {
+        uuid full_name email status is_super_admin auth_provider created_at
         access { uuid status branch_id branch { uuid name } role { id uuid name slug } }
       }
     }
@@ -108,14 +108,14 @@ export const SECUREX_QUERIES = {
     }
   `,
   USER_ACCESSES: `
-    query UserAccesses {
-      userAccesses {
+    query UserAccesses($all: Boolean) {
+      userAccesses(all: $all) {
         uuid status user_id app_id company_id branch_id role_id
         user { uuid full_name email }
         app { uuid name }
         company { uuid name }
         branch { uuid name }
-        role { uuid name slug }
+        role { uuid name }
       }
     }
   `,
@@ -197,8 +197,8 @@ export const SECUREX_QUERIES = {
     }
   `,
   USER_ACCESS_PAGE: `
-    query UserAccessPage {
-      userAccesses {
+    query UserAccessPage($all: Boolean) {
+      userAccesses(all: $all) {
         uuid status user_id app_id company_id branch_id role_id
         user { uuid full_name email }
         app { uuid name }
@@ -223,9 +223,9 @@ export const SECUREX_MUTATIONS = {
     }
   `,
   UPDATE_USER: `
-    mutation UpdateUser($uuid: String!, $full_name: String, $email: String, $is_super_admin: Boolean) {
-      updateUser(uuid: $uuid, full_name: $full_name, email: $email, is_super_admin: $is_super_admin) {
-        uuid full_name email status
+    mutation UpdateUser($uuid: String!, $full_name: String, $email: String, $is_super_admin: Boolean, $auth_provider: String) {
+      updateUser(uuid: $uuid, full_name: $full_name, email: $email, is_super_admin: $is_super_admin, auth_provider: $auth_provider) {
+        uuid full_name email status is_super_admin auth_provider
       }
     }
   `,

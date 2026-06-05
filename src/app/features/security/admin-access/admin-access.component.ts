@@ -96,7 +96,7 @@ export class AdminAccessComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.securexService.getUserAccessesWithRoles().subscribe({
+    this.securexService.getUserAccessesWithRoles({ all: true }).subscribe({
       next: (raw: any) => {
         this.rawAccesses = (raw || []).map((r: any) => ({
           ...r,
