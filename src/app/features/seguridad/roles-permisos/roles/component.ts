@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { RoleService } from '@core/services/role.service';
+import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { RolePermissionsModalComponent } from '@shared/modals/modal-shell/role-permissions-modal/role-permissions-modal.component';
 import { NotificationService } from '@core/services/notification.service';
@@ -15,6 +16,7 @@ import { NotificationService } from '@core/services/notification.service';
 })
 export class SecurityRoleCrudComponent implements OnInit {
   private roleService = inject(RoleService);
+  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   roles: any[] = [];
@@ -39,7 +41,8 @@ export class SecurityRoleCrudComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.roleService.getRolesWithPermissions().subscribe({
+    const companyUuid = this.authService.currentCompany()?.uuid ?? null;
+    this.roleService.getRolesWithPermissions(companyUuid).subscribe({
       next: (res) => { this.roles = res; this.loading = false; },
       error: () => this.loading = false
     });

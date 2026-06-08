@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { UserService } from '@core/services/user.service';
+import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { NotificationService } from '@core/services/notification.service';
 
@@ -14,6 +15,7 @@ import { NotificationService } from '@core/services/notification.service';
 })
 export class AdminUsersComponent implements OnInit {
   private userService = inject(UserService);
+  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
   users: any[] = [];
@@ -68,6 +70,20 @@ export class AdminUsersComponent implements OnInit {
     obs.subscribe({
       next: () => {
         this.notificationService.success(`Usuario ${e.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
+        if (e.mode === 'add' && e.data.email) {
+          this.authService.adminResetUserPassword(e.data.email).subscribe({
+            next: (res: any) => {
+              if (res.success) {
+                this.notificationService.success(`Código de invitación enviado a ${e.data.email}`);
+              } else {
+                this.notificationService.notify('error', res.error || 'No se pudo enviar la invitación.');
+              }
+            },
+            error: (err: any) => {
+              this.notificationService.notify('error', `Error al enviar invitación: ${err?.message || 'Error de conexión'}`);
+            }
+          });
+        }
         this.load();
         this.isSaving = false;
       },

@@ -196,9 +196,11 @@ export class AdminAccessComponent implements OnInit {
         status: r.status,
         role: r.role_name,
         uuid: r.uuid,
+        email: r.user?.email || '',
         _canAdd: false,
         _canEdit: true,
-        _canDelete: true
+        _canDelete: true,
+        _canReset: true
       });
     }
 
@@ -338,10 +340,36 @@ export class AdminAccessComponent implements OnInit {
     obs.subscribe({
       next: () => {
         this.notificationService.success(`Acceso ${event.mode === 'add' ? 'asignado' : 'actualizado'} correctamente`);
+        if (event.mode === 'add') {
+          this.sendInvitationForNewAccess(event.data);
+        }
         this.load();
         this.isSaving = false;
       },
       error: () => (this.isSaving = false)
+    });
+  }
+
+  private sendInvitationForNewAccess(data: any) {
+    const userOption: any = this.formFields
+      .find(f => f.name === 'user_id')?.options
+      ?.find((o: any) => o.value === data.user_id);
+    const email = userOption?.email;
+    if (!email) {
+      this.notificationService.notify('warn', 'No se encontró el email del usuario para enviar la invitación.');
+      return;
+    }
+    this.authService.adminResetUserPassword(email).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.notificationService.success(`Código de invitación enviado a ${email}`);
+        } else {
+          this.notificationService.notify('error', res.error || 'No se pudo enviar la invitación.');
+        }
+      },
+      error: (err: any) => {
+        this.notificationService.notify('error', `Error al enviar invitación: ${err?.message || 'Error de conexión'}`);
+      }
     });
   }
 
@@ -354,6 +382,24 @@ export class AdminAccessComponent implements OnInit {
         this.isSaving = false;
       },
       error: () => (this.isSaving = false)
+    });
+  }
+
+  handleResetPassword(item: any) {
+    const email = item?.email;
+    if (!email) {
+      this.notificationService.notify('warn', 'No se encontró el correo del usuario.');
+      return;
+    }
+    this.authService.adminResetUserPassword(email).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.notificationService.success(`Código de restablecimiento enviado a ${email}`);
+        } else {
+          this.notificationService.notify('error', res.error || 'No se pudo enviar el código.');
+        }
+      },
+      error: () => this.notificationService.notify('error', 'Error al enviar el código de restablecimiento.')
     });
   }
 }

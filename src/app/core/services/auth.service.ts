@@ -524,6 +524,26 @@ export class AuthService {
     }
 
     /**
+     * Administrador fuerza el reinicio de contraseña de un usuario (envía código a su email).
+     */
+    adminResetUserPassword(email: string): Observable<any> {
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/forgot-password`, {
+            email,
+            app_uuid: this.configService.appUuid
+        }).pipe(
+            map(res => ({
+                success: res.status === 'success',
+                message: res.message,
+                error: res.status !== 'success' ? (res.message || 'Error al enviar el código.') : undefined
+            })),
+            catchError(err => {
+                const errorMsg = err.error?.message || err.error?.error || 'Error de conexión. Intenta de nuevo.';
+                return of({ success: false, error: errorMsg });
+            })
+        );
+    }
+
+    /**
      * Obtiene las opciones para registrar una huella.
      */
     getWebAuthnRegisterOptions(): Observable<any> {

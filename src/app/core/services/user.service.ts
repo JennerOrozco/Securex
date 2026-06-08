@@ -105,6 +105,11 @@ export class UserService {
     return this.gql.query<{ deleteUser: boolean }>('security', SECUREX_MUTATIONS.DELETE_USER, { uuid }).pipe(map(d => d.deleteUser));
   }
 
+  sendUserInvitationGql(data: { email: string; full_name?: string }): Observable<any> {
+    return this.gql.query<{ sendUserInvitation: { success: boolean; message: string } }>('security', SECUREX_MUTATIONS.SEND_USER_INVITATION, data)
+      .pipe(map(d => d.sendUserInvitation));
+  }
+
   private bool(data: any): any {
     const out: any = {};
     for (const key of Object.keys(data)) {

@@ -26,8 +26,8 @@ export class RoleService {
   syncRolePermissions(roleId: any, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles/${roleId}/permissions`, { permission_ids: permissionIds }); }
 
   // GraphQL
-  getRolesWithPermissions(): Observable<any[]> {
-    return this.gql.query<{ roles: any[] }>('security', SECUREX_QUERIES.ROLES).pipe(map(d => d.roles));
+  getRolesWithPermissions(companyUuid?: string | null): Observable<any[]> {
+    return this.gql.query<{ roles: any[] }>('security', SECUREX_QUERIES.ROLES, { companyUuid }).pipe(map(d => d.roles));
   }
 
   getRolesByCompany(appId: number, companyUuid?: string | null): Observable<any[]> {

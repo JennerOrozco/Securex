@@ -10,6 +10,7 @@
   [formAddTitle]="'Asignar Acceso'"
   [formEditTitle]="'Editar Acceso'"
   [mapItemForEdit]="mapItemForEdit"
+  [showReset]="true"
   title="Accesos de Usuario"
   subtitle="Jerarquía de aplicaciones, compañías, sucursales y usuarios asignados."
   addLabel="Asignar Acceso"
@@ -23,5 +24,6 @@
   (onEdit)="handleEdit($event)"
   (onSave)="handleSave($event)"
   (onConfirmDelete)="handleDelete($event)"
+  (onReset)="handleResetPassword($event)"
   (onFilter)="filterTree($event)"
 ></app-crud-page>

@@ -39,6 +39,7 @@ export class CrudPageComponent {
   @Input() showDelete: boolean = true;
   @Input() showPermissions: boolean = false;
   @Input() showView: boolean = false;
+  @Input() showReset: boolean = false;
 
   // ── Tree Table (Optional) ──────────────────────────────────
   @Input() isTreeTable: boolean = false;
@@ -85,6 +86,7 @@ export class CrudPageComponent {
   @Output() onDelete = new EventEmitter<any>();
   @Output() onPermissions = new EventEmitter<any>();
   @Output() onView = new EventEmitter<any>();
+  @Output() onReset = new EventEmitter<any>();
   @Output() onSave = new EventEmitter<{ mode: 'add' | 'edit'; data: any }>();
   @Output() onConfirmDelete = new EventEmitter<any>();
   @Output() onRefresh = new EventEmitter<void>();
@@ -158,6 +160,10 @@ export class CrudPageComponent {
     this.selectedItem = item;
     this.modalVisible = true;
     this.onDelete.emit(item);
+  }
+
+  handleReset(item: any): void {
+    this.onReset.emit(item);
   }
 
   handleSave(data: any): void {

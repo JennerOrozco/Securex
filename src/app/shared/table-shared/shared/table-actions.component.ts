@@ -16,6 +16,7 @@ export interface TableActionsConfig {
   permissions?: boolean;
   delete?: boolean;
   activate?: boolean;
+  reset?: boolean;
 }
 
 @Component({
@@ -80,6 +81,11 @@ export interface TableActionsConfig {
           <i class="pi pi-sync"></i>
         </button>
       }
+      @if (config.reset) {
+        <button class="act-btn reset" pTooltip="Restablecer contraseña" tooltipPosition="top" (click)="onReset.emit(rowData); $event.stopPropagation()">
+          <i class="pi pi-key"></i>
+        </button>
+      }
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -99,4 +105,5 @@ export class TableActionsComponent {
   @Output() onPermissions = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
   @Output() onActivate = new EventEmitter<any>();
+  @Output() onReset = new EventEmitter<any>();
 }

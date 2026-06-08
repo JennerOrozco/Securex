@@ -50,6 +50,7 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
   @Output() onFilter = new EventEmitter<string>();
   @Output() onFilterType = new EventEmitter<string>();
   @Output() onNodeReorder = new EventEmitter<any>();
+  @Output() onReset = new EventEmitter<any>();
 
   // Sort state
   sortField: string = '';
@@ -131,6 +132,7 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     return [
       { action: 'add-child', label: 'Agregar Sub-elemento', icon: 'pi pi-plus', iconClass: 'view', visible: this.activeRow?._canAdd !== false },
       { action: 'edit', label: 'Editar', icon: 'pi pi-pencil', iconClass: 'edit', visible: this.activeRow?._canEdit !== false },
+      { action: 'reset', label: 'Restablecer contraseña', icon: 'pi pi-key', iconClass: 'reset', visible: this.activeRow?._canReset === true },
       { action: 'delete', label: 'Eliminar', icon: 'pi pi-trash', iconClass: 'del', danger: true, visible: this.activeRow?._canDelete !== false },
     ];
   }
@@ -175,6 +177,7 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
       addChild: row._canAdd !== false,
       edit: row._canEdit !== false,
       delete: row._canDelete !== false,
+      reset: row._canReset === true,
     };
   }
 
@@ -190,6 +193,9 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
         break;
       case 'delete':
         this.onDelete.emit(this.activeRow);
+        break;
+      case 'reset':
+        this.onReset.emit(this.activeRow);
         break;
     }
 

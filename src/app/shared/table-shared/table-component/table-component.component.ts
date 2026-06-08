@@ -104,6 +104,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   @Input() showPermissions: boolean = false;
   @Input() showActivate: boolean = false;
   @Input() showSelect: boolean = false;
+  @Input() showReset: boolean = false;
 
   // Lógica de Row Grouping nativo
   @Input() enableRowGroup: boolean = false;
@@ -123,6 +124,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   @Output() onPermissions = new EventEmitter<any>();
   @Output() onActivate = new EventEmitter<any>();
   @Output() onSelect = new EventEmitter<any>();
+  @Output() onReset = new EventEmitter<any>();
 
   @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
 
@@ -305,6 +307,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
       permissions: this.showPermissions,
       activate: this.showActivate,
       delete: this.showDelete,
+      reset: this.showReset,
     };
   }
 

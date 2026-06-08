@@ -16,8 +16,8 @@ export const SECUREX_QUERIES = {
     }
   `,
   ROLES: `
-    query Roles {
-      roles {
+    query Roles($companyUuid: String) {
+      roles(company_uuid: $companyUuid) {
         id uuid name slug description is_active company_uuid
         company {
           name
@@ -358,6 +358,13 @@ export const SECUREX_MUTATIONS = {
   DELETE_USER_ACCESS: `
     mutation DeleteUserAccess($uuid: String!) {
       deleteUserAccess(uuid: $uuid)
+    }
+  `,
+  SEND_USER_INVITATION: `
+    mutation SendUserInvitation($email: String!, $full_name: String) {
+      sendUserInvitation(email: $email, full_name: $full_name) {
+        success message
+      }
     }
   `,
 };

@@ -98,7 +98,8 @@
                     [config]="getActionsConfig(rowData)"
                     (onAddChild)="onAddChild.emit(rowData.id)"
                     (onEdit)="onEdit.emit($event)"
-                    (onDelete)="onDelete.emit($event)">
+                    (onDelete)="onDelete.emit($event)"
+                    (onReset)="onReset.emit($event)">
                   </app-table-actions>
                 }
                 @default {

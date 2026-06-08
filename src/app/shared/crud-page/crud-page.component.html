@@ -19,6 +19,7 @@
       [showDelete]="showDelete"
       [showPermissions]="showPermissions"
       [showView]="showView"
+      [showReset]="showReset"
       [minimalMode]="minimalMode"
       [reorderableColumns]="reorderableColumns"
       [addLabel]="addLabel"
@@ -27,6 +28,7 @@
       (onDelete)="handleDelete($event)"
       (onPermissions)="onPermissions.emit($event)"
       (onView)="onView.emit($event)"
+      (onReset)="onReset.emit($event)"
       (onColReorder)="onColReorder.emit($event)"
       (onRefresh)="onRefresh.emit()"
     >
@@ -52,6 +54,7 @@
       (onAddChild)="handleTreeAddChild($event)"
       (onEdit)="handleEdit($event)"
       (onDelete)="handleDelete($event)"
+      (onReset)="handleReset($event)"
       (onFilter)="onFilter.emit($event)"
       (onFilterType)="onFilterType.emit($event)"
       (onNodeReorder)="onNodeReorder.emit($event)"
