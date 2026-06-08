@@ -180,7 +180,10 @@ export class SecurityUserCrudComponent implements OnInit {
 
     if (mode === 'add') {
       this.userService.createUserAccessGql(payload).subscribe({
-        next: () => this.handleSuccess('Acceso creado'),
+        next: () => {
+          this.handleSuccess('Acceso creado');
+          this.sendInvitationForNewAccess(data);
+        },
         error: () => (this.isSaving = false)
       });
     } else {
@@ -208,5 +211,46 @@ export class SecurityUserCrudComponent implements OnInit {
     this.notificationService.notify('success', msg);
     this.load();
     this.isSaving = false;
+  }
+
+  private sendInvitationForNewAccess(data: any) {
+    const userOption: any = this.formFields
+      .find(f => f.name === 'user_id')?.options
+      ?.find((o: any) => o.value === data.user_id);
+    const email = userOption?.email;
+    if (!email) {
+      this.notificationService.notify('warn', 'No se encontró el email del usuario para enviar la invitación.');
+      return;
+    }
+    this.authService.adminResetUserPassword(email).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.notificationService.success(`Código de invitación enviado a ${email}`);
+        } else {
+          this.notificationService.notify('error', res.error || 'No se pudo enviar la invitación.');
+        }
+      },
+      error: (err: any) => {
+        this.notificationService.notify('error', `Error al enviar invitación: ${err?.message || 'Error de conexión'}`);
+      }
+    });
+  }
+
+  handleResetPassword(item: any) {
+    const email = item?.user_email;
+    if (!email) {
+      this.notificationService.notify('warn', 'No se encontró el correo del usuario.');
+      return;
+    }
+    this.authService.adminResetUserPassword(email).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.notificationService.success(`Código de restablecimiento enviado a ${email}`);
+        } else {
+          this.notificationService.notify('error', res.error || 'No se pudo enviar el código.');
+        }
+      },
+      error: () => this.notificationService.notify('error', 'Error al enviar el código de restablecimiento.')
+    });
   }
 }

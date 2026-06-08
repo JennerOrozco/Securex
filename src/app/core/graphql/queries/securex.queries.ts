@@ -155,7 +155,7 @@ export const SECUREX_QUERIES = {
   PASSWORD_RESETS: `
     query PasswordResets {
       passwordResets {
-        id email token created_at
+        id email app_uuid token created_at
         app { name }
       }
     }

@@ -243,6 +243,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
       { action: 'send', label: 'Enviar Correo', icon: 'pi pi-send', iconClass: 'send', visible: this.showSend },
       { action: 'duplicate', label: 'Duplicar', icon: 'pi pi-copy', iconClass: 'duplicate', visible: this.showDuplicate },
       { action: 'permissions', label: 'Permisos', icon: 'pi pi-shield', iconClass: 'perm', visible: this.showPermissions },
+      { action: 'reset', label: 'Restablecer contraseña', icon: 'pi pi-key', iconClass: 'reset', visible: this.showReset },
       { action: 'delete', label: 'Eliminar', icon: 'pi pi-trash', iconClass: 'del', danger: true, visible: this.showDelete },
     ];
   }
@@ -263,6 +264,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
         case 'delete': this.onDelete.emit(target); break;
         case 'permissions': this.onPermissions.emit(target); break;
         case 'select': this.onSelect.emit(target); break;
+        case 'reset': this.onReset.emit(target); break;
       }
     }, 300);
   }

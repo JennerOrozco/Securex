@@ -24,9 +24,8 @@ export class PasswordResetsComponent implements OnInit {
 
   cols: TableColumn[] = [
     { field: 'email', header: 'Email', type: 'text', sortable: true },
-    { field: 'ip_address', header: 'IP', type: 'text' },
-    { field: 'status', header: 'Estado', type: 'status', sortable: true,
-      filterOptions: [{ label: 'Activo', value: 1 }, { label: 'Inactivo', value: 0 }], filterOptionLabel: 'label' },
+    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
+    { field: 'token', header: 'Código OTP', type: 'text', sortable: true, style: { width: '110px', textAlign: 'center' } },
     { field: 'created_at', header: 'Fecha', type: 'date', sortable: true },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
@@ -37,10 +36,11 @@ export class PasswordResetsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.auditService.getPasswordResets().subscribe({
+    this.auditService.getPasswordResetsGql().subscribe({
       next: (res: any[]) => {
         this.data = (res || []).map((item: any) => ({
           ...item,
+          app_name: item.app?.name || item.app_uuid || '-',
           created_at: item.created_at && item.created_at !== '0000-00-00 00:00:00'
             ? this.datePipe.transform(item.created_at, 'yyyy-MM-dd HH:mm:ss') : '-'
         }));
@@ -52,7 +52,7 @@ export class PasswordResetsComponent implements OnInit {
 
   onConfirmDelete(item: any) {
     this.isSaving = true;
-    this.auditService.deletePasswordReset(item.uuid).subscribe({
+    this.auditService.deletePasswordReset(item.id).subscribe({
       next: () => {
         this.notificationService.success('Registro eliminado');
         this.load();
