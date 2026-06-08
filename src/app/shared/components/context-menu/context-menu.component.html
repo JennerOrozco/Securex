@@ -6,11 +6,13 @@
     <span class="menu-title">{{ title }}</span>
   </div>
   <ul class="menu-list">
-    <li *ngFor="let item of visibleItems"
+    @for (item of visibleItems; track $index) {
+<li
         (click)="onAction.emit(item.action)"
         [class.menu-item-danger]="item.danger">
       <i [class]="item.icon"></i>
       <span>{{ item.label }}</span>
     </li>
+    }
   </ul>
 </div>

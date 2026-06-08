@@ -1,15 +1,26 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { AuditService } from '@core/services/audit.service';
 
 @Component({
   selector: 'app-security-audit-log',
   standalone: true,
-  imports: [CommonModule, TableComponent],
-  templateUrl: './audit-log.component.html',
-
+  imports: [CommonModule, CrudPageComponent],
+  template: `
+    <app-crud-page
+      title="Registro de Auditoría"
+      subtitle="Todos los eventos de seguridad del sistema"
+      [columns]="cols"
+      [data]="items"
+      [loading]="loading"
+      [showAdd]="false"
+      [showEdit]="false"
+      [showDelete]="false"
+      (onRefresh)="load()">
+    </app-crud-page>
+  `
 })
 export class AuditLogComponent implements OnInit {
   private auditService = inject(AuditService);

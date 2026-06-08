@@ -22,7 +22,7 @@
 
   <div class="gm-body" [class.gm-body--no-padding]="noPadding">
     <form *ngIf="fields && fields.length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
-      <ng-container *ngFor="let field of fields; let i = index">
+      @for (field of fields; track $index; let i = $index) {
         <!-- Standard & Shared Fields -->
         <div [style.animation-delay]="i * 40 + 'ms'">
           <ng-container [ngSwitch]="field.type">
@@ -152,7 +152,7 @@
             ></app-nit-input>
           </ng-container>
         </div>
-      </ng-container>
+      }
     </form>
     <ng-content></ng-content>
   </div>

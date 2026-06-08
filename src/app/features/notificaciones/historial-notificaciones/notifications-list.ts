@@ -1,26 +1,31 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AuthService } from '@core/services/auth.service';
-import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-notifications-list',
   standalone: true,
-  imports: [CommonModule, TableComponent, DeleteModalComponent],
+  imports: [CommonModule, CrudPageComponent],
   template: `
-    <app-table-component title="Historial de Notificaciones" subtitle="Registro de todas las notificaciones creadas" 
-      [columns]="cols" [data]="items" [loading]="loading" [showAdd]="false" [showEdit]="false" [showDelete]="true" 
-      (onDelete)="handleDelete($event)">
-    </app-table-component>
-
-    <app-delete-modal [visible]="modalVisible" title="Eliminar Notificación"
-      message="¿Estás seguro que deseas eliminar este registro histórico?"
-      [loading]="isSaving" (onConfirm)="confirmDelete()" (onClose)="modalVisible = false">
-    </app-delete-modal>
+    <app-crud-page
+      title="Historial de Notificaciones"
+      subtitle="Registro de todas las notificaciones creadas"
+      [columns]="cols"
+      [data]="items"
+      [loading]="loading"
+      [showAdd]="false"
+      [showEdit]="false"
+      [showDelete]="true"
+      deleteTitle="Eliminar Notificación"
+      deleteMessage="¿Estás seguro que deseas eliminar este registro histórico?"
+      [isSaving]="isSaving"
+      (onConfirmDelete)="confirmDelete($event)"
+      (onRefresh)="load()">
+    </app-crud-page>
   `
 })
 export class NotificationsListComponent implements OnInit {
@@ -31,8 +36,6 @@ export class NotificationsListComponent implements OnInit {
   items: any[] = [];
   loading = false;
   isSaving = false;
-  modalVisible = false;
-  selectedItem: any = null;
 
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true },
@@ -73,15 +76,12 @@ export class NotificationsListComponent implements OnInit {
     });
   }
 
-  handleDelete(item: any) { this.selectedItem = item; this.modalVisible = true; }
-
-  confirmDelete() {
+  confirmDelete(item: any) {
     this.isSaving = true;
-    this.apiService.deleteNotificationHistoryGql(this.selectedItem.id).subscribe({
+    this.apiService.deleteNotificationHistoryGql(item.id).subscribe({
       next: () => {
         this.notificationService.showSuccess('Notificación eliminada');
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => this.isSaving = false

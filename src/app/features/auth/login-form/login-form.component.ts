@@ -1,11 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
+import { AuthFormBase } from '../shared/auth-form-base';
+import { SubmitButtonComponent } from '../shared/submit-button.component';
+import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, InputComponent, PasswordComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, InputComponent, PasswordComponent, SubmitButtonComponent, AuthBottomLinkComponent],
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
   styles: [`
@@ -16,16 +19,14 @@ import { PasswordComponent } from '@shared/components/password/password.componen
       width: 100%;
       align-items: stretch;
     }
-    .actions-wrap .btn-login {
+    app-submit-button {
       flex: 1;
     }
   `],
   standalone: true
 })
-export class LoginFormComponent implements OnInit {
-  @Input() loading = false;
+export class LoginFormComponent extends AuthFormBase implements OnInit {
   @Output() onSubmit = new EventEmitter<{ email: string; password: string }>();
-  @Output() onToggleMode = new EventEmitter<string>();
   @Output() onBiometricLogin = new EventEmitter<string>();
 
   loginForm = new FormGroup({
@@ -59,10 +60,6 @@ export class LoginFormComponent implements OnInit {
     this.saveEmailIfNeeded();
     const email = this.loginForm.value.email ?? '';
     this.onBiometricLogin.emit(email);
-  }
-
-  toggleMode(mode: string): void {
-    this.onToggleMode.emit(mode);
   }
 
   private saveEmailIfNeeded(): void {

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
@@ -54,7 +54,7 @@ export class FormModalComponent implements OnInit, OnChanges {
 
   form!: FormGroup;
 
-  constructor(private fb: FormBuilder) {}
+  private fb = inject(FormBuilder);
 
   get dialogClass(): string {
     return this.mode === 'add' ? 'add' : this.mode === 'edit' ? 'edit' : 'view';

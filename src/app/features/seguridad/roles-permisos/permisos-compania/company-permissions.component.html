@@ -8,24 +8,23 @@
   <ng-container *ngIf="hasPermission">
     <div class="perm-card">
       <!-- Toolbar Header -->
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div>
-            <h2 class="toolbar-title">Permisos por Compa&ntilde;&iacute;a</h2>
-            <p class="toolbar-sub">Seleccione la aplicaci&oacute;n y la compa&ntilde;&iacute;a para administrar los permisos.</p>
-          </div>
-        </div>
-        <div class="toolbar-right">
-          <button
+      <app-toolbar
+        title="Permisos por Compañía"
+        subtitle="Seleccione la aplicación y la compañía para administrar los permisos."
+        [showSearch]="false"
+        [showAdd]="false"
+      >
+        <div toolbar-actions>
+          <app-button
             *ngIf="selectedCompanyId && groups.length > 0"
-            class="btn btn--navy"
+            [label]="isSaving ? 'Guardando...' : 'Guardar Permisos'"
+            [icon]="isSaving ? 'pi pi-spinner animate-spin' : 'pi pi-save'"
             [disabled]="isSaving"
-            (click)="savePermissions()">
-            <i class="pi" [class.pi-save]="!isSaving" [class.pi-spinner]="isSaving" [class.animate-spin]="isSaving"></i>
-            {{ isSaving ? 'Guardando...' : 'Guardar Permisos' }}
-          </button>
+            class="p-button-navy"
+            (onClick)="savePermissions()">
+          </app-button>
         </div>
-      </div>
+      </app-toolbar>
 
       <!-- Selectors Bar -->
       <div class="selectors-bar">
@@ -80,10 +79,11 @@
               placeholder="Filtrar por m&oacute;dulo, submen&uacute; o acci&oacute;n..."
               [(ngModel)]="searchQuery"
               (ngModelChange)="onSearch()" />
+            <span *ngIf="searchQuery" class="search-match-badge">{{ getMatchCount() }} coincidencia(s)</span>
           </div>
           <div class="perm-bulk-actions">
-            <button class="btn btn--ghost-indigo btn-sm" (click)="selectAll()">Marcar Todo</button>
-            <button class="btn btn--ghost-indigo btn-sm" (click)="clearAll()">Limpiar Todo</button>
+            <app-button label="Marcar Todo" class="btn--ghost-indigo btn-sm" (onClick)="selectAll()"></app-button>
+            <app-button label="Limpiar Todo" class="btn--ghost-indigo btn-sm" (onClick)="clearAll()"></app-button>
             <span class="perm-count">{{ selectedIds.size }} seleccionados</span>
           </div>
         </div>
@@ -125,7 +125,12 @@
                      [class.icon-component]="node.type === 'COMPONENT'"></i>
 
                   <div class="flex flex-col min-w-0">
-                    <span class="gm-tt-name">{{ node.name }}</span>
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="gm-tt-name">{{ node.name }}</span>
+                      <span class="type-chip" [ngClass]="'type-' + node.type.toLowerCase()">
+                        {{ node.type }}
+                      </span>
+                    </div>
                     <span class="gm-tt-slug" *ngIf="node.slug">{{ node.slug }}</span>
                   </div>
                 </div>
@@ -148,16 +153,16 @@
                 </div>
               </div>
 
-              <ng-container *ngIf="node.expanded">
-                <ng-container *ngFor="let child of node.children">
+              <div class="node-children-container" [class.expanded]="node.expanded">
+                @for (child of node.children; track $index) {
                   <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
-                </ng-container>
-              </ng-container>
+                }
+              </div>
             </ng-template>
 
-            <ng-container *ngFor="let group of filteredGroups">
+            @for (group of filteredGroups; track $index) {
               <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
-            </ng-container>
+            }
           </div>
         </div>
 

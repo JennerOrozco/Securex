@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import { tap } from 'rxjs/operators';
 export class ConfigService {
   private config: any;
 
-  constructor(private http: HttpClient) { }
+  private http = inject(HttpClient);
 
   loadConfig(): Promise<any> {
     return firstValueFrom(

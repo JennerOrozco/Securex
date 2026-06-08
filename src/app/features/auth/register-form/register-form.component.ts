@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, EventEmitter, Input, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
+import { AuthFormBase } from '../shared/auth-form-base';
+import { SubmitButtonComponent } from '../shared/submit-button.component';
+import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent],
+  imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent, SubmitButtonComponent, AuthBottomLinkComponent],
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
   standalone: true
 })
-export class RegisterFormComponent implements OnInit, OnDestroy {
-  @Input() loading = false;
+export class RegisterFormComponent extends AuthFormBase implements OnInit, OnDestroy {
   @Output() onSubmit = new EventEmitter<Record<string, string>>();
-  @Output() onToggleMode = new EventEmitter<string>();
 
   registerForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -24,12 +25,10 @@ export class RegisterFormComponent implements OnInit, OnDestroy {
   captchaResponse: string | null = null;
 
   ngOnInit(): void {
-    // Definir el callback global para el captcha
     (window as any).onCaptchaSuccess = (response: string) => {
       this.captchaResponse = response;
     };
 
-    // Cargar el script de Google reCAPTCHA
     const script = document.createElement('script');
     script.src = 'https://www.google.com/recaptcha/api.js';
     script.async = true;
@@ -38,7 +37,6 @@ export class RegisterFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Limpiar el callback global
     delete (window as any).onCaptchaSuccess;
   }
 
@@ -60,9 +58,5 @@ export class RegisterFormComponent implements OnInit, OnDestroy {
     }
     data['captcha'] = this.captchaResponse;
     this.onSubmit.emit(data);
-  }
-
-  toggleMode(mode: string): void {
-    this.onToggleMode.emit(mode);
   }
 }

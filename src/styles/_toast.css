@@ -222,6 +222,18 @@
     --p-primary-contrast-color: #ffffff;
     --p-primary-hover-color: #dc2626;
     --p-primary-active-color: #b91c1c;
+
+    /* p-select option selected */
+    --p-select-option-selected-background: #fef2f2;
+    --p-select-option-selected-color: #b91c1c;
+    --p-select-option-selected-focus-background: #fee2e2;
+    --p-select-option-selected-focus-color: #991b1b;
+
+    /* p-multiselect option selected */
+    --p-multiselect-option-selected-background: #fef2f2;
+    --p-multiselect-option-selected-color: #b91c1c;
+    --p-multiselect-option-selected-focus-background: #fee2e2;
+    --p-multiselect-option-selected-focus-color: #991b1b;
 }
 
 .my-app-dark .p-datatable-filter-overlay,
@@ -245,6 +257,18 @@
     --p-primary-contrast-color: #ffffff;
     --p-primary-hover-color: #dc2626;
     --p-primary-active-color: #b91c1c;
+
+    /* p-select option selected */
+    --p-select-option-selected-background: color-mix(in srgb, #ef4444, transparent 84%);
+    --p-select-option-selected-color: rgba(255, 255, 255, 0.87);
+    --p-select-option-selected-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-select-option-selected-focus-color: rgba(255, 255, 255, 0.87);
+
+    /* p-multiselect option selected */
+    --p-multiselect-option-selected-background: color-mix(in srgb, #ef4444, transparent 84%);
+    --p-multiselect-option-selected-color: rgba(255, 255, 255, 0.87);
+    --p-multiselect-option-selected-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-multiselect-option-selected-focus-color: rgba(255, 255, 255, 0.87);
 }
 
 .p-multiselect-filter-custom .p-multiselect-token {

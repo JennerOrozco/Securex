@@ -6,15 +6,15 @@ import {
   BaseStyle
 } from "./chunk-KTQBNEQH.js";
 import {
+  Bind,
+  BindModule
+} from "./chunk-6BZVRROY.js";
+import {
   Footer,
   Header,
   PrimeTemplate,
   SharedModule
 } from "./chunk-74ZBYFTI.js";
-import {
-  Bind,
-  BindModule
-} from "./chunk-6BZVRROY.js";
 import {
   k2 as k
 } from "./chunk-ZGIVYFBQ.js";

@@ -95,15 +95,15 @@
             </div>
 
             <ng-container *ngIf="node.expanded">
-              <ng-container *ngFor="let child of node.items">
-                <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
-              </ng-container>
+@for (child of node.items; track $index) {
+              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
+            }
             </ng-container>
           </ng-template>
 
-          <ng-container *ngFor="let group of filteredGroups">
-            <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
-          </ng-container>
+@for (group of filteredGroups; track $index) {
+              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
+            }
         </div>
 
       </div>

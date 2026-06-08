@@ -1,6 +1,6 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AuthService } from '@core/services/auth.service';
@@ -8,11 +8,18 @@ import { AuthService } from '@core/services/auth.service';
 @Component({
   selector: 'app-notifications-apps',
   standalone: true,
-  imports: [CommonModule, TableComponent],
+  imports: [CommonModule, CrudPageComponent],
   template: `
-    <app-table-component title="Aplicaciones" subtitle="Aplicaciones registradas en el servicio de notificaciones" 
-      [columns]="cols" [data]="items" [loading]="loading" [showAdd]="false" [showEdit]="false" [showDelete]="false">
-    </app-table-component>
+    <app-crud-page
+      title="Aplicaciones"
+      subtitle="Aplicaciones registradas en el servicio de notificaciones"
+      [columns]="cols"
+      [data]="items"
+      [loading]="loading"
+      [showAdd]="false"
+      [showEdit]="false"
+      [showDelete]="false">
+    </app-crud-page>
   `
 })
 export class AppsComponent implements OnInit {

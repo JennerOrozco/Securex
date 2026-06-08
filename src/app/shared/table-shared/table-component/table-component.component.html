@@ -2,7 +2,7 @@
   <div [ngClass]="minimalMode ? 'minimal-container' : 'table-card'">
 
     <p-table #dt [value]="data" [rows]="rows" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
-      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true" [loading]="loading"
+      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true" [loading]="loading || loadingService.isLoading()"
       [stripedRows]="stripedRows" responsiveLayout="scroll"
       [resizableColumns]="true" columnResizeMode="expand"
       currentPageReportTemplate=" {first} - {last} de {totalRecords} registros" [showCurrentPageReport]="true"
@@ -119,6 +119,15 @@
             } @else {
             <app-cell-renderer [col]="col" [rowData]="rowData"></app-cell-renderer>
             }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="loading" let-columns>
+        <tr *ngFor="let _ of [].constructor(5); index as i">
+          <td *ngFor="let col of columns; index as j" [style]="col.style">
+            <p-skeleton [width]="col.type === 'actions' ? '2rem' : skeletonWidths[i % skeletonWidths.length]"
+              [height]="'1.25rem'" styleClass="skeleton-cell" />
           </td>
         </tr>
       </ng-template>

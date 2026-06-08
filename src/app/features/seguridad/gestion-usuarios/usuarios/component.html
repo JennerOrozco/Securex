@@ -1,35 +1,18 @@
-<div class="p-2">
-  <app-table-component
-    title="Accesos de Usuarios"
-    subtitle="Filtrados por tu app y compañía actual (sede central)"
-    [columns]="cols"
-    [data]="accesses"
-    [loading]="loading"
-    [showAdd]="true"
-    [showEdit]="true"
-    [showDelete]="true"
-    (onAdd)="handleAdd()"
-    (onEdit)="handleEdit($event)"
-    (onDelete)="handleDelete($event)">
-  </app-table-component>
-
-  <app-form-modal
-    [visible]="modalVisible && modalMode !== 'delete'"
-    [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    title="{{ modalMode === 'add' ? 'Nuevo Acceso' : 'Editar Acceso' }}"
-    [fields]="formFields"
-    [data]="modalMode === 'edit' ? selectedItem : null"
-    [loading]="isSaving"
-    (onConfirm)="save($event)"
-    (onClose)="modalVisible = false">
-  </app-form-modal>
-
-  <app-delete-modal
-    [visible]="modalVisible && modalMode === 'delete'"
-    title="Eliminar Acceso"
-    [bodyMessage]="'¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal.'"
-    [loading]="isSaving"
-    (onConfirm)="confirmDelete()"
-    (onClose)="modalVisible = false">
-  </app-delete-modal>
-</div>
+<app-crud-page
+  title="Accesos de Usuarios"
+  subtitle="Filtrados por tu app y compañía actual (sede central)"
+  [columns]="cols"
+  [data]="accesses"
+  [loading]="loading"
+  [showAdd]="true"
+  [showEdit]="true"
+  [showDelete]="true"
+  [formFields]="formFields"
+  formAddTitle="Nuevo Acceso"
+  formEditTitle="Editar Acceso"
+  [isSaving]="isSaving"
+  deleteMessage="¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal."
+  (onSave)="save($event)"
+  (onConfirmDelete)="confirmDelete($event)"
+  (onRefresh)="load()"
+></app-crud-page>

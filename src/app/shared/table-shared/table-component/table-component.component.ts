@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, ContentChild, TemplateRef, ViewChild, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, ContentChild, TemplateRef, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FilterService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { RippleModule } from 'primeng/ripple';
 import { SelectModule } from 'primeng/select';
 import { DatePickerModule } from 'primeng/datepicker';
+import { SkeletonModule } from 'primeng/skeleton';
 
 import { TableColumn } from '../shared/table.types';
 export type { TableColumn } from '../shared/table.types';
@@ -28,11 +29,10 @@ import { BottomSheetComponent } from '../../components/bottom-sheet/bottom-sheet
 import { ActionItem } from '../../components/action-menu.types';
 import { ButtonComponent } from '../../components/button/button.component';
 import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
-import { StatusClassPipe } from '../shared/status-class.pipe';
-import { BadgeClassPipe } from '../shared/badge-class.pipe';
 import { TableActionsComponent, TableActionsConfig } from '../shared/table-actions.component';
 import { CellRendererComponent } from '../shared/cell-renderer/cell-renderer.component';
 import { BaseTableDirective } from '../shared/base-table.directive';
+import { LoadingService } from '@core/services/loading.service';
 
 @Component({
   selector: 'app-table-component',
@@ -60,12 +60,22 @@ import { BaseTableDirective } from '../shared/base-table.directive';
     BottomSheetComponent,
     ButtonComponent,
     ToolbarComponent,
-    StatusClassPipe,
-    BadgeClassPipe,
     TableActionsComponent,
-    CellRendererComponent
+    CellRendererComponent,
+    SkeletonModule
   ],
   templateUrl: './table-component.component.html',
+  styles: [`
+    :host ::ng-deep .p-datatable-loading-overlay { display: none !important; }
+    :host ::ng-deep .p-datatable-loading { opacity: 1 !important; }
+    :host ::ng-deep .p-datatable .p-datatable-tbody > tr.p-highlight {
+      background: #fef2f2 !important;
+      color: #991b1b !important;
+    }
+    :host ::ng-deep .p-datatable .p-datatable-tbody > tr.p-highlight:hover {
+      background: #fee2e2 !important;
+    }
+  `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent extends BaseTableDirective implements OnInit, OnChanges {
@@ -123,7 +133,12 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   displayColumnsModal: boolean = false;
   expandedRowKeys: { [s: string]: boolean } = {};
 
-  constructor(private filterService: FilterService) {
+  skeletonWidths = ['70%', '55%', '85%', '40%', '65%', '75%', '50%', '60%', '80%', '45%'];
+
+  private filterService = inject(FilterService);
+  protected loadingService = inject(LoadingService);
+
+  constructor() {
     super();
   }
 

@@ -70,7 +70,7 @@
         <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)"
           [attr.draggable]="dragdrop && rowData._canReorder !== false ? true : null"
           [class.drag-over]="dragOverNode === rowData"
-          [ngClass]="getRowClass(rowData.type)"
+          [ngClass]="getRowClass(rowData.type) + ' depth-' + (rowNode.level || 0)"
           (dragstart)="onRowDragStart($event, rowData)"
           (dragover)="onRowDragOver($event, rowData)" 
           (dragleave)="onRowDragLeave($event)"

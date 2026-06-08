@@ -215,3 +215,11 @@
     }
   </div>
 </div>
+
+<app-delete-modal
+  [visible]="deleteModalVisible()"
+  title="Eliminar Dispositivo"
+  [bodyMessage]="'¿Eliminar el dispositivo <strong>' + (itemToDelete?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'"
+  (onConfirm)="handleConfirmDelete()"
+  (onClose)="deleteModalVisible.set(false)"
+></app-delete-modal>

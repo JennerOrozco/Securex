@@ -24,58 +24,58 @@ export interface TableActionsConfig {
   imports: [CommonModule, TooltipModule],
   template: `
     <div class="actions">
-      @if (config?.addChild) {
+      @if (config.addChild) {
         <button class="act-btn view" pTooltip="Agregar Sub-elemento" tooltipPosition="top" (click)="onAddChild.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-plus"></i>
         </button>
       }
-      @if (config?.select) {
+      @if (config.select) {
         <button class="act-btn select" pTooltip="Seleccionar" tooltipPosition="top" (click)="onSelect.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-check-circle"></i>
         </button>
       }
-      @if (config?.create) {
+      @if (config.create) {
         <button class="btn btn--navy btn-sm" [pTooltip]="config.createLabel || 'Crear'" tooltipPosition="top" (click)="onCreate.emit(rowData); $event.stopPropagation()">
           <i class="pi" [ngClass]="config.createIcon || 'pi-plus'"></i>
           <span class="create-label-text">{{ config.createLabel || 'Crear' }}</span>
         </button>
       }
-      @if (config?.view) {
+      @if (config.view) {
         <button class="act-btn view" pTooltip="Visualizar" tooltipPosition="top" (click)="onView.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-eye"></i>
         </button>
       }
-      @if (config?.edit) {
+      @if (config.edit) {
         <button class="act-btn edit" pTooltip="Editar" tooltipPosition="top" (click)="onEdit.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-pencil"></i>
         </button>
       }
-      @if (config?.pdf) {
+      @if (config.pdf) {
         <button class="act-btn pdf" pTooltip="PDF" tooltipPosition="top" (click)="onPdf.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-file-pdf"></i>
         </button>
       }
-      @if (config?.send) {
+      @if (config.send) {
         <button class="act-btn send" pTooltip="Enviar Correo" tooltipPosition="top" (click)="onSend.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-send"></i>
         </button>
       }
-      @if (config?.duplicate) {
+      @if (config.duplicate) {
         <button class="act-btn duplicate" pTooltip="Duplicar" tooltipPosition="top" (click)="onDuplicate.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-copy"></i>
         </button>
       }
-      @if (config?.permissions) {
+      @if (config.permissions) {
         <button class="act-btn perm" pTooltip="Permisos" tooltipPosition="top" (click)="onPermissions.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-shield"></i>
         </button>
       }
-      @if (config?.delete) {
+      @if (config.delete) {
         <button class="act-btn del" pTooltip="Eliminar" tooltipPosition="top" (click)="onDelete.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-trash"></i>
         </button>
       }
-      @if (config?.activate) {
+      @if (config.activate) {
         <button class="act-btn activate" pTooltip="Act./Des." tooltipPosition="top" (click)="onActivate.emit(rowData); $event.stopPropagation()">
           <i class="pi pi-sync"></i>
         </button>

@@ -1,7 +1,7 @@
 import {
   Badge,
   BadgeModule
-} from "./chunk-CDXF7KEH.js";
+} from "./chunk-DIWNEUTN.js";
 import {
   Ripple
 } from "./chunk-4OOVWLCN.js";
@@ -22,12 +22,12 @@ import {
   BaseStyle
 } from "./chunk-KTQBNEQH.js";
 import {
+  Bind
+} from "./chunk-6BZVRROY.js";
+import {
   PrimeTemplate,
   SharedModule
 } from "./chunk-74ZBYFTI.js";
-import {
-  Bind
-} from "./chunk-6BZVRROY.js";
 import {
   U,
   W,
@@ -2358,4 +2358,4 @@ export {
   Button,
   ButtonModule
 };
-//# sourceMappingURL=chunk-5KZ6QSRT.js.map
+//# sourceMappingURL=chunk-SKARK3AF.js.map

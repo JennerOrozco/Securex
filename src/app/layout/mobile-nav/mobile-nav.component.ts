@@ -1,10 +1,12 @@
-import { Component, inject, HostListener, OnInit, OnDestroy, signal, computed, ViewEncapsulation } from '@angular/core';
+import { Component, inject, HostListener, OnInit, signal, computed, ViewEncapsulation, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { LayoutService } from '@core/services/layout.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService, AppNotification } from '@core/services/notification.service';
-import { Subscription, filter } from 'rxjs';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface MenuItem {
   icon: string;
@@ -29,17 +31,17 @@ const ICON_MAP: Record<string, string> = {
 @Component({
   selector: 'app-mobile-nav',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TimeAgoPipe],
   templateUrl: './mobile-nav.component.html',
   styleUrl: './mobile-nav.component.css',
   encapsulation: ViewEncapsulation.None
 })
-export class MobileNavComponent implements OnInit, OnDestroy {
+export class MobileNavComponent implements OnInit {
   private layoutService = inject(LayoutService);
   private router = inject(Router);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
-  private routerSub!: Subscription;
+  private destroyRef = inject(DestroyRef);
 
   branch = signal<any>(null);
   sidebarOpen = this.layoutService.sidebarOpen;
@@ -88,9 +90,11 @@ export class MobileNavComponent implements OnInit, OnDestroy {
   });
 
   ngOnInit() {
-    // Subscribe to router events to reactively track the URL
-    this.routerSub = this.router.events
-      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+    this.router.events
+      .pipe(
+        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+        takeUntilDestroyed(this.destroyRef)
+      )
       .subscribe(e => this.currentUrl.set(e.urlAfterRedirects));
 
     const companyBranch = localStorage.getItem('currentBranch');
@@ -102,23 +106,23 @@ export class MobileNavComponent implements OnInit, OnDestroy {
       }
     }
 
-    this.authService.getMobileComponents().subscribe({
-      next: (res) => {
-        const data = res.data || res;
-        this.mobileComponents.set(Array.isArray(data) ? data : []);
-      },
-      error: (err) => console.error('Error fetching mobile components', err)
-    });
+    this.authService.getMobileComponents()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const data = res.data || res;
+          this.mobileComponents.set(Array.isArray(data) ? data : []);
+        },
+        error: (err) => console.error('Error fetching mobile components', err)
+      });
 
     if (this.authService.userMenu().length === 0) {
-      this.authService.refreshPermissions().subscribe();
+      this.authService.refreshPermissions()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe();
     }
 
     this.loadNotifications();
-  }
-
-  ngOnDestroy() {
-    this.routerSub?.unsubscribe();
   }
 
   toggleSidebar(): void {
@@ -137,14 +141,16 @@ export class MobileNavComponent implements OnInit, OnDestroy {
   }
 
   loadNotifications(): void {
-    this.notificationService.getNotifications().subscribe({
-      next: (res) => {
-        this.notifications.set(res ?? []);
-      },
-      error: () => {
-        this.notifications.set([]);
-      }
-    });
+    this.notificationService.getNotifications()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          this.notifications.set(res ?? []);
+        },
+        error: () => {
+          this.notifications.set([]);
+        }
+      });
   }
 
   markAsRead(id: number): void {
@@ -152,11 +158,13 @@ export class MobileNavComponent implements OnInit, OnDestroy {
     if (!notif) return;
     if (!notif.is_read) {
       notif.is_read = true;
-      this.notificationService.markAsRead(id).subscribe({
-        error: () => {
-          notif.is_read = false;
-        }
-      });
+      this.notificationService.markAsRead(id)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          error: () => {
+            notif.is_read = false;
+          }
+        });
     }
     if (notif.route_url) {
       this.showNotifications.set(false);
@@ -165,14 +173,16 @@ export class MobileNavComponent implements OnInit, OnDestroy {
   }
 
   deleteNotification(id: number): void {
-    this.notificationService.deleteNotification(id).subscribe({
-      next: () => {
-        this.notifications.update(notifs => notifs.filter(n => n.id !== id));
-      },
-      error: () => {
-        alert('Error al eliminar la notificación');
-      }
-    });
+    this.notificationService.deleteNotification(id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.notifications.update(notifs => notifs.filter(n => n.id !== id));
+        },
+        error: () => {
+          alert('Error al eliminar la notificación');
+        }
+      });
   }
 
   onTouchStart(event: TouchEvent, id: number) {
@@ -216,28 +226,15 @@ export class MobileNavComponent implements OnInit, OnDestroy {
     this.notifications().forEach(n => {
       if (!n.is_read) {
         n.is_read = true;
-        this.notificationService.markAsRead(n.id).subscribe({
-          error: () => {
-            n.is_read = false;
-          }
-        });
+        this.notificationService.markAsRead(n.id)
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe({
+            error: () => {
+              n.is_read = false;
+            }
+          });
       }
     });
-  }
-
-  timeAgo(dateStr: string): string {
-    const now = new Date();
-    const date = new Date(dateStr);
-    const diffMs = now.getTime() - date.getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-    if (diffMin < 1) return 'Ahora';
-    if (diffMin < 60) return `Hace ${diffMin} min`;
-    const diffHour = Math.floor(diffMin / 60);
-    if (diffHour < 24) return `Hace ${diffHour}h`;
-    const diffDay = Math.floor(diffHour / 24);
-    if (diffDay === 1) return 'Ayer';
-    if (diffDay < 7) return `Hace ${diffDay} días`;
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   }
 
   @HostListener('document:keydown.escape')

@@ -163,52 +163,102 @@
     overflow: visible !important;
 }
 
-.gm-treetable .p-treetable-toggler-spacer {
-    position: relative;
-    display: inline-block;
-    width: 1.5rem;
-    height: 100%;
-    vertical-align: middle;
-}
-
-.gm-treetable .p-treetable-toggler-spacer::after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    bottom: -20px;
-    left: 50%;
-    border-left: 1px dashed #cbd5e1;
-    z-index: 1;
-}
-
-.gm-treetable .p-treetable-toggler {
-    position: relative;
-    z-index: 2;
-    margin-right: 8px !important;
-}
-
-.gm-treetable .p-treetable-toggler::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -0.75rem;
-    width: 0.75rem;
-    border-top: 1px dashed #cbd5e1;
-    z-index: 1;
-}
-
-.gm-treetable .p-treetable-toggler-spacer + .node-icon-wrap {
+.gm-treetable .p-treetable-tbody > tr {
     position: relative;
 }
 
-.gm-treetable .p-treetable-toggler-spacer + .node-icon-wrap::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: -0.75rem;
-    width: 0.75rem;
-    border-top: 1px dashed #cbd5e1;
-    z-index: 1;
+.gm-treetable .p-treetable-tbody > tr > td:first-child {
+    position: relative;
+}
+
+/* Vertical guide line coming down from parent */
+.gm-treetable .p-treetable-tbody > tr.depth-1 > td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-2 > td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 44px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-3 > td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 68px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-4 > td:first-child::before {
+  content: '';
+  position: absolute;
+  left: 92px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+/* Elbow branch connecting to child node */
+.gm-treetable .p-treetable-tbody > tr.depth-1 > td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-2 > td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 44px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-3 > td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 68px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
+}
+
+.gm-treetable .p-treetable-tbody > tr.depth-4 > td:first-child::after {
+  content: '';
+  position: absolute;
+  left: 92px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  z-index: 5;
 }
 
 /* ─────────────────────────────────────────────────────────────

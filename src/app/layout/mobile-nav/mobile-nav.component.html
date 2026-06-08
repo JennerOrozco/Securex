@@ -59,7 +59,7 @@
         <div class="flex justify-between items-start">
           <p class="text-sm font-semibold" [class.text-white]="notif.is_read"
             [class.text-padel-orange]="!notif.is_read">{{ notif.title }}</p>
-          <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">{{ timeAgo(notif.created_at) }}</span>
+          <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">{{ notif.created_at | timeAgo }}</span>
         </div>
         <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
       </div>

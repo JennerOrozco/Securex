@@ -492,18 +492,18 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 30px 10px;
+    padding: 36px 10px 30px;
     text-align: center;
-    min-height: 280px;
+    min-height: 300px;
 }
 
-/* Spinner animado premium con efecto de anillo brillante */
+/* ─── Ring spinner con glow ─── */
 .loader-ring {
     display: inline-block;
     position: relative;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 24px;
+    width: 72px;
+    height: 72px;
+    margin-bottom: 28px;
 }
 
 .loader-ring div {
@@ -512,8 +512,8 @@
     position: absolute;
     width: 64px;
     height: 64px;
-    margin: 8px;
-    border: 3px solid transparent;
+    margin: 4px;
+    border: 2.5px solid transparent;
     border-radius: 50%;
     animation: loader-ring-spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
     border-top-color: var(--teal-bright);
@@ -526,8 +526,7 @@
 
 .loader-ring div:nth-child(2) {
     animation-delay: -0.3s;
-    border-top-color: #3b82f6;
-    /* Blue accent */
+    border-top-color: rgba(220, 38, 38, 0.6);
 }
 
 .loader-ring div:nth-child(3) {
@@ -535,81 +534,134 @@
     border-top-color: var(--teal-bright);
 }
 
+.loader-ring div:nth-child(4) {
+    border-top-color: rgba(127, 29, 29, 0.5);
+}
+
+.ring-core {
+    position: absolute !important;
+    inset: 50% !important;
+    margin: 0 !important;
+    width: 12px !important;
+    height: 12px !important;
+    transform: translate(-50%, -50%);
+    border: none !important;
+    border-radius: 50%;
+    background: var(--teal-bright);
+    opacity: 0.6;
+    animation: core-pulse 1.6s ease-in-out infinite !important;
+}
+
 @keyframes loader-ring-spin {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    100% {
-        transform: rotate(360deg);
-    }
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Icono central de escudo */
-.loader-logo {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 24px;
-    transform: translateY(-80px);
-    /* Align with the loader ring */
-    pointer-events: none;
+@keyframes core-pulse {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(0.8); }
+    50%      { opacity: 0.8; transform: translate(-50%, -50%) scale(1.2); }
 }
 
-.loader-shield {
-    font-size: 1.8rem;
-    color: var(--teal-bright);
-    animation: loader-shield-pulse 2s infinite ease-in-out;
-}
-
-@keyframes loader-shield-pulse {
-
-    0%,
-    100% {
-        transform: scale(1);
-        opacity: 0.8;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 1;
-        filter: drop-shadow(0 0 10px rgba(220, 38, 38, 0.6));
-    }
-}
-
+/* ─── Título ─── */
 .config-title {
     font-family: var(--font-head);
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: var(--auth-white);
-    margin-bottom: 8px;
+    margin-bottom: 16px;
     letter-spacing: -0.01em;
+    animation: title-fade-in 0.5s ease-out both;
 }
 
+@keyframes title-fade-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Progress bar ─── */
+.config-progress {
+    width: 200px;
+    height: 3px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+    margin-bottom: 20px;
+}
+
+.config-progress-bar {
+    height: 100%;
+    width: 30%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, var(--teal-accent), var(--teal-bright), var(--teal-accent));
+    background-size: 200% 100%;
+    animation: progress-sweep 1.8s ease-in-out infinite;
+}
+
+@keyframes progress-sweep {
+    0%   { width: 20%; background-position: 200% 0; }
+    50%  { width: 70%; background-position: 100% 0; }
+    100% { width: 20%; background-position: 0% 0; }
+}
+
+/* ─── Steps ─── */
 .config-steps {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 0;
 }
 
-.step-text {
-    font-size: 0.9rem;
+.step-item {
+    font-size: 0.88rem;
     font-weight: 500;
     color: var(--auth-white-60);
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    opacity: 0;
+    animation: step-slide-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.step-sub {
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.35);
+.step-1 {
+    animation-delay: 0.3s;
+}
+
+.step-2 {
+    animation-delay: 0.7s;
+}
+
+.step-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--teal-bright);
+    flex-shrink: 0;
+    animation: dot-blink 1.4s ease-in-out infinite;
+}
+
+.step-2 .step-dot {
+    animation-delay: 0.4s;
+}
+
+@keyframes step-slide-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes dot-blink {
+    0%, 100% { opacity: 0.3; transform: scale(0.85); }
+    50%      { opacity: 1;   transform: scale(1); }
 }
 
 .animate-fade-in {
     animation: fadeIn 0.4s ease-out both;
+}
+
+.card-sub--company {
+    margin-bottom: 24px;
+}
+
+.error-box--card {
+    margin-top: 16px;
 }

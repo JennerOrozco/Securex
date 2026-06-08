@@ -1,9 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { ButtonModule } from 'primeng/button';
-import { TooltipModule } from 'primeng/tooltip';
 import { SelectComponent } from '@shared/components/select/select.component';
+import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { AppService } from '@core/services/app.service';
 import { CompanyService } from '@core/services/company.service';
 import { PermissionService } from '@core/services/permission.service';
@@ -25,15 +26,30 @@ interface PermNode {
 @Component({
   selector: 'app-security-company-permissions',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, ButtonModule, TooltipModule, SelectComponent],
-  templateUrl: './company-permissions.component.html'
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SelectComponent, ToolbarComponent, ButtonComponent],
+  templateUrl: './company-permissions.component.html',
+  styleUrl: './company-permissions.component.css'
 })
 export class CompanyPermissionsComponent implements OnInit {
+
+  getMatchCount(): number {
+    const q = this.searchQuery.toLowerCase().trim();
+    if (!q) return 0;
+    let count = 0;
+    const checkNode = (node: PermNode) => {
+      const isMatch = node.name.toLowerCase().includes(q) || node.slug.toLowerCase().includes(q);
+      if (isMatch) count++;
+      node.children.forEach(checkNode);
+    };
+    this.groups.forEach(checkNode);
+    return count;
+  }
   private appService = inject(AppService);
   private companyService = inject(CompanyService);
   private permissionService = inject(PermissionService);
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
+  private destroyRef = inject(DestroyRef);
 
   apps: any[] = [];
   companies: any[] = [];
@@ -71,11 +87,11 @@ export class CompanyPermissionsComponent implements OnInit {
   ngOnInit() {
     if (this.hasPermission) {
       this.loadApps();
-      this.appControl.valueChanges.subscribe(val => {
+      this.appControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(val => {
         this.selectedAppId = val;
         this.onAppChange();
       });
-      this.companyControl.valueChanges.subscribe(val => {
+      this.companyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(val => {
         this.selectedCompanyId = val;
         this.onCompanyChange();
       });

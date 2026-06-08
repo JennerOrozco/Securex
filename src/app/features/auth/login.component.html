@@ -1,146 +1,142 @@
-<!-- ════════════════════════════════════
-     DESKTOP VIEW
-════════════════════════════════════ -->
 <div class="desktop-shell">
 
-    <!-- Ambient orbs -->
     <div class="orb orb-1"></div>
     <div class="orb orb-2"></div>
     <div class="orb orb-3"></div>
 
-    <!-- Wave bottom -->
     <div class="wave-stage">
         <canvas #waveCanvas class="wave-canvas"></canvas>
     </div>
 
-    <!-- Particle dots (populated via ngAfterViewInit) -->
     <div class="particles" #particlesContainer></div>
 
-    <!-- Center content -->
     <div class="center-col">
 
-        <!-- Logo -->
         <div class="logo-area">
             <img src="/assets/image.png" alt="Logo" class="form-logo-img mx-auto">
             <h1>SECUREX</h1>
             <p>Gestión integrada. Crecimiento continuo.</p>
         </div>
 
-        <!-- Glass card -->
         <div class="glass-card">
 
-            <!-- Configuration Loading Spinner -->
-            <div *ngIf="loadingConfig" class="config-loading-container animate-fade-in">
-                <div class="loader-ring">
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                    <div></div>
-                </div>
-                <h3 class="config-title">Iniciando sesión</h3>
-                <div class="config-steps">
-                    <span class="step-text">
-                        <i class="pi pi-spin pi-spinner mr-2" style="font-size: 14px; color: var(--teal-bright);"></i>Preparando tu entorno comercial...
-                    </span>
-                    <span class="step-sub">Configurando tus accesos seguros</span>
-                </div>
-            </div>
+            @if (loadingConfig) {
+                <div class="config-loading-container animate-fade-in">
+                    <div class="loader-ring">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div class="ring-core"></div>
+                    </div>
+                    <h3 class="config-title">Iniciando sesión</h3>
 
-            <!-- Login / Register / Forgot / Reset sub-components -->
-            <ng-container *ngIf="!loadingConfig">
+                    <div class="config-progress">
+                        <div class="config-progress-bar"></div>
+                    </div>
 
-                <!-- Company Selection View -->
-                <ng-container *ngIf="showCompanySelect">
+                    <div class="config-steps">
+                        <span class="step-item step-1">
+                            <span class="step-dot"></span>
+                            Preparando tu entorno comercial...
+                        </span>
+                        <span class="step-item step-2">
+                            <span class="step-dot"></span>
+                            Configurando tus accesos seguros
+                        </span>
+                    </div>
+                </div>
+            }
+
+            @if (!loadingConfig) {
+
+                @if (showCompanySelect) {
                     <p class="card-title">Selecciona tu Empresa</p>
-                    <p class="card-sub" style="margin-bottom: 24px;">Tienes acceso a múltiples compañías. Selecciona una
-                        para continuar:</p>
+                    <p class="card-sub card-sub--company">Tienes acceso a múltiples compañías. Selecciona una para continuar:</p>
 
                     <div class="company-list-container">
-                        <div *ngFor="let company of availableCompanies" class="company-card-item"
-                            [class.selected]="selectedCompanyUuid === company.uuid" (click)="selectCompany(company)">
-                            <div class="company-info-text">
-                                <span class="company-name-text">{{ company.name }}</span>
-                                <span class="company-role-text">{{ company.branch_name || 'Usuario Aprobado' }}</span>
-                            </div>
-                            <div class="company-check-icon" *ngIf="selectedCompanyUuid === company.uuid">
-                                <i class="fas fa-check-circle"></i>
-                            </div>
-                        </div>
+                        @for (company of availableCompanies; track $index) {
+                            <app-company-card
+                                [company]="company"
+                                [selected]="selectedCompanyUuid === company.uuid"
+                                (onSelect)="selectCompany($event)"
+                            />
+                        }
                     </div>
 
                     <div class="company-actions-row">
-                        <button type="button" class="btn-cancel-select" (click)="cancelCompanySelect()"
-                            [disabled]="loading">
+                        <button type="button" class="btn-cancel-select" (click)="cancelCompanySelect()" [disabled]="loading">
                             Cancelar
                         </button>
-                        <button type="button" class="btn-login" (click)="confirmCompanySelect()"
-                            [disabled]="loading || !selectedCompanyUuid">
+                        <button type="button" class="btn-login" (click)="confirmCompanySelect()" [disabled]="loading || !selectedCompanyUuid">
                             {{ loading ? 'Iniciando...' : 'Ingresar' }}
                         </button>
                     </div>
-                </ng-container>
+                }
 
-                <!-- Normal Authentication Views -->
-                <ng-container *ngIf="!showCompanySelect">
-                    <ng-container *ngIf="view === 'login'">
-                        <p class="card-title">Inicio de sesión.</p>
-                        <p class="card-sub">Inicia sesión para comenzar.</p>
-                        <app-login-form [loading]="loading" (onSubmit)="login($event)"
-                            (onToggleMode)="toggleMode($event)" (onBiometricLogin)="loginWithBiometrics($event)">
-                        </app-login-form>
-                    </ng-container>
+                @if (!showCompanySelect) {
+                    @switch (view) {
+                        @case ('login') {
+                            <p class="card-title">Inicio de sesión.</p>
+                            <p class="card-sub">Inicia sesión para comenzar.</p>
+                            <app-login-form [loading]="loading" (onSubmit)="login($event)"
+                                (onToggleMode)="toggleMode($event)" (onBiometricLogin)="loginWithBiometrics($event)">
+                            </app-login-form>
+                        }
+                        @case ('register') {
+                            <p class="card-title">Crear cuenta.</p>
+                            <p class="card-sub">Regístrate para comenzar.</p>
+                            <app-register-form [loading]="loading" (onSubmit)="onRegister($event)"
+                                (onToggleMode)="toggleMode($event)">
+                            </app-register-form>
+                        }
+                        @case ('forgot-password') {
+                            <p class="card-title">Recuperar contraseña.</p>
+                            <p class="card-sub">Ingresa tu correo para recibir un código.</p>
+                            <app-forgot-password-form [loading]="loading" (onSubmit)="onRequestReset($event)"
+                                (onToggleMode)="toggleMode($event)">
+                            </app-forgot-password-form>
+                        }
+                        @case ('reset-password') {
+                            <p class="card-title">Restablecer contraseña.</p>
+                            <p class="card-sub">Ingresa tu nueva contraseña.</p>
+                            <app-reset-password-form [loading]="loading" (onSubmit)="onResetPassword($event)"
+                                (onToggleMode)="toggleMode($event)">
+                            </app-reset-password-form>
+                        }
+                    }
+                }
+            }
 
-                    <ng-container *ngIf="view === 'register'">
-                        <p class="card-title">Crear cuenta.</p>
-                        <p class="card-sub">Regístrate para comenzar.</p>
-                        <app-register-form [loading]="loading" (onSubmit)="onRegister($event)"
-                            (onToggleMode)="toggleMode($event)">
-                        </app-register-form>
-                    </ng-container>
+            @if (error) {
+                <div class="error-box error-box--card">
+                    <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    {{ error }}
+                </div>
+            }
 
-                    <ng-container *ngIf="view === 'forgot-password'">
-                        <p class="card-title">Recuperar contraseña.</p>
-                        <p class="card-sub">Ingresa tu correo para recibir un código.</p>
-                        <app-forgot-password-form [loading]="loading" (onSubmit)="onRequestReset($event)"
-                            (onToggleMode)="toggleMode($event)">
-                        </app-forgot-password-form>
-                    </ng-container>
-
-                    <ng-container *ngIf="view === 'reset-password'">
-                        <p class="card-title">Restablecer contraseña.</p>
-                        <p class="card-sub">Ingresa tu nueva contraseña.</p>
-                        <app-reset-password-form [loading]="loading" (onSubmit)="onResetPassword($event)"
-                            (onToggleMode)="toggleMode($event)">
-                        </app-reset-password-form>
-                    </ng-container>
-                </ng-container>
-            </ng-container>
-
-            <!-- Global error banner -->
-            <div *ngIf="error" class="error-box" style="margin-top:16px;">
-                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clip-rule="evenodd" />
-                </svg>
-                {{ error }}
-            </div>
-
-        </div><!-- /glass-card -->
-    </div><!-- /center-col -->
-
-    <!-- Desktop toast -->
-    <div *ngIf="toastMessage" class="toast"
-        [ngClass]="{'toast--success': toastType === 'success', 'toast--error': toastType === 'error'}">
-        <svg *ngIf="toastType === 'success'" class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-        </svg>
-        <svg *ngIf="toastType === 'error'" class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-        <span>{{ toastMessage }}</span>
+        </div>
     </div>
 
-</div><!-- /desktop-shell -->
+    @if (toastMessage) {
+        <div class="toast"
+            [ngClass]="{'toast--success': toastType === 'success', 'toast--error': toastType === 'error'}">
+            @if (toastType === 'success') {
+                <svg class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+            }
+            @if (toastType === 'error') {
+                <svg class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            }
+            <span>{{ toastMessage }}</span>
+        </div>
+    }
 
-
+</div>

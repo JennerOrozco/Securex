@@ -21,10 +21,12 @@
     <p class="gm-send-sub" *ngIf="bodyMessage">{{ bodyMessage }}</p>
     <div class="gm-recipients" *ngIf="emails.length > 0">
       <p class="gm-recipients-label">Se enviará a las siguientes cuentas:</p>
-      <div class="gm-recipient-chip" *ngFor="let email of emails">
+      @for (email of emails; track $index) {
+      <div class="gm-recipient-chip">
         <i class="pi pi-at"></i>
         <span>{{ email }}</span>
       </div>
+      }
     </div>
     <p class="gm-send-sub gm-no-emails" *ngIf="emails.length === 0">
       No hay cuentas de correo asociadas a este reporte.

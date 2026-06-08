@@ -37,7 +37,8 @@
       </div>
 
       <div *ngIf="!loading && notes.length > 0" class="gm-sticky-notes-grid">
-        <div *ngFor="let note of notes; let i = index" 
+        @for (note of notes; track $index; let i = $index) {
+<div
              class="gm-sticky-note" 
              [ngClass]="'gm-sticky-note--' + ['yellow', 'blue', 'green', 'rose', 'purple'][i % 5]"
              [class.editing]="editingNoteId() === note.uuid">
@@ -86,7 +87,8 @@
             <span class="gm-sticky-note-date">{{ note.created_at | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
         </div>
-      </div>
+      }
+    </div>
 
     </div>
   </p-scrollpanel>

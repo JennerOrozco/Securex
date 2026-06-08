@@ -762,3 +762,26 @@
         line-height: 1.1 !important;
     }
 }
+
+/* ─────────────────────────────────────────────────────────────
+   SELECTED ROW — rojo en vez de verde de PrimeNG
+   ───────────────────────────────────────────────────────────── */
+.users-table .p-datatable-tbody > tr.p-highlight {
+    background: #fef2f2 !important;
+    color: #991b1b !important;
+}
+
+.users-table .p-datatable-tbody > tr.p-highlight:hover {
+    background: #fee2e2 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PAGINATOR DROPDOWN — z-index para evitar clipping
+   ───────────────────────────────────────────────────────────── */
+.p-paginator .p-dropdown {
+    z-index: 10 !important;
+}
+
+.p-paginator .p-dropdown-panel {
+    z-index: 1001 !important;
+}

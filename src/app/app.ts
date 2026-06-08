@@ -8,6 +8,8 @@ import { SwUpdate, SwPush } from '@angular/service-worker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -25,27 +27,27 @@ import { LoaderComponent } from '@shared/components/loader/loader.component';
 })
 export class App {
   protected readonly title = signal('SECUREX');
-  private currentUrl = signal('');
 
   private authService = inject(AuthService);
   private router = inject(Router);
   private swUpdate = inject(SwUpdate);
   private swPush = inject(SwPush);
 
+  private currentUrl = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map(e => e.urlAfterRedirects)
+    ),
+    { initialValue: this.router.url }
+  );
+
   showLayout = computed(() => {
     return !!this.authService.currentUser() && this.currentUrl() !== '/login';
   });
 
   constructor() {
-    this.currentUrl.set(this.router.url);
     this.checkForUpdates();
     this.listenToNotificationClicks();
-    
-    this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.currentUrl.set(event.urlAfterRedirects);
-      }
-    });
   }
 
   private checkForUpdates() {
@@ -86,6 +88,4 @@ export class App {
       });
     }
   }
-
-
 }

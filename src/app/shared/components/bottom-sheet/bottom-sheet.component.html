@@ -9,7 +9,8 @@
   </div>
   <div class="sheet-body">
     <ul class="sheet-list">
-      <li *ngFor="let item of visibleItems"
+      @for (item of visibleItems; track $index) {
+<li
           (click)="onAction.emit(item.action)"
           [class.sheet-item-danger]="item.danger">
         <div class="sheet-item-icon" [class]="item.iconClass || ''">
@@ -17,6 +18,7 @@
         </div>
         <span>{{ item.label }}</span>
       </li>
+      }
     </ul>
     <button class="sheet-cancel-btn" (click)="onClose.emit()">Cancelar</button>
   </div>

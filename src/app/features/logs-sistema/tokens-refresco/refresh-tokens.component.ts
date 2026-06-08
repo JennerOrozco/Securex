@@ -26,7 +26,7 @@ export class RefreshTokensComponent implements OnInit {
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
     { field: 'app_name', header: 'App', type: 'text', sortable: true },
     { field: 'token_preview', header: 'Token', type: 'text' },
-    { field: 'is_revoked', header: 'Estado', type: 'status', sortable: true,
+    { field: 'is_revoked', header: 'Estado', type: 'badge', sortable: true,
       filterOptions: [{ label: 'Activo', value: 'Activo' }, { label: 'Inactivo', value: 'Inactivo' }], filterOptionLabel: 'label' },
     { field: 'expires_at', header: 'Expira', type: 'date', sortable: true },
     { field: 'created_at', header: 'Creado', type: 'date', sortable: true },

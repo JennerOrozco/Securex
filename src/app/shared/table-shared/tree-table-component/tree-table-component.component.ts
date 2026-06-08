@@ -13,8 +13,6 @@ import { ContextMenuComponent } from '../../components/context-menu/context-menu
 import { BottomSheetComponent } from '../../components/bottom-sheet/bottom-sheet.component';
 import { ActionItem } from '../../components/action-menu.types';
 import { ToolbarComponent } from '../../components/toolbar/toolbar.component';
-import { StatusClassPipe } from '../shared/status-class.pipe';
-import { BadgeClassPipe } from '../shared/badge-class.pipe';
 import { CellRendererComponent } from '../shared/cell-renderer/cell-renderer.component';
 import { TableActionsComponent, TableActionsConfig } from '../shared/table-actions.component';
 import { BaseTableDirective } from '../shared/base-table.directive';
@@ -34,8 +32,6 @@ import { BaseTableDirective } from '../shared/base-table.directive';
     ContextMenuComponent,
     BottomSheetComponent,
     ToolbarComponent,
-    StatusClassPipe,
-    BadgeClassPipe,
     CellRendererComponent,
     TableActionsComponent
   ],

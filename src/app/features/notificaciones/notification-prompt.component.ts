@@ -58,7 +58,7 @@ export class NotificationPromptComponent implements OnInit {
   showPrompt = false;
   private notificationService = inject(NotificationService);
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     this.checkPermission();

@@ -1,20 +1,28 @@
-import { Directive, input, output, HostListener, inject } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { Directive, input, output, HostListener, OnDestroy } from '@angular/core';
 
 @Directive({ selector: '[appDebounce]', standalone: true })
-export class DebounceDirective {
+export class DebounceDirective implements OnDestroy {
   readonly appDebounce = output<string>();
   readonly debounceMs = input(300, { alias: 'debounceMs' });
 
-  private ngModel = inject(NgModel, { optional: true });
   private timeoutId: any;
 
   @HostListener('input', ['$event'])
   onInput(event: Event) {
     const value = (event.target as HTMLInputElement).value;
-    clearTimeout(this.timeoutId);
+    this.clearPendingTimeout();
     this.timeoutId = setTimeout(() => {
       this.appDebounce.emit(value);
     }, this.debounceMs());
+  }
+
+  ngOnDestroy() {
+    this.clearPendingTimeout();
+  }
+
+  private clearPendingTimeout() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
   }
 }

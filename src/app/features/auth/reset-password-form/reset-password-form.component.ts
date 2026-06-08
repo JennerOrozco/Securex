@@ -1,19 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
+import { AuthFormBase } from '../shared/auth-form-base';
+import { SubmitButtonComponent } from '../shared/submit-button.component';
+import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
 
 @Component({
-  imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent],
+  imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent, SubmitButtonComponent, AuthBottomLinkComponent],
   selector: 'app-reset-password-form',
   templateUrl: './reset-password-form.component.html',
   standalone: true
 })
-export class ResetPasswordFormComponent {
-  @Input() loading = false;
+export class ResetPasswordFormComponent extends AuthFormBase {
   @Output() onSubmit = new EventEmitter<{ code: string; newPassword: string; confirmNewPassword: string }>();
-  @Output() onToggleMode = new EventEmitter<string>();
 
   resetForm = new FormGroup({
     code: new FormControl('', [Validators.required]),
@@ -21,8 +22,7 @@ export class ResetPasswordFormComponent {
     confirmNewPassword: new FormControl('', [Validators.required])
   });
 
-  submit(event: Event): void {
-    event.preventDefault();
+  submit(): void {
     if (this.resetForm.invalid) {
       this.resetForm.markAllAsTouched();
       return;
@@ -32,9 +32,5 @@ export class ResetPasswordFormComponent {
       newPassword: this.resetForm.value.newPassword ?? '',
       confirmNewPassword: this.resetForm.value.confirmNewPassword ?? ''
     });
-  }
-
-  toggleMode(mode: string): void {
-    this.onToggleMode.emit(mode);
   }
 }

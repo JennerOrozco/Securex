@@ -64,3 +64,35 @@
     margin-right: 0.15rem;
   }
 }
+
+/* =====================================================
+   VARIANTE GHOST INDIGO — Para botones de acciones en bloque, etc.
+   ===================================================== */
+:host ::ng-deep .gm-btn.btn--ghost-indigo,
+:host ::ng-deep .p-button.gm-btn.btn--ghost-indigo {
+  background: #ffffff !important;
+  color: #6366f1 !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: none !important;
+}
+
+:host ::ng-deep .gm-btn.btn--ghost-indigo:hover,
+:host ::ng-deep .p-button.gm-btn.btn--ghost-indigo:hover {
+  background: #eef2ff !important;
+  border-color: #c7d2fe !important;
+  color: #6366f1 !important;
+}
+
+/* =====================================================
+   TAMAÑO PEQUEÑO (sm)
+   ===================================================== */
+:host ::ng-deep .gm-btn.btn-sm,
+:host ::ng-deep .p-button.gm-btn.btn-sm {
+  min-height: 28px !important;
+  height: 28px !important;
+  padding: 0 0.65rem !important;
+  font-size: 0.72rem !important;
+  border-radius: 6px !important;
+  gap: 0.3rem !important;
+}
+

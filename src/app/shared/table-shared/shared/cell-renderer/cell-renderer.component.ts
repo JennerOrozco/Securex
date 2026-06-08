@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { TableColumn } from '../table.types';
-import { StatusClassPipe } from '../status-class.pipe';
 import { BadgeClassPipe } from '../badge-class.pipe';
 
 @Component({
@@ -15,15 +14,13 @@ import { BadgeClassPipe } from '../badge-class.pipe';
     FormsModule,
     TooltipModule,
     InputTextModule,
-    StatusClassPipe,
     BadgeClassPipe,
   ],
   template: `
     @switch (col.type) {
       @case ('status') {
         @if (rowData[col.field]) {
-          <span class="estado-badge" [ngClass]="rowData[col.field] | statusClass">
-            <span class="edo-dot"></span>
+          <span class="type-chip" [ngClass]="rowData[col.field] | badgeClass">
             {{ rowData[col.field] }}
           </span>
         }

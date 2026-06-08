@@ -9,6 +9,7 @@ import { LoginFormComponent } from './login-form/login-form.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
 import { ForgotPasswordFormComponent } from './forgot-password-form/forgot-password-form.component';
 import { ResetPasswordFormComponent } from './reset-password-form/reset-password-form.component';
+import { CompanyCardComponent } from './shared/company-card.component';
 import { forkJoin, timer } from 'rxjs';
 
 declare var google: any;
@@ -25,7 +26,8 @@ declare var google: any;
     LoginFormComponent,
     RegisterFormComponent,
     ForgotPasswordFormComponent,
-    ResetPasswordFormComponent
+    ResetPasswordFormComponent,
+    CompanyCardComponent
   ]
 })
 export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {

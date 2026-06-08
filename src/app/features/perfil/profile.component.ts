@@ -1,11 +1,12 @@
-import { Component, OnInit, signal, inject, OnDestroy } from '@angular/core';
+import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PasswordComponent } from '../../shared/components/password/password.component';
 import { TableComponent, TableColumn } from '../../shared/table-shared/table-component/table-component.component';
-import { Subject, timer } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DeleteModalComponent } from '../../shared/modals/modal-shell/delete-modal/delete-modal.component';
 
 export interface ProfileData {
   uuid: string;
@@ -25,14 +26,16 @@ export interface ProfileData {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent, DeleteModalComponent],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss'
 })
-export class ProfileComponent implements OnInit, OnDestroy {
+export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
   private fb = inject(FormBuilder);
-  private destroy$ = new Subject<void>();
+  private destroyRef = inject(DestroyRef);
+  deleteModalVisible = signal(false);
+  itemToDelete: any = null;
 
   profileData = signal<ProfileData | null>(null);
   profileLoading = signal<boolean>(true);
@@ -74,22 +77,19 @@ export class ProfileComponent implements OnInit, OnDestroy {
       });
     }
 
-    this.authService.getUserProfile().subscribe({
-      next: (response) => {
-        const data = response.data || response;
-        this.profileData.set(data);
-        this.profileLoading.set(false);
-      },
-      error: () => {
-        this.profileError.set('Error al cargar el perfil. Intente de nuevo.');
-        this.profileLoading.set(false);
-      }
-    });
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.authService.getUserProfile()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          const data = response.data || response;
+          this.profileData.set(data);
+          this.profileLoading.set(false);
+        },
+        error: () => {
+          this.profileError.set('Error al cargar el perfil. Intente de nuevo.');
+          this.profileLoading.set(false);
+        }
+      });
   }
 
   passwordMatchValidator(g: FormGroup) {
@@ -108,33 +108,40 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   loadDevices() {
     this.devicesLoading.set(true);
-    this.authService.getWebAuthnCredentials().subscribe({
-      next: (res) => {
-        console.log('Devices API response:', res);
-        // Soporta tanto si viene el array directo como si viene envuelto en { data: [...] }
-        const devicesData = Array.isArray(res) ? res : (res.data || []);
-        this.devices.set(devicesData);
-        console.log('Devices signal set to:', this.devices());
-        this.devicesLoading.set(false);
-      },
-      error: (err) => {
-        console.error('Error loading devices:', err);
-        this.devicesLoading.set(false);
-      }
-    });
+    this.authService.getWebAuthnCredentials()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const devicesData = Array.isArray(res) ? res : (res.data || []);
+          this.devices.set(devicesData);
+          this.devicesLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error loading devices:', err);
+          this.devicesLoading.set(false);
+        }
+      });
   }
 
   deleteDevice(device: any) {
-    if (confirm(`¿Estás seguro de que deseas eliminar el dispositivo "${device.device_name}"?`)) {
-      this.authService.deleteWebAuthnCredential(device.id).subscribe({
+    this.itemToDelete = device;
+    this.deleteModalVisible.set(true);
+  }
+
+  handleConfirmDelete() {
+    if (!this.itemToDelete) return;
+    this.authService.deleteWebAuthnCredential(this.itemToDelete.id)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
         next: () => {
+          this.deleteModalVisible.set(false);
+          this.itemToDelete = null;
           this.loadDevices();
         },
         error: (err) => {
           console.error('Error al eliminar dispositivo:', err);
         }
       });
-    }
   }
 
   getUserInitials(): string {
@@ -156,21 +163,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
       new_password: this.passwordForm.value.newPassword
     };
 
-    this.authService.changePassword(payload).subscribe({
-      next: () => {
-        this.passwordLoading.set(false);
-        this.passwordSuccess.set(true);
-        this.passwordForm.reset();
+    this.authService.changePassword(payload)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.passwordLoading.set(false);
+          this.passwordSuccess.set(true);
+          this.passwordForm.reset();
 
-        timer(4000).pipe(takeUntil(this.destroy$)).subscribe(() => {
-          this.passwordSuccess.set(false);
-        });
-      },
-      error: (err) => {
-        this.passwordLoading.set(false);
-        this.passwordError.set(err.error?.message || 'Error al cambiar la contraseña');
-      }
-    });
+          timer(4000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+            this.passwordSuccess.set(false);
+          });
+        },
+        error: (err) => {
+          this.passwordLoading.set(false);
+          this.passwordError.set(err.error?.message || 'Error al cambiar la contraseña');
+        }
+      });
   }
 
   // Helper to convert base64 to ArrayBuffer (supports Base64URL)
@@ -210,7 +219,9 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.biometricsError.set(null);
     this.biometricsSuccess.set(false);
 
-    this.authService.getWebAuthnRegisterOptions().subscribe({
+    this.authService.getWebAuthnRegisterOptions()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
       next: async (response) => {
         try {
           const data = (response as any).data ?? response;
@@ -275,20 +286,22 @@ export class ProfileComponent implements OnInit, OnDestroy {
           };
 
           // Enviar al backend
-          this.authService.registerWebAuthn(registrationData).subscribe({
-            next: () => {
-              this.biometricsLoading.set(false);
-              this.biometricsSuccess.set(true);
-              this.loadDevices(); // Recargar la lista de dispositivos
-              timer(4000).pipe(takeUntil(this.destroy$)).subscribe(() => {
-                this.biometricsSuccess.set(false);
-              });
-            },
-            error: (err) => {
-              this.biometricsLoading.set(false);
-              this.biometricsError.set(err.error?.message || 'Error al registrar la huella en el servidor');
-            }
-          });
+          this.authService.registerWebAuthn(registrationData)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
+              next: () => {
+                this.biometricsLoading.set(false);
+                this.biometricsSuccess.set(true);
+                this.loadDevices();
+                timer(4000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+                  this.biometricsSuccess.set(false);
+                });
+              },
+              error: (err) => {
+                this.biometricsLoading.set(false);
+                this.biometricsError.set(err.error?.message || 'Error al registrar la huella en el servidor');
+              }
+            });
 
         } catch (err: any) {
           this.biometricsLoading.set(false);

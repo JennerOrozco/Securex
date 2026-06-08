@@ -1,15 +1,16 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject, DestroyRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { AuthService, User } from '@core/services/auth.service';
 import { NotificationService, AppNotification } from '@core/services/notification.service';
-import { DOCUMENT } from '@angular/common';
+import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     standalone: true,
-    imports: [CommonModule, RouterModule]
+    imports: [CommonModule, RouterModule, TimeAgoPipe]
 })
 export class HeaderComponent implements OnInit {
     public authService = inject(AuthService);
@@ -18,6 +19,7 @@ export class HeaderComponent implements OnInit {
     private cdr = inject(ChangeDetectorRef);
 
     private document = inject(DOCUMENT);
+    private destroyRef = inject(DestroyRef);
     isFullscreen = false;
 
     get currentUser(): User | null {
@@ -44,7 +46,9 @@ export class HeaderComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getNotifications().subscribe({
+        this.notificationService.getNotifications()
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
             next: (res) => {
                 this.notifications = res ?? [];
                 this.cdr.detectChanges();
@@ -69,7 +73,9 @@ export class HeaderComponent implements OnInit {
         if (!notif) return;
         if (!notif.is_read) {
             notif.is_read = true;
-            this.notificationService.markAsRead(id).subscribe({
+            this.notificationService.markAsRead(id)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
                 error: () => {
                     notif.is_read = false;
                     this.cdr.detectChanges();
@@ -84,7 +90,9 @@ export class HeaderComponent implements OnInit {
 
     deleteNotification(id: number, event: MouseEvent): void {
         event.stopPropagation(); // Evitar que se marque como leída o navegue
-        this.notificationService.deleteNotification(id).subscribe({
+        this.notificationService.deleteNotification(id)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe({
             next: () => {
                 this.notifications = this.notifications.filter(n => n.id !== id);
                 this.cdr.detectChanges();
@@ -99,7 +107,9 @@ export class HeaderComponent implements OnInit {
         this.notifications.forEach(n => {
             if (!n.is_read) {
                 n.is_read = true;
-                this.notificationService.markAsRead(n.id).subscribe({
+                this.notificationService.markAsRead(n.id)
+                    .pipe(takeUntilDestroyed(this.destroyRef))
+                    .subscribe({
                     error: () => {
                         n.is_read = false;
                         this.cdr.detectChanges();
@@ -107,21 +117,6 @@ export class HeaderComponent implements OnInit {
                 });
             }
         });
-    }
-
-    timeAgo(dateStr: string): string {
-        const now = new Date();
-        const date = new Date(dateStr);
-        const diffMs = now.getTime() - date.getTime();
-        const diffMin = Math.floor(diffMs / 60000);
-        if (diffMin < 1) return 'Ahora';
-        if (diffMin < 60) return `Hace ${diffMin} min`;
-        const diffHour = Math.floor(diffMin / 60);
-        if (diffHour < 24) return `Hace ${diffHour}h`;
-        const diffDay = Math.floor(diffHour / 24);
-        if (diffDay === 1) return 'Ayer';
-        if (diffDay < 7) return `Hace ${diffDay} días`;
-        return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
     }
 
     toggleFullscreen(): void {
@@ -144,7 +139,9 @@ export class HeaderComponent implements OnInit {
         const user = this.authService.currentUserValue;
         const company = this.authService.currentCompany();
         if (user && company) {
-            this.notificationService.sendTestNotification(user.uuid, company.uuid).subscribe({
+            this.notificationService.sendTestNotification(user.uuid, company.uuid)
+                .pipe(takeUntilDestroyed(this.destroyRef))
+                .subscribe({
                 next: () => alert('Notificación de prueba enviada!'),
                 error: (err: any) => alert('Error al enviar prueba: ' + err.message)
             });

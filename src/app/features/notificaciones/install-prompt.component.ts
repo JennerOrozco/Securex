@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -134,7 +134,7 @@ export class InstallPromptComponent implements OnInit {
 
   iosStep = 1;
 
-  constructor(private cdr: ChangeDetectorRef) { }
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     // Check if app is already installed/standalone
