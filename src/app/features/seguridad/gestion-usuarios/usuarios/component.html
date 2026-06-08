@@ -1,6 +1,6 @@
 <app-crud-page
   title="Accesos de Usuarios"
-  subtitle="Filtrados por tu app y compañía actual (sede central)"
+  subtitle="Sucursales y roles filtrados por tu compañía activa"
   [columns]="cols"
   [data]="accesses"
   [loading]="loading"
@@ -11,6 +11,8 @@
   formAddTitle="Nuevo Acceso"
   formEditTitle="Editar Acceso"
   [isSaving]="isSaving"
+  [formExtraData]="formInitialData"
+  [mapItemForEdit]="mapItemForEdit"
   deleteMessage="¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal."
   (onSave)="save($event)"
   (onConfirmDelete)="confirmDelete($event)"

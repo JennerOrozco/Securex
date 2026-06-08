@@ -24,6 +24,7 @@ import { InputNumberComponent } from '../../../components/input-number/input-num
 import { DatepickerComponent } from '../../../components/datepicker/datepicker.component';
 import { TextareaComponent } from '../../../components/textarea/textarea.component';
 import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.utils';
+import { SelectGridComponent } from '../../../components/select-grid/select-grid.component';
 
 @Component({
   selector: 'app-form-modal',
@@ -33,7 +34,8 @@ import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.ut
     InputTextModule, InputNumberModule, AutoCompleteModule, DatePickerModule,
     TextareaModule, TooltipModule, RippleModule, SelectModule, SelectComponent, PasswordModule,
     InputComponent, PhoneInputComponent, NitInputComponent, FileInputComponent,
-    InputImageComponent, PasswordComponent, InputNumberComponent, DatepickerComponent, TextareaComponent
+    InputImageComponent, PasswordComponent, InputNumberComponent, DatepickerComponent, TextareaComponent,
+    SelectGridComponent
   ],
   templateUrl: './form-modal.component.html',
   styleUrls: ['./form-modal.component.css']

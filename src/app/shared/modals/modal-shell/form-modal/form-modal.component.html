@@ -121,6 +121,21 @@
               [required]="field.required || false"
             ></app-select>
 
+            <app-select-grid
+              *ngSwitchCase="'select-grid'"
+              [id]="field.name"
+              [label]="field.label"
+              [options]="field.options || []"
+              [optionLabel]="'label'"
+              [optionValue]="'value'"
+              [placeholder]="field.placeholder || 'Seleccione'"
+              [control]="$any(form.get(field.name))"
+              [icon]="field.icon || ''"
+              [required]="field.required || false"
+              [columns]="field.columns || []"
+              [filterBy]="field.columns?.length ? (field.columns[0].field + ',' + (field.columns[1]?.field || '')) : 'label'"
+            ></app-select-grid>
+
             <app-phone-input
               *ngSwitchCase="'phone'"
               [id]="field.name"
