@@ -1,47 +1,32 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
-import { Subscription } from 'rxjs';
+import { FormFieldComponent } from '../form-field/form-field.component';
 import { nitValidator, sanitizeNitInput } from './nit-input.utils';
+import { BaseFormControl } from '../base-form-control';
 
 export { nitValidator } from './nit-input.utils';
 
 @Component({
   selector: 'app-nit-input',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, InputTextModule, FormFieldComponent],
   templateUrl: './nit-input.component.html',
 
 })
-export class NitInputComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() id: string = 'nit-' + Math.random().toString(36).substr(2, 9);
+export class NitInputComponent extends BaseFormControl {
+  protected prefix = 'nit-';
+
+  @Input() id: string = '';
   @Input() label: string = 'NIT';
   @Input() placeholder: string = 'C/F o número de NIT';
   @Input() icon: string = 'pi pi-id-card';
   @Input() required: boolean = false;
-  @Input() control!: any;
+  @Input() override control!: any;
   @Input() disabled: boolean = false;
 
-  private updatingSelf = false;
-  private sub?: Subscription;
-
-  ngOnInit() {
-    this.initControl();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['control'] && !changes['control'].firstChange) {
-      this.sub?.unsubscribe();
-      this.initControl();
-    }
-  }
-
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
-  }
-
-  private initControl() {
+  override onControlInit() {
     if (this.control) {
       const currentValidators = this.control.validator;
       this.control.setValidators(
@@ -52,21 +37,11 @@ export class NitInputComponent implements OnInit, OnChanges, OnDestroy {
       if (this.control.value) {
         this.formatValue(this.control.value);
       }
-
-      this.sub = this.control.valueChanges.subscribe((val: any) => {
-        if (!this.updatingSelf) {
-          this.formatValue(val);
-        }
-      });
     }
   }
 
-  protected setControlValue(value: any) {
-    this.updatingSelf = true;
-    this.control.setValue(value);
-    this.control.markAsDirty();
-    this.control.markAsTouched();
-    this.updatingSelf = false;
+  override onControlChange(val: any) {
+    this.formatValue(val);
   }
 
   onNitInput(event: Event) {
@@ -103,7 +78,7 @@ export class NitInputComponent implements OnInit, OnChanges, OnDestroy {
     this.setControlValue(clean);
   }
 
-  onBlur() {
+  override onBlur() {
     if (this.control) {
       this.control.markAsTouched();
     }

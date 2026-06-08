@@ -1,15 +1,18 @@
 import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableComponent, TableColumn } from '@shared/table-component/table-component.component';
+import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
+import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
 import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { AuthService } from '@core/services/auth.service';
+import { TreeTableComponent } from '@shared/table-shared/tree-table-component/tree-table-component.component';
+import { TreeNode } from 'primeng/api';
 
 @Component({
   selector: 'app-crud-page',
   standalone: true,
-  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent],
+  imports: [CommonModule, TableComponent, FormModalComponent, DeleteModalComponent, TreeTableComponent],
   templateUrl: './crud-page.component.html'
 })
 export class CrudPageComponent {
@@ -17,6 +20,12 @@ export class CrudPageComponent {
 
   // ── Permission gate ────────────────────────────────────────
   @Input() permission: string = '';
+  @Input() permissionMessage: string = 'No tienes permisos para acceder a este módulo.';
+
+  private _hasPermission: boolean | null = null;
+  @Input() set hasPermission(val: boolean) {
+    this._hasPermission = val;
+  }
 
   // ── Table ──────────────────────────────────────────────────
   @Input() title: string = '';
@@ -28,19 +37,40 @@ export class CrudPageComponent {
   @Input() showAdd: boolean = true;
   @Input() showEdit: boolean = true;
   @Input() showDelete: boolean = true;
+  @Input() showPermissions: boolean = false;
+  @Input() showView: boolean = false;
+
+  // ── Tree Table (Optional) ──────────────────────────────────
+  @Input() isTreeTable: boolean = false;
+  @Input() treeNodes: TreeNode[] = [];
+  @Input() colorRows: boolean = false;
+  @Input() showLegend: boolean = true;
 
   // ── Form modal ─────────────────────────────────────────────
   @Input() formFields: FormField[] = [];
   @Input() formAddTitle: string = '';
   @Input() formEditTitle: string = '';
   @Input() formExtraData: any = null;
-  @Input() isSaving: boolean = false;
   @Input() customFormValid: boolean | null = null;
   @Input() mapItemForEdit: (item: any) => any = (item) => item;
+
+  private _isSaving = false;
+  @Input() set isSaving(val: boolean) {
+    const wasSaving = this._isSaving;
+    this._isSaving = val;
+    if (wasSaving && !val && this.modalVisible) {
+      this.modalVisible = false;
+    }
+  }
+  get isSaving(): boolean {
+    return this._isSaving;
+  }
 
   // ── Delete modal ───────────────────────────────────────────
   @Input() deleteTitle: string = 'Eliminar Registro';
   @Input() deleteMessage: string | ((item: any) => string) = '¿Eliminar este registro?';
+  @Input() minimalMode: boolean = false;
+  @Input() reorderableColumns: boolean = true;
 
   // ── Toggles ────────────────────────────────────────────────
   @Input() hidePermissionGate: boolean = false;
@@ -49,10 +79,17 @@ export class CrudPageComponent {
   @Output() onAdd = new EventEmitter<void>();
   @Output() onEdit = new EventEmitter<any>();
   @Output() onDelete = new EventEmitter<any>();
+  @Output() onPermissions = new EventEmitter<any>();
+  @Output() onView = new EventEmitter<any>();
   @Output() onSave = new EventEmitter<{ mode: 'add' | 'edit'; data: any }>();
   @Output() onConfirmDelete = new EventEmitter<any>();
   @Output() onRefresh = new EventEmitter<void>();
+  @Output() onColReorder = new EventEmitter<any>();
   @Output() onCloseModal = new EventEmitter<void>();
+
+  @Output() onAddRoot = new EventEmitter<void>();
+  @Output() onAddChild = new EventEmitter<number>();
+  @Output() onNodeReorder = new EventEmitter<any>();
 
   // ── Internal state ─────────────────────────────────────────
   modalVisible = false;
@@ -60,6 +97,7 @@ export class CrudPageComponent {
   selectedItem: any = null;
 
   get hasPermission(): boolean {
+    if (this._hasPermission !== null) return this._hasPermission;
     if (!this.permission) return true;
     return this.authService.checkPermission(this.permission);
   }
@@ -87,6 +125,20 @@ export class CrudPageComponent {
     this.onAdd.emit();
   }
 
+  handleTreeAddRoot(): void {
+    this.modalMode = 'add';
+    this.selectedItem = null;
+    this.modalVisible = true;
+    this.onAddRoot.emit();
+  }
+
+  handleTreeAddChild(parentId: number): void {
+    this.modalMode = 'add';
+    this.selectedItem = null;
+    this.modalVisible = true;
+    this.onAddChild.emit(parentId);
+  }
+
   handleEdit(item: any): void {
     this.modalMode = 'edit';
     this.selectedItem = this.mapItemForEdit(item);
@@ -102,7 +154,10 @@ export class CrudPageComponent {
   }
 
   handleSave(data: any): void {
-    this.onSave.emit({ mode: this.modalMode as 'add' | 'edit', data });
+    const finalData = this.modalMode === 'edit' && this.selectedItem
+      ? { ...this.selectedItem, ...data }
+      : data;
+    this.onSave.emit({ mode: this.modalMode as 'add' | 'edit', data: finalData });
   }
 
   handleConfirmDelete(): void {

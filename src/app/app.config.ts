@@ -9,15 +9,19 @@ import { ConfigService } from '@core/services/config.service';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { responseInterceptor } from './core/interceptors/response.interceptor';
 import { CustomTitleStrategy } from './core/strategies/title.strategy';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
+import { loadingInterceptor } from './core/interceptors/loading.interceptor';
+import { xsrfInterceptor } from './core/interceptors/xsrf.interceptor';
+import { timeoutInterceptor } from './core/interceptors/timeout.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     MessageService,
+    ConfirmationService,
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     { provide: TitleStrategy, useClass: CustomTitleStrategy },
-    provideHttpClient(withFetch(), withInterceptors([responseInterceptor, authInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([responseInterceptor, authInterceptor, loadingInterceptor, xsrfInterceptor, timeoutInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

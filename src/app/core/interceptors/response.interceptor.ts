@@ -20,14 +20,19 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
   return next(req).pipe(
     map(event => {
       if (event instanceof HttpResponse && event.body) {
+        // Solo interceptar respuestas JSON (evitar problemas con blobs/binarios)
+        const contentType = event.headers.get('Content-Type') || '';
+        if (!contentType.includes('application/json')) {
+          return event;
+        }
+
         const body = event.body as ApiResponse;
         
         if (body.status === 'success') {
-          // AHORA: Solo se muestra toast si se solicita explícitamente vía contexto
+          // Solo se muestra toast si se solicita explícitamente vía contexto
           if (req.context.get(SHOW_TOAST)) {
             let message = req.context.get(TOAST_MESSAGE) || body.message || 'Operación exitosa';
             
-            // Traducción simple por si acaso
             if (message === 'Permissions synchronized') {
               message = 'Permisos sincronizados';
             }
@@ -38,7 +43,6 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
           if (body.data !== undefined && body.data !== null) {
             return event.clone({ body: body.data });
           } else if (body.data === null) {
-            // data es null: mantener el body completo para que los servicios puedan leer status y message
             return event.clone({ body });
           }
         }
@@ -55,7 +59,7 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
 
       if (error.status === 403) {
         message = 'El usuario no tiene permiso para esta acción';
-      } else if (error.error && error.error.message) {
+      } else if (error.error && typeof error.error === 'object' && error.error.message) {
         message = error.error.message;
       }
 

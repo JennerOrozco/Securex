@@ -2,21 +2,24 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { FormFieldComponent } from '../form-field/form-field.component';
+import { BaseFormControl } from '../base-form-control';
 
 @Component({
   selector: 'app-input-number',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputNumberModule],
+  imports: [CommonModule, ReactiveFormsModule, InputNumberModule, FormFieldComponent],
   templateUrl: './input-number.component.html',
-
 })
-export class InputNumberComponent {
-  @Input() id: string = 'in-' + Math.random().toString(36).substr(2, 9);
+export class InputNumberComponent extends BaseFormControl {
+  protected prefix = 'in-';
+
+  @Input() id: string = '';
   @Input() label: string = '';
   @Input() placeholder: string = '';
   @Input() icon: string = '';
   @Input() required: boolean = false;
-  @Input() control!: any;
+  @Input() override control!: any;
   @Input() minFractionDigits: number = 2;
   @Input() maxFractionDigits: number = 2;
 

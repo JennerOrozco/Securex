@@ -41,7 +41,8 @@
 .gm-field-icon,
 i.gm-field-icon,
 span.gm-field-icon,
-.gm-dialog .gm-field-icon {
+.gm-dialog .gm-field-icon,
+.perm-search-icon {
   position: absolute;
   left: 10px;
   top: 50%;

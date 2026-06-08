@@ -1,10 +1,10 @@
-import { Component, Input, OnInit, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
-import { Subscription } from 'rxjs';
 import { AsYouType, CountryCode, parsePhoneNumberFromString } from 'libphonenumber-js';
+import { BaseFormControl } from '../base-form-control';
 
 interface Country {
   name: string;
@@ -44,55 +44,36 @@ const COUNTRIES_LIST: Country[] = [
   templateUrl: './phone-input.component.html',
 
 })
-export class PhoneInputComponent implements OnInit, OnChanges, OnDestroy {
-  @Input() id: string = 'phone-' + Math.random().toString(36).substr(2, 9);
+export class PhoneInputComponent extends BaseFormControl {
+  protected prefix = 'phone-';
+
+  @Input() id: string = '';
   @Input() label: string = 'Teléfono';
   @Input() placeholder: string = '1234 5678';
   @Input() icon: string = '';
   @Input() required: boolean = false;
-  @Input() control!: any;
+  @Input() override control!: any;
   @Input() disabled: boolean = false;
 
   countries: Country[] = COUNTRIES_LIST;
   selectedCountryCode = 'GT';
   localNumber = '';
-  private updatingSelf = false;
-  private sub?: Subscription;
 
-  ngOnInit() {
-    this.initControl();
+  override onControlInit() {
+    this.parseValue(this.control.value);
+    this.validateNumber();
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['control'] && !changes['control'].firstChange) {
-      this.sub?.unsubscribe();
-      this.initControl();
-    }
+  override onControlChange(val: any) {
+    this.parseValue(val);
+    this.validateNumber();
   }
 
-  ngOnDestroy() {
-    this.sub?.unsubscribe();
-  }
-
-  private initControl() {
+  override onBlur() {
     if (this.control) {
-      this.parseValue(this.control.value);
+      this.control.markAsTouched();
       this.validateNumber();
-      this.sub = this.control.valueChanges.subscribe((val: any) => {
-        if (!this.updatingSelf) {
-          this.parseValue(val);
-          this.validateNumber();
-        }
-      });
     }
-  }
-
-  protected setControlValue(value: any) {
-    this.updatingSelf = true;
-    this.control.setValue(value);
-    this.control.markAsDirty();
-    this.control.markAsTouched();
-    this.updatingSelf = false;
   }
 
   getCountryByCode(code: string): Country {
@@ -139,13 +120,6 @@ export class PhoneInputComponent implements OnInit, OnChanges, OnDestroy {
     const asYouType = new AsYouType(this.selectedCountryCode as CountryCode);
     this.localNumber = asYouType.input(digits);
     this.emitValue();
-  }
-
-  onBlur() {
-    if (this.control) {
-      this.control.markAsTouched();
-      this.validateNumber();
-    }
   }
 
   parseValue(value: any) {

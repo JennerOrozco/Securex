@@ -1,38 +1,13 @@
-<div class="gm-field" [class.gm-has-icon]="icon">
-  <label class="gm-label" [for]="id">
-    {{ label }}
-    @if (required) { <span class="gm-required">*</span> }
-  </label>
-  <div class="gm-control-wrap">
-    @if (icon) {
-      <i [className]="icon + ' gm-field-icon'"></i>
-    }
-    <input
-      pInputText
-      [id]="id"
-      class="gm-input"
-      [placeholder]="placeholder"
-      [disabled]="disabled"
-      [value]="control?.value || ''"
-      (input)="onNitInput($event)"
-      (blur)="onBlur()"
-    />
-    @if (control?.touched || control?.dirty) {
-      @if (control?.valid) {
-        <i class="pi pi-check gm-status-icon gm-valid"></i>
-      } @else if (control?.invalid) {
-        <i class="pi pi-times gm-status-icon gm-invalid"></i>
-      }
-    }
-  </div>
-  @if ((control?.touched || control?.dirty) && control?.invalid) {
-    <span class="gm-error-msg">
-      <i class="pi pi-exclamation-circle"></i>
-      @if (control?.errors?.['required']) {
-        {{ label }} es requerido.
-      } @else {
-        NIT inválido. Debe ser 'C/F' o números con más de 4 dígitos.
-      }
-    </span>
-  }
-</div>
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control"
+  [errorMsg]="control?.errors?.['required'] ? label + ' es requerido.' : 'NIT inválido. Debe ser C/F o números con más de 4 dígitos.'">
+  <input
+    pInputText
+    [id]="id"
+    class="gm-input"
+    [placeholder]="placeholder"
+    [disabled]="disabled"
+    [value]="control?.value || ''"
+    (input)="onNitInput($event)"
+    (blur)="onBlur()"
+  />
+</app-form-field>

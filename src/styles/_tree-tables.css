@@ -5,12 +5,7 @@
    ======================================================================= */
 
 .perm-card {
-    background: var(--ggts-bg-card);
-    border-radius: 16px;
-    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-    border: 1px solid var(--ggts-border);
-    overflow: hidden;
-}
+    /* border/radius/shadow heredados de .card-base */ }
 
 /* ─────────────────────────────────────────────────────────────
    HEADER
@@ -83,6 +78,7 @@
 
 .p-treetable .p-treetable-tbody > tr > td {
     padding: 5px 12px !important;
+    border: none !important;
     border-bottom: 1px solid var(--ggts-border) !important;
 }
 
@@ -100,7 +96,8 @@
 .p-treetable .p-treetable-tbody > tr.row-menu:hover,
 .p-treetable .p-treetable-tbody > tr.row-submenu:hover,
 .p-treetable .p-treetable-tbody > tr.row-action:hover,
-.p-treetable .p-treetable-tbody > tr.row-component:hover {
+.p-treetable .p-treetable-tbody > tr.row-component:hover,
+.p-treetable .p-treetable-tbody > tr.row-company:hover {
     background-color: #f8fafc !important;
 }
 
@@ -121,10 +118,6 @@
     background-color: #ffffff !important;
 }
 
-.p-treetable .p-treetable-tbody > tr.row-company:hover {
-    background-color: #f8fafc !important;
-}
-
 /* Black text in non-app rows */
 .p-treetable .p-treetable-tbody > tr.row-menu .node-name,
 .p-treetable .p-treetable-tbody > tr.row-submenu .node-name,
@@ -137,17 +130,31 @@
     color: #000000 !important;
 }
 
-/* Hierarchical padding per row type */
-.p-treetable .p-treetable-tbody > tr.row-menu > td      { padding: 6px 12px !important; }
-.p-treetable .p-treetable-tbody > tr.row-submenu > td  { padding: 5px 12px !important; }
-.p-treetable .p-treetable-tbody > tr.row-action > td   { padding: 4px 12px !important; }
-.p-treetable .p-treetable-tbody > tr.row-component > td{ padding: 4px 12px !important; }
-
-/* Visual depth left borders per level */
-.p-treetable .p-treetable-tbody > tr.row-menu > td:first-child      { border-left: 4px solid #170000 !important; }
-.p-treetable .p-treetable-tbody > tr.row-submenu > td:first-child  { border-left: 4px solid #350a06 !important; }
-.p-treetable .p-treetable-tbody > tr.row-action > td:first-child   { border-left: 4px solid #56070c !important; }
-.p-treetable .p-treetable-tbody > tr.row-component > td:first-child{ border-left: 4px solid #e2e8f0 !important; }
+/* Hierarchical padding & left borders per row type */
+.p-treetable .p-treetable-tbody > tr.row-menu > td {
+    padding: 6px 12px !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-menu > td:first-child {
+    border-left: 4px solid #170000 !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-submenu > td {
+    padding: 5px 12px !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-submenu > td:first-child {
+    border-left: 4px solid #350a06 !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-action > td {
+    padding: 4px 12px !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-action > td:first-child {
+    border-left: 4px solid #56070c !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-component > td {
+    padding: 4px 12px !important;
+}
+.p-treetable .p-treetable-tbody > tr.row-component > td:first-child {
+    border-left: 4px solid #e2e8f0 !important;
+}
 
 /* ─────────────────────────────────────────────────────────────
    TREE CONNECTORS (dashed lines)
@@ -334,14 +341,14 @@ tr.drag-over {
 .type-activo::before    { background: #16a34a; }
 
 .type-inactivo {
-    background: #fee2e2 !important;
-    color: #991b1b !important;
-    border-color: #fecaca !important;
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    border-color: #e2e8f0 !important;
 }
 
-.type-inactivo::before  { background: #dc2626; }
+.type-inactivo::before  { background: #94a3b8; }
 
-/* Aliases used by admin-access / admin-permissions */
+/* Aliases used by admin-access / admin-permissions — correct semantic colors */
 .type-approved,
 .type-active {
     background: #dcfce7 !important;
@@ -350,7 +357,9 @@ tr.drag-over {
 }
 
 .type-approved::before,
-.type-active::before    { background: #16a34a !important; }
+.type-active::before {
+    background: #16a34a !important;
+}
 
 .type-rejected,
 .type-inactive {
@@ -360,15 +369,82 @@ tr.drag-over {
 }
 
 .type-rejected::before,
-.type-inactive::before  { background: #dc2626 !important; }
+.type-inactive::before {
+    background: #ef4444 !important;
+}
 
 .type-pending {
     background: #fef9c3 !important;
     color: #854d0e !important;
-    border-color: #fde68a !important;
+    border-color: #fef08a !important;
 }
 
-.type-pending::before   { background: #ca8a04 !important; }
+.type-pending::before {
+    background: #f59e0b !important;
+}
+
+/* Boolean & provider chips (used by admin-users / regular tables) */
+.type-true {
+    background: #dcfce7;
+    color: #166534;
+    border-color: #bbf7d0;
+}
+
+.type-true::before {
+    background: #16a34a !important;
+}
+
+.type-false {
+    background: #f1f5f9;
+    color: #64748b;
+    border-color: #e2e8f0;
+}
+
+.type-false::before {
+    background: #94a3b8 !important;
+}
+
+.type-default,
+.type-local {
+    background: #f1f5f9;
+    color: #475569;
+    border-color: #e2e8f0;
+}
+
+.type-default::before,
+.type-local::before {
+    background: #94a3b8 !important;
+}
+
+.type-google {
+    background: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+}
+
+.type-google::before {
+    background: #0284c7 !important;
+}
+
+.type-microsoft {
+    background: #e0e7ff;
+    color: #3730a3;
+    border-color: #c7d2fe;
+}
+
+.type-microsoft::before {
+    background: #4338ca !important;
+}
+
+.type-github {
+    background: #f3e8ff;
+    color: #6b21a8;
+    border-color: #d8b4fe;
+}
+
+.type-github::before {
+    background: #7c3aed !important;
+}
 
 /* Module icon colors (used by <app-tree-table> children) */
 .bg-indigo, .bg-emerald, .bg-amber, .bg-rose, .bg-slate {
@@ -410,6 +486,28 @@ tr.drag-over {
     color: var(--ggts-text-muted);
 }
 
+/* Center actions column in TreeTable */
+.p-treetable .p-treetable-thead th.th-actions {
+    text-align: center !important;
+}
+
+.p-treetable .p-treetable-thead th.th-actions .th-content {
+    justify-content: center !important;
+    display: flex !important;
+    width: 100% !important;
+}
+
+.p-treetable .p-treetable-tbody td.td-actions {
+    text-align: center !important;
+}
+
+.p-treetable .p-treetable-tbody td.td-actions app-table-actions {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+}
+
 /* ─────────────────────────────────────────────────────────────
    PAGINATOR (tree-table version)
    ───────────────────────────────────────────────────────────── */
@@ -431,15 +529,6 @@ tr.drag-over {
     background: #f1f5f9 !important;
 }
 
-.p-treetable .p-paginator .p-link.p-highlight {
-    background: #fef2f2 !important;
-    color: #b91c1c !important;
-    font-weight: 700 !important;
-}
-
-.p-treetable .p-paginator .p-link.p-highlight:hover {
-    background: #fee2e2 !important;
-}
 
 /* ─────────────────────────────────────────────────────────────
    DRAG-AND-DROP ROOT ZONE
@@ -527,13 +616,7 @@ tr.drag-over {
 }
 
 .perm-search-icon {
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-    font-size: 0.75rem;
-    pointer-events: none;
+    /* Inherits base from .gm-field-icon in style-inputs.css */
 }
 
 .perm-search {
@@ -603,30 +686,9 @@ tr.drag-over {
     gap: 0.5rem;
 }
 
-.bulk-btn {
-    font-size: 0.72rem;
-    font-weight: 700;
-    padding: 0.35rem 0.75rem;
-    border-radius: 6px;
-    border: 1px solid var(--ggts-border);
-    background: white;
-    color: #6366f1;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.bulk-btn:hover {
-    background: #eef2ff;
-    border-color: #c7d2fe;
-}
-
-.bulk-btn.muted {
-    color: var(--ggts-text-muted);
-}
-
-.bulk-btn.muted:hover {
-    background: #f1f5f9;
-}
+/* .bulk-btn definido en _utilities.css (.muted variant backward compat) */
+.bulk-btn.muted { color: var(--ggts-text-muted); }
+.bulk-btn.muted:hover { background: #f1f5f9; }
 
 .perm-count {
     font-size: 0.7rem;
@@ -635,72 +697,7 @@ tr.drag-over {
     padding-left: 0.5rem;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   TOOLBAR (custom hand-rolled toolbars in feature pages)
-   ───────────────────────────────────────────────────────────── */
-.toolbar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    background: #fff;
-    border-bottom: 1px solid var(--ggts-border);
-}
-
-.toolbar-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.toolbar-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--ggts-navy-hex);
-    margin: 0;
-    letter-spacing: -0.01em;
-}
-
-.toolbar-sub {
-    font-size: 0.8rem;
-    color: var(--ggts-text-muted);
-    margin: 0;
-}
-
-.toolbar-right {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.btn-save {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: 36px;
-    padding: 0 1rem;
-    background: var(--ggts-navy-hex);
-    border: none;
-    border-radius: 8px;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    white-space: nowrap;
-    transition: all 0.2s;
-}
-
-.btn-save:hover {
-    background: var(--ggts-navy-light);
-}
-
-.btn-save:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
+/* Toolbar styles live in toolbar.component.css (duplicate removed). */
 
 /* ─────────────────────────────────────────────────────────────
    MOBILE

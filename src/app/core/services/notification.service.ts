@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
-import { Observable, catchError, firstValueFrom, of, tap } from 'rxjs';
+import { Observable, catchError, firstValueFrom, of, tap, timeout } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
 export interface AppNotification {
@@ -32,7 +32,6 @@ export class NotificationService {
    */
   async registerForPush() {
     if (!this.swPush.isEnabled) {
-      console.warn('Push notifications are not enabled in this browser/environment.');
       return;
     }
 
@@ -42,11 +41,10 @@ export class NotificationService {
       });
 
       this.sendSubscriptionToApi(sub).subscribe({
-        next: (res) => console.log('Device registered for push notifications:', res),
-        error: (err) => console.error('Failed to register device for push:', err)
+        error: () => {} // Silencioso en producción
       });
-    } catch (err) {
-      console.error('Could not subscribe to push notifications', err);
+    } catch {
+      // Silencioso: push no es crítico para la funcionalidad core
     }
   }
 
@@ -54,37 +52,36 @@ export class NotificationService {
    * Desinscribe el dispositivo de las notificaciones push.
    */
   async unsubscribeFromPush() {
+    if (!this.swPush.isEnabled) {
+      return;
+    }
     try {
-      // Obtener la suscripción actual antes de desuscribirse
-      const sub = await firstValueFrom(this.swPush.subscription);
+      const sub = await firstValueFrom(this.swPush.subscription.pipe(timeout(2000)));
 
       if (sub) {
         const payload = {
           device_token: JSON.stringify(sub)
         };
 
-        // Llamar al backend para eliminar el registro
         this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { body: payload }).subscribe({
-          next: () => console.log('Device unsubscribed in backend'),
-          error: (err) => console.error('Failed to unsubscribe device in backend:', err)
+          error: () => {} // Silencioso en producción
         });
 
-        // Desuscribirse en el navegador
         await this.swPush.unsubscribe();
       }
-    } catch (err) {
-      console.error('Could not unsubscribe from push notifications', err);
+    } catch {
+      // Silencioso: no bloquear si falla desuscripción
     }
   }
 
   private getCompanyUuid(): string | null {
-    const storedCompany = localStorage.getItem('currentCompany');
+    const storedCompany = sessionStorage.getItem('currentCompany');
     if (storedCompany) {
       try {
         const company = JSON.parse(storedCompany);
         return company?.uuid || null;
-      } catch (e) {
-        console.error('Error parsing company from localStorage', e);
+      } catch {
+        return null;
       }
     }
     return null;

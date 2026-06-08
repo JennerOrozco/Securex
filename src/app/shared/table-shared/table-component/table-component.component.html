@@ -1,0 +1,150 @@
+<div class="page-wrapper" [ngClass]="{'minimal': minimalMode}">
+  <div [ngClass]="minimalMode ? 'minimal-container' : 'table-card'">
+
+    <p-table #dt [value]="data" [rows]="rows" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
+      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true" [loading]="loading"
+      [stripedRows]="stripedRows" responsiveLayout="scroll"
+      [resizableColumns]="true" columnResizeMode="expand"
+      currentPageReportTemplate=" {first} - {last} de {totalRecords} registros" [showCurrentPageReport]="true"
+      class="users-table" [columns]="selectedColumns" [rowGroupMode]="enableRowGroup ? 'subheader' : undefined"
+      [groupRowsBy]="enableRowGroup ? groupRowsBy : ''" [sortField]="enableRowGroup ? groupRowsBy : ''"
+      [sortMode]="enableRowGroup ? 'single' : 'multiple'"
+      [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'" [reorderableColumns]="reorderableColumns"
+      (onColReorder)="onColReorder.emit($event)">
+
+      <ng-template pTemplate="caption">
+        <app-toolbar [title]="title" [subtitle]="subtitle" [searchPlaceholder]="searchPlaceholder" [showSearch]="true"
+          [showAdd]="showAdd" [addLabel]="addLabel" (onSearch)="filterGlobal($event)" (onAdd)="onAdd.emit()">
+          <div toolbar-actions-start>
+            <app-button icon="pi pi-th-large" class="p-button-navy" tooltip="Mostrar/Ocultar Columnas"
+              tooltipPosition="top" (onClick)="displayColumnsModal = true">
+            </app-button>
+          </div>
+          <div toolbar-actions>
+            <ng-content select="[custom-toolbar-actions]"></ng-content>
+          </div>
+        </app-toolbar>
+      </ng-template>
+
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns; trackBy: trackByField" pResizableColumn pReorderableColumn
+            [pSortableColumn]="col.sortable ? col.field : undefined" [style]="col.style"
+            [ngClass]="{'th-actions': col.field === 'actions' || col.type === 'actions'}">
+            <div class="th-content">
+              <span>{{ col.header }}</span>
+              <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
+              @if (col.field !== 'actions' && col.type !== 'actions') {
+              @if (col.filterOptions && col.filterOptions.length > 0) {
+              <p-columnFilter [field]="col.field" [matchMode]="col.filterMulti ? 'in' : 'equals'" display="menu"
+                [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
+                <ng-template pTemplate="filter" let-value let-filterCallback="filterCallback">
+                  @if (col.filterMulti) {
+                  <p-multiselect [ngModel]="value" [options]="col.filterOptions"
+                    (onChange)="filterCallback($event.value)" placeholder="Todos"
+                    [optionLabel]="col.filterOptionLabel || 'label'" [optionValue]="col.filterOptionValue || 'value'"
+                    [showClear]="true" [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom">
+                  </p-multiselect>
+                  } @else {
+                  <p-select [ngModel]="value" [options]="col.filterOptions" (onChange)="filterCallback($event.value)"
+                    placeholder="Todos" [optionLabel]="col.filterOptionLabel || 'label'"
+                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true">
+                  </p-select>
+                  }
+                </ng-template>
+              </p-columnFilter>
+              } @else if (col.type === 'date') {
+              <p-columnFilter type="date" [field]="col.field" display="menu" class="ml-auto" [showMatchModes]="true"
+                [showOperator]="false" [showAddButton]="true" matchMode="dateIs"></p-columnFilter>
+              } @else {
+              <p-columnFilter type="text" [field]="col.field" display="menu" [showMatchModes]="true"
+                [showOperator]="false" [showAddButton]="true" class="ml-auto"></p-columnFilter>
+              }
+              }
+            </div>
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="groupheader" let-rowData>
+        <tr pRowGroupHeader class="group-header-row">
+          @if (showAddChild && hasActionsColumn) {
+          <td [attr.colspan]="selectedColumns.length - 1">
+            <span class="group-header-content">
+              <ng-template [ngTemplateOutlet]="groupToggleBtn"
+                [ngTemplateOutletContext]="{ rowData: rowData }"></ng-template>
+              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
+            </span>
+          </td>
+
+          } @else {
+          <td [attr.colspan]="selectedColumns.length">
+            <span class="group-header-content">
+              <ng-template [ngTemplateOutlet]="groupToggleBtn"
+                [ngTemplateOutletContext]="{ rowData: rowData }"></ng-template>
+              <i class="pi pi-folder mr-2 group-folder-icon"></i>
+              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
+            </span>
+          </td>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template #groupToggleBtn let-rowData="rowData">
+        @if (expandableRowGroups) {
+        <button type="button" class="group-toggle-btn"
+          (click)="toggleGroupRow(rowData[groupRowsBy]); $event.stopPropagation()">
+          <i class="pi" [ngClass]="expandedRowKeys[rowData[groupRowsBy]] ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+        </button>
+        }
+      </ng-template>
+
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
+          (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
+          <td *ngFor="let col of columns; trackBy: trackByField; let i = index" [style]="col.style"
+            [ngClass]="{'td-actions': col.type === 'actions'}">
+            @if (col.type === 'actions') {
+            @if (customActionsTemplate) {
+            <ng-template [ngTemplateOutlet]="customActionsTemplate"
+              [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
+            } @else {
+            <app-table-actions [rowData]="rowData" [config]="tableActionsConfig" (onSelect)="onSelect.emit($event)"
+              (onAddChild)="onAddChild.emit($event)" (onCreate)="onCreate.emit($event)" (onView)="onView.emit($event)"
+              (onEdit)="onEdit.emit($event)" (onPdf)="onPdf.emit($event)" (onSend)="onSend.emit($event)"
+              (onDuplicate)="onDuplicate.emit($event)" (onPermissions)="onPermissions.emit($event)"
+              (onDelete)="onDelete.emit($event)" (onActivate)="onActivate.emit($event)">
+            </app-table-actions>
+            }
+            } @else {
+            <app-cell-renderer [col]="col" [rowData]="rowData"></app-cell-renderer>
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptystate" let-columns>
+        <tr>
+          <td [attr.colspan]="columns.length">
+            <div class="empty-state">
+              <i class="pi pi-folder-open empty-icon"></i>
+              <span>No se encontraron registros.</span>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<app-context-menu [visible]="contextMenuVisible" [position]="menuPosition" [items]="contextMenuItems"
+  (onAction)="executeAction($event)">
+</app-context-menu>
+
+<app-bottom-sheet [visible]="mobileMenuVisible" [items]="contextMenuItems" (onAction)="executeAction($event)"
+  (onClose)="closeMenus()">
+</app-bottom-sheet>
+
+<app-columns-modal [visible]="displayColumnsModal" [columns]="columns" [selected]="selectedColumns"
+  (onClose)="displayColumnsModal = false" (onApply)="onApplyColumns($event)">
+</app-columns-modal>

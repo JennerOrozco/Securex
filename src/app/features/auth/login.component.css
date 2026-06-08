@@ -449,16 +449,7 @@
     animation: fadeIn 0.25s ease;
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
-}
-
+/* @keyframes fadeIn is defined globally in _utilities.css */
 .company-actions-row {
     display: flex;
     gap: 12px;

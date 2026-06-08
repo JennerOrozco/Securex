@@ -1,0 +1,150 @@
+<div class="perm-card">
+  <app-toolbar
+    [title]="title"
+    [subtitle]="subtitle"
+    [searchPlaceholder]="searchPlaceholder"
+    [showSearch]="true"
+    [showAdd]="showAdd"
+    [addLabel]="addLabel"
+    (onSearch)="onFilter.emit($event)"
+    (onAdd)="onAddRoot.emit()">
+  </app-toolbar>
+
+  @if (showLegend) {
+    <div class="types-legend-bar">
+      <div class="legend-label">Tipos de acción:</div>
+      <div class="legend-items">
+        <div class="legend-item" (click)="filterByType('MENU')">
+          <span class="type-chip type-menu">MENU</span>
+          <span class="legend-desc">Módulo Sidebar</span>
+        </div>
+        <div class="legend-item" (click)="filterByType('SUBMENU')">
+          <span class="type-chip type-submenu">SUBMENU</span>
+          <span class="legend-desc">Ítem Interno</span>
+        </div>
+        <div class="legend-item" (click)="filterByType('ACTION')">
+          <span class="type-chip type-action">ACTION</span>
+          <span class="legend-desc">Botón / Proceso</span>
+        </div>
+        <div class="legend-item" (click)="filterByType('COMPONENT')">
+          <span class="type-chip type-component">COMPONENT</span>
+          <span class="legend-desc">UI / Visual</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <div class="p-0">
+    <p-treeTable #tt
+      [value]="nodes"
+      [columns]="columns"
+      [loading]="loading"
+      [scrollable]="true"
+      [scrollHeight]="scrollHeight"
+      [paginator]="true"
+      [rows]="rows"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [resizableColumns]="true"
+      columnResizeMode="expand"
+      [sortField]="sortField"
+      [sortOrder]="sortOrder"
+      [reorderableColumns]="reorderableColumns"
+      (onColReorder)="onColReorder.emit($event)"
+      class="gm-treetable">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          @for (col of columns; track trackByField($index, col)) {
+            <th ttResizableColumn ttReorderableColumn [style]="col.style" [class.sortable]="col.sortable" [ngClass]="{'th-actions': col.type === 'actions'}"
+              (click)="col.sortable && sortByField(col.field, $event)">
+              <div class="th-content">
+                <span>{{ col.header }}</span>
+                @if (col.sortable) {
+                  <i class="pi" [class.pi-sort-alt]="sortField !== col.field" [class.pi-sort-up]="sortField === col.field && sortOrder === 1" [class.pi-sort-down]="sortField === col.field && sortOrder === -1"></i>
+                }
+              </div>
+            </th>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
+        <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)"
+          [attr.draggable]="dragdrop && rowData._canReorder !== false ? true : null"
+          [class.drag-over]="dragOverNode === rowData"
+          [ngClass]="getRowClass(rowData.type)"
+          (dragstart)="onRowDragStart($event, rowData)"
+          (dragover)="onRowDragOver($event, rowData)" 
+          (dragleave)="onRowDragLeave($event)"
+          (drop)="onRowDrop($event, rowData)">
+          @for (col of columns; track $index) {
+            <td [style]="col.style" [ngClass]="{'td-actions': col.type === 'actions'}">
+              @switch (col.type) {
+                @case ('tree') {
+                  <div class="node-content">
+                    <p-treeTableToggler [rowNode]="rowNode"></p-treeTableToggler>
+                    <div class="node-icon-wrap" [ngClass]="getIconBg(rowData.type)">
+                      <i [class]="rowData.icon || 'pi pi-tag'"></i>
+                    </div>
+                    <div class="flex flex-col">
+                      <span class="node-name">{{ rowData[col.field] }}</span>
+                      @if (rowData.slug) {
+                        <span class="node-slug">{{ rowData.slug }}</span>
+                      }
+                    </div>
+                  </div>
+                }
+                @case ('actions') {
+                  <app-table-actions
+                    [rowData]="rowData"
+                    [config]="getActionsConfig(rowData)"
+                    (onAddChild)="onAddChild.emit(rowData.id)"
+                    (onEdit)="onEdit.emit($event)"
+                    (onDelete)="onDelete.emit($event)">
+                  </app-table-actions>
+                }
+                @default {
+                  <app-cell-renderer [col]="col" [rowData]="rowData"></app-cell-renderer>
+                }
+              }
+            </td>
+          }
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td [attr.colspan]="columns.length">
+            <div class="empty-state">
+              <i class="pi pi-shield empty-icon"></i>
+              <p class="text-xl font-bold text-slate-700 mb-1">Sin Registros</p>
+              <p class="text-sm text-slate-400">No hay información jerárquica para mostrar.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-treeTable>
+  </div>
+
+  @if (draggedNode) {
+    <div class="root-drop-zone"
+      (dragover)="onRootDragOver($event)"
+      (dragleave)="onRootDragLeave($event)"
+      (drop)="onRootDrop($event)"
+      [class.drag-over]="dragOverRoot">
+      <i class="pi pi-arrow-up"></i>
+      <span>Soltar aquí para convertir en <strong>elemento raíz</strong> (sin padre)</span>
+    </div>
+  }
+
+  <app-context-menu
+    [visible]="contextMenuVisible"
+    [position]="menuPosition"
+    [items]="contextMenuItems"
+    (onAction)="executeAction($event)">
+  </app-context-menu>
+
+  <app-bottom-sheet
+    [visible]="mobileMenuVisible"
+    [items]="contextMenuItems"
+    (onAction)="executeAction($event)"
+    (onClose)="closeMenus()">
+  </app-bottom-sheet>
+</div>

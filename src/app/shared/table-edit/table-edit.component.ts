@@ -15,7 +15,7 @@ import { CardModule } from 'primeng/card';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { ToolbarComponent } from '../components/toolbar/toolbar.component';
-import { TableComponent } from '../table-component/table-component.component';
+import { TableComponent } from '../table-shared/table-component/table-component.component';
 
 export interface TableEditColumn {
   field: string;
@@ -45,7 +45,6 @@ export interface TableEditColumn {
     ToolbarComponent,
     TableComponent
   ],
-  styleUrls: ['./table-edit.component.css'],
   templateUrl: './table-edit.component.html'
 })
 export class TableEditComponent {
@@ -78,9 +77,6 @@ export class TableEditComponent {
   }
 
   onRowExpand(event: any) {
-    console.log('TableEdit: Row expanded:', event);
-    console.log('TableEdit: Row data (FormGroup) value:', event.data?.value);
-    console.log('TableEdit: Gastos in row:', event.data?.get('gastos')?.value);
   }
 
   getLabelFromOptions(val: any, options: any[], valKey = 'value', lblKey = 'label'): string {

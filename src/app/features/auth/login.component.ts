@@ -199,7 +199,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             this.loading = false;
             if (res.requires_company_select) {
               this.showCompanySelect = true;
-              this.availableCompanies = res.companies;
+              this.availableCompanies = res.companies || [];
               this.lastUsedCredentials = null;
               this.googleIdToken = response.credential;
               this.selectedCompanyUuid = '';
@@ -380,7 +380,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
         if (res.requires_company_select) {
           this.showCompanySelect = true;
-          this.availableCompanies = res.companies;
+          this.availableCompanies = res.companies || [];
           this.lastUsedCredentials = credentials;
           this.googleIdToken = null;
           this.selectedCompanyUuid = '';
@@ -537,7 +537,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     this.authService.getWebAuthnLoginOptions(email || undefined).subscribe({
       next: async (response) => {
         try {
-          const data = response.options ? response : (response.data ?? response);
+          const data = (response as any).options ? (response as any) : ((response as any).data ?? response);
           const options = data.options;
           const challengeBase64 = data.challenge;
 

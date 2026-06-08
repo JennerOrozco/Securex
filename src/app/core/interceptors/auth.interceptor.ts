@@ -3,17 +3,27 @@ import { inject } from '@angular/core';
 import { catchError, throwError, switchMap, Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
+import { SecureStorageService } from '../services/secure-storage.service';
+
+/** Regex precisas para endpoints públicos de autenticación */
+const PUBLIC_ENDPOINT_PATTERNS = [
+    /\/auth\/login/,
+    /\/auth\/register/,
+    /\/auth\/forgot-password/,
+    /\/auth\/reset-password/,
+    /\/auth\/refresh/,
+    /\/auth\/google-login/,
+    /\/auth\/webauthn\/login-options/,
+    /\/auth\/webauthn\/login/
+];
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
     const notificationService = inject(NotificationService);
-    const token = localStorage.getItem('accessToken');
+    const secureStorage = inject(SecureStorageService);
+    const token = secureStorage.getItem('accessToken');
 
-    const isPublicEndpoint = req.url.includes('/auth/login') ||
-                             req.url.includes('/auth/register') ||
-                             req.url.includes('/auth/forgot-password') ||
-                             req.url.includes('/auth/reset-password') ||
-                             req.url.includes('/auth/refresh');
+    const isPublicEndpoint = PUBLIC_ENDPOINT_PATTERNS.some(pattern => pattern.test(req.url));
 
     let authReq = req;
     if (token && !isPublicEndpoint) {

@@ -1,11 +1,13 @@
-import { Component, signal, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { Component, signal, computed, inject } from '@angular/core';
+import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
-import { InstallPromptComponent } from './features/notifications/install-prompt.component';
-import { NotificationPromptComponent } from './features/notifications/notification-prompt.component';
+import { InstallPromptComponent } from './features/notificaciones/install-prompt.component';
+import { NotificationPromptComponent } from './features/notificaciones/notification-prompt.component';
 import { SwUpdate, SwPush } from '@angular/service-worker';
 import { ToastModule } from 'primeng/toast';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { LoaderComponent } from '@shared/components/loader/loader.component';
 
 @Component({
   selector: 'app-root',
@@ -16,20 +18,34 @@ import { ToastModule } from 'primeng/toast';
     RouterOutlet,
     InstallPromptComponent,
     NotificationPromptComponent,
-    ToastModule
+    ToastModule,
+    ConfirmDialogModule,
+    LoaderComponent
   ]
 })
 export class App {
   protected readonly title = signal('SECUREX');
+  private currentUrl = signal('');
 
   private authService = inject(AuthService);
   private router = inject(Router);
   private swUpdate = inject(SwUpdate);
   private swPush = inject(SwPush);
 
+  showLayout = computed(() => {
+    return !!this.authService.currentUser() && this.currentUrl() !== '/login';
+  });
+
   constructor() {
+    this.currentUrl.set(this.router.url);
     this.checkForUpdates();
     this.listenToNotificationClicks();
+    
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.currentUrl.set(event.urlAfterRedirects);
+      }
+    });
   }
 
   private checkForUpdates() {
@@ -49,7 +65,6 @@ export class App {
   private listenToNotificationClicks() {
     if (this.swPush.isEnabled) {
       this.swPush.notificationClicks.subscribe(({ action, notification }) => {
-        console.log('Notification clicked:', notification);
         const url = notification.data?.url;
 
         if (url) {
@@ -72,8 +87,5 @@ export class App {
     }
   }
 
-  get showLayout(): boolean {
-    // Solo mostrar Header/Footer si hay usuario logueado Y no estamos en login
-    return !!this.authService.currentUserValue && this.router.url !== '/login';
-  }
+
 }

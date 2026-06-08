@@ -186,23 +186,44 @@
 /* ─────────────────────────────────────────────────────────────
    PRIMARY BUTTON
    ───────────────────────────────────────────────────────────── */
-.btn-login {
-    width: 100%;
-    padding: 14px;
+/* Base styles shared by login page buttons */
+.btn-login,
+.btn-biometric {
     background: linear-gradient(135deg, #ff4444 0%, var(--teal-bright) 100%) !important;
+    color: var(--teal-darkest) !important;
     border: none;
     border-radius: 14px;
-    font-family: var(--font-head);
-    font-size: 1rem;
-    font-weight: 700;
-    color: var(--teal-darkest) !important;
     cursor: pointer;
-    letter-spacing: 0.02em;
     transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4) !important;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4) !important;
+}
+
+.btn-login:hover,
+.btn-biometric:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
+    filter: brightness(1.08);
+}
+
+.btn-login:disabled,
+.btn-biometric:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Button-specific layouts & animations */
+.btn-login {
+    width: 100%;
+    padding: 14px;
+    font-family: var(--font-head);
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
     gap: 8px;
     position: relative;
     overflow: hidden;
@@ -217,12 +238,6 @@
     transition: opacity 0.2s;
 }
 
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
-    filter: brightness(1.08);
-}
-
 .btn-login:hover::after {
     opacity: 1;
 }
@@ -231,43 +246,13 @@
     transform: scale(0.98);
 }
 
-.btn-login:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
 .btn-biometric {
     padding: 0 1.2rem;
-    background: linear-gradient(135deg, #ff4444 0%, var(--teal-bright) 100%) !important;
-    color: var(--teal-darkest) !important;
-    border: none;
-    border-radius: 14px;
     font-size: 1.2rem;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4) !important;
-}
-
-.btn-biometric:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
-    filter: brightness(1.08);
 }
 
 .btn-biometric:active:not(:disabled) {
     transform: scale(0.95);
-}
-
-.btn-biometric:disabled {
-    opacity: 0.55;
-    cursor: not-allowed;
-    box-shadow: none;
-    transform: none;
 }
 
 .btn-spinner {

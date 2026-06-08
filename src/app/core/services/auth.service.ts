@@ -668,20 +668,26 @@ export class AuthService {
         const refreshToken = sessionStorage.getItem('refreshToken');
         const accessToken = localStorage.getItem('accessToken');
 
-        // Revocar dispositivo push en el backend
-        try {
-            const sub = await firstValueFrom(this.swPush.subscription);
-            if (sub) {
-                const payload = {
-                    device_token: JSON.stringify(sub)
-                };
-                await firstValueFrom(
-                    this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { body: payload })
-                );
-                console.log('Push device unsubscribed in backend successfully.');
-            }
-        } catch (err) {
-            console.error('Failed to unsubscribe push device in backend during logout:', err);
+        // Revocar dispositivo push en el backend (sin bloquear el logout)
+        if (this.swPush.isEnabled) {
+            firstValueFrom(this.swPush.subscription)
+                .then(sub => {
+                    if (sub) {
+                        const payload = {
+                            device_token: JSON.stringify(sub)
+                        };
+                        firstValueFrom(
+                            this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, { body: payload })
+                        ).then(() => {
+                            console.log('Push device unsubscribed in backend successfully.');
+                        }).catch(err => {
+                            console.error('Failed to delete push device registration on logout:', err);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Failed to get push subscription on logout:', err);
+                });
         }
 
         // Revocar en backend (fire & forget — no bloquear el logout)

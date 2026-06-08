@@ -1,6 +1,6 @@
 import { inject, OnInit, Directive } from '@angular/core';
 import { Observable } from 'rxjs';
-import { SecurexService } from '@core/services/securex.service';
+import { AppService } from '@core/services/app.service';
 import { NotificationService } from '@core/services/notification.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 
@@ -16,7 +16,7 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
  */
 @Directive()
 export abstract class BaseNotificationConfigComponent<T = any> implements OnInit {
-  protected securexService = inject(SecurexService);
+  protected appService = inject(AppService);
   protected notificationService = inject(NotificationService);
 
   ngOnInit(): void {
@@ -37,7 +37,7 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
 
   load() {
     this.loading = true;
-    this.securexService.getAppsWithCompanies().subscribe({
+    this.appService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
         this.apps = res.data || res || [];
         this.updateFormFields();

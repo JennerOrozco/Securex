@@ -130,4 +130,8 @@ export class NotificationSettingsService {
   getSmtpSettingsGql(): Observable<any[]> {
     return this.gql.query<{ smtpSettings: any[] }>('notification', NOTIFICATION_QUERIES.SMTP_SETTINGS).pipe(map(d => d.smtpSettings));
   }
+
+  getAppsGql(): Observable<any[]> {
+    return this.gql.query<{ apps: any[] }>('notification', NOTIFICATION_QUERIES.APPS).pipe(map(d => d.apps));
+  }
 }

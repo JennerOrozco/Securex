@@ -22,122 +22,127 @@ export const routes: Routes = [
       {
         path: 'home',
         title: 'Dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard.component').then(m => m.DashboardComponent),
+        loadComponent: () => import('./features/inicio/dashboard.component').then(m => m.DashboardComponent),
       },
       {
         path: 'profile',
         title: 'Perfil',
-        loadComponent: () => import('./features/profile/profile.component').then(m => m.ProfileComponent),
+        loadComponent: () => import('./features/perfil/profile.component').then(m => m.ProfileComponent),
       },
       {
         path: 'security/users',
         title: 'Usuarios',
-        loadComponent: () => import('./features/security/user-crud/component').then(m => m.SecurityUserCrudComponent)
+        loadComponent: () => import('./features/seguridad/gestion-usuarios/usuarios/component').then(m => m.SecurityUserCrudComponent)
       },
       {
         path: 'security/roles',
         title: 'Roles',
-        loadComponent: () => import('./features/security/role-crud/component').then(m => m.SecurityRoleCrudComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/roles/component').then(m => m.SecurityRoleCrudComponent)
       },
       {
         path: 'catalog/apps',
         title: 'Aplicaciones',
-        loadComponent: () => import('./features/catalog/apps/apps.component').then(m => m.AppsComponent)
+        loadComponent: () => import('./features/catalogos-generales/aplicaciones/apps.component').then(m => m.AppsComponent)
       },
       {
         path: 'security/permissions',
         title: 'Permisos',
-        loadComponent: () => import('./features/security/permission-list/component').then(m => m.SecurityPermissionCrudComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/permisos/component').then(m => m.SecurityPermissionCrudComponent)
       },
       {
         path: 'catalog/companies',
         title: 'Compañías',
-        loadComponent: () => import('./features/catalog/companies/companies.component').then(m => m.CompaniesComponent)
+        loadComponent: () => import('./features/catalogos-generales/companias/companies.component').then(m => m.CompaniesComponent)
       },
       {
         path: 'catalog/branches',
         title: 'Sucursales',
-        loadComponent: () => import('./features/catalog/branches/branches.component').then(m => m.BranchesComponent)
+        loadComponent: () => import('./features/catalogos-generales/sucursales/branches.component').then(m => m.BranchesComponent)
       },
       {
         path: 'security/company-permissions',
         title: 'Permisos por Compañía',
-        loadComponent: () => import('./features/security/company-permissions/company-permissions.component').then(m => m.CompanyPermissionsComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/permisos-compania/company-permissions.component').then(m => m.CompanyPermissionsComponent)
       },
       {
         path: 'security/admin-users',
         title: 'Usuarios (Admin)',
-        loadComponent: () => import('./features/security/admin-users/admin-users.component').then(m => m.AdminUsersComponent)
+        loadComponent: () => import('./features/seguridad/gestion-usuarios/usuarios-admin/admin-users.component').then(m => m.AdminUsersComponent)
       },
       {
         path: 'security/access',
         title: 'Accesos',
-        loadComponent: () => import('./features/security/admin-access/admin-access.component').then(m => m.AdminAccessComponent)
+        loadComponent: () => import('./features/seguridad/gestion-usuarios/accesos/admin-access.component').then(m => m.AdminAccessComponent)
       },
       {
         path: 'security/admin-permissions',
         title: 'Permisos (Admin)',
-        loadComponent: () => import('./features/security/admin-permissions/admin-permissions.component').then(m => m.AdminPermissionsComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/permisos-admin/admin-permissions.component').then(m => m.AdminPermissionsComponent)
       },
       {
         path: 'system-logs/security-audit',
         title: 'Auditoría',
-        loadComponent: () => import('./features/system-logs/security-audit/security-audit.component').then(m => m.SecurityAuditComponent)
+        loadComponent: () => import('./features/logs-sistema/logs-auditoria/security-audit.component').then(m => m.SecurityAuditComponent)
       },
       {
         path: 'system-logs/login-attempts',
         title: 'Intentos de Acceso',
-        loadComponent: () => import('./features/system-logs/login-attempts/login-attempts.component').then(m => m.LoginAttemptsComponent)
+        loadComponent: () => import('./features/logs-sistema/intentos-acceso/login-attempts.component').then(m => m.LoginAttemptsComponent)
       },
       {
         path: 'system-logs/password-resets',
         title: 'Restablecimientos de Contraseña',
-        loadComponent: () => import('./features/system-logs/password-resets/password-resets.component').then(m => m.PasswordResetsComponent)
+        loadComponent: () => import('./features/logs-sistema/reseteos-clave/password-resets.component').then(m => m.PasswordResetsComponent)
       },
       {
         path: 'system-logs/refresh-tokens',
         title: 'Tokens de Refresco',
-        loadComponent: () => import('./features/system-logs/refresh-tokens/refresh-tokens.component').then(m => m.RefreshTokensComponent)
+        loadComponent: () => import('./features/logs-sistema/tokens-refresco/refresh-tokens.component').then(m => m.RefreshTokensComponent)
       },
       {
         path: 'security/webauthn-credentials',
         title: 'Credenciales WebAuthn',
-        loadComponent: () => import('./features/security/user-webauthn-credentials/user-webauthn-credentials.component').then(m => m.UserWebauthnCredentials)
+        loadComponent: () => import('./features/seguridad/gestion-usuarios/credenciales-webauthn/user-webauthn-credentials.component').then(m => m.UserWebauthnCredentials)
       },
       {
         path: 'system-logs/api-status',
         title: 'Estado de APIs',
-        loadComponent: () => import('./features/system-logs/api-status/api-status.component').then(m => m.ApiStatusComponent)
+        loadComponent: () => import('./features/logs-sistema/estado-apis/api-status.component').then(m => m.ApiStatusComponent)
+      },
+      {
+        path: 'notifications/apps',
+        title: 'Aplicaciones',
+        loadComponent: () => import('./features/notificaciones/apps/apps.component').then(m => m.AppsComponent)
       },
       {
         path: 'notifications/push-settings',
         title: 'Configuraciones Push',
-        loadComponent: () => import('./features/notifications/push-settings/push-settings').then(m => m.PushSettingsComponent)
+        loadComponent: () => import('./features/notificaciones/config-push/push-settings').then(m => m.PushSettingsComponent)
       },
       {
         path: 'notifications/smtp-settings',
         title: 'Configuraciones SMTP',
-        loadComponent: () => import('./features/notifications/smtp-settings/smtp-settings').then(m => m.SmtpSettingsComponent)
+        loadComponent: () => import('./features/notificaciones/config-smtp/smtp-settings').then(m => m.SmtpSettingsComponent)
       },
       {
         path: 'notifications/test',
         title: 'Probar Notificaciones',
-        loadComponent: () => import('./features/notifications/notification-test/notification-test').then(m => m.NotificationTestComponent)
+        loadComponent: () => import('./features/notificaciones/probar-envio/notification-test').then(m => m.NotificationTestComponent)
       },
       {
         path: 'notifications/history',
         title: 'Historial de Notificaciones',
-        loadComponent: () => import('./features/notifications/notifications-list/notifications-list').then(m => m.NotificationsListComponent)
+        loadComponent: () => import('./features/notificaciones/historial-notificaciones/notifications-list').then(m => m.NotificationsListComponent)
       },
       {
         path: 'notifications/devices',
         title: 'Dispositivos de Usuario',
-        loadComponent: () => import('./features/notifications/user-devices/user-devices').then(m => m.UserDevicesComponent)
+        loadComponent: () => import('./features/notificaciones/dispositivos-usuario/user-devices').then(m => m.UserDevicesComponent)
       },
       {
         path: 'notifications/send-attempts',
         title: 'Intentos de Envío',
-        loadComponent: () => import('./features/notifications/send-attempts/send-attempts').then(m => m.SendAttemptsComponent)
+        loadComponent: () => import('./features/notificaciones/intentos-envio/send-attempts').then(m => m.SendAttemptsComponent)
       }
     ]
   },

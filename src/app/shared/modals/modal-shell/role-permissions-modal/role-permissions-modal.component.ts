@@ -5,7 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 import { CheckboxModule } from 'primeng/checkbox';
-import { SecurexService } from '../../../../core/services/securex.service';
+import { RoleService } from '@core/services/role.service';
 
 interface ProcessedGroup {
   id: number;
@@ -21,8 +21,7 @@ interface ProcessedGroup {
   selector: 'app-role-permissions-modal',
   standalone: true,
   imports: [CommonModule, FormsModule, DialogModule, ButtonModule, TooltipModule, CheckboxModule],
-  templateUrl: './role-permissions-modal.component.html',
-  styleUrls: ['./role-permissions-modal.component.css']
+  templateUrl: './role-permissions-modal.component.html'
 })
 export class RolePermissionsModalComponent implements OnChanges {
   @Input() visible = false;
@@ -33,7 +32,7 @@ export class RolePermissionsModalComponent implements OnChanges {
   @Output() onSave = new EventEmitter<number[]>();
   @Output() onClose = new EventEmitter<void>();
 
-  private securexService = inject(SecurexService);
+  private roleService = inject(RoleService);
 
   isLoading = false;
   searchQuery = '';
@@ -63,7 +62,7 @@ export class RolePermissionsModalComponent implements OnChanges {
     this.isLoading = true;
     this.selectedIds = new Set();
     this.submenuIds = new Set();
-    this.securexService.getRolePermissions(this.roleId).subscribe({
+    this.roleService.getRolePermissions(this.roleId).subscribe({
       next: (res) => {
         this.processPermissions(res);
         this.isLoading = false;

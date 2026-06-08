@@ -47,6 +47,13 @@ export const NOTIFICATION_QUERIES = {
       }
     }
   `,
+  APPS: `
+    query Apps {
+      apps {
+        id uuid name slug is_active
+      }
+    }
+  `,
 };
 
 export const NOTIFICATION_MUTATIONS = {

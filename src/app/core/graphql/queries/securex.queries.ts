@@ -204,12 +204,13 @@ export const SECUREX_QUERIES = {
         app { uuid name }
         company { uuid name }
         branch { uuid name }
-        role { uuid name }
+        role { id uuid name }
       }
       users { id uuid full_name email }
       apps { id uuid name }
       companies { id uuid name app_id }
       branches { id uuid name company_id }
+      roles { id uuid name slug }
     }
   `,
 };

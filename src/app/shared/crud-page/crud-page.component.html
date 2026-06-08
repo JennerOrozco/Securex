@@ -3,11 +3,12 @@
   <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
     <i class="pi pi-lock"></i>
     <h2>Acceso restringido</h2>
-    <p>No tienes permisos para acceder a este módulo.</p>
+    <p>{{ permissionMessage }}</p>
   </div>
 
   <ng-container *ngIf="hidePermissionGate || hasPermission">
-    <app-table-component
+    <!-- Flat Table Component -->
+    <app-table-component *ngIf="!isTreeTable"
       [title]="title"
       [subtitle]="subtitle"
       [data]="data"
@@ -16,15 +17,45 @@
       [showAdd]="showAdd"
       [showEdit]="showEdit"
       [showDelete]="showDelete"
+      [showPermissions]="showPermissions"
+      [showView]="showView"
+      [minimalMode]="minimalMode"
+      [reorderableColumns]="reorderableColumns"
       [addLabel]="addLabel"
       (onAdd)="handleAdd()"
       (onEdit)="handleEdit($event)"
       (onDelete)="handleDelete($event)"
+      (onPermissions)="onPermissions.emit($event)"
+      (onView)="onView.emit($event)"
+      (onColReorder)="onColReorder.emit($event)"
       (onRefresh)="onRefresh.emit()"
     >
       <!-- Extra toolbar actions can be projected here -->
       <ng-content select="[custom-toolbar-actions]"></ng-content>
     </app-table-component>
+
+    <!-- Tree Table Component -->
+    <app-tree-table-component *ngIf="isTreeTable"
+      [title]="title"
+      [subtitle]="subtitle"
+      [nodes]="treeNodes"
+      [columns]="columns"
+      [loading]="loading"
+      [showAdd]="showAdd"
+      [addLabel]="addLabel"
+      [showLegend]="showLegend"
+      [colorRows]="colorRows"
+      [reorderableColumns]="reorderableColumns"
+      (onAddRoot)="handleTreeAddRoot()"
+      (onAddChild)="handleTreeAddChild($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)"
+      (onNodeReorder)="onNodeReorder.emit($event)"
+      (onColReorder)="onColReorder.emit($event)"
+    >
+      <!-- Extra toolbar actions can be projected here -->
+      <ng-content select="[custom-toolbar-actions]"></ng-content>
+    </app-tree-table-component>
   </ng-container>
 
   <!-- Form modal (add / edit) -->

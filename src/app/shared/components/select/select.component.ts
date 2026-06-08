@@ -2,16 +2,19 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
+import { FormFieldComponent } from '../form-field/form-field.component';
+import { BaseFormControl } from '../base-form-control';
 
 @Component({
   selector: 'app-select',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, SelectModule],
+  imports: [CommonModule, ReactiveFormsModule, SelectModule, FormFieldComponent],
   templateUrl: './select.component.html',
-
 })
-export class SelectComponent {
-  @Input() id: string = 'select-' + Math.random().toString(36).substr(2, 9);
+export class SelectComponent extends BaseFormControl {
+  protected prefix = 'select-';
+
+  @Input() id: string = '';
   @Input() label: string = '';
   @Input() placeholder: string = 'Seleccione una opción';
   @Input() options: any[] = [];
@@ -19,7 +22,7 @@ export class SelectComponent {
   @Input() optionValue: string = 'id';
   @Input() icon: string = '';
   @Input() required: boolean = false;
-  @Input() control!: any;
+  @Input() override control!: any;
   @Input() showClear: boolean = false;
 
   @Output() onChange = new EventEmitter<any>();
