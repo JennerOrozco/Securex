@@ -33,6 +33,7 @@
     height: 44px;
     border-bottom: 1px solid rgba(226, 232, 240, 0.45);
     background: rgba(255, 255, 255, 0.25);
+    position: relative;
 }
 
 .gm-tt-row:last-child {
@@ -198,6 +199,59 @@
 .icon-action    { color: #f59e0b !important; }
 .icon-component { color: #ef4444 !important; }
 
+/* Connector lines per depth level */
+.gm-tt-row {
+    position: relative;
+}
+
+.gm-tt-row.depth-1::before,
+.gm-tt-row.depth-2::before,
+.gm-tt-row.depth-3::before,
+.gm-tt-row.depth-4::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    border-left: 1px dashed rgba(99, 102, 241, 0.3);
+    pointer-events: none;
+}
+
+.gm-tt-row.depth-1::before { left: 42px; }
+.gm-tt-row.depth-2::before { left: 70px; }
+.gm-tt-row.depth-3::before { left: 98px; }
+.gm-tt-row.depth-4::before { left: 126px; }
+
+/* Visual elbow joining nodes to the main branch line */
+.gm-tt-row:not(.depth-0) .gm-tt-col-name::before {
+    content: '';
+    position: absolute;
+    left: -14px;
+    top: 50%;
+    width: 10px;
+    height: 1px;
+    border-top: 1px dashed rgba(99, 102, 241, 0.3);
+    pointer-events: none;
+}
+
+.gm-tt-row:hover {
+    background: rgba(99, 102, 241, 0.05) !important;
+    box-shadow: inset 3px 0 0 #6366f1;
+}
+
+/* Smooth child expand/collapse */
+.node-children-container {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-in-out;
+}
+
+.node-children-container.expanded {
+    max-height: 2500px;
+    opacity: 1;
+}
+
 /* Text */
 .gm-tt-name {
     font-size: 0.78rem;
@@ -217,4 +271,35 @@
     color: var(--ggts-text-light);
     font-weight: 500;
     margin-top: 1px;
+}
+
+/* Checkbox pop-in animation */
+.gm-tt-checkbox.all,
+.gm-tt-checkbox.partial {
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); }
+    100% { transform: scale(1); }
+}
+
+.search-match-badge {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+    pointer-events: none;
+    animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }

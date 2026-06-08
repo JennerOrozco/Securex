@@ -71,7 +71,10 @@ export class AdminUsersComponent implements OnInit {
         this.load();
         this.isSaving = false;
       },
-      error: () => (this.isSaving = false)
+      error: (err) => {
+        this.notificationService.notify('error', `Error al ${e.mode === 'add' ? 'crear' : 'actualizar'} usuario`);
+        this.isSaving = false;
+      }
     });
   }
 

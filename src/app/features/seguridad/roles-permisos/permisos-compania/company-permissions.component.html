@@ -68,110 +68,13 @@
       </div>
 
       <!-- Permission Tree -->
-      <div *ngIf="selectedCompanyId && !loading && groups.length > 0" class="perm-body">
-        <!-- Search & Actions Bar -->
-        <div class="perm-actions-bar">
-          <div class="perm-search-wrap">
-            <i class="pi pi-search perm-search-icon"></i>
-            <input
-              class="perm-search"
-              type="text"
-              placeholder="Filtrar por m&oacute;dulo, submen&uacute; o acci&oacute;n..."
-              [(ngModel)]="searchQuery"
-              (ngModelChange)="onSearch()" />
-            <span *ngIf="searchQuery" class="search-match-badge">{{ getMatchCount() }} coincidencia(s)</span>
-          </div>
-          <div class="perm-bulk-actions">
-            <app-button label="Marcar Todo" class="btn--ghost-indigo btn-sm" (onClick)="selectAll()"></app-button>
-            <app-button label="Limpiar Todo" class="btn--ghost-indigo btn-sm" (onClick)="clearAll()"></app-button>
-            <span class="perm-count">{{ selectedIds.size }} seleccionados</span>
-          </div>
-        </div>
-
-        <!-- TreeTable Container -->
-        <div class="gm-treetable">
-          <!-- Header -->
-          <div class="gm-tt-header">
-            <div class="gm-tt-col-name">Recurso / M&oacute;dulo / Permiso</div>
-            <div class="gm-tt-col-select">Estado de Acceso</div>
-          </div>
-
-          <!-- Body -->
-          <div class="gm-tt-body">
-            <ng-template #nodeTemplate let-node="node" let-depth="depth">
-              <div class="gm-tt-row" [ngClass]="'depth-' + depth">
-                <div class="gm-tt-col-name"
-                     (click)="node.children.length > 0 ? (node.expanded = !node.expanded) : toggleSingle(node.id)">
-                  <i *ngIf="node.children.length > 0"
-                     class="pi pi-chevron-right gm-tt-chevron"
-                     [class.open]="node.expanded"></i>
-                  <div *ngIf="node.children.length === 0" class="gm-tt-chevron-placeholder"></div>
-
-                  <div *ngIf="depth === 0" class="gm-tt-icon-wrap" [ngClass]="{
-                    'menu-type': node.type === 'MENU',
-                    'submenu-type': node.type === 'SUBMENU',
-                    'action-type': node.type === 'ACTION',
-                    'component-type': node.type === 'COMPONENT'
-                  }">
-                    <i [class]="getModuleIcon(node.name)"></i>
-                  </div>
-
-                  <i *ngIf="depth > 0" class="mr-2 text-[11px]"
-                     [class.pi-folder-open]="node.children.length > 0"
-                     [class.pi-cog]="node.children.length === 0"
-                     [class.icon-menu]="node.type === 'MENU'"
-                     [class.icon-submenu]="node.type === 'SUBMENU'"
-                     [class.icon-action]="node.type === 'ACTION'"
-                     [class.icon-component]="node.type === 'COMPONENT'"></i>
-
-                  <div class="flex flex-col min-w-0">
-                    <div class="flex items-center gap-2 flex-wrap">
-                      <span class="gm-tt-name">{{ node.name }}</span>
-                      <span class="type-chip" [ngClass]="'type-' + node.type.toLowerCase()">
-                        {{ node.type }}
-                      </span>
-                    </div>
-                    <span class="gm-tt-slug" *ngIf="node.slug">{{ node.slug }}</span>
-                  </div>
-                </div>
-                <div class="gm-tt-col-select">
-                  <div *ngIf="node.children.length > 0"
-                       class="gm-tt-checkbox"
-                       [class.all]="isAllSelected(node.allIds)"
-                       [class.partial]="isPartialSelected(node.allIds)"
-                       (click)="$event.stopPropagation(); toggle(node)">
-                    <i class="pi"
-                       [class.pi-check]="isAllSelected(node.allIds)"
-                       [class.pi-minus]="isPartialSelected(node.allIds)"></i>
-                  </div>
-                  <div *ngIf="node.children.length === 0"
-                       class="gm-tt-checkbox action"
-                       [class.all]="isSelected(node.id)"
-                       (click)="$event.stopPropagation(); toggleSingle(node.id)">
-                    <i class="pi" [class.pi-check]="isSelected(node.id)"></i>
-                  </div>
-                </div>
-              </div>
-
-              <div class="node-children-container" [class.expanded]="node.expanded">
-                @for (child of node.children; track $index) {
-                  <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
-                }
-              </div>
-            </ng-template>
-
-            @for (group of filteredGroups; track $index) {
-              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
-            }
-          </div>
-        </div>
-
-        <!-- Empty search results -->
-        <div *ngIf="filteredGroups.length === 0 && searchQuery" class="empty-state">
-          <i class="pi pi-filter-slash text-3xl text-slate-300 mb-2"></i>
-          <p class="text-slate-500">No se encontraron resultados para tu b&uacute;squeda.</p>
-        </div>
-      </div>
+      <app-permission-tree
+        *ngIf="selectedCompanyId && !loading && groups.length > 0"
+        [groups]="groups"
+        [selectedIds]="selectedIds"
+        [loading]="false"
+        (selectedIdsChange)="onSelectionChange($event)">
+      </app-permission-tree>
 
       <!-- Empty state: no permissions for app -->
       <div *ngIf="selectedCompanyId && !loading && groups.length === 0" class="empty-state">

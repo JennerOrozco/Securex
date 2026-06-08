@@ -161,6 +161,7 @@
    ───────────────────────────────────────────────────────────── */
 .gm-treetable .p-treetable-tbody > tr > td {
     overflow: visible !important;
+    font-size: 0.78rem;
 }
 
 .gm-treetable .p-treetable-tbody > tr {
@@ -357,30 +358,40 @@ tr.drag-over {
 .type-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.15rem 0.5rem;
-    border-radius: 6px;
-    letter-spacing: 0.03em;
-    background: #f1f5f9;
-    color: #475569;
-    border: 1px solid #e2e8f0;
+    gap: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+    letter-spacing: 0.04em;
+    border: 1px solid;
     text-transform: uppercase;
+    line-height: 1.2;
 }
 
-.type-chip::before {
-    content: '';
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    display: inline-block;
+.type-menu {
+    background: #eef2ff;
+    color: #4338ca;
+    border-color: #c7d2fe;
 }
 
-.type-menu::before      { background: #6366f1; }  /* Indigo   */
-.type-submenu::before   { background: #10b981; }  /* Emerald  */
-.type-action::before    { background: #f59e0b; }  /* Amber    */
-.type-component::before { background: #f43f5e; }  /* Rose     */
+.type-submenu {
+    background: #ecfdf5;
+    color: #047857;
+    border-color: #a7f3d0;
+}
+
+.type-action {
+    background: #fffbeb;
+    color: #b45309;
+    border-color: #fde68a;
+}
+
+.type-component {
+    background: #fff1f2;
+    color: #be123c;
+    border-color: #fecdd3;
+}
 
 .type-activo {
     background: #dcfce7 !important;
@@ -762,6 +773,17 @@ tr.drag-over {
     }
     .gm-treetable .p-treetable-tbody > tr {
         cursor: pointer;
+    }
+    .gm-treetable .p-treetable-tbody > tr > td {
+        font-size: 0.7rem;
+    }
+    .gm-treetable .node-name,
+    .gm-treetable .body-text,
+    .gm-treetable .route-link {
+        font-size: 0.68rem;
+    }
+    .type-chip {
+        display: none;
     }
 }
 

@@ -62,7 +62,7 @@ import { BadgeClassPipe } from '../badge-class.pipe';
       }
       @case ('user') {
         <div class="user-cell">
-          <div class="avatar">{{ (rowData[col.field] || '?') | slice:0:1 }}</div>
+          <div class="avatar"><i class="pi pi-user"></i></div>
           <div>
             <span class="user-name">{{ rowData[col.field] }}</span>
             @if (col.subField && rowData[col.subField]) {

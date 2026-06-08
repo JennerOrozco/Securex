@@ -45,6 +45,8 @@ export class CrudPageComponent {
   @Input() treeNodes: TreeNode[] = [];
   @Input() colorRows: boolean = false;
   @Input() showLegend: boolean = true;
+  @Input() dragdrop: boolean = false;
+  @Input() searchPlaceholder: string = 'Buscar...';
 
   // ── Form modal ─────────────────────────────────────────────
   @Input() formFields: FormField[] = [];
@@ -55,6 +57,8 @@ export class CrudPageComponent {
   @Input() mapItemForEdit: (item: any) => any = (item) => item;
 
   private _isSaving = false;
+  @Input() catalogLoading: boolean = false;
+
   @Input() set isSaving(val: boolean) {
     const wasSaving = this._isSaving;
     this._isSaving = val;
@@ -86,9 +90,12 @@ export class CrudPageComponent {
   @Output() onRefresh = new EventEmitter<void>();
   @Output() onColReorder = new EventEmitter<any>();
   @Output() onCloseModal = new EventEmitter<void>();
+  @Output() onSelectGridEmptyFilter = new EventEmitter<string>();
 
   @Output() onAddRoot = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<number>();
+  @Output() onFilter = new EventEmitter<string>();
+  @Output() onFilterType = new EventEmitter<string>();
   @Output() onNodeReorder = new EventEmitter<any>();
 
   // ── Internal state ─────────────────────────────────────────

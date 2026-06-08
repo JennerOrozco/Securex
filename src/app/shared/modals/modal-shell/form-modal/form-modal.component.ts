@@ -53,6 +53,7 @@ export class FormModalComponent implements OnInit, OnChanges {
 
   @Output() onConfirm = new EventEmitter<any>();
   @Output() onClose = new EventEmitter<void>();
+  @Output() onSelectGridEmptyFilter = new EventEmitter<string>();
 
   form!: FormGroup;
 

@@ -1,13 +1,11 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TreeTableComponent } from '@shared/table-shared/tree-table-component/tree-table-component.component';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { AppService } from '@core/services/app.service';
 import { PermissionService } from '@core/services/permission.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
-import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
 import { TreeNode } from 'primeng/api';
 import { mapToTreeNodes } from '@shared/utils/tree-utils';
@@ -15,7 +13,7 @@ import { mapToTreeNodes } from '@shared/utils/tree-utils';
 @Component({
   selector: 'app-admin-permissions',
   standalone: true,
-  imports: [CommonModule, TreeTableComponent, FormModalComponent, DeleteModalComponent],
+  imports: [CommonModule, CrudPageComponent],
   templateUrl: './admin-permissions.component.html',
 
 })
@@ -31,9 +29,6 @@ export class AdminPermissionsComponent implements OnInit {
   loading = false;
   isSaving = false;
 
-  modalVisible = false;
-  modalMode: 'add' | 'edit' | 'delete' = 'add';
-  selectedItem: any = null;
   currentAppId: number | null = null;
 
   formFields: FormField[] = [
@@ -136,56 +131,39 @@ export class AdminPermissionsComponent implements OnInit {
     }));
   }
 
-  handleAdd() {
-    this.modalMode = 'add';
-    this.selectedItem = null;
+  setRootAdd() {
     this.currentAppId = null;
-    this.modalVisible = true;
   }
 
-  handleAddChild(id: number) {
-    this.modalMode = 'add';
-    this.selectedItem = null;
-    this.currentAppId = id;
-    this.modalVisible = true;
+  setChildAdd(parentId: number) {
+    this.currentAppId = parentId;
   }
 
-  handleEdit(item: any) {
-    this.modalMode = 'edit';
-    this.selectedItem = { ...item };
-    this.modalVisible = true;
-  }
-
-  handleDelete(item: any) {
-    this.modalMode = 'delete';
-    this.selectedItem = item;
-    this.modalVisible = true;
-  }
-
-  save(data: any) {
+  handleSave(event: { mode: 'add' | 'edit'; data: any }) {
     this.isSaving = true;
-    const obs = this.modalMode === 'add'
-      ? this.permissionService.createPermissionGql(data)
-      : this.permissionService.updatePermissionGql(this.selectedItem.uuid, data);
+    if (event.mode === 'add') {
+      event.data.parent_id = this.currentAppId;
+    }
+    const obs = event.mode === 'add'
+      ? this.permissionService.createPermissionGql(event.data)
+      : this.permissionService.updatePermissionGql(event.data.uuid, event.data);
 
     obs.subscribe({
       next: () => {
-        this.notificationService.success(`Permiso ${this.modalMode === 'add' ? 'creado' : 'actualizado'} correctamente`);
+        this.notificationService.success(`Permiso ${event.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => this.isSaving = false
     });
   }
 
-  confirmDelete() {
+  handleDelete(item: any) {
     this.isSaving = true;
-    this.permissionService.deletePermissionGql(this.selectedItem.uuid).subscribe({
+    this.permissionService.deletePermissionGql(item.uuid).subscribe({
       next: () => {
         this.notificationService.success('Permiso eliminado');
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => this.isSaving = false

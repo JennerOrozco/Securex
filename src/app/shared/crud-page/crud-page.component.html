@@ -46,10 +46,14 @@
       [showLegend]="showLegend"
       [colorRows]="colorRows"
       [reorderableColumns]="reorderableColumns"
+      [dragdrop]="dragdrop"
+      [searchPlaceholder]="searchPlaceholder"
       (onAddRoot)="handleTreeAddRoot()"
       (onAddChild)="handleTreeAddChild($event)"
       (onEdit)="handleEdit($event)"
       (onDelete)="handleDelete($event)"
+      (onFilter)="onFilter.emit($event)"
+      (onFilterType)="onFilterType.emit($event)"
       (onNodeReorder)="onNodeReorder.emit($event)"
       (onColReorder)="onColReorder.emit($event)"
     >
@@ -67,10 +71,11 @@
     [fields]="formFields"
     [data]="resolvedFormData"
     [initialData]="formExtraData"
-    [loading]="isSaving"
+    [loading]="catalogLoading || isSaving"
     [customFormValid]="customFormValid"
     (onConfirm)="handleSave($event)"
     (onClose)="handleCloseModal()"
+    (onSelectGridEmptyFilter)="onSelectGridEmptyFilter.emit($event)"
   ></app-form-modal>
 
   <!-- Delete modal -->

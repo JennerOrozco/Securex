@@ -20,94 +20,15 @@
 
   <div class="gm-body p-0" style="min-height:450px">
     <div class="p-3 border-b bg-slate-50/50 sticky top-0 z-10 backdrop-blur-md">
-      <div class="flex items-center justify-between gap-4 mb-2">
-        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest m-0">Matriz de Acceso</p>
-        <div class="flex gap-3">
-          <button class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 transition-colors" (click)="selectAll()">Marcar Todo</button>
-          <button class="text-[11px] font-bold text-slate-400 hover:text-slate-600 transition-colors" (click)="clearAll()">Limpiar Todo</button>
-        </div>
-      </div>
-
-      <div class="perm-search-wrap">
-        <i class="pi pi-search perm-search-icon"></i>
-        <input class="perm-search" type="text" placeholder="Filtrar por m&oacute;dulo, submen&uacute; o acci&oacute;n..." [(ngModel)]="searchQuery" (ngModelChange)="onSearch()">
-      </div>
+      <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest m-0">Matriz de Acceso</p>
     </div>
 
-    <div class="flex flex-col items-center justify-center p-20 gap-4" *ngIf="isLoading">
-      <div class="w-10 h-10 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
-      <span class="text-xs font-medium text-slate-500">Cargando jerarqu&iacute;a de permisos...</span>
-    </div>
-
-    <div *ngIf="!isLoading" class="p-4">
-      <div *ngIf="filteredGroups.length === 0" class="flex flex-col items-center p-12 text-slate-400">
-        <i class="pi pi-filter-slash text-3xl mb-2"></i>
-        <span class="text-sm">No se encontraron resultados para tu b&uacute;squeda.</span>
-      </div>
-
-      <!-- TreeTable Container -->
-      <div *ngIf="filteredGroups.length > 0" class="gm-treetable">
-
-        <!-- TreeTable Header -->
-        <div class="gm-tt-header">
-          <div class="gm-tt-col-name">Recurso / M&oacute;dulo / Permiso</div>
-          <div class="gm-tt-col-select">Estado de Acceso</div>
-        </div>
-
-        <!-- TreeTable Body -->
-        <div class="gm-tt-body">
-          <ng-template #nodeTemplate let-node="node" let-depth="depth">
-            <div class="gm-tt-row" [ngClass]="'depth-' + depth">
-              <div class="gm-tt-col-name cursor-pointer" (click)="node.items.length > 0 ? (node.expanded = !node.expanded) : toggle(node.id)">
-                <i *ngIf="node.items.length > 0" class="pi pi-chevron-right gm-tt-chevron" [class.open]="node.expanded"></i>
-                <div *ngIf="node.items.length === 0" class="gm-tt-chevron-placeholder"></div>
-
-                <div *ngIf="depth === 0" class="gm-tt-icon-wrap" [ngClass]="{
-                  'menu-type': node.type === 'MENU',
-                  'submenu-type': node.type === 'SUBMENU',
-                  'action-type': node.type === 'ACTION',
-                  'component-type': node.type === 'COMPONENT'
-                }">
-                  <i [class]="getModuleIcon(node.name)"></i>
-                </div>
-
-                <i *ngIf="depth > 0" class="mr-2 text-[11px]"
-                   [class.pi-folder-open]="node.items.length > 0"
-                   [class.pi-cog]="node.items.length === 0"
-                   [class.icon-menu]="node.type === 'MENU'"
-                   [class.icon-submenu]="node.type === 'SUBMENU'"
-                   [class.icon-action]="node.type === 'ACTION'"
-                   [class.icon-component]="node.type === 'COMPONENT'"></i>
-
-                <span class="gm-tt-name">{{ node.name }}</span>
-              </div>
-              <div class="gm-tt-col-select">
-                <div class="gm-tt-checkbox"
-                     [class.action]="node.items.length === 0"
-                     [class.all]="isAllSelected(node.allActions)"
-                     [class.partial]="isPartialSelected(node.allActions)"
-                     (click)="$event.stopPropagation(); toggleBatch(node.allActions)">
-                  <i class="pi"
-                     [class.pi-check]="isAllSelected(node.allActions)"
-                     [class.pi-minus]="isPartialSelected(node.allActions)"></i>
-                </div>
-              </div>
-            </div>
-
-            <ng-container *ngIf="node.expanded">
-@for (child of node.items; track $index) {
-              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: child, depth: depth + 1 }"></ng-container>
-            }
-            </ng-container>
-          </ng-template>
-
-@for (group of filteredGroups; track $index) {
-              <ng-container *ngTemplateOutlet="nodeTemplate; context: { node: group, depth: 0 }"></ng-container>
-            }
-        </div>
-
-      </div>
-    </div>
+    <app-permission-tree
+      [groups]="groups"
+      [selectedIds]="selectedIds"
+      [loading]="isLoading"
+      (selectedIdsChange)="onSelectionChange($event)">
+    </app-permission-tree>
   </div>
 
   <ng-template pTemplate="footer">

@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { TreeNode } from 'primeng/api';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -10,11 +9,9 @@ import { CompanyService } from '@core/services/company.service';
 import { RoleService } from '@core/services/role.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
-import { FormModalComponent } from '@shared/modals/modal-shell/form-modal/form-modal.component';
-import { DeleteModalComponent } from '@shared/modals/modal-shell/delete-modal/delete-modal.component';
 import { NotificationService } from '@core/services/notification.service';
-import { TreeTableComponent } from '@shared/table-shared/tree-table-component/tree-table-component.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
+import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 
 interface AccessNodeData {
   id?: string | number;
@@ -43,10 +40,7 @@ interface AccessNodeData {
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
-    TreeTableComponent,
-    FormModalComponent,
-    DeleteModalComponent
+    CrudPageComponent
   ],
   templateUrl: './admin-access.component.html'
 })
@@ -62,10 +56,22 @@ export class AdminAccessComponent implements OnInit {
   accessNodes: TreeNode<AccessNodeData>[] = [];
   loading = false;
   isSaving = false;
+  catalogLoading = false;
+  formExtraData: any = null;
 
-  modalVisible = false;
-  modalMode: 'add' | 'edit' | 'delete' = 'add';
-  selectedItem: any = null;
+  mapItemForEdit = (item: any) => {
+    const r = this.rawAccesses.find(a => a.uuid === item.uuid);
+    if (!r) return item;
+    return {
+      user_id:    r.user_id,
+      app_id:     r.app_id,
+      company_id: r.company_id,
+      branch_id:  r.branch_id,
+      role_id:    r.role_id,
+      status:     r.status,
+      uuid:       r.uuid
+    };
+  };
 
   cols: TableColumn[] = [
     { field: 'name',   header: 'Acceso',    type: 'tree',    sortable: true, style: { width: '45%' } },
@@ -75,7 +81,8 @@ export class AdminAccessComponent implements OnInit {
   ];
 
   formFields: FormField[] = [
-    { name: 'user_id',    label: 'Usuario',     type: 'select', required: true,  options: [] },
+    { name: 'user_id',    label: 'Usuario',     type: 'select-grid', required: true,  options: [], columns: [],
+      icon: 'pi pi-user', placeholder: 'Buscar usuario por nombre o correo...' },
     { name: 'app_id',     label: 'Aplicación',  type: 'select', required: true,  options: [], disabled: true },
     { name: 'company_id', label: 'Compañía',    type: 'select', required: true,  options: [], disabled: true },
     { name: 'branch_id',  label: 'Sucursal',    type: 'select', options: [], disabled: true },
@@ -230,44 +237,32 @@ export class AdminAccessComponent implements OnInit {
   handleAddUnderBranch(branchId: string | number) {
     const branch = this.findBranchById(this.accessNodes, branchId);
     if (!branch) return;
-    this.modalMode = 'add';
-    this.selectedItem = {
+    this.formExtraData = {
       app_id:     branch.app_id,
       company_id: branch.company_id,
       branch_id:  branch.branch_id,
       status:     'APPROVED'
     };
-    this.modalVisible = true;
     this.loadModalCatalogs({
       appId:      branch.app_id!,
       companyId:  branch.company_id!,
-      companyUuid: branch.company_uuid
+      companyUuid: branch.company_uuid || this.authService.currentCompany()?.uuid
     });
   }
 
   handleEdit(item: any) {
     const r = this.rawAccesses.find(a => a.uuid === item.uuid);
-    if (!r) return;
-    this.modalMode = 'edit';
-    this.selectedItem = {
-      user_id:    r.user_id,
-      app_id:     r.app_id,
-      company_id: r.company_id,
-      branch_id:  r.branch_id,
-      role_id:    r.role_id,
-      status:     r.status,
-      uuid:       r.uuid
-    };
-    this.modalVisible = true;
-    this.loadModalCatalogs({
-      appId:      r.app_id,
-      companyId:  r.company_id,
-      companyUuid: r.company?.uuid
-    });
+    if (r) {
+      this.loadModalCatalogs({
+        appId:      r.app_id,
+        companyId:  r.company_id,
+        companyUuid: r.company?.uuid || this.authService.currentCompany()?.uuid
+      });
+    }
   }
 
   private loadModalCatalogs(ctx: { appId: number; companyId: number; companyUuid?: string }) {
-    this.isSaving = true;
+    this.catalogLoading = true;
     const safe = <T>(obs$: any) => obs$.pipe(catchError(() => of<T[]>([])));
 
     forkJoin({
@@ -291,20 +286,22 @@ export class AdminAccessComponent implements OnInit {
           ...companyBranches.map((b: any) => ({ label: b.name, value: b.id }))
         ];
         
-        // Enable branch select if user does not have a branch assigned (e.g. branch_id is null/undefined)
-        const hasNoBranch = this.selectedItem?.branch_id === null || this.selectedItem?.branch_id === undefined;
-        branchField.disabled = !hasNoBranch;
+        branchField.disabled = false;
 
         const userField = this.formFields.find(f => f.name === 'user_id')!;
+        userField.columns = [
+          { field: 'email', header: 'Correo', width: '220px' }
+        ];
         userField.options = (users || []).map((u: any) => ({
-          label: `${u.full_name} (${u.email})`,
-          value: u.id
+          label: u.full_name,
+          value: u.id,
+          email: u.email
         }));
 
         const roleField = this.formFields.find(f => f.name === 'role_id')!;
         roleField.options = (roles || []).map((r: any) => ({ label: r.name, value: r.id }));
 
-        this.isSaving = false;
+        this.catalogLoading = false;
 
         const loadedCount = [apps, companies, branches, users, roles].filter(a => Array.isArray(a) && a.length > 0).length;
         if (loadedCount < 5) {
@@ -315,7 +312,7 @@ export class AdminAccessComponent implements OnInit {
         }
       },
       error: () => {
-        this.isSaving = false;
+        this.catalogLoading = false;
         this.notificationService.notify('error', 'No se pudieron cargar los catálogos del formulario');
       }
     });
@@ -332,38 +329,28 @@ export class AdminAccessComponent implements OnInit {
     return null;
   }
 
-  handleDelete(item: any) {
-    const r = this.rawAccesses.find(a => a.uuid === item.uuid);
-    if (!r) return;
-    this.modalMode = 'delete';
-    this.selectedItem = r;
-    this.modalVisible = true;
-  }
-
-  save(data: any) {
+  handleSave(event: { mode: 'add' | 'edit'; data: any }) {
     this.isSaving = true;
-    const obs = this.modalMode === 'add'
-      ? this.userService.createUserAccessGql(data)
-      : this.userService.updateUserAccessGql(this.selectedItem.uuid, data);
+    const obs = event.mode === 'add'
+      ? this.userService.createUserAccessGql(event.data)
+      : this.userService.updateUserAccessGql(event.data.uuid, event.data);
 
     obs.subscribe({
       next: () => {
-        this.notificationService.success(`Acceso ${this.modalMode === 'add' ? 'asignado' : 'actualizado'} correctamente`);
+        this.notificationService.success(`Acceso ${event.mode === 'add' ? 'asignado' : 'actualizado'} correctamente`);
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => (this.isSaving = false)
     });
   }
 
-  confirmDelete() {
+  handleDelete(item: any) {
     this.isSaving = true;
-    this.userService.deleteUserAccessGql(this.selectedItem.uuid).subscribe({
+    this.userService.deleteUserAccessGql(item.uuid).subscribe({
       next: () => {
         this.notificationService.success('Acceso eliminado');
         this.load();
-        this.modalVisible = false;
         this.isSaving = false;
       },
       error: () => (this.isSaving = false)

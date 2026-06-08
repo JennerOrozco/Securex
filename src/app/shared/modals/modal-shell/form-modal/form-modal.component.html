@@ -133,7 +133,8 @@
               [icon]="field.icon || ''"
               [required]="field.required || false"
               [columns]="field.columns || []"
-              [filterBy]="field.columns?.length ? (field.columns[0].field + ',' + (field.columns[1]?.field || '')) : 'label'"
+              [filterBy]="field.columns?.length ? 'label,' + field.columns!.map(c => c.field).join(',') : 'label'"
+              (onEmptyFilterAction)="onSelectGridEmptyFilter.emit(field.name)"
             ></app-select-grid>
 
             <app-phone-input

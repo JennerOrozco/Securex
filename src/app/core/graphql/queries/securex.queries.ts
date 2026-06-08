@@ -210,7 +210,6 @@ export const SECUREX_QUERIES = {
       apps { id uuid name }
       companies { id uuid name app_id }
       branches { id uuid name company_id }
-      roles { id uuid name slug }
     }
   `,
 };

@@ -1,11 +1,15 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { UserService } from '@core/services/user.service';
+import { RoleService } from '@core/services/role.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
+import { of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-security-user-crud',
@@ -14,18 +18,19 @@ import { AuthService } from '@core/services/auth.service';
   templateUrl: './component.html',
 })
 export class SecurityUserCrudComponent implements OnInit {
-  private userService = inject(UserService);
+  private userService         = inject(UserService);
   private notificationService = inject(NotificationService);
-  private authService = inject(AuthService);
+  private authService         = inject(AuthService);
+  private roleService         = inject(RoleService);
+  private router              = inject(Router);
 
-  accesses: any[] = [];
-  users: any[] = [];
-  apps: any[] = [];
+  accesses:  any[] = [];
+  users:     any[] = [];
+  apps:      any[] = [];
   companies: any[] = [];
-  branches: any[] = [];      // Todas las sucursales cargadas
-  roles: any[] = [];         // Todos los roles cargados
+  branches:  any[] = [];
 
-  loading = false;
+  loading  = false;
   isSaving = false;
 
   /** Datos pre-cargados para el formulario de NUEVO acceso */
@@ -37,50 +42,47 @@ export class SecurityUserCrudComponent implements OnInit {
       icon: 'pi pi-user',
       placeholder: 'Buscar usuario por nombre o correo...',
       columns: [
-        { field: 'label', header: 'Nombre', icon: 'pi pi-user' },
-        { field: 'email', header: 'Correo', icon: 'pi pi-envelope', width: '220px' }
+        { field: 'email',  header: 'Correo', width: '220px', icon: 'pi pi-envelope' }
       ]
     },
-    { name: 'app_id', label: 'Aplicación', type: 'select', required: true, options: [], disabled: true, icon: 'pi pi-th-large' },
-    { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: [], disabled: true, icon: 'pi pi-building' },
-    { name: 'branch_id', label: 'Sucursal', type: 'select', options: [], icon: 'pi pi-map-marker' },
-    { name: 'role_id', label: 'Rol', type: 'select', required: true, options: [], icon: 'pi pi-id-card' },
-    { name: 'status', label: 'Estado', type: 'select', required: true, options: [
-      { label: 'Pendiente', value: 'PENDING' },
-      { label: 'Aprobado', value: 'APPROVED' },
+    { name: 'app_id',     label: 'Aplicación', type: 'select', required: true,  options: [], disabled: true, icon: 'pi pi-th-large'    },
+    { name: 'company_id', label: 'Compañía',   type: 'select', required: true,  options: [], disabled: true, icon: 'pi pi-building'    },
+    { name: 'branch_id',  label: 'Sucursal',   type: 'select', required: false, options: [],               icon: 'pi pi-map-marker'  },
+    { name: 'role_id',    label: 'Rol',        type: 'select', required: true,  options: [],               icon: 'pi pi-id-card'     },
+    { name: 'status',     label: 'Estado',     type: 'select', required: true,  options: [
+      { label: 'Pendiente', value: 'PENDING'  },
+      { label: 'Aprobado',  value: 'APPROVED' },
       { label: 'Rechazado', value: 'REJECTED' }
     ], icon: 'pi pi-check-circle' }
   ];
 
   cols: TableColumn[] = [
-    { field: 'user_name', header: 'Usuario', type: 'user', subField: 'user_email', sortable: true },
-    { field: 'app_name', header: 'Aplicación', type: 'text', sortable: true },
-    { field: 'company_name', header: 'Compañía', type: 'text', sortable: true },
-    { field: 'branch_name', header: 'Sucursal', type: 'text', sortable: true },
-    { field: 'role_name', header: 'Rol', type: 'text', sortable: true },
-    { field: 'status', header: 'Estado', type: 'badge', sortable: true,
+    { field: 'user_name',    header: 'Usuario',    type: 'user',  subField: 'user_email', sortable: true },
+    { field: 'app_name',     header: 'Aplicación', type: 'text',  sortable: true },
+    { field: 'company_name', header: 'Compañía',   type: 'text',  sortable: true },
+    { field: 'branch_name',  header: 'Sucursal',   type: 'text',  sortable: true },
+    { field: 'role_name',    header: 'Rol',        type: 'role',  sortable: true },
+    { field: 'status',       header: 'Estado',     type: 'badge', sortable: true,
       filterOptions: [
-        { label: 'Aprobado', value: 'APPROVED' },
-        { label: 'Pendiente', value: 'PENDING' },
+        { label: 'Aprobado',  value: 'APPROVED' },
+        { label: 'Pendiente', value: 'PENDING'  },
         { label: 'Rechazado', value: 'REJECTED' }
       ], filterOptionLabel: 'label' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
-  /** Mapa de item para edicion: convierte relaciones en IDs para los selects */
+  /** Mapea un item para edición asegurando que los selects reciban IDs correctos */
   mapItemForEdit = (item: any) => ({
     ...item,
     user_id:    item.user_id,
     app_id:     item.app_id,
     company_id: item.company_id,
-    branch_id:  item.branch_id  ?? null,
+    branch_id:  item.branch_id ?? null,
     role_id:    item.role_id,
     status:     item.status
   });
 
-  ngOnInit() {
-    this.load();
-  }
+  ngOnInit() { this.load(); }
 
   load() {
     this.loading = true;
@@ -90,100 +92,76 @@ export class SecurityUserCrudComponent implements OnInit {
         this.apps      = res.apps      || [];
         this.companies = res.companies || [];
         this.branches  = res.branches  || [];
-        this.roles     = res.roles     || [];
 
         this.accesses = (res.userAccesses || []).map((a: any) => ({
           ...a,
-          user_name:    a.user?.full_name  || a.user?.name || '-',
-          user_email:   a.user?.email      || '-',
-          app_name:     a.app?.name        || '-',
-          company_name: a.company?.name    || '-',
-          branch_name:  a.branch?.name     || 'Todas',
-          role_name:    a.role?.name       || '-',
+          user_name:    a.user?.full_name || a.user?.name || '-',
+          user_email:   a.user?.email     || '-',
+          app_name:     a.app?.name       || '-',
+          company_name: a.company?.name   || '-',
+          branch_name:  a.branch?.name    || 'Todas',
+          role_name:    a.role?.name      || '-',
           status:       (a.status || 'PENDING').toString().toUpperCase()
         }));
 
-        this.refreshFormOptions();
-        this.buildInitialData();
-        this.loading = false;
+        // Resolver compañía activa del usuario logueado
+        const currentCompany = this.authService.currentCompany();
+        const matchedCompany = this.companies.find(c => c.uuid === currentCompany?.uuid);
+
+        // Establecer datos pre-cargados para el formulario
+        if (matchedCompany) {
+          this.buildInitialData(matchedCompany);
+        } else {
+          this.refreshFormOptions([]);
+          this.loading = false;
+        }
       },
       error: () => (this.loading = false)
     });
   }
 
   /**
-   * Construye los datos pre-cargados para el formulario de NUEVO acceso:
-   * - app_id: obtenido del app activo del usuario logueado (coincide con config.appUuid)
-   * - company_id: obtenido de la compañía activa del usuario en sesión
-   * - branch_id / role_id: filtrados según esa compañía
-   * - status: APPROVED por defecto
+   * Construye los datos iniciales del formulario y carga los roles
+   * filtrados por la compañía activa del usuario logueado.
    */
-  private buildInitialData() {
+  private buildInitialData(matchedCompany: any) {
     const currentCompany = this.authService.currentCompany();
 
-    // Buscar la app que coincida con el uuid activo
-    const appUuid = this.authService.currentUser()?.uuid
-      ? localStorage.getItem('currentCompany')
-        ? JSON.parse(localStorage.getItem('currentCompany')!)
-        : null
-      : null;
-
-    // Buscar el app_id por uuid de la compañía activa (companies tienen app_id)
-    let resolvedAppId: number | null = null;
-    let resolvedCompanyId: number | null = null;
-
-    if (currentCompany?.uuid) {
-      const matchedCompany = this.companies.find(c => c.uuid === currentCompany.uuid);
-      if (matchedCompany) {
-        resolvedCompanyId = matchedCompany.id;
-        resolvedAppId     = matchedCompany.app_id ?? null;
-        // Filtrar branches y roles de esta compañía
-        this.refreshFormOptionsForCompany(matchedCompany.id, matchedCompany.app_id);
-      }
-    }
-
     this.formInitialData = {
-      app_id:     resolvedAppId,
-      company_id: resolvedCompanyId,
+      app_id:     matchedCompany.app_id ?? null,
+      company_id: matchedCompany.id,
       status:     'APPROVED'
     };
-  }
 
-  private refreshFormOptions() {
-    // Carga completa de opciones (sin filtrar, para edición)
-    this.formFields = this.formFields.map((f) => {
-      if (f.name === 'user_id')    return { ...f, options: this.users.map((u) => ({ label: `${u.full_name} (${u.email})`, value: u.id })) };
-      if (f.name === 'app_id')     return { ...f, options: this.apps.map((a) => ({ label: a.name, value: a.id })) };
-      if (f.name === 'company_id') return { ...f, options: this.companies.map((c) => ({ label: c.name, value: c.id })) };
-      if (f.name === 'branch_id')  return { ...f, options: [{ label: 'Todas (Sin Sucursal)', value: null }, ...this.branches.map((b) => ({ label: b.name, value: b.id }))] };
-      if (f.name === 'role_id')    return { ...f, options: this.roles.map((r) => ({ label: r.name, value: r.id })) };
-      return f;
+    // Sucursales filtradas por la compañía del usuario
+    const filteredBranches = this.branches.filter(b => b.company_id === matchedCompany.id);
+
+    // Roles filtrados por compañía via query dedicada (rolesByCompany)
+    const rolesObs = (matchedCompany.app_id && currentCompany?.uuid)
+      ? this.roleService.getRolesByCompany(matchedCompany.app_id, currentCompany.uuid)
+          .pipe(catchError(() => of([])))
+      : of([]);
+
+    rolesObs.subscribe({
+      next: (roles: any[]) => {
+        this.refreshFormOptions(roles, filteredBranches);
+        this.loading = false;
+      },
+      error: () => {
+        this.refreshFormOptions([]);
+        this.loading = false;
+      }
     });
   }
 
-  /**
-   * Filtra branches y roles por la compañía activa del usuario,
-   * para que el formulario de nuevo acceso solo muestre lo relevante.
-   */
-  private refreshFormOptionsForCompany(companyId: number, appId?: number | null) {
-    const filteredBranches = this.branches.filter(b => b.company_id === companyId);
-    const filteredRoles    = this.roles.filter(r =>
-      !r.company_uuid // roles globales
-      || this.companies.find(c => c.id === companyId && c.uuid === r.company_uuid)
-    );
-
+  private refreshFormOptions(roles: any[], filteredBranches?: any[]) {
+    const branches = filteredBranches ?? this.branches;
     this.formFields = this.formFields.map((f) => {
-      if (f.name === 'user_id')    return { ...f, options: this.users.map((u) => ({ label: `${u.full_name} (${u.email})`, value: u.id })) };
-      if (f.name === 'app_id')     return { ...f, options: this.apps.map((a) => ({ label: a.name, value: a.id })) };
-      if (f.name === 'company_id') return { ...f, options: this.companies.map((c) => ({ label: c.name, value: c.id })) };
-      if (f.name === 'branch_id')  return {
-        ...f,
-        options: [
-          { label: 'Todas (Sin Sucursal)', value: null },
-          ...filteredBranches.map((b) => ({ label: b.name, value: b.id }))
-        ]
-      };
-      if (f.name === 'role_id')    return { ...f, options: filteredRoles.map((r) => ({ label: r.name, value: r.id })) };
+      if (f.name === 'user_id')    return { ...f, options: this.users.map(u => ({ label: u.full_name, email: u.email, value: u.id })) };
+      if (f.name === 'app_id')     return { ...f, options: this.apps.map(a => ({ label: a.name, value: a.id })) };
+      if (f.name === 'company_id') return { ...f, options: this.companies.map(c => ({ label: c.name, value: c.id })) };
+      if (f.name === 'branch_id')  return { ...f, options: [{ label: 'Todas (Sin Sucursal)', value: null }, ...branches.map(b => ({ label: b.name, value: b.id }))] };
+      if (f.name === 'role_id')    return { ...f, options: roles.map(r => ({ label: r.name, value: r.id })) };
       return f;
     });
   }
@@ -219,6 +197,11 @@ export class SecurityUserCrudComponent implements OnInit {
       next: () => this.handleSuccess('Acceso eliminado'),
       error: () => (this.isSaving = false)
     });
+  }
+
+  onSelectGridEmptyFilter() {
+    this.notificationService.notify('info', 'Crea el usuario desde "Usuarios (Admin)" y luego asígnalo aquí.');
+    this.router.navigate(['/security/admin-users']);
   }
 
   private handleSuccess(msg: string) {
