@@ -8,13 +8,14 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
+import { ResetPasswordModalComponent } from '@shared/modals/modal-shell/reset-password-modal/reset-password-modal.component';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-security-user-crud',
   standalone: true,
-  imports: [CommonModule, CrudPageComponent],
+  imports: [CommonModule, CrudPageComponent, ResetPasswordModalComponent],
   templateUrl: './component.html',
 })
 export class SecurityUserCrudComponent implements OnInit {
@@ -32,6 +33,10 @@ export class SecurityUserCrudComponent implements OnInit {
 
   loading  = false;
   isSaving = false;
+
+  resetModalVisible = false;
+  resetModalItem: any = null;
+  resetModalLoading = false;
 
   /** Datos pre-cargados para el formulario de NUEVO acceso */
   formInitialData: any = {};
@@ -242,15 +247,34 @@ export class SecurityUserCrudComponent implements OnInit {
       this.notificationService.notify('warn', 'No se encontró el correo del usuario.');
       return;
     }
+    this.resetModalItem = item;
+    this.resetModalVisible = true;
+  }
+
+  confirmResetPassword() {
+    if (!this.resetModalItem) return;
+    const email = this.resetModalItem.user_email;
+    this.resetModalLoading = true;
     this.authService.adminResetUserPassword(email).subscribe({
       next: (res: any) => {
+        this.resetModalLoading = false;
+        this.resetModalVisible = false;
+        this.resetModalItem = null;
         if (res.success) {
           this.notificationService.success(`Código de restablecimiento enviado a ${email}`);
         } else {
           this.notificationService.notify('error', res.error || 'No se pudo enviar el código.');
         }
       },
-      error: () => this.notificationService.notify('error', 'Error al enviar el código de restablecimiento.')
+      error: () => {
+        this.resetModalLoading = false;
+        this.notificationService.notify('error', 'Error al enviar el código de restablecimiento.');
+      }
     });
+  }
+
+  closeResetModal() {
+    this.resetModalVisible = false;
+    this.resetModalItem = null;
   }
 }

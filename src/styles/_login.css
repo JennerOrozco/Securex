@@ -19,8 +19,7 @@
     width: 56px;
     height: 56px;
     border-radius: 16px;
-    background: #ffffff;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: var(--color-bg-card);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -38,8 +37,7 @@
     font-family: var(--font-head);
     font-size: 1.5rem;
     font-weight: 700;
-    color: #ffffff;
-    margin: 0 0 6px;
+    color: var(--color-bg-card);
     letter-spacing: -0.02em;
 }
 
@@ -102,8 +100,7 @@
     background: rgba(255, 255, 255, 0.07);
     border: 1px solid rgba(255, 255, 255, 0.12);
     border-radius: 12px;
-    color: #ffffff;
-    font-family: var(--font-body);
+    color: var(--color-bg-card);
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
@@ -117,7 +114,7 @@
 
 .input-wrap select option {
     background: var(--teal-dark);
-    color: #ffffff;
+    color: var(--color-bg-card);
 }
 
 .input-wrap input:focus,
@@ -377,14 +374,11 @@
 }
 
 .auth-field-wrap .gm-required {
-    color: #ef4444 !important;
-}
-
-.auth-field-wrap .gm-input.p-inputtext.p-component {
+    color: var(--color-danger-text) !important;
     background: rgba(255, 255, 255, 0.07) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 12px !important;
-    color: #ffffff !important;
+    color: var(--color-bg-card) !important;
     font-family: var(--font-body) !important;
     font-size: 0.9rem !important;
     padding: 13px 14px 13px 2rem !important;
@@ -431,10 +425,7 @@
     background: rgba(255, 255, 255, 0.07) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 12px !important;
-    color: #ffffff !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-    padding: 13px 14px !important;
+    color: var(--color-bg-card) !important;
     min-height: 44px !important;
 }
 
@@ -462,7 +453,7 @@
 }
 
 .auth-field-wrap .p-select-label {
-    color: #ffffff !important;
+    color: var(--color-bg-card) !important;
     font-family: var(--font-body) !important;
     font-size: 0.9rem !important;
 }
@@ -488,69 +479,69 @@
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .m-sheet .auth-field-wrap .gm-label {
-        color: #64748b !important;
+        color: var(--color-text-muted) !important;
     }
     .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component {
-        background: #f8fafc !important;
-        border: 1.5px solid #e2e8f0 !important;
-        color: #0f172a !important;
+        background: var(--color-bg-subtle) !important;
+        border: 1.5px solid var(--color-border) !important;
+        color: var(--color-text-main) !important;
     }
     .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component::placeholder {
-        color: #cbd5e1 !important;
+        color: var(--color-border-light) !important;
     }
     .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component:focus {
         border-color: var(--teal-bright) !important;
-        background: #ffffff !important;
+        background: var(--color-bg-card) !important;
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
     .m-sheet .auth-field-wrap .gm-field-icon {
-        color: #cbd5e1 !important;
+        color: var(--color-border-light) !important;
     }
     .m-sheet .auth-field-wrap .gm-field:focus-within .gm-field-icon {
         color: var(--teal-bright) !important;
     }
     .m-sheet .auth-field-wrap .gm-error-msg {
-        color: #ef4444 !important;
+        color: var(--color-danger-text) !important;
     }
     .m-sheet .auth-field-wrap .p-password .p-inputtext,
     .m-sheet .auth-field-wrap .p-password-input {
-        background: #f8fafc !important;
-        border: 1.5px solid #e2e8f0 !important;
-        color: #0f172a !important;
+        background: var(--color-bg-subtle) !important;
+        border: 1.5px solid var(--color-border) !important;
+        color: var(--color-text-main) !important;
     }
     .m-sheet .auth-field-wrap .p-password .p-inputtext::placeholder,
     .m-sheet .auth-field-wrap .p-password-input::placeholder {
-        color: #cbd5e1 !important;
+        color: var(--color-border-light) !important;
     }
     .m-sheet .auth-field-wrap .p-password .p-inputtext:focus,
     .m-sheet .auth-field-wrap .p-password-input:focus {
         border-color: var(--teal-bright) !important;
-        background: #ffffff !important;
+        background: var(--color-bg-card) !important;
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
     .m-sheet .auth-field-wrap .p-password .p-password-toggle-mask-icon,
     .m-sheet .auth-field-wrap .p-password .p-icon {
-        color: #94a3b8 !important;
+        color: var(--color-text-light) !important;
     }
     .m-sheet .auth-field-wrap .p-select {
-        background: #f8fafc !important;
-        border: 1.5px solid #e2e8f0 !important;
+        background: var(--color-bg-subtle) !important;
+        border: 1.5px solid var(--color-border) !important;
     }
     .m-sheet .auth-field-wrap .p-select-label {
-        color: #0f172a !important;
+        color: var(--color-text-main) !important;
     }
     .m-sheet .auth-field-wrap .p-select .p-select-placeholder {
-        color: #cbd5e1 !important;
+        color: var(--color-border-light) !important;
     }
     .m-sheet .auth-field-wrap .p-select:focus-within {
         border-color: var(--teal-bright) !important;
-        background: #ffffff !important;
+        background: var(--color-bg-card) !important;
         box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
     }
     .m-sheet .auth-field-wrap .p-select .p-select-dropdown {
         background: rgba(226, 232, 240, 0.5) !important;
-        border-left: 1px solid #e2e8f0 !important;
-        color: #64748b !important;
+        border-left: 1px solid var(--color-border) !important;
+        color: var(--color-text-muted) !important;
     }
 }
 

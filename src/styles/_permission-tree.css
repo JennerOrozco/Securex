@@ -1,4 +1,4 @@
-/* =======================================================================
+﻿/* =======================================================================
    PERMISSION-TREE — custom HTML tree table (not PrimeNG)
    Used by CompanyPermissions page and RolePermissionsModal.
    Distinct from src/styles/_tree-tables.css which is for the
@@ -20,7 +20,7 @@
 }
 
 .gm-tt-header {
-    background: var(--ggts-navy-hex);
+    background: var(--app-main-primary);
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
@@ -76,7 +76,7 @@
 /* Chevrons */
 .gm-tt-chevron {
     font-size: 0.62rem;
-    color: #94a3b8;
+    color: var(--color-text-light);
     cursor: pointer;
     width: 20px;
     height: 20px;
@@ -90,7 +90,7 @@
 
 .gm-tt-chevron:hover {
     background: rgba(148, 163, 184, 0.15);
-    color: #475569;
+    color: var(--color-text-secondary);
 }
 
 .gm-tt-chevron.open {
@@ -108,7 +108,7 @@
     width: 18px;
     height: 18px;
     border-radius: 6px;
-    border: 1.5px solid #cbd5e1;
+    border: 1.5px solid var(--color-border-light);
     display: grid;
     place-items: center;
     cursor: pointer;
@@ -120,26 +120,26 @@
 }
 
 .gm-tt-checkbox:hover {
-    border-color: #6366f1;
+    border-color: var(--app-main-indigo);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
 .gm-tt-checkbox.all {
-    background: #323462;
-    border-color: #323462;
+    background: var(--app-main-primary);
+    border-color: var(--app-main-primary);
     color: white;
     box-shadow: 0 2px 6px rgba(50, 52, 98, 0.25);
 }
 
 .gm-tt-checkbox.partial {
     background: rgba(50, 52, 98, 0.12);
-    border-color: #323462;
-    color: #323462;
+    border-color: var(--app-main-primary);
+    color: var(--app-main-primary);
 }
 
 .gm-tt-checkbox.action.all {
-    background: #10b981;
-    border-color: #10b981;
+    background: var(--color-emerald);
+    border-color: var(--color-emerald);
     color: white;
     box-shadow: 0 2px 6px rgba(16, 185, 129, 0.25);
 }
@@ -156,35 +156,35 @@
     flex-shrink: 0;
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.22)) !important;
     border: 1px solid rgba(99, 102, 241, 0.25) !important;
-    color: #6366f1 !important;
+    color: var(--app-main-indigo) !important;
 }
 
 .gm-tt-icon-wrap.menu-type {
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(99, 102, 241, 0.22)) !important;
     border: 1px solid rgba(99, 102, 241, 0.25) !important;
-    color: #6366f1 !important;
+    color: var(--app-main-indigo) !important;
 }
 
 .gm-tt-icon-wrap.submenu-type {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(16, 185, 129, 0.22)) !important;
     border: 1px solid rgba(16, 185, 129, 0.25) !important;
-    color: #10b981 !important;
+    color: var(--color-emerald) !important;
 }
 
 .gm-tt-icon-wrap.action-type {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(245, 158, 11, 0.22)) !important;
     border: 1px solid rgba(245, 158, 11, 0.25) !important;
-    color: #f59e0b !important;
+    color: var(--color-amber) !important;
 }
 
 .gm-tt-icon-wrap.component-type {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), rgba(239, 68, 68, 0.22)) !important;
     border: 1px solid rgba(239, 68, 68, 0.25) !important;
-    color: #ef4444 !important;
+    color: var(--color-danger-text) !important;
 }
 
 /* Module color classes (used by role-permissions-modal) */
-.mod-purple { background: linear-gradient(135deg,#e0e7ff,#c7d2fe); color: #323462; }
+.mod-purple { background: linear-gradient(135deg,#e0e7ff,#c7d2fe); color: var(--app-main-primary); }
 .mod-blue   { background: linear-gradient(135deg,#dbeafe,#bfdbfe); color: #1e40af; }
 .mod-green  { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color: #065f46; }
 .mod-orange { background: linear-gradient(135deg,#fff7ed,#fed7aa); color: #9a3412; }
@@ -194,10 +194,10 @@
 .mod-slate  { background: linear-gradient(135deg,#f1f5f9,#e2e8f0); color: #334155; }
 
 /* Type icons (company-permissions scope color coding) */
-.icon-menu      { color: #6366f1 !important; }
-.icon-submenu   { color: #10b981 !important; }
-.icon-action    { color: #f59e0b !important; }
-.icon-component { color: #ef4444 !important; }
+.icon-menu      { color: var(--app-main-indigo) !important; }
+.icon-submenu   { color: var(--color-emerald) !important; }
+.icon-action    { color: var(--color-amber) !important; }
+.icon-component { color: var(--color-danger-text) !important; }
 
 /* Connector lines per depth level */
 .gm-tt-row {
@@ -235,8 +235,7 @@
 }
 
 .gm-tt-row:hover {
-    background: rgba(99, 102, 241, 0.05) !important;
-    box-shadow: inset 3px 0 0 #6366f1;
+    background: rgba(99, 102, 241, 0.07) !important;
 }
 
 /* Smooth child expand/collapse */
@@ -255,20 +254,20 @@
 /* Text */
 .gm-tt-name {
     font-size: 0.78rem;
-    color: #1e293b;
+    color: var(--color-text-heading);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
 .depth-2 .gm-tt-name {
-    color: #475569;
+    color: var(--color-text-secondary);
 }
 
 .gm-tt-slug {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.65rem;
-    color: var(--ggts-text-light);
+    color: var(--app-main-text-light);
     font-weight: 500;
     margin-top: 1px;
 }
@@ -290,7 +289,7 @@
     top: 50%;
     transform: translateY(-50%);
     background: rgba(99, 102, 241, 0.1);
-    color: #6366f1;
+    color: var(--app-main-indigo);
     font-size: 0.65rem;
     font-weight: 700;
     padding: 2px 6px;

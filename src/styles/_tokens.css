@@ -1,168 +1,177 @@
-/* =======================================================================
-   TOKENS — design tokens (CSS custom properties)
-   Loaded from src/styles.css.
+﻿/* =======================================================================
+   TOKENS — single source of truth for the design system
+   All partials in src/styles/ MUST reference these. No hardcoded values.
    ======================================================================= */
 
 :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.75rem;
+  /* ──────────────── FONT SIZE LADDER ──────────────── */
+  --font-3xs: 0.5rem;
+  --font-2xs: 0.625rem;
+  --font-xs:  0.7rem;
+  --font-sm:  0.75rem;
+  --font-md:  0.8rem;
+  --font-base: 0.875rem;
+  --font-lg:  1rem;
+  --font-xl:  1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 2rem;
 
-    /* Custom NC Colors */
-    --nc-navy: 222 47% 11%;
-    --nc-red: 350 70% 50%;
-    --padel-orange: 18 61% 47%;
+  /* ──────────────── RADIUS LADDER ──────────────── */
+  --radius-xs:  4px;
+  --radius-sm:  6px;
+  --radius-md:  8px;
+  --radius-lg:  12px;
+  --radius-xl:  16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+  --radius-full: 9999px;
 
-    /* GGTS - Group Global Trading Services Brand Colors */
-    --ggts-navy: 218 85% 8%;
-    --ggts-primary: 210 44% 59%;
-    --ggts-light: 200 33% 65%;
-    --ggts-white: 0 0% 100%;
+  /* ──────────────── SPACING LADDER ──────────────── */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
 
-    /* GGTS Hex tokens (required by shared table components) */
-    --ggts-navy-hex: #250303;
-    --ggts-navy-light: #3b0808;
-    --ggts-blue-accent: #7f1d1d;
-    --ggts-teal: #dc2626;
-    --ggts-border: #e2e8f0;
-    --ggts-text-main: #0f172a;
-    --ggts-text-muted: #64748b;
-    --ggts-text-light: #94a3b8;
-    --ggts-bg-page: #f1f5f9;
-    --ggts-bg-card: #ffffff;
-    --ggts-indigo: #6366f1;
+  /* ──────────────── BRAND COLORS ──────────────── */
+  --app-main-primary:        #250303;
+  --app-main-primary-light:  #3b0808;
+  --app-main-primary-dark:   #1a0202;
+  --app-main-primary-deep:   #2d0505;
+  --app-main-accent:         #7f1d1d;
+  --app-main-indigo:         #6366f1;
+  --app-main-indigo-light:   #e0e7ff;
+  --app-main-indigo-border:  #c7d2fe;
 
-    /* Auth form theme tokens (formerly in features/auth/auth-shared.css) */
-    --teal-darkest: #0d0000;
-    --teal-accent: #7f1d1d;
-    --teal-bright: #dc2626;
-    --teal-dark: #1a0505;
-    --teal-mid: #2d0a0a;
-    --auth-white: #ffffff;
-    --auth-white-60: rgba(255, 255, 255, 0.6);
-    --auth-white-20: rgba(255, 255, 255, 0.2);
-    --auth-white-10: rgba(255, 255, 255, 0.1);
-    --auth-white-05: rgba(255, 255, 255, 0.05);
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
+  /* ──────────────── SEMANTIC COLORS ──────────────── */
+  --color-success-bg:     #dcfce7;
+  --color-success-text:   #166534;
+  --color-success-border: #bbf7d0;
+  --color-danger-bg:      #fee2e2;
+  --color-danger-text:    #991b1b;
+  --color-danger-hover:   #b91c1c;
+  --color-danger-border:  #fecaca;
+  --color-danger-light:   #fef2f2;
+  --color-warning-bg:     #fef9c3;
+  --color-warning-text:   #854d0e;
+  --color-warning-border: #fef08a;
+  --color-info-bg:        #e0f2fe;
+  --color-info-text:      #075985;
+  --color-info-border:    #bae6fd;
+  --color-amber:          #f59e0b;
+  --color-amber-bg:       #fffbeb;
+  --color-amber-border:   #fde68a;
+  --color-emerald:        #10b981;
+  --color-emerald-bg:     #ecfdf5;
+  --color-emerald-border: #a7f3d0;
 
-    /* Custom tokens */
-    --gradient-primary: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(210 44% 59%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(218 85% 8%) 0%, hsl(218 85% 15%) 100%);
-    --gradient-card: linear-gradient(180deg, hsl(0 0% 100%) 0%, hsl(210 20% 98%) 100%);
-    --shadow-soft: 0 4px 20px -2px hsl(218 85% 8% / 0.08);
-    --shadow-medium: 0 8px 30px -4px hsl(218 85% 8% / 0.12);
-    --shadow-glow: 0 0 40px hsl(210 44% 59% / 0.15);
+  /* ──────────────── NEUTRAL / SURFACE COLORS ──────────────── */
+  --color-bg-page:        #f1f5f9;
+  --color-bg-subtle:      #f8fafc;
+  --color-bg-card:        #ffffff;
+  --color-border:         #e2e8f0;
+  --color-border-light:   #cbd5e1;
+  --color-text-main:      #0f172a;
+  --color-text-heading:   #1e293b;
+  --color-text-secondary: #475569;
+  --color-text-muted:     #64748b;
+  --color-text-light:     #94a3b8;
+
+  /* ──────────────── BACKWARD COMPAT (deprecated aliases) ──────────────── */
+  --app-main-border:      var(--color-border);
+  --app-main-text-main:   var(--color-text-main);
+  --app-main-text-muted:  var(--color-text-muted);
+  --app-main-text-light:  var(--color-text-light);
+  --app-main-bg-page:     var(--color-bg-page);
+  --app-main-bg-card:     var(--color-bg-card);
+  --app-main-blue-accent: var(--app-main-accent);
+  --app-main-teal:        var(--color-danger-text);
+
+  /* ──────────────── AUTH / LOGIN THEME ──────────────── */
+  --teal-darkest:  #0d0000;
+  --teal-dark:     #1a0505;
+  --teal-mid:      #2d0a0a;
+  --teal-accent:   #7f1d1d;
+  --teal-bright:   #dc2626;
+  --auth-white:    #ffffff;
+  --auth-white-60: rgba(255, 255, 255, 0.6);
+  --auth-white-20: rgba(255, 255, 255, 0.2);
+  --auth-white-10: rgba(255, 255, 255, 0.1);
+  --auth-white-05: rgba(255, 255, 255, 0.05);
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+
+  /* ──────────────── SHADOWS ──────────────── */
+  --shadow-soft:   0 4px 20px -2px rgba(15, 23, 42, 0.08);
+  --shadow-medium: 0 8px 30px -4px rgba(15, 23, 42, 0.12);
+  --shadow-glow:   0 0 40px rgba(99, 102, 241, 0.15);
 }
 
+/* ──────────────── BODY ──────────────── */
 body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #f8fafc;
+  color: var(--color-text-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* Modern Scrollbars */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
+/* ──────────────── SCROLLBARS ──────────────── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-    background-color: hsla(var(--muted-foreground), 0.2);
-    border-radius: 9999px;
+  background-color: var(--color-text-light);
+  border-radius: var(--radius-full);
 }
 ::-webkit-scrollbar-thumb:hover {
-    background-color: hsla(var(--muted-foreground), 0.4);
+  background-color: var(--color-text-muted);
 }
 
-/* Mobile Navigation */
+/* ──────────────── MOBILE NAVIGATION ──────────────── */
 .mobile-bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 4rem;
-    background-color: hsl(var(--card));
-    border-top: 1px solid hsl(var(--border));
-    z-index: 100;
-    padding-bottom: env(safe-area-inset-bottom);
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  height: 4rem;
+  background-color: var(--color-bg-card);
+  border-top: 1px solid var(--color-border);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
 }
-
-@media (min-width: 768px) {
-    .mobile-bottom-nav {
-        display: none;
-    }
-}
+@media (min-width: 768px) { .mobile-bottom-nav { display: none; } }
 
 .mobile-nav-items {
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-    height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 100%;
 }
 
 .mobile-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    color: hsl(var(--muted-foreground));
-    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
-    width: 100%;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  color: var(--color-text-muted);
+  transition: color 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%; height: 100%;
 }
 
-.mobile-nav-item svg {
-    width: 1.5rem;
-    height: 1.5rem;
-}
-
-.mobile-nav-item span {
-    font-size: 10px;
-    font-weight: 500;
-}
-
-.mobile-nav-item.active {
-    color: hsl(var(--primary));
-}
+.mobile-nav-item svg { width: var(--font-2xl); height: var(--font-2xl); }
+.mobile-nav-item span { font-size: 10px; font-weight: 500; }
+.mobile-nav-item.active { color: var(--app-main-indigo); }
 
 .sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background-color: rgb(0 0 0 / 0.5);
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition-property: opacity;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.sidebar-overlay.open {
-    opacity: 1;
-    pointer-events: auto;
-}
+.sidebar-overlay.open { opacity: 1; pointer-events: auto; }

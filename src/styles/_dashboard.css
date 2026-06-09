@@ -83,10 +83,7 @@
 
 .welcome-avatar-icon {
     font-size: 2.2rem;
-    color: #ffffff;
-}
-
-.welcome-badge {
+    color: var(--color-bg-card);
     display: inline-block;
     background-color: rgba(13, 148, 136, 0.08);
     color: #0d9488;
@@ -100,8 +97,7 @@
 }
 
 .welcome-title {
-    color: #1e293b;
-    font-size: 2.25rem;
+    color: var(--color-text-heading);
     font-weight: 800;
     margin: 0 0 0.75rem 0;
     letter-spacing: -0.02em;
@@ -112,8 +108,7 @@
 }
 
 .welcome-subtitle {
-    color: #64748b;
-    font-size: 1rem;
+    color: var(--color-text-muted);
     line-height: 1.6;
     margin: 0 0 1.5rem 0;
 }
@@ -121,14 +116,13 @@
 .welcome-divider {
     width: 60px;
     height: 4px;
-    background-color: #e2e8f0;
+    background-color: var(--color-border);
     border-radius: 2px;
     margin: 0.5rem auto 1.5rem auto;
 }
 
 .welcome-footer-text {
-    color: #475569;
-    font-size: 0.9rem;
+    color: var(--color-text-secondary);
     display: flex;
     align-items: center;
     justify-content: center;

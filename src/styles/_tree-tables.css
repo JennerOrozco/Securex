@@ -1,4 +1,4 @@
-/* =======================================================================
+﻿/* =======================================================================
    TREE-TABLES — global styles
    Shared styles for PrimeNG TreeTable (used by TreeTableComponent,
    role-permissions-modal, company-permissions).  Imported from styles.css.
@@ -15,9 +15,9 @@
 }
 
 .p-treetable .p-treetable-thead > tr > th {
-    background: var(--ggts-navy-hex) !important;
+    background: var(--app-main-primary) !important;
     color: rgba(255, 255, 255, 0.9) !important;
-    font-size: 12px !important;
+    font-size: var(--font-sm) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em;
@@ -31,18 +31,18 @@
 }
 
 .p-treetable .p-treetable-thead > tr > th.sortable:hover {
-    background: var(--ggts-navy-light) !important;
+    background: var(--app-main-primary-light) !important;
 }
 
 .p-treetable .th-content {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     white-space: nowrap;
 }
 
 .p-treetable .th-content i {
-    font-size: 10px;
+    font-size: var(--font-2xs);
     opacity: 0.5;
 }
 
@@ -60,7 +60,7 @@
    ───────────────────────────────────────────────────────────── */
 .p-treetable .p-treetable-tbody > tr {
     background: transparent;
-    color: var(--ggts-navy-hex);
+    color: var(--app-main-primary);
     transition: all 0.15s ease-in-out;
 }
 
@@ -73,13 +73,13 @@
 }
 
 .p-treetable .p-treetable-tbody > tr:hover {
-    background: #f8fafc !important;
+    background: var(--color-bg-page) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr > td {
     padding: 5px 12px !important;
     border: none !important;
-    border-bottom: 1px solid var(--ggts-border) !important;
+    border-bottom: 1px solid var(--app-main-border) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -89,7 +89,7 @@
 .p-treetable .p-treetable-tbody > tr.row-submenu,
 .p-treetable .p-treetable-tbody > tr.row-action,
 .p-treetable .p-treetable-tbody > tr.row-component {
-    background-color: #ffffff !important;
+    background-color: var(--color-bg-card) !important;
     color: #000000 !important;
 }
 
@@ -98,24 +98,24 @@
 .p-treetable .p-treetable-tbody > tr.row-action:hover,
 .p-treetable .p-treetable-tbody > tr.row-component:hover,
 .p-treetable .p-treetable-tbody > tr.row-company:hover {
-    background-color: #f8fafc !important;
+    background-color: var(--color-bg-subtle) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-app {
-    background-color: #f1f5f9 !important;
+    background-color: var(--color-bg-page) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-app > td {
     font-weight: 600 !important;
-    color: #1e293b !important;
+    color: var(--color-text-heading) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-app:hover {
-    background-color: #e2e8f0 !important;
+    background-color: var(--color-border) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-company {
-    background-color: #ffffff !important;
+    background-color: var(--color-bg-card) !important;
 }
 
 /* Black text in non-app rows */
@@ -153,7 +153,7 @@
     padding: 4px 12px !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-component > td:first-child {
-    border-left: 4px solid #e2e8f0 !important;
+    border-left: 4px solid var(--color-border) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -161,7 +161,7 @@
    ───────────────────────────────────────────────────────────── */
 .gm-treetable .p-treetable-tbody > tr > td {
     overflow: visible !important;
-    font-size: 0.78rem;
+    font-size: var(--font-sm);
 }
 
 .gm-treetable .p-treetable-tbody > tr {
@@ -305,16 +305,16 @@
 }
 
 .p-treetable .p-treetable-tbody > tr.row-component .node-icon-wrap {
-    background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
+    background: var(--color-bg-card) !important;
+    border: 1px solid var(--color-border-light) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-component .node-icon-wrap i {
-    color: #64748b !important;
+    color: var(--color-text-muted) !important;
 }
 
 tr.drag-over {
-    outline: 2px dashed var(--ggts-blue-accent) !important;
+    outline: 2px dashed var(--app-main-blue-accent) !important;
     outline-offset: -2px;
     background: rgba(99, 102, 241, 0.04) !important;
 }
@@ -331,23 +331,23 @@ tr.drag-over {
 .node-icon-wrap {
     width: 28px;
     height: 28px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     display: grid;
     place-items: center;
-    font-size: 0.85rem;
+    font-size: var(--font-base);
     flex-shrink: 0;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .node-name {
     font-weight: 600;
-    font-size: 0.78rem;
-    color: var(--ggts-text-main);
+    font-size: var(--font-sm);
+    color: var(--app-main-text-main);
 }
 
 .node-slug {
-    font-size: 0.72rem;
-    color: var(--ggts-text-muted);
+    font-size: var(--font-xs);
+    color: var(--app-main-text-muted);
     font-weight: 500;
     margin-top: 1px;
 }
@@ -359,10 +359,10 @@ tr.drag-over {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    font-size: 0.6rem;
+    font-size: var(--font-xs);
     font-weight: 700;
-    padding: 0.1rem 0.35rem;
-    border-radius: 4px;
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--radius-xs);
     letter-spacing: 0.04em;
     border: 1px solid;
     text-transform: uppercase;
@@ -371,14 +371,14 @@ tr.drag-over {
 
 .type-menu {
     background: #eef2ff;
-    color: #4338ca;
-    border-color: #c7d2fe;
+    color: var(--app-main-indigo);
+    border-color: var(--app-main-indigo-border);
 }
 
 .type-submenu {
-    background: #ecfdf5;
+    background: var(--color-emerald-bg);
     color: #047857;
-    border-color: #a7f3d0;
+    border-color: var(--color-emerald-border);
 }
 
 .type-action {
@@ -394,27 +394,27 @@ tr.drag-over {
 }
 
 .type-activo {
-    background: #dcfce7 !important;
-    color: #166534 !important;
-    border-color: #bbf7d0 !important;
+    background: var(--color-success-bg) !important;
+    color: var(--color-success-text) !important;
+    border-color: var(--color-success-border) !important;
 }
 
 .type-activo::before    { background: #16a34a; }
 
 .type-inactivo {
-    background: #f1f5f9 !important;
-    color: #64748b !important;
-    border-color: #e2e8f0 !important;
+    background: var(--color-bg-page) !important;
+    color: var(--color-text-muted) !important;
+    border-color: var(--color-border) !important;
 }
 
-.type-inactivo::before  { background: #94a3b8; }
+.type-inactivo::before  { background: var(--color-text-light); }
 
 /* Aliases used by admin-access / admin-permissions — correct semantic colors */
 .type-approved,
 .type-active {
-    background: #dcfce7 !important;
-    color: #166534 !important;
-    border-color: #bbf7d0 !important;
+    background: var(--color-success-bg) !important;
+    color: var(--color-success-text) !important;
+    border-color: var(--color-success-border) !important;
 }
 
 .type-approved::before,
@@ -424,9 +424,9 @@ tr.drag-over {
 
 .type-rejected,
 .type-inactive {
-    background: #fee2e2 !important;
-    color: #991b1b !important;
-    border-color: #fecaca !important;
+    background: var(--color-danger-bg) !important;
+    color: var(--color-danger-text) !important;
+    border-color: var(--color-danger-border) !important;
 }
 
 .type-rejected::before,
@@ -435,20 +435,20 @@ tr.drag-over {
 }
 
 .type-pending {
-    background: #fef9c3 !important;
-    color: #854d0e !important;
+    background: var(--color-warning-bg) !important;
+    color: var(--color-warning-text) !important;
     border-color: #fef08a !important;
 }
 
 .type-pending::before {
-    background: #f59e0b !important;
+    background: var(--color-amber) !important;
 }
 
 /* Boolean & provider chips (used by admin-users / regular tables) */
 .type-true {
-    background: #dcfce7;
-    color: #166534;
-    border-color: #bbf7d0;
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+    border-color: var(--color-success-border);
 }
 
 .type-true::before {
@@ -456,25 +456,25 @@ tr.drag-over {
 }
 
 .type-false {
-    background: #f1f5f9;
-    color: #64748b;
-    border-color: #e2e8f0;
+    background: var(--color-bg-page);
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
 }
 
 .type-false::before {
-    background: #94a3b8 !important;
+    background: var(--color-text-light) !important;
 }
 
 .type-default,
 .type-local {
-    background: #f1f5f9;
-    color: #475569;
-    border-color: #e2e8f0;
+    background: var(--color-bg-page);
+    color: var(--color-text-secondary);
+    border-color: var(--color-border);
 }
 
 .type-default::before,
 .type-local::before {
-    background: #94a3b8 !important;
+    background: var(--color-text-light) !important;
 }
 
 .type-google {
@@ -488,13 +488,13 @@ tr.drag-over {
 }
 
 .type-microsoft {
-    background: #e0e7ff;
+    background: var(--app-main-indigo-light);
     color: #3730a3;
-    border-color: #c7d2fe;
+    border-color: var(--app-main-indigo-border);
 }
 
 .type-microsoft::before {
-    background: #4338ca !important;
+    background: var(--app-main-indigo) !important;
 }
 
 .type-github {
@@ -509,16 +509,16 @@ tr.drag-over {
 
 /* Module icon colors (used by <app-tree-table> children) */
 .bg-indigo, .bg-emerald, .bg-amber, .bg-rose, .bg-slate {
-    background: #f8fafc !important;
-    border: 1px solid #cbd5e1 !important;
+    background: var(--color-bg-subtle) !important;
+    border: 1px solid var(--color-border-light) !important;
     box-shadow: none !important;
 }
 
-.bg-indigo { color: #6366f1 !important; }
-.bg-emerald{ color: #10b981 !important; }
-.bg-amber  { color: #f59e0b !important; }
+.bg-indigo { color: var(--app-main-indigo) !important; }
+.bg-emerald{ color: var(--color-emerald) !important; }
+.bg-amber  { color: var(--color-amber) !important; }
 .bg-rose   { color: #f43f5e !important; }
-.bg-slate  { color: #64748b !important; }
+.bg-slate  { color: var(--color-text-muted) !important; }
 
 /* ─────────────────────────────────────────────────────────────
    ROUTE LINKS, BODY TEXT, ACTIONS
@@ -527,67 +527,47 @@ tr.drag-over {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: var(--ggts-text-muted);
-    font-size: 0.78rem;
+    color: var(--app-main-text-muted);
+    font-size: var(--font-sm);
     font-weight: 500;
     text-decoration: none;
 }
 
 .route-link:hover {
-    color: var(--ggts-blue-accent);
+    color: var(--app-main-blue-accent);
 }
 
 .body-text {
-    font-size: 0.78rem;
+    font-size: var(--font-sm);
     font-weight: 500;
-    color: var(--ggts-text-main);
+    color: var(--app-main-text-main);
 }
 
 .body-text.text-muted {
-    color: var(--ggts-text-muted);
+    color: var(--app-main-text-muted);
 }
 
-/* Center actions column in TreeTable */
-.p-treetable .p-treetable-thead th.th-actions {
-    text-align: center !important;
-}
-
-.p-treetable .p-treetable-thead th.th-actions .th-content {
-    justify-content: center !important;
-    display: flex !important;
-    width: 100% !important;
-}
-
-.p-treetable .p-treetable-tbody td.td-actions {
-    text-align: center !important;
-}
-
-.p-treetable .p-treetable-tbody td.td-actions app-table-actions {
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    width: 100% !important;
-}
+/* Actions column centering — shared with _tables.css (global th.th-actions / td.td-actions) */
 
 /* ─────────────────────────────────────────────────────────────
    PAGINATOR (tree-table version)
    ───────────────────────────────────────────────────────────── */
 .p-treetable .p-paginator {
     background: rgba(255, 255, 255, 0.5) !important;
-    border-top: 1px solid var(--ggts-border) !important;
+    border-top: 1px solid var(--app-main-border) !important;
     padding: 0.25rem !important;
 }
 
 .p-treetable .p-paginator .p-paginator-element {
     min-width: 1.75rem !important;
     height: 1.75rem !important;
-    font-size: 11px !important;
-    color: var(--ggts-text-muted) !important;
-    border-radius: 6px !important;
+    font-size: var(--font-xs) !important;
+    color: var(--app-main-text-muted) !important;
+    border-radius: var(--radius-sm) !important;
 }
 
 .p-treetable .p-paginator .p-paginator-element:hover {
-    background: #f1f5f9 !important;
+    background: var(--color-bg-page) !important;
 }
 
 
@@ -601,42 +581,42 @@ tr.drag-over {
     gap: 0.5rem;
     margin: 0.75rem 1.5rem;
     padding: 1rem;
-    border: 2px dashed #cbd5e1;
-    border-radius: 10px;
-    background: #f8fafc;
-    color: var(--ggts-text-muted);
-    font-size: 0.85rem;
+    border: 2px dashed var(--color-border-light);
+    border-radius: var(--radius-lg);
+    background: var(--color-bg-subtle);
+    color: var(--app-main-text-muted);
+    font-size: var(--font-base);
     transition: all 0.2s ease;
     cursor: default;
     user-select: none;
 }
 
 .root-drop-zone.drag-over {
-    border-color: var(--ggts-teal);
+    border-color: var(--app-main-teal);
     background: rgba(13, 148, 136, 0.06);
-    color: var(--ggts-teal);
+    color: var(--app-main-teal);
 }
 
 .root-drop-zone i {
-    font-size: 1rem;
+    font-size: var(--font-lg);
 }
 
 /* ─────────────────────────────────────────────────────────────
    TYPES LEGEND BAR
    ───────────────────────────────────────────────────────────── */
 .types-legend-bar {
-    background: #f8fafc;
+    background: var(--color-bg-subtle);
     padding: 0.65rem 1.5rem;
-    border-bottom: 1px solid var(--ggts-border);
+    border-bottom: 1px solid var(--app-main-border);
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
 .legend-label {
-    font-size: 0.65rem;
+    font-size: var(--font-2xs);
     font-weight: 800;
-    color: var(--ggts-text-light);
+    color: var(--app-main-text-light);
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
@@ -661,8 +641,8 @@ tr.drag-over {
 }
 
 .legend-desc {
-    font-size: 0.7rem;
-    color: var(--ggts-text-muted);
+    font-size: var(--font-xs);
+    color: var(--app-main-text-muted);
     font-weight: 500;
 }
 
@@ -683,17 +663,17 @@ tr.drag-over {
 .perm-search {
     width: 100%;
     border: 1px solid rgba(226, 232, 240, 0.9);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 0.45rem 0.65rem 0.45rem 2rem;
-    font-size: 0.8rem;
-    color: #0f172a;
+    font-size: var(--font-md);
+    color: var(--color-text-main);
     background: rgba(255, 255, 255, 0.8);
     outline: none;
     transition: all 0.2s;
 }
 
 .perm-search:focus {
-    border-color: #6366f1;
+    border-color: var(--app-main-indigo);
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
     background: #fff;
 }
@@ -704,10 +684,12 @@ tr.drag-over {
 .selectors-bar {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 1.25rem;
     padding: 1.25rem 1.5rem;
-    background: var(--ggts-navy-hex);
+    background: var(--app-main-primary);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .selector-group {
@@ -720,11 +702,11 @@ tr.drag-over {
 }
 
 .selector-label {
-    font-size: 0.72rem;
+    font-size: var(--font-xs);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.06em;
+    color: rgba(255, 255, 255, 0.65);
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -737,7 +719,7 @@ tr.drag-over {
     gap: 1rem;
     padding: 0.75rem 1.5rem;
     background: rgba(248, 250, 252, 0.75);
-    border-bottom: 1px solid var(--ggts-border);
+    border-bottom: 1px solid var(--app-main-border);
     flex-wrap: wrap;
 }
 
@@ -748,13 +730,13 @@ tr.drag-over {
 }
 
 /* .bulk-btn definido en _utilities.css (.muted variant backward compat) */
-.bulk-btn.muted { color: var(--ggts-text-muted); }
-.bulk-btn.muted:hover { background: #f1f5f9; }
+.bulk-btn.muted { color: var(--app-main-text-muted); }
+.bulk-btn.muted:hover { background: var(--color-bg-page); }
 
 .perm-count {
-    font-size: 0.7rem;
+    font-size: var(--font-xs);
     font-weight: 600;
-    color: var(--ggts-text-light);
+    color: var(--app-main-text-light);
     padding-left: 0.5rem;
 }
 
@@ -775,12 +757,12 @@ tr.drag-over {
         cursor: pointer;
     }
     .gm-treetable .p-treetable-tbody > tr > td {
-        font-size: 0.7rem;
+        font-size: var(--font-xs);
     }
     .gm-treetable .node-name,
     .gm-treetable .body-text,
     .gm-treetable .route-link {
-        font-size: 0.68rem;
+        font-size: var(--font-2xs);
     }
     .type-chip {
         display: none;

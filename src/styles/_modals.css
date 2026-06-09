@@ -1,4 +1,4 @@
-/* =======================================================================
+﻿/* =======================================================================
    MODALS — global styles
    Shared styles for PrimeNG Dialog (used by modal-shell, form-modal,
    delete-modal, columns-modal, role-permissions-modal and send-email-modal).
@@ -121,7 +121,7 @@
 .gm-dialog .p-dialog-header .p-dialog-header-icon:hover,
 .gm-dialog .p-dialog-header .p-dialog-close-button:hover {
     background: rgba(255, 255, 255, 0.15) !important;
-    color: #ffffff !important;
+    color: var(--color-bg-card) !important;
 }
 
 /* Mobile sizing */
@@ -149,7 +149,9 @@
 .gm-dialog--add .p-dialog-header,
 .gm-dialog--view .p-dialog-header,
 .gm-dialog--edit .p-dialog-header,
-.gm-dialog--delete .p-dialog-header {
+.gm-dialog--delete .p-dialog-header,
+.gm-dialog--send .p-dialog-header,
+.gm-dialog--info .p-dialog-header {
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     padding: 1.25rem 1.55rem 1.2rem !important;
@@ -158,7 +160,9 @@
 .gm-dialog--add .p-dialog-content,
 .gm-dialog--view .p-dialog-content,
 .gm-dialog--edit .p-dialog-content,
-.gm-dialog--delete .p-dialog-content {
+.gm-dialog--delete .p-dialog-content,
+.gm-dialog--send .p-dialog-content,
+.gm-dialog--info .p-dialog-content {
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
     border: none !important;
@@ -167,7 +171,9 @@
 .gm-dialog--add .p-dialog-footer,
 .gm-dialog--view .p-dialog-footer,
 .gm-dialog--edit .p-dialog-footer,
-.gm-dialog--delete .p-dialog-footer {
+.gm-dialog--delete .p-dialog-footer,
+.gm-dialog--send .p-dialog-footer,
+.gm-dialog--info .p-dialog-footer {
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
 }
@@ -178,7 +184,9 @@
 .gm-dialog--add,
 .gm-dialog--view,
 .gm-dialog--edit,
-.gm-dialog--delete {
+.gm-dialog--delete,
+.gm-dialog--send,
+.gm-dialog--info {
     --gm-dialog-header-border: rgba(255, 255, 255, 0.12);
     --gm-dialog-header-title-color: #ffffff;
     --gm-dialog-header-icon-bg: rgba(255, 255, 255, 0.15);
@@ -210,7 +218,7 @@
 .gm-dialog--delete { --gm-dialog-header-bg: #991b1b; }
 
 .gm-dialog--delete .gm-delete-icon {
-    color: #991b1b !important;
+    color: var(--color-danger-text) !important;
 }
 
 .gm-dialog--delete .gm-delete-ring--1 {
@@ -226,15 +234,25 @@
 }
 
 .gm-dialog--delete .gm-delete-sub strong {
-    color: #991b1b !important;
+    color: var(--color-danger-text) !important;
 }
 
 .gm-dialog--delete .gm-header-badge {
     background: rgba(255, 255, 255, 0.2) !important;
-    color: #ffffff !important;
+    color: var(--color-bg-card) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
     font-weight: 700 !important;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   VARIANT — SEND (Electric Blue)
+   ───────────────────────────────────────────────────────────── */
+.gm-dialog--send { --gm-dialog-header-bg: #1e40af; }
+
+/* ─────────────────────────────────────────────────────────────
+   VARIANT — INFO (Navy Indigo)
+   ───────────────────────────────────────────────────────────── */
+.gm-dialog--info { --gm-dialog-header-bg: #323462; }
 
 @media screen and (max-width: 480px) {
     .p-dialog:not(.p-dialog-maximized) {
@@ -272,22 +290,32 @@
 
 .gm-icon--add {
     background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-    color: #065f46;
+    color: var(--color-success-text);
 }
 
 .gm-icon--edit {
     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
-    color: #1e40af;
+    color: var(--app-main-indigo);
 }
 
 .gm-icon--delete {
     background: linear-gradient(135deg, #ffe4e6, #fecdd3);
-    color: #9f1239;
+    color: var(--color-danger-text);
 }
 
 .gm-icon--view {
     background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
-    color: #323462;
+    color: var(--app-main-primary);
+}
+
+.gm-icon--send {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    color: var(--app-main-indigo);
+}
+
+.gm-icon--info {
+    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    color: var(--app-main-primary);
 }
 
 .gm-header-text {
@@ -324,14 +352,14 @@
 
 .gm-badge--view {
     background: rgba(224, 231, 255, 0.9);
-    color: #323462;
+    color: var(--app-main-primary);
 }
 
 .gm-title {
     margin: 0;
     font-size: 0.8rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--color-text-main);
     letter-spacing: -0.01em;
     white-space: nowrap;
     overflow: hidden;
@@ -395,7 +423,7 @@
 .gm-delete-ring--2 {
     width: 40px;
     height: 40px;
-    background: #fecdd3;
+    background: var(--color-danger-border);
     opacity: 0.5;
     animation-delay: 0.3s;
 }
@@ -403,7 +431,7 @@
 .gm-delete-ring--3 {
     width: 48px;
     height: 48px;
-    background: #fda4af;
+    background: var(--color-danger-bg);
     opacity: 0.25;
     animation-delay: 0.6s;
 }
@@ -418,25 +446,141 @@
     position: relative;
     z-index: 1;
     font-size: 1rem;
-    color: #e11d48;
+    color: var(--color-danger-text);
 }
 
 .gm-delete-title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #0f172a;
+    color: var(--color-text-main);
     margin: 0;
 }
 
 .gm-delete-sub {
     font-size: 0.75rem;
-    color: #64748b;
+    color: var(--color-text-muted);
     margin: 0;
     line-height: 1.4;
 }
 
 .gm-delete-sub strong {
-    color: #e11d48;
+    color: var(--color-danger-text);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SEND / RESET ZONE (shared by send-email-modal and
+   reset-password-modal — blue ring theme)
+   ───────────────────────────────────────────────────────────── */
+.gm-send-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 0.75rem 0 0.25rem;
+}
+
+.gm-send-icon-wrap {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+    margin-bottom: 2px;
+}
+
+.gm-send-ring {
+    position: absolute;
+    border-radius: 50%;
+    animation: pulse-ring 2s ease-out infinite;
+}
+
+.gm-send-ring--1 {
+    width: 32px;
+    height: 32px;
+    background: var(--app-main-indigo-light);
+    animation-delay: 0s;
+}
+
+.gm-send-ring--2 {
+    width: 40px;
+    height: 40px;
+    background: var(--app-main-indigo-light);
+    opacity: 0.5;
+    animation-delay: 0.3s;
+}
+
+.gm-send-ring--3 {
+    width: 48px;
+    height: 48px;
+    background: var(--app-main-indigo-border);
+    opacity: 0.25;
+    animation-delay: 0.6s;
+}
+
+.gm-send-icon {
+    position: relative;
+    z-index: 1;
+    font-size: 1rem;
+    color: var(--app-main-indigo);
+}
+
+.gm-send-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--color-text-main);
+    margin: 0;
+}
+
+.gm-send-sub {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    line-height: 1.4;
+}
+
+.gm-send-sub strong {
+    color: var(--app-main-indigo);
+}
+
+.gm-no-emails {
+    color: var(--color-text-light);
+    font-style: italic;
+}
+
+.gm-recipients {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.gm-recipients-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.gm-recipient-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--app-main-indigo-light);
+    border: 1px solid var(--app-main-indigo-light);
+    font-size: 0.78rem;
+    color: var(--app-main-indigo);
+    font-weight: 500;
+}
+
+.gm-recipient-chip i {
+    font-size: 0.65rem;
+    color: var(--app-main-indigo);
 }
 
 /* ─────────────────────────────────────────────────────────────

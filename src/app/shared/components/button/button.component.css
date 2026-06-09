@@ -1,9 +1,9 @@
-/* =====================================================
+﻿/* =====================================================
    SHARED BUTTON — Base Styles
    ===================================================== */
 :host {
-  --navy:        var(--ggts-navy-hex);
-  --navy-light:  var(--ggts-navy-light);
+  --navy:        var(--app-main-primary);
+  --navy-light:  var(--app-main-primary-light);
   display: inline-block;
   background: transparent !important;
   border: none !important;

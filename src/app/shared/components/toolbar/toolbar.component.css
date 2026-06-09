@@ -1,13 +1,13 @@
-:host {
+﻿:host {
   display: block;
   width: 100%;
-  --navy:        var(--ggts-navy-hex);
-  --navy-light:  var(--ggts-navy-light);
-  --teal:        var(--ggts-teal);
-  --border:      var(--ggts-border);
-  --text-main:   var(--ggts-text-main);
-  --text-muted:  var(--ggts-text-muted);
-  --text-light:  var(--ggts-text-light);
+  --navy:        var(--app-main-primary);
+  --navy-light:  var(--app-main-primary-light);
+  --teal:        var(--app-main-teal);
+  --border:      var(--app-main-border);
+  --text-main:   var(--app-main-text-main);
+  --text-muted:  var(--app-main-text-muted);
+  --text-light:  var(--app-main-text-light);
 }
 
 .toolbar {

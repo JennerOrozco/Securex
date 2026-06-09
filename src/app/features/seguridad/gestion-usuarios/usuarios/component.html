@@ -21,3 +21,12 @@
   (onRefresh)="load()"
   (onSelectGridEmptyFilter)="onSelectGridEmptyFilter()"
 ></app-crud-page>
+
+<app-reset-password-modal
+  [visible]="resetModalVisible"
+  [userEmail]="resetModalItem?.user_email || ''"
+  [userName]="resetModalItem?.user_name || ''"
+  [loading]="resetModalLoading"
+  (onConfirm)="confirmResetPassword()"
+  (onClose)="closeResetModal()">
+</app-reset-password-modal>

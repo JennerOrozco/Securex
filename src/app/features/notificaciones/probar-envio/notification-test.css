@@ -1,10 +1,10 @@
-:host {
+﻿:host {
   display: block;
 }
 
 .panel-blanco {
-  background-color: var(--ggts-bg-card, #ffffff);
-  border: 1px solid var(--ggts-border, #e2e8f0);
+  background-color: var(--app-main-bg-card, #ffffff);
+  border: 1px solid var(--app-main-border, #e2e8f0);
   border-radius: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   padding: 1rem;
