@@ -1,77 +1,110 @@
 {
-  "theme_color": "hsl(222.2, 84%, 4.9%)",
-  "background_color": "#ffffff",
+  "name": "SECUREX - Seguridad Empresarial",
+  "short_name": "SECUREX",
+  "description": "Plataforma de seguridad empresarial. Control total de operaciones.",
+  "start_url": "/home",
+  "scope": "/",
+  "id": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
+  "orientation": "portrait-primary",
+  "dir": "ltr",
+  "lang": "es-GT",
+  "theme_color": "#0b1120",
+  "background_color": "#0b1120",
+  "categories": ["business", "security", "utilities"],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
   "icons": [
     {
-      "purpose": "maskable",
+      "src": "icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-256x256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512x512.png",
       "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
       "src": "icon512_maskable.png",
-      "type": "image/png"
-    },
-    {
-      "purpose": "any",
       "sizes": "512x512",
-      "src": "icon512_rounded.png",
-      "type": "image/png"
-    }
-  ],
-  "orientation": "portrait",
-  "display": "standalone",
-  "display_override": [
-    "window-controls-overlay",
-    "standalone"
-  ],
-  "dir": "auto",
-  "lang": "es-GT",
-  "name": "SECUREX",
-  "short_name": "SECUREX",
-  "description": "Seguridad empresarial. Control total.",
-  "start_url": "https://admin.ggts.com.gt/home",
-  "id": "https://admin.ggts.com.gt/home",
-  "scope": "https://admin.ggts.com.gt",
-  "launch_handler": {
-    "client_mode": [
-      "focus-existing",
-      "auto"
-    ]
-  },
-  "shortcuts": [
-    {
-      "name": "Nuevo Registro",
-      "short_name": "Nuevo",
-      "description": "Crear una nueva entrada en el sistema",
-      "url": "https://admin.ggts.com.gt/nuevo",
-      "icons": [
-        {
-          "src": "icon-new.png",
-          "sizes": "192x192"
-        }
-      ]
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
-      "name": "Reportes",
-      "short_name": "Reportes",
-      "url": "https://admin.ggts.com.gt/reportes",
-      "icons": [
-        {
-          "src": "icon-reports.png",
-          "sizes": "192x192"
-        }
-      ]
+      "src": "icon512_rounded.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "screenshots": [
     {
-      "src": "screenshot_mobile_1.png",
+      "src": "screenshots/screenshot_mobile.png",
       "sizes": "1080x2400",
       "type": "image/png",
-      "form_factor": "narrow"
+      "form_factor": "narrow",
+      "label": "Panel de control principal"
     },
     {
-      "src": "screenshot_desktop_1.png",
+      "src": "screenshots/screenshot_desktop.png",
       "sizes": "1920x1080",
       "type": "image/png",
-      "form_factor": "wide"
+      "form_factor": "wide",
+      "label": "Vista de escritorio del dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Inicio",
+      "description": "Ir al panel de control principal",
+      "url": "/home",
+      "icons": [
+        {
+          "src": "icons/icon-96x96.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
