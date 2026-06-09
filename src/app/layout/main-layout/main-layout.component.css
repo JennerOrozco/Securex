@@ -27,9 +27,11 @@
   flex: 1;
   overflow-y: auto;
   position: relative;
-  /* Removed large padding here, will let components handle their own padding or use a wrapper */
   padding: 0;
   -webkit-overflow-scrolling: touch;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(200, 50, 50, 0.04) 0%, transparent 70%),
+    #f3f4f6;
 }
 
 /* Full layout variant for builders/editors */

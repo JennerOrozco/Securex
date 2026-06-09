@@ -37,6 +37,45 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
 
+  /* ──────────────── TAILWIND / SHADCN HSL TOKENS ────────────────
+     Rojinegro theme — dark surfaces with deep red accents.
+     Space-separated HSL for hsl(var(--x)) in tailwind.config.js.
+     DO NOT use commas. */
+  --background: 0 15% 5%;
+  --foreground: 0 10% 92%;
+  --card: 0 12% 8%;
+  --card-foreground: 0 10% 90%;
+  --popover: 0 13% 9%;
+  --popover-foreground: 0 10% 90%;
+  --primary: 0 70% 35%;
+  --primary-foreground: 0 10% 96%;
+  --secondary: 0 10% 14%;
+  --secondary-foreground: 0 10% 88%;
+  --muted: 0 8% 12%;
+  --muted-foreground: 0 8% 48%;
+  --accent: 0 55% 25%;
+  --accent-foreground: 0 10% 94%;
+  --destructive: 0 84% 50%;
+  --destructive-foreground: 0 10% 96%;
+  --border: 0 10% 18%;
+  --input: 0 10% 16%;
+  --ring: 0 65% 40%;
+
+  /* Light variant (for light-mode pages like auth) */
+  --background-light: 0 15% 96%;
+  --foreground-light: 0 20% 8%;
+  --card-light: 0 0% 100%;
+  --border-light: 0 10% 88%;
+  --muted-light: 0 10% 94%;
+
+  --nc-navy: 222 47% 11%;
+  --nc-red: 350 70% 50%;
+  --padel-orange: 18 61% 47%;
+  --ggts-navy: 218 85% 8%;
+  --ggts-primary: 210 44% 59%;
+  --ggts-light: 200 33% 65%;
+  --ggts-white: 0 0% 100%;
+
   /* ──────────────── BRAND COLORS ──────────────── */
   --app-main-primary:        #250303;
   --app-main-primary-light:  #3b0808;
@@ -113,11 +152,12 @@
 
 /* ──────────────── BODY ──────────────── */
 body {
-  background-color: #f8fafc;
+  background-color: #f1f5f9;
   color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
+  min-height: 100vh;
 }
 
 /* ──────────────── SCROLLBARS ──────────────── */
@@ -175,3 +215,14 @@ body {
   transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .sidebar-overlay.open { opacity: 1; pointer-events: auto; }
+
+/* ──────────────── CONTENT CARD ──────────────── */
+.content-card {
+  background-color: var(--app-main-bg-card, #ffffff);
+  border: 1px solid var(--app-main-border, #e2e8f0);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(180, 30, 30, 0.06), 0 8px 32px rgba(0,0,0,0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

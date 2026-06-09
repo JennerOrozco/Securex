@@ -2,21 +2,7 @@
   display: block;
 }
 
-.panel-blanco {
-  background-color: var(--app-main-bg-card, #ffffff);
-  border: 1px solid var(--app-main-border, #e2e8f0);
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  padding: 1rem;
-}
-
-@media (min-width: 768px) {
-  .panel-blanco {
-    padding: 1.5rem;
-  }
-}
-
-.panel-blanco app-toolbar ::ng-deep .toolbar {
+.content-card app-toolbar ::ng-deep .toolbar {
   background: transparent !important;
   border-bottom: none !important;
   padding-left: 0 !important;

@@ -1,5 +1,28 @@
-<div class="gm-profile-wrapper">
-  <div class="gm-profile-card">
+<div class="gm-profile-wrapper p-2">
+  @if (profileError(); as error) {
+    <div class="gm-error-banner">
+      <i class="pi pi-exclamation-circle"></i>
+      <span>{{ error }}</span>
+      <button class="gm-retry-btn" (click)="ngOnInit()">Reintentar</button>
+    </div>
+  }
+
+  <div class="gm-profile-header">
+    <div class="gm-avatar">
+      @if (profileData()?.profile_picture) {
+        <img [src]="profileData()?.profile_picture" alt="Avatar" />
+      } @else {
+        <span class="gm-avatar-initials">{{ getUserInitials() }}</span>
+      }
+    </div>
+    <div class="gm-user-meta">
+      <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
+      <p>{{ profileData()?.email }}</p>
+      <span class="gm-role-badge">{{ profileData()?.role_name || 'Sin Rol' }}</span>
+    </div>
+  </div>
+
+  <div class="content-card">
     @if (profileLoading() && !profileData()) {
       <div class="gm-skeleton-container">
         <div class="gm-skeleton-header">
@@ -17,29 +40,6 @@
         </div>
       </div>
     } @else {
-      @if (profileError(); as error) {
-        <div class="gm-error-banner">
-          <i class="pi pi-exclamation-circle"></i>
-          <span>{{ error }}</span>
-          <button class="gm-retry-btn" (click)="ngOnInit()">Reintentar</button>
-        </div>
-      }
-
-      <div class="gm-profile-header">
-        <div class="gm-avatar">
-          @if (profileData()?.profile_picture) {
-            <img [src]="profileData()?.profile_picture" alt="Avatar" />
-          } @else {
-            <span class="gm-avatar-initials">{{ getUserInitials() }}</span>
-          }
-        </div>
-        <div class="gm-user-meta">
-          <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
-          <p>{{ profileData()?.email }}</p>
-          <span class="gm-role-badge">{{ profileData()?.role_name || 'Sin Rol' }}</span>
-        </div>
-      </div>
-
       <div class="gm-profile-content">
         <nav class="gm-profile-menu" role="tablist">
           <button

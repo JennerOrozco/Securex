@@ -374,15 +374,20 @@
 }
 
 .auth-field-wrap .gm-required {
-    color: var(--color-danger-text) !important;
+    color: var(--teal-bright) !important;
+    font-weight: 700;
+}
+
+.auth-field-wrap .gm-input.p-inputtext.p-component {
     background: rgba(255, 255, 255, 0.07) !important;
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 12px !important;
     color: var(--color-bg-card) !important;
     font-family: var(--font-body) !important;
     font-size: 0.9rem !important;
-    padding: 13px 14px 13px 2rem !important;
+    padding: 13px 14px !important;
     min-height: 44px !important;
+    width: 100% !important;
 }
 
 .auth-field-wrap .gm-input.p-inputtext.p-component::placeholder {
@@ -393,6 +398,10 @@
     border-color: var(--teal-bright) !important;
     background: rgba(220, 38, 38, 0.08) !important;
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+}
+
+.auth-field-wrap .gm-has-icon .gm-input.p-inputtext.p-component {
+    padding-left: 2.25rem !important;
 }
 
 .auth-field-wrap .gm-field-icon {
@@ -426,7 +435,11 @@
     border: 1px solid rgba(255, 255, 255, 0.12) !important;
     border-radius: 12px !important;
     color: var(--color-bg-card) !important;
+    font-family: var(--font-body) !important;
+    font-size: 0.9rem !important;
+    padding: 13px 14px !important;
     min-height: 44px !important;
+    width: 100% !important;
 }
 
 .auth-field-wrap .p-password .p-inputtext::placeholder {

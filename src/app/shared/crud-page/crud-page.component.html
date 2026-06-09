@@ -1,4 +1,5 @@
 <div class="p-2">
+  <div class="content-card">
   <!-- Permission gate (optional) -->
   <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
     <i class="pi pi-lock"></i>
@@ -93,4 +94,5 @@
 
   <!-- Extra modals (e.g. role-permissions) can be projected here -->
   <ng-content select="[extra-modals]"></ng-content>
+  </div>
 </div>
