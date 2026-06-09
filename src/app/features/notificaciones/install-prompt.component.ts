@@ -10,11 +10,11 @@ import { CommonModule } from '@angular/common';
       <div class="flex flex-col gap-2 md:gap-3">
         <!-- Header con Icono -->
         <div class="flex items-center gap-2 md:gap-3">
-          <div class="w-8 h-8 md:w-10 md:h-10 bg-white rounded-lg md:rounded-xl flex items-center justify-center shadow-lg transform rotate-3">
-            <img src="/assets/image.png" alt="Logo" class="logo-img">
+          <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl overflow-hidden shadow-lg transform rotate-3 border border-white/10">
+            <img src="/securex.png" alt="Logo" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
-            <h4 class="text-white font-head font-bold text-sm md:text-base tracking-tight">Instalar AVANTEX APP</h4>
+            <h4 class="text-white font-head font-bold text-sm md:text-base tracking-tight">Instalar SECUREX APP</h4>
           </div>
           <button (click)="dismissPrompt()" class="w-6 h-6 flex items-center justify-center rounded-full bg-white/5 text-white/40 hover:text-white transition-colors">
             <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -46,7 +46,7 @@ import { CommonModule } from '@angular/common';
               <!-- Step 1: Intro -->
               <div *ngIf="iosStep === 1" class="animate-fade-in space-y-1 md:space-y-2">
                 <p class="text-white/90 text-[10px] md:text-xs font-body leading-relaxed text-center">
-                  Agrega <strong>AVANTEX APP</strong> a tu pantalla de inicio para una mejor experiencia.
+                  Agrega <strong>SECUREX APP</strong> a tu pantalla de inicio para una mejor experiencia.
                 </p>
                 <div class="flex justify-center">
                    <div class="w-8 h-8 md:w-10 md:h-10 bg-white/10 rounded-full flex items-center justify-center animate-bounce">
@@ -119,11 +119,6 @@ import { CommonModule } from '@angular/common';
     @keyframes iosSlideUp {
       from { transform: translateY(120%) scale(0.9); opacity: 0; }
       to { transform: translateY(0) scale(1); opacity: 1; }
-    }
-    .logo-img {
-      max-width: 80%;
-      max-height: 80%;
-      object-fit: contain;
     }
   `]
 })
