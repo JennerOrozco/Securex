@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
 import { InstallPromptComponent } from './features/notificaciones/install-prompt.component';
 import { NotificationPromptComponent } from './features/notificaciones/notification-prompt.component';
-import { UpdatePromptComponent } from '@shared/components/update-prompt/update-prompt.component';
-import { SwPush } from '@angular/service-worker';
+import { SwPush, SwUpdate } from '@angular/service-worker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
@@ -21,7 +20,6 @@ import { filter, map } from 'rxjs';
     RouterOutlet,
     InstallPromptComponent,
     NotificationPromptComponent,
-    UpdatePromptComponent,
     ToastModule,
     ConfirmDialogModule,
     LoaderComponent
@@ -33,6 +31,7 @@ export class App {
   private authService = inject(AuthService);
   private router = inject(Router);
   private swPush = inject(SwPush);
+  private swUpdate = inject(SwUpdate);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -47,7 +46,20 @@ export class App {
   });
 
   constructor() {
+    this.checkForUpdates();
     this.listenToNotificationClicks();
+  }
+
+  private checkForUpdates() {
+    if (!this.swUpdate.isEnabled) return;
+
+    this.swUpdate.versionUpdates.subscribe(evt => {
+      if (evt.type === 'VERSION_READY') {
+        if (confirm('Hay una nueva version de SECUREX. Deseas actualizar ahora?')) {
+          this.swUpdate.activateUpdate().then(() => window.location.reload());
+        }
+      }
+    });
   }
 
   private listenToNotificationClicks() {
