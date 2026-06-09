@@ -54,3 +54,4 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist/securex-app/browser
           publish_branch: deploy
+          force_orphan: true

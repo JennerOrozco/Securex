@@ -6,7 +6,6 @@
   "scope": "/",
   "id": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait-primary",
   "dir": "ltr",
   "lang": "es-GT",
