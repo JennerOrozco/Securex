@@ -286,6 +286,8 @@ app-select .gm-control-wrap {
 
 .p-select-overlay {
   font-size: 0.85rem !important;
+  position: fixed !important;
+  z-index: 99998 !important;
 }
 
 .p-select-panel .p-select-item,

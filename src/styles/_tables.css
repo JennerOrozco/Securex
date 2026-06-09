@@ -1,4 +1,4 @@
-﻿/* =======================================================================
+/* =======================================================================
    TABLES — global styles
    Shared styles for PrimeNG datatables (used by TableComponent, TableEdit
    and feature pages).  Imported from src/styles.css.
@@ -784,4 +784,36 @@ td.td-actions app-table-actions {
 
 .p-paginator .p-dropdown-panel {
     z-index: 99999 !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   COLUMN-FILTER SELECT / MULTISELECT — overlay flotante
+   Evita que el panel del p-select y p-multiselect empuje el
+   layout; se comporta como un popup absolutamente posicionado.
+   ───────────────────────────────────────────────────────────── */
+
+/* El overlay del p-select se renderiza en el body via CDK portal,
+   por lo que basta con elevar su z-index y asegurarse de que
+   NO tenga position:static. */
+.p-select-overlay,
+.p-multiselect-overlay {
+    position: fixed !important;
+    z-index: 99998 !important;
+}
+
+/* Dentro del overlay de filtro de columna, el p-select y el
+   p-multiselect (el trigger, no el panel) NO deben tener
+   overflow:visible forzado que corte el panel. */
+.p-datatable-filter-overlay .p-select,
+.p-datatable-filter-overlay .p-multiselect {
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* El p-multiselect-filter-custom que usamos en el template
+   de filtro también necesita que su overlay sea flotante */
+.p-multiselect-filter-custom .p-multiselect-overlay,
+.p-multiselect-filter-custom.p-multiselect-overlay {
+    position: fixed !important;
+    z-index: 99998 !important;
 }
