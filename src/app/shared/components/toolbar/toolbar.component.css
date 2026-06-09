@@ -115,8 +115,9 @@
     max-width: 100%;
   }
   .search-inp {
-    height: 42px;
-    font-size: 15px;
+    height: 38px;
+    font-size: 14px;
+    padding: 0 16px 0 38px;
   }
 }
 

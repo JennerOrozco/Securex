@@ -1,4 +1,4 @@
-<div class="p-4">
+<div class="p-2">
   <div *ngIf="!hasPermission" class="access-denied">
     <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
     <h2>Acceso restringido</h2>
@@ -6,8 +6,7 @@
   </div>
 
   <ng-container *ngIf="hasPermission">
-    <div class="perm-card">
-      <!-- Toolbar Header -->
+    <div class="content-card">
       <app-toolbar
         title="Permisos por Compañía"
         subtitle="Seleccione la aplicación y la compañía para administrar los permisos."
@@ -26,7 +25,6 @@
         </div>
       </app-toolbar>
 
-      <!-- Selectors Bar -->
       <div class="selectors-bar">
         <div class="selector-group">
           <label class="selector-label">Aplicaci&oacute;n</label>
@@ -55,7 +53,6 @@
         </div>
       </div>
 
-      <!-- Loading Skeleton -->
       <div *ngIf="loading" class="perm-skeleton">
         <div class="perm-skeleton-header"></div>
         <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-40"></span></div>
@@ -65,14 +62,12 @@
         <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-44"></span></div>
       </div>
 
-      <!-- Empty State: No Company Selected -->
       <div *ngIf="selectedAppId && !selectedCompanyId && !loading" class="empty-state">
         <i class="pi pi-building text-4xl text-slate-300 mb-3"></i>
         <p class="text-slate-500 font-medium">Seleccione una compa&ntilde;&iacute;a para gestionar sus permisos.</p>
         <span class="text-xs text-slate-400 mt-1">Use el selector superior para elegir la compa&ntilde;&iacute;a destino.</span>
       </div>
 
-      <!-- Permission Tree -->
       <app-permission-tree
         *ngIf="selectedCompanyId && !loading && groups.length > 0"
         [groups]="groups"
@@ -81,7 +76,6 @@
         (selectedIdsChange)="onSelectionChange($event)">
       </app-permission-tree>
 
-      <!-- Empty state: no permissions for app -->
       <div *ngIf="selectedCompanyId && !loading && groups.length === 0" class="empty-state">
         <i class="pi pi-folder-open text-4xl text-slate-300 mb-3"></i>
         <p class="text-slate-500 font-medium">No hay permisos disponibles para esta aplicaci&oacute;n.</p>

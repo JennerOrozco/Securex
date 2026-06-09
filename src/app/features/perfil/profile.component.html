@@ -1,4 +1,4 @@
-<div class="gm-profile-wrapper p-2">
+<div class="gm-profile-wrapper">
   @if (profileError(); as error) {
     <div class="gm-error-banner">
       <i class="pi pi-exclamation-circle"></i>
@@ -42,6 +42,11 @@
     } @else {
       <div class="gm-profile-content">
         <nav class="gm-profile-menu" role="tablist">
+          <div
+            class="gm-profile-indicator"
+            [style.left]="activeTab() === 'info' ? '0.25rem' : 'calc(50% + 0.125rem)'"
+            [style.width]="activeTab() === 'info' ? 'calc(50% - 0.375rem)' : 'calc(50% - 0.375rem)'"
+          ></div>
           <button
             [class.active]="activeTab() === 'info'"
             (click)="setTab('info')"

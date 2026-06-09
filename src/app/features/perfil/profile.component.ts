@@ -28,7 +28,7 @@ export interface ProfileData {
   standalone: true,
   imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent, DeleteModalComponent],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.scss'
+  styleUrl: './profile.component.css'
 })
 export class ProfileComponent implements OnInit {
   private authService = inject(AuthService);
