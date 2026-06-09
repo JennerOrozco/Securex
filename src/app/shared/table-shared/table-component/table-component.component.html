@@ -10,6 +10,7 @@
       [groupRowsBy]="enableRowGroup ? groupRowsBy : ''" [sortField]="enableRowGroup ? groupRowsBy : ''"
       [sortMode]="enableRowGroup ? 'single' : 'multiple'"
       [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'" [reorderableColumns]="reorderableColumns"
+      paginatorDropdownAppendTo="body"
       (onColReorder)="onColReorder.emit($event)">
 
       <ng-template pTemplate="caption">
@@ -43,12 +44,14 @@
                   <p-multiselect [ngModel]="value" [options]="col.filterOptions"
                     (onChange)="filterCallback($event.value)" placeholder="Todos"
                     [optionLabel]="col.filterOptionLabel || 'label'" [optionValue]="col.filterOptionValue || 'value'"
-                    [showClear]="true" [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom">
+                    [showClear]="true" [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom"
+                    appendTo="body">
                   </p-multiselect>
                   } @else {
                   <p-select [ngModel]="value" [options]="col.filterOptions" (onChange)="filterCallback($event.value)"
                     placeholder="Todos" [optionLabel]="col.filterOptionLabel || 'label'"
-                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true">
+                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true"
+                    appendTo="body">
                   </p-select>
                   }
                 </ng-template>
