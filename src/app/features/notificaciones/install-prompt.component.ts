@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
         <!-- Header con Icono -->
         <div class="flex items-center gap-2 md:gap-3">
           <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl overflow-hidden shadow-lg transform rotate-3 border border-white/10">
-            <img src="/securex.png" alt="Logo" class="w-full h-full object-cover">
+            <img src="/image.png" alt="Logo" class="w-full h-full object-cover">
           </div>
           <div class="flex-1">
             <h4 class="text-white font-head font-bold text-sm md:text-base tracking-tight">Instalar SECUREX APP</h4>
