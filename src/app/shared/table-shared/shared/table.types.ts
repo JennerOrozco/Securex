@@ -4,6 +4,7 @@ export interface TableColumn {
   type?: 'text' | 'user' | 'role' | 'status' | 'badge' | 'boolean' | 'date' | 'currency' | 'actions' | 'toggle' | 'filesize' | 'validation' | 'image' | 'tree' | 'link';
   subField?: string;
   sortable?: boolean;
+  visible?: boolean;
   toggleTrueLabel?: string;
   toggleFalseLabel?: string;
   toggleEmitType?: string;

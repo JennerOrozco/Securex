@@ -29,7 +29,7 @@
 
       <ng-template pTemplate="header" let-columns>
         <tr>
-          <th *ngFor="let col of columns; trackBy: trackByField" pResizableColumn pReorderableColumn
+          <th *ngFor="let col of visibleColumns; trackBy: trackByField" pResizableColumn pReorderableColumn
             [pSortableColumn]="col.sortable ? col.field : undefined" [style]="col.style"
             [ngClass]="{'th-actions': col.field === 'actions' || col.type === 'actions'}">
             <div class="th-content">
@@ -71,17 +71,7 @@
 
       <ng-template pTemplate="groupheader" let-rowData>
         <tr pRowGroupHeader class="group-header-row">
-          @if (showAddChild && hasActionsColumn) {
-          <td [attr.colspan]="selectedColumns.length - 1">
-            <span class="group-header-content">
-              <ng-template [ngTemplateOutlet]="groupToggleBtn"
-                [ngTemplateOutletContext]="{ rowData: rowData }"></ng-template>
-              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
-            </span>
-          </td>
-
-          } @else {
-          <td [attr.colspan]="selectedColumns.length">
+          <td [attr.colspan]="visibleColumns.length">
             <span class="group-header-content">
               <ng-template [ngTemplateOutlet]="groupToggleBtn"
                 [ngTemplateOutletContext]="{ rowData: rowData }"></ng-template>
@@ -89,7 +79,6 @@
               {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
             </span>
           </td>
-          }
         </tr>
       </ng-template>
 
@@ -105,7 +94,7 @@
       <ng-template pTemplate="body" let-rowData let-columns="columns">
         <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
           (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
-          <td *ngFor="let col of columns; trackBy: trackByField; let i = index" [style]="col.style"
+          <td *ngFor="let col of visibleColumns; trackBy: trackByField; let i = index" [style]="col.style"
             [ngClass]="{'td-actions': col.type === 'actions'}">
             @if (col.type === 'actions') {
             @if (customActionsTemplate) {
@@ -128,7 +117,7 @@
 
       <ng-template pTemplate="loading" let-columns>
         <tr *ngFor="let _ of [].constructor(5); index as i">
-          <td *ngFor="let col of columns; index as j" [style]="col.style">
+          <td *ngFor="let col of visibleColumns; index as j" [style]="col.style">
             <p-skeleton [width]="col.type === 'actions' ? '2rem' : skeletonWidths[i % skeletonWidths.length]"
               [height]="'1.25rem'" styleClass="skeleton-cell" />
           </td>
@@ -137,7 +126,7 @@
 
       <ng-template pTemplate="emptystate" let-columns>
         <tr>
-          <td [attr.colspan]="columns.length">
+          <td [attr.colspan]="visibleColumns.length">
             <div class="empty-state">
               <i class="pi pi-folder-open empty-icon"></i>
               <span>No se encontraron registros.</span>

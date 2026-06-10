@@ -749,8 +749,8 @@ tr.drag-over {
     .gm-treetable table {
         min-width: 650px !important;
     }
-    .gm-treetable .p-treetable-thead > tr > th:last-child,
-    .gm-treetable .p-treetable-tbody > tr > td:last-child {
+    .gm-treetable .p-treetable-thead > tr > th.th-actions,
+    .gm-treetable .p-treetable-tbody > tr > td.td-actions {
         display: none !important;
     }
     .gm-treetable .p-treetable-tbody > tr {
@@ -763,9 +763,6 @@ tr.drag-over {
     .gm-treetable .body-text,
     .gm-treetable .route-link {
         font-size: var(--font-2xs);
-    }
-    .type-chip {
-        display: none;
     }
 }
 

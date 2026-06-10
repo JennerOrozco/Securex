@@ -58,6 +58,10 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
 
   @ViewChild('tt') treeTable!: TreeTable;
 
+  get visibleColumns(): TableColumn[] {
+    return this.columns.filter(c => c.visible !== false);
+  }
+
   constructor() {
     super();
   }

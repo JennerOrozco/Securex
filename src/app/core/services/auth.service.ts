@@ -249,7 +249,8 @@ export class AuthService {
                 ...data.user,
                 id: data.user.uuid, // Mapeo de id
                 name: data.user.full_name, // Mapeo de name
-                role: data.user.is_super_admin ? 'admin' : 'user' // Mapeo de role
+                role: data.user.is_super_admin ? 'admin' : 'user', // Mapeo de role
+                profile_picture: data.user.profile_picture // Mapeo de foto
             };
             localStorage.setItem('currentUser', JSON.stringify(user));
             this.currentUserSignal.set(user);
@@ -449,7 +450,8 @@ export class AuthService {
                             ...this.currentUserValue!,
                             full_name: data.full_name,
                             name: data.full_name,
-                            role_name: data.role_name || 'Residente'
+                            role_name: data.role_name || 'Residente',
+                            profile_picture: data.profile_picture
                         };
                         localStorage.setItem('currentUser', JSON.stringify(updatedUser));
                         this.currentUserSignal.set(updatedUser);
@@ -462,6 +464,37 @@ export class AuthService {
                     }
                 })
             );
+    }
+
+    uploadProfilePicture(file: File): Observable<any> {
+        const formData = new FormData();
+        formData.append('file', file);
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/profile-picture`, formData).pipe(
+            tap(response => {
+                const data = response.data || response;
+                if (data && data.url) {
+                    const updatedUser = {
+                        ...this.currentUserValue!,
+                        profile_picture: data.url
+                    };
+                    localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                    this.currentUserSignal.set(updatedUser);
+                }
+            })
+        );
+    }
+
+    deleteProfilePicture(): Observable<any> {
+        return this.http.delete<any>(`${this.configService.apiUrl}/auth/profile-picture`).pipe(
+            tap(() => {
+                const updatedUser = {
+                    ...this.currentUserValue!,
+                    profile_picture: undefined
+                };
+                localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+                this.currentUserSignal.set(updatedUser);
+            })
+        );
     }
 
     /**

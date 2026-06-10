@@ -4,7 +4,7 @@
 This project has a nodesify-graphify knowledge graph at .graphify/.
 
 CRITICAL RULES:
-- If no `.graphify/graph.json` exists, run `nodesify-graphify run .` to build the graph before anything else.
+- If no `.graphify/graph.json` exists, run `nodesify-graphify run src` to build the graph from the source directory only. If you must run from the root, exclude the `dist` folder to avoid indexing build artifacts.
 - You are **FORBIDDEN** from using native search tools (Grep, Glob, Search, etc.) as your first step for discovery.
 - You **MUST** read .graphify/graph_report.md before doing any file exploration.
 - You **MUST** use `nodesify-graphify query "<question>"`, `nodesify-graphify path "<A>" "<B>"`, or `nodesify-graphify explain "<concept>"` via shell commands to locate files, components, and understand cross-module relationships.

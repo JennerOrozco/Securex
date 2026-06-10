@@ -1,0 +1,99 @@
+<app-modal-shell
+  [(visible)]="visible"
+  (visibleChange)="onVisibleChange($event)"
+  [title]="!hasImage && existingImageUrl ? 'Foto actual' : 'Ajustar imagen'"
+  [icon]="'pi pi-image'"
+  [iconType]="'edit'"
+  [width]="'600px'"
+  [breakpoints]="{ '960px': '88vw', '768px': '94vw', '480px': '96vw' }"
+  [noPadding]="true"
+  [showFooter]="false">
+
+  @if (!hasImage) {
+    <div class="crop-empty-state">
+      @if (existingImageUrl) {
+        <div class="crop-preview-current">
+          <img [src]="existingImageUrl" alt="Foto actual" class="crop-preview-img" />
+          <button type="button" class="crop-change-btn" (click)="openFilePicker()">
+            <i class="pi pi-camera"></i>
+            Cambiar foto
+          </button>
+        </div>
+      } @else {
+        <div class="crop-empty-content" (click)="openFilePicker()">
+          <i class="pi pi-cloud-upload crop-empty-icon"></i>
+          <span class="crop-empty-title">Seleccionar imagen</span>
+          <span class="crop-empty-hint">Haga clic para buscar un archivo de imagen</span>
+          <span class="crop-empty-formats">JPG, PNG, WebP</span>
+        </div>
+      }
+      <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display:none" />
+    </div>
+  } @else {
+    <div class="crop-wrapper">
+      <div class="crop-toolbar">
+        <div class="crop-toolbar-group">
+          <span class="crop-toolbar-label">Relación:</span>
+          <span class="crop-ar-label">1:1</span>
+        </div>
+        <div class="crop-toolbar-group">
+          <button type="button" class="crop-action-btn" (click)="zoomOut()" title="Alejar">
+            <i class="pi pi-search-minus"></i>
+          </button>
+          <button type="button" class="crop-action-btn" (click)="zoomIn()" title="Acercar">
+            <i class="pi pi-search-plus"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="crop-main-area">
+        <div class="crop-container" #imgContainer>
+          @if (cropperLoading) {
+            <div class="crop-loading">
+              <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem;"></i>
+              <span>Cargando imagen...</span>
+            </div>
+          }
+          <canvas
+            #imgCanvas
+            class="crop-canvas"
+            (mousedown)="onMouseDown($event)"
+            (mousemove)="onMouseMove($event)"
+            (mouseup)="onMouseUp()"
+            (mouseleave)="onMouseUp()"
+            (wheel)="onWheel($event)"
+          ></canvas>
+        </div>
+
+        <div class="crop-preview-panel">
+          <span class="crop-preview-panel-label">Vista previa</span>
+          <div class="crop-preview-wrap">
+            <canvas #previewCanvas class="crop-preview-canvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="crop-footer-actions">
+        <div class="crop-file-info">
+          @if (fileName) {
+            <i class="pi pi-file-image"></i>
+            <span class="crop-file-name">{{ fileName }}</span>
+            <span class="crop-file-size">{{ fileSize }}</span>
+          }
+        </div>
+        <div class="crop-actions-right">
+          <button type="button" class="crop-action-btn" (click)="removeImage()" title="Cambiar imagen">
+            <i class="pi pi-upload"></i>
+          </button>
+          <button type="button" class="crop-btn crop-btn-cancel" (click)="cancel()">
+            Cancelar
+          </button>
+          <button type="button" class="crop-btn crop-btn-confirm" (click)="confirmCrop()">
+            <i class="pi pi-check"></i>
+            Aplicar recorte
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</app-modal-shell>

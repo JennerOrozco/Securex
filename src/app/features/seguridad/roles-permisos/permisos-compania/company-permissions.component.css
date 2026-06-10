@@ -67,6 +67,12 @@
   100% { background-position: -200% 0; }
 }
 
+@media (max-width: 768px) {
+  ::ng-deep .type-chip {
+    display: none;
+  }
+}
+
 @media (max-width: 640px) {
   .selectors-bar {
     padding: 0.875rem 1rem;

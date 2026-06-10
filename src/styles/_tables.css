@@ -666,11 +666,11 @@ td.td-actions app-table-actions {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   HIDE ACTIONS COLUMN ON MOBILE (shared across Table + TreeTable)
+   HIDE ACTIONS COLUMN ON MOBILE
    ───────────────────────────────────────────────────────────── */
 @media (max-width: 768px) {
-    .p-datatable-tbody td:last-child,
-    .p-datatable-thead th:last-child {
+    .p-datatable-tbody td.td-actions,
+    .p-datatable-thead th.th-actions {
         display: none;
     }
 }
@@ -817,3 +817,18 @@ td.td-actions app-table-actions {
     position: fixed !important;
     z-index: 99998 !important;
 }
+
+/* ─────────────────────────────────────────────────────────────
+   CRUD PAGE CONTAINER PADDING (Tighter Layout)
+   ───────────────────────────────────────────────────────────── */
+.gm-crud-page-container {
+    padding: 0.5rem;
+    transition: padding 0.2s ease;
+}
+
+@media (max-width: 768px) {
+    .gm-crud-page-container {
+        padding: 0 !important;
+    }
+}
+

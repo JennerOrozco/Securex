@@ -116,7 +116,11 @@
   <div class="sidebar-footer">
     <div class="user-profile-vertical">
       <div class="user-avatar-mini">
-        {{ user()?.name?.charAt(0) || 'U' }}
+        @if (user()?.profile_picture) {
+          <img [src]="user()?.profile_picture" alt="Avatar" />
+        } @else {
+          {{ user()?.name?.charAt(0) || 'U' }}
+        }
       </div>
       <div class="user-meta">
         <span class="user-name-label">{{ user()?.name || 'Usuario' }}</span>

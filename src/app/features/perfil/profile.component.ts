@@ -4,9 +4,11 @@ import { AuthService } from '../../core/services/auth.service';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PasswordComponent } from '../../shared/components/password/password.component';
 import { TableComponent, TableColumn } from '../../shared/table-shared/table-component/table-component.component';
+import { SkeletonModule } from 'primeng/skeleton';
 import { timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DeleteModalComponent } from '../../shared/modals/modal-shell/delete-modal/delete-modal.component';
+import { ImageCropperComponent } from '../../shared/components/image-cropper/image-cropper.component';
 
 export interface ProfileData {
   uuid: string;
@@ -26,7 +28,7 @@ export interface ProfileData {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent, DeleteModalComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PasswordComponent, TableComponent, DeleteModalComponent, ImageCropperComponent, SkeletonModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
@@ -36,18 +38,20 @@ export class ProfileComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
   deleteModalVisible = signal(false);
   itemToDelete: any = null;
+  cropVisible = signal(false);
+  avatarDragOver = signal(false);
 
   profileData = signal<ProfileData | null>(null);
   profileLoading = signal<boolean>(true);
   profileError = signal<string | null>(null);
+  avatarLoading = signal<boolean>(false);
  
   devices = signal<any[]>([]);
   devicesLoading = signal<boolean>(false);
   
   columns: TableColumn[] = [
     { field: 'device_name', header: 'Dispositivo', type: 'text' },
-    { field: 'sign_count', header: 'Uso', type: 'text' },
-    { field: 'created_at', header: 'Fecha de Registro', type: 'text' },
+    { field: 'created_at', header: 'Fecha de Registro', type: 'date' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
@@ -74,8 +78,11 @@ export class ProfileComponent implements OnInit {
         full_name: currentUser.full_name,
         email: currentUser.email,
         role_name: currentUser.role_name,
+        profile_picture: currentUser.profile_picture,
       });
     }
+
+    this.loadDevices();
 
     this.authService.getUserProfile()
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -149,6 +156,75 @@ export class ProfileComponent implements OnInit {
     const parts = name.trim().split(/\s+/);
     if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  openCropModal() {
+    this.cropVisible.set(true);
+  }
+
+  onAvatarDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.avatarDragOver.set(true);
+  }
+
+  onAvatarDragLeave() {
+    this.avatarDragOver.set(false);
+  }
+
+  onAvatarDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.avatarDragOver.set(false);
+    const file = event.dataTransfer?.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      this.openCropModal();
+    }
+  }
+
+  handleCrop(croppedFile: File) {
+    this.avatarLoading.set(true);
+
+    this.authService.uploadProfilePicture(croppedFile)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (res) => {
+          const data = res.data || res;
+          const newUrl = data.url;
+          this.profileData.update(profile => profile ? { ...profile, profile_picture: newUrl } : null);
+          this.avatarLoading.set(false);
+        },
+        error: (err) => {
+          console.error('Error al subir la foto de perfil:', err);
+          alert(err.error?.message || 'Error al subir la foto de perfil.');
+          this.avatarLoading.set(false);
+        }
+      });
+  }
+
+  handleCropClose() {
+    this.cropVisible.set(false);
+  }
+
+  deleteProfilePicture(event: Event) {
+    event.stopPropagation();
+    
+    if (confirm('¿Está seguro de que desea eliminar su foto de perfil?')) {
+      this.avatarLoading.set(true);
+      this.authService.deleteProfilePicture()
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: () => {
+            this.profileData.update(profile => profile ? { ...profile, profile_picture: undefined } : null);
+            this.avatarLoading.set(false);
+          },
+          error: (err) => {
+            console.error('Error al eliminar la foto de perfil:', err);
+            alert(err.error?.message || 'Error al eliminar la foto de perfil.');
+            this.avatarLoading.set(false);
+          }
+        });
+    }
   }
 
   changePassword() {

@@ -133,6 +133,10 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   selectedItems: any[] = [];
   selectedColumns: TableColumn[] = [];
   displayColumnsModal: boolean = false;
+
+  get visibleColumns(): TableColumn[] {
+    return this.selectedColumns.filter(c => c.visible !== false);
+  }
   expandedRowKeys: { [s: string]: boolean } = {};
 
   skeletonWidths = ['70%', '55%', '85%', '40%', '65%', '75%', '50%', '60%', '80%', '45%'];

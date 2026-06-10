@@ -1,29 +1,14 @@
-<div class="gm-profile-wrapper">
+<div class="gm-crud-page-container">
   @if (profileError(); as error) {
-    <div class="gm-error-banner">
+    <div class="gm-error-banner animate-slide-in">
       <i class="pi pi-exclamation-circle"></i>
       <span>{{ error }}</span>
       <button class="gm-retry-btn" (click)="ngOnInit()">Reintentar</button>
     </div>
   }
 
-  <div class="gm-profile-header">
-    <div class="gm-avatar">
-      @if (profileData()?.profile_picture) {
-        <img [src]="profileData()?.profile_picture" alt="Avatar" />
-      } @else {
-        <span class="gm-avatar-initials">{{ getUserInitials() }}</span>
-      }
-    </div>
-    <div class="gm-user-meta">
-      <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
-      <p>{{ profileData()?.email }}</p>
-      <span class="gm-role-badge">{{ profileData()?.role_name || 'Sin Rol' }}</span>
-    </div>
-  </div>
-
-  <div class="content-card">
-    @if (profileLoading() && !profileData()) {
+  @if (profileLoading() && !profileData()) {
+    <div class="gm-skeleton-card">
       <div class="gm-skeleton-container">
         <div class="gm-skeleton-header">
           <div class="gm-skeleton gm-avatar-skeleton"></div>
@@ -39,21 +24,93 @@
           <div class="gm-skeleton gm-skeleton-pane"></div>
         </div>
       </div>
-    } @else {
-      <div class="gm-profile-content">
-        <nav class="gm-profile-menu" role="tablist">
-          <div
-            class="gm-profile-indicator"
-            [style.left]="activeTab() === 'info' ? '0.25rem' : 'calc(50% + 0.125rem)'"
-            [style.width]="activeTab() === 'info' ? 'calc(50% - 0.375rem)' : 'calc(50% - 0.375rem)'"
-          ></div>
+    </div>
+  } @else {
+    <!-- Tarjeta Principal de Perfil Alineada con el Sistema -->
+    <div class="gm-profile-card">
+      
+      <!-- Banner/Header Hero Sólido y Corporativo -->
+      <div class="gm-profile-banner-hero">
+        <div class="gm-profile-banner-overlay"></div>
+        <div class="gm-profile-hero-content">
+          <div class="gm-avatar-container">
+            <div
+              class="gm-avatar"
+              [class.gm-avatar-loading]="avatarLoading()"
+              [class.gm-avatar-dragover]="avatarDragOver()"
+              (click)="!avatarLoading() && openCropModal()"
+              (dragover)="onAvatarDragOver($event)"
+              (dragleave)="onAvatarDragLeave()"
+              (drop)="onAvatarDrop($event)"
+              title="Cambiar foto de perfil"
+            >
+              @if (avatarLoading()) {
+                <div class="gm-avatar-loading-spinner">
+                  <i class="pi pi-spin pi-spinner"></i>
+                </div>
+              } @else if (profileData()?.profile_picture) {
+                <img [src]="profileData()?.profile_picture" alt="Avatar" class="gm-avatar-img" [style.view-transition-name]="'avatar'" />
+              } @else {
+                <span class="gm-avatar-initials">{{ getUserInitials() }}</span>
+              }
+              <div class="gm-avatar-overlay">
+                <i class="pi pi-camera"></i>
+              </div>
+            </div>
+            @if (profileData()?.profile_picture && !avatarLoading()) {
+              <button class="gm-avatar-delete-btn" (click)="deleteProfilePicture($event)" title="Eliminar foto de perfil">
+                <i class="pi pi-trash"></i>
+              </button>
+            }
+          </div>
+          <div class="gm-user-meta">
+            <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
+            <div class="gm-meta-sub">
+              <span class="gm-email"><i class="pi pi-envelope mr-1"></i>{{ profileData()?.email }}</span>
+              <span class="gm-role-badge">
+                <i class="pi pi-shield mr-1"></i>{{ profileData()?.role_name || 'Sin Rol' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cuerpo del Card (Navegación + Contenido) -->
+      <div class="gm-profile-card-body">
+        
+        <!-- Menú de pestañas para Desktop (Dock Lateral) -->
+        <nav class="gm-profile-sidebar-menu" role="tablist">
           <button
             [class.active]="activeTab() === 'info'"
             (click)="setTab('info')"
             role="tab"
             [attr.aria-selected]="activeTab() === 'info'"
           >
-            <i class="pi pi-info-circle"></i>
+            <i class="pi pi-user-edit"></i>
+            <span>Información Personal</span>
+            <i class="pi pi-chevron-right gm-menu-chevron"></i>
+          </button>
+          <button
+            [class.active]="activeTab() === 'security'"
+            (click)="setTab('security')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'security'"
+          >
+            <i class="pi pi-lock"></i>
+            <span>Seguridad & Accesos</span>
+            <i class="pi pi-chevron-right gm-menu-chevron"></i>
+          </button>
+        </nav>
+
+        <!-- Menú de pestañas para Mobile (Pills Horizontales) -->
+        <nav class="gm-profile-mobile-tabs" role="tablist">
+          <button
+            [class.active]="activeTab() === 'info'"
+            (click)="setTab('info')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'info'"
+          >
+            <i class="pi pi-user"></i>
             <span>Información</span>
           </button>
           <button
@@ -67,158 +124,241 @@
           </button>
         </nav>
 
+        <!-- Panel de Contenido Activo -->
         <div class="gm-profile-pane">
           @if (activeTab() === 'info') {
-            <div class="gm-info-grid">
-              <div class="gm-info-box">
-                <h3><i class="pi pi-user mr-2"></i>Usuario</h3>
-                <div class="gm-detail">
-                  <span>Nombre</span>
-                  <strong>{{ profileData()?.full_name }}</strong>
+            @if (profileLoading()) {
+              <div class="gm-pane-skeleton">
+                <div class="gm-pane-skeleton-header">
+                  <p-skeleton width="40%" height="1.1rem" borderRadius="6px"></p-skeleton>
+                  <div style="margin-top:0.4rem;"><p-skeleton width="65%" height="0.75rem" borderRadius="6px"></p-skeleton></div>
                 </div>
-                <div class="gm-detail">
-                  <span>Email</span>
-                  <strong>{{ profileData()?.email }}</strong>
+                <div style="margin-bottom:1.25rem;"><p-skeleton width="100%" height="76px" borderRadius="10px"></p-skeleton></div>
+                <div class="gm-info-grid">
+                  <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
+                  <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
                 </div>
+              </div>
+            } @else {
+              <div class="gm-pane-header">
+                <h3><i class="pi pi-id-card mr-2 text-primary"></i>Información del Perfil</h3>
+                <p>Consulta los datos personales de tu cuenta y los detalles de tu organización.</p>
+              </div>
+              
+              <!-- Barra de Progreso de Seguridad Lineal -->
+              <div class="gm-security-score-bar">
+                <div class="gm-score-header">
+                  <div class="gm-score-title">
+                    <i class="pi" [class.pi-shield]="devices().length > 0" [class.pi-exclamation-triangle]="devices().length === 0" [class.text-success]="devices().length > 0" [class.text-warning]="devices().length === 0"></i>
+                    <span>Nivel de Seguridad de la Cuenta</span>
+                  </div>
+                  <strong>{{ devices().length > 0 ? '100% (Excelente)' : '50% (Intermedio)' }}</strong>
+                </div>
+                <div class="gm-progress-track">
+                  <div class="gm-progress-bar" [class.secure]="devices().length > 0" [style.width]="devices().length > 0 ? '100%' : '50%'"></div>
+                </div>
+                <p class="gm-score-hint">
+                  @if (devices().length > 0) {
+                    <i class="pi pi-check text-success mr-1"></i> Protección biométrica FIDO2 activa. Tu cuenta posee el nivel de resguardo más alto.
+                  } @else {
+                    <i class="pi pi-info-circle text-warning mr-1"></i> Se recomienda registrar una llave biométrica para evitar accesos no autorizados.
+                  }
+                </p>
               </div>
 
-              <div class="gm-info-box">
-                <h3><i class="pi pi-building mr-2"></i>Compañía & Sucursal</h3>
-                <div class="gm-detail">
-                  <span>Compañía</span>
-                  <strong>{{ profileData()?.company_name || 'N/A' }}</strong>
+              <!-- Grids de Información en tarjetas limpias -->
+              <div class="gm-info-grid">
+                <div class="gm-info-card">
+                  <div class="gm-card-header">
+                    <i class="pi pi-user mr-2 text-primary"></i>
+                    <h4>Datos Personales</h4>
+                  </div>
+                  <div class="gm-card-body">
+                    <div class="gm-info-field">
+                      <span class="gm-field-label">Nombre Completo</span>
+                      <strong class="gm-field-value">{{ profileData()?.full_name }}</strong>
+                    </div>
+                    <div class="gm-info-field">
+                      <span class="gm-field-label">Correo Electrónico</span>
+                      <strong class="gm-field-value">{{ profileData()?.email }}</strong>
+                    </div>
+                  </div>
                 </div>
-                <div class="gm-detail">
-                  <span>Sucursal</span>
-                  <strong>{{ profileData()?.branch?.name || 'N/A' }}</strong>
+
+                <div class="gm-info-card">
+                  <div class="gm-card-header">
+                    <i class="pi pi-building mr-2 text-primary"></i>
+                    <h4>Organización</h4>
+                  </div>
+                  <div class="gm-card-body">
+                    <div class="gm-info-field">
+                      <span class="gm-field-label">Compañía</span>
+                      <strong class="gm-field-value">{{ profileData()?.company_name || 'N/A' }}</strong>
+                    </div>
+                    <div class="gm-info-field">
+                      <span class="gm-field-label">Sucursal asignada</span>
+                      <strong class="gm-field-value">{{ profileData()?.branch?.name || 'N/A' }}</strong>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            }
           }
 
           @if (activeTab() === 'security') {
-            <div class="gm-security-box">
-              <h3><i class="pi pi-lock mr-2"></i>Actualizar Contraseña</h3>
-
-              <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
-                <app-password
-                  label="Contraseña Actual"
-                  placeholder="Ingrese su contraseña actual"
-                  [control]="passwordForm.get('currentPassword')"
-                  [required]="true"
-                  [feedback]="false"
-                ></app-password>
-
-                <app-password
-                  label="Nueva Contraseña"
-                  placeholder="Mínimo 6 caracteres"
-                  [control]="passwordForm.get('newPassword')"
-                  [required]="true"
-                  [feedback]="true"
-                ></app-password>
-
-                <app-password
-                  label="Confirmar Nueva Contraseña"
-                  placeholder="Repita la nueva contraseña"
-                  [control]="passwordForm.get('confirmPassword')"
-                  [required]="true"
-                  [feedback]="false"
-                ></app-password>
-
-                @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
-                  <div class="gm-form-feedback error">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <span>Las contraseñas no coinciden.</span>
+            <div class="gm-security-grid">
+              
+              <!-- Cambiar Contraseña -->
+              <div class="gm-security-box card-box">
+                <div class="gm-box-header">
+                  <i class="pi pi-lock"></i>
+                  <div>
+                    <h4>Actualizar Contraseña</h4>
+                    <p class="subtitle">Modifica la clave de acceso a tu cuenta periódicamente para mayor seguridad.</p>
                   </div>
-                }
+                </div>
 
-                @if (passwordSuccess()) {
-                  <div class="gm-form-feedback success">
-                    <i class="pi pi-check-circle"></i>
-                    <span>Contraseña actualizada exitosamente.</span>
-                  </div>
-                }
+                <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="gm-form-styled">
+                  <app-password
+                    label="Contraseña Actual"
+                    placeholder="Ingrese su contraseña actual"
+                    [control]="passwordForm.get('currentPassword')"
+                    [required]="true"
+                    [feedback]="false"
+                  ></app-password>
 
-                @if (passwordError(); as errMsg) {
-                  <div class="gm-form-feedback error">
-                    <i class="pi pi-exclamation-circle"></i>
-                    <span>{{ errMsg }}</span>
-                  </div>
-                }
+                  <app-password
+                    label="Nueva Contraseña"
+                    placeholder="Mínimo 6 caracteres"
+                    [control]="passwordForm.get('newPassword')"
+                    [required]="true"
+                    [feedback]="true"
+                  ></app-password>
 
-                <button
-                  type="submit"
-                  [disabled]="passwordForm.invalid || passwordLoading()"
-                  class="gm-btn-submit"
-                >
-                  @if (passwordLoading()) {
-                    <i class="pi pi-spin pi-spinner mr-2"></i>
+                  <app-password
+                    label="Confirmar Nueva Contraseña"
+                    placeholder="Repita la nueva contraseña"
+                    [control]="passwordForm.get('confirmPassword')"
+                    [required]="true"
+                    [feedback]="false"
+                  ></app-password>
+
+                  @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
+                    <div class="gm-form-feedback error animate-shake">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <span>Las contraseñas no coinciden.</span>
+                    </div>
                   }
-                  {{ passwordLoading() ? 'Actualizando...' : 'Actualizar Contraseña' }}
-                </button>
-              </form>
-            </div>
 
-            <div class="gm-security-box mt-4">
-              <h3><i class="fa-solid fa-fingerprint mr-2"></i>Autenticación Biométrica</h3>
-              <p class="text-muted">Registra tu huella digital o reconocimiento facial para iniciar sesión de forma más rápida y segura.</p>
+                  @if (passwordSuccess()) {
+                    <div class="gm-form-feedback success animate-bounceIn">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Contraseña actualizada exitosamente.</span>
+                    </div>
+                  }
 
-              @if (biometricsSuccess()) {
-                <div class="gm-form-feedback success mb-3">
-                  <i class="pi pi-check-circle"></i>
-                  <span>Huella registrada exitosamente.</span>
-                </div>
-              }
+                  @if (passwordError(); as errMsg) {
+                    <div class="gm-form-feedback error animate-shake">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <span>{{ errMsg }}</span>
+                    </div>
+                  }
 
-              @if (biometricsError(); as errMsg) {
-                <div class="gm-form-feedback error mb-3">
-                  <i class="pi pi-exclamation-circle"></i>
-                  <span>{{ errMsg }}</span>
-                </div>
-              }
-
-              @if (!devicesLoading() && devices().length === 0) {
-                <div class="gm-biometric-prompt">
-                  <div class="gm-prompt-icon">
-                    <i class="fa-solid fa-fingerprint"></i>
-                  </div>
-                  <h4>Configura tu autenticación biométrica</h4>
-                  <p>
-                    Registra tu huella digital, rostro o llave de acceso para iniciar sesión
-                    de forma más rápida y segura sin necesidad de ingresar tu contraseña cada vez.
-                  </p>
-                  <button class="gm-btn-register" (click)="registerBiometrics()" [disabled]="biometricsLoading()">
-                    @if (biometricsLoading()) {
+                  <button
+                    type="submit"
+                    [disabled]="passwordForm.invalid || passwordLoading()"
+                    class="gm-btn-submit"
+                  >
+                    @if (passwordLoading()) {
                       <i class="pi pi-spin pi-spinner mr-2"></i>
                     }
-                    <i class="fa-solid fa-fingerprint mr-2"></i>
-                    {{ biometricsLoading() ? 'Registrando...' : 'Registrar mi llave de acceso' }}
+                    {{ passwordLoading() ? 'Actualizando...' : 'Actualizar Contraseña' }}
                   </button>
-                </div>
-              }
-
-              <div class="gm-table-responsive">
-                <app-table-component
-                  [title]="'Dispositivos Registrados'"
-                  [subtitle]="'Tus métodos de autenticación'"
-                  [data]="devices()"
-                  [columns]="columns"
-                  [loading]="devicesLoading()"
-                  [showAdd]="devices().length > 0"
-                  [addLabel]="'Agregar Metodo'"
-                  [showEdit]="false"
-                  [showDelete]="true"
-                  [rows]="5"
-                  (onAdd)="registerBiometrics()"
-                  (onDelete)="deleteDevice($event)"
-                ></app-table-component>
+                </form>
               </div>
+
+              <!-- Autenticación Biométrica Limpia y Sobria -->
+              <div class="gm-security-box card-box">
+                @if (devicesLoading() && devices().length === 0) {
+                  <div class="gm-security-skeleton-inner">
+                    <p-skeleton width="100%" height="46px" borderRadius="8px"></p-skeleton>
+                    <div style="margin-top:0.75rem;"><p-skeleton width="70%" height="0.8rem" borderRadius="6px"></p-skeleton></div>
+                    <div style="margin-top:1rem;"><p-skeleton width="100%" height="140px" borderRadius="8px"></p-skeleton></div>
+                  </div>
+                } @else {
+                  <div class="gm-box-header">
+                    <i class="fa-solid fa-fingerprint"></i>
+                    <div>
+                      <h4>Autenticación Biométrica / Llaves de Acceso</h4>
+                      <p class="subtitle">Inicia sesión de forma rápida y segura mediante huella dactilar, reconocimiento facial o PIN del dispositivo.</p>
+                    </div>
+                  </div>
+
+                  @if (biometricsSuccess()) {
+                    <div class="gm-form-feedback success mb-3 animate-bounceIn">
+                      <i class="pi pi-check-circle"></i>
+                      <span>Huella registrada exitosamente.</span>
+                    </div>
+                  }
+
+                  @if (biometricsError(); as errMsg) {
+                    <div class="gm-form-feedback error mb-3 animate-shake">
+                      <i class="pi pi-exclamation-circle"></i>
+                      <span>{{ errMsg }}</span>
+                    </div>
+                  }
+
+                  @if (!devicesLoading() && devices().length === 0) {
+                    <div class="gm-biometric-panel-register">
+                      <div class="gm-biometric-icon-container">
+                        <i class="fa-solid fa-fingerprint"></i>
+                      </div>
+                      <div class="gm-biometric-details">
+                        <h4>Protege tu cuenta con acceso biométrico</h4>
+                        <p>
+                          Vincule la huella digital o rostro de su computadora o teléfono. Esto genera una llave criptográfica única bajo el estándar FIDO2 que es imposible de duplicar o hackear.
+                        </p>
+                        <div class="gm-biometric-features">
+                          <span><i class="pi pi-shield"></i> Cifrado FIDO2</span>
+                          <span><i class="pi pi-bolt"></i> Acceso Rápido</span>
+                          <span><i class="pi pi-lock-open"></i> Sin contraseñas</span>
+                        </div>
+                        <button class="gm-btn-register-flat" (click)="registerBiometrics()" [disabled]="biometricsLoading()">
+                          @if (biometricsLoading()) {
+                            <i class="pi pi-spin pi-spinner mr-2"></i>
+                          }
+                          <i class="fa-solid fa-fingerprint mr-2"></i>
+                          {{ biometricsLoading() ? 'Registrando...' : 'Registrar mi llave de acceso' }}
+                        </button>
+                      </div>
+                    </div>
+                  }
+
+                  <div class="gm-table-container">
+                    <app-table-component
+                      [title]="'Dispositivos Registrados'"
+                      [subtitle]="'Métodos de autenticación activos para esta cuenta'"
+                      [data]="devices()"
+                      [columns]="columns"
+                      [loading]="devicesLoading()"
+                      [showAdd]="devices().length > 0"
+                      [addLabel]="'Agregar Método'"
+                      [showEdit]="false"
+                      [showDelete]="true"
+                      [rows]="5"
+                      (onAdd)="registerBiometrics()"
+                      (onDelete)="deleteDevice($event)"
+                    ></app-table-component>
+                  </div>
+                }
+              </div>
+
             </div>
           }
         </div>
       </div>
-    }
-  </div>
+    </div>
+  }
 </div>
 
 <app-delete-modal
@@ -228,3 +368,16 @@
   (onConfirm)="handleConfirmDelete()"
   (onClose)="deleteModalVisible.set(false)"
 ></app-delete-modal>
+
+<app-image-cropper
+  [visible]="cropVisible()"
+  [aspectRatio]="1"
+  [maxWidth]="400"
+  [maxHeight]="400"
+  [quality]="0.85"
+  [outputFormat]="'image/jpeg'"
+  [existingImageUrl]="profileData()?.profile_picture || null"
+  (visibleChange)="cropVisible.set($event)"
+  (onCrop)="handleCrop($event)"
+  (onClose)="handleCropClose()"
+></app-image-cropper>
