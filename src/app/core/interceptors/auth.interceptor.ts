@@ -66,7 +66,7 @@ const handle401Error = (
         catchError(err => {
             if (!sessionExpiredToastShown) {
                 sessionExpiredToastShown = true;
-                notificationService.showError('Sesión expirada. Inicia sesión nuevamente.');
+                notificationService.error('Sesión expirada. Inicia sesión nuevamente.');
                 authService.logout();
             }
             return throwError(() => err);

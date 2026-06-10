@@ -37,7 +37,7 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
               message = 'Permisos sincronizados';
             }
             
-            notificationService.showSuccess(message);
+            notificationService.success(message);
           }
           
           if (body.data !== undefined && body.data !== null) {
@@ -63,7 +63,7 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
         message = error.error.message;
       }
 
-      notificationService.showError(message);
+      notificationService.error(message);
 
       return throwError(() => error);
     })

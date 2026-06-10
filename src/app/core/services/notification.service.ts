@@ -155,26 +155,19 @@ export class NotificationService {
     );
   }
 
-  notify(severity: 'success' | 'error' | 'info' | 'warn', message: string) {
-    const config: Record<string, { summary: string; life: number; icon: string }> = {
-      success: { summary: 'Éxito', life: 2000, icon: 'pi pi-check-circle' },
-      error: { summary: 'Error', life: 3000, icon: 'pi pi-times-circle' },
-      info: { summary: 'Información', life: 2000, icon: 'pi pi-info-circle' },
-      warn: { summary: 'Advertencia', life: 2500, icon: 'pi pi-exclamation-triangle' },
-    };
-    const cfg = config[severity];
-    this.messageService.add({ severity, summary: cfg.summary, detail: message, life: cfg.life, icon: cfg.icon });
+  private toastConfig: Record<string, { severity: string; summary: string; life: number; icon: string }> = {
+    success: { severity: 'success', summary: 'Éxito', life: 2000, icon: 'pi pi-check-circle' },
+    error: { severity: 'error', summary: 'Error', life: 3000, icon: 'pi pi-times-circle' },
+    info: { severity: 'info', summary: 'Información', life: 2000, icon: 'pi pi-info-circle' },
+    warn: { severity: 'warn', summary: 'Advertencia', life: 2500, icon: 'pi pi-exclamation-triangle' },
+  };
+
+  notify(type: keyof typeof this.toastConfig, message: string) {
+    const cfg = this.toastConfig[type];
+    this.messageService.add({ severity: cfg.severity, summary: cfg.summary, detail: message, life: cfg.life, icon: cfg.icon });
   }
 
-  showError(message: string) {
-    this.notify('error', message);
-  }
+  success(message: string) { this.notify('success', message); }
 
-  showSuccess(message: string) {
-    this.notify('success', message);
-  }
-
-  success(message: string) {
-    this.notify('success', message);
-  }
+  error(message: string) { this.notify('error', message); }
 }

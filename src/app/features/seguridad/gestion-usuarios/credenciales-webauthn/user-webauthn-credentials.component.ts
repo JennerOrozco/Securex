@@ -56,7 +56,7 @@ export class UserWebauthnCredentials implements OnInit {
       },
       error: () => {
         this.isSaving = false;
-        this.notificationService.showError('Error al eliminar la credencial');
+        this.notificationService.error('Error al eliminar la credencial');
       }
     });
   }

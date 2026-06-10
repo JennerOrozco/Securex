@@ -1,137 +1,121 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ConfigService } from './config.service';
-import { GraphqlService } from '../graphql/graphql.service';
+import { BaseApiService } from './base-api.service';
 import { NOTIFICATION_QUERIES, NOTIFICATION_MUTATIONS } from '../graphql/queries/notification.queries';
 
-@Injectable({
-  providedIn: 'root'
-})
-export class NotificationSettingsService {
-  private http = inject(HttpClient);
-  private configService = inject(ConfigService);
-  private gql = inject(GraphqlService);
-
-  private get apiUrl() {
-    return this.configService.notificationApiUrl; // We assume this exists based on config.json checks earlier
+@Injectable({ providedIn: 'root' })
+export class NotificationSettingsService extends BaseApiService {
+  protected override get baseUrl(): string {
+    return this.configService.notificationApiUrl;
   }
 
-  // --- PUSH SETTINGS ---
   getPushSettings(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/admin/push-settings`);
+    return this.http.get(`${this.baseUrl}/notifications/admin/push-settings`);
   }
 
   getPushSetting(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/admin/push-settings/${id}`);
+    return this.http.get(`${this.baseUrl}/notifications/admin/push-settings/${id}`);
   }
 
   savePushSetting(id: number | null, data: any): Observable<any> {
     if (id) {
-      return this.http.put(`${this.apiUrl}/notifications/admin/push-settings/${id}`, data);
+      return this.http.put(`${this.baseUrl}/notifications/admin/push-settings/${id}`, data);
     }
-    return this.http.post(`${this.apiUrl}/notifications/admin/push-settings`, data);
+    return this.http.post(`${this.baseUrl}/notifications/admin/push-settings`, data);
   }
 
   deletePushSetting(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/admin/push-settings/${id}`);
+    return this.http.delete(`${this.baseUrl}/notifications/admin/push-settings/${id}`);
   }
 
-  // --- SMTP SETTINGS ---
   getSmtpSettings(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/admin/smtp-settings`);
+    return this.http.get(`${this.baseUrl}/notifications/admin/smtp-settings`);
   }
 
   getSmtpSetting(id: number): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/admin/smtp-settings/${id}`);
+    return this.http.get(`${this.baseUrl}/notifications/admin/smtp-settings/${id}`);
   }
 
   saveSmtpSetting(id: number | null, data: any): Observable<any> {
     if (id) {
-      return this.http.put(`${this.apiUrl}/notifications/admin/smtp-settings/${id}`, data);
+      return this.http.put(`${this.baseUrl}/notifications/admin/smtp-settings/${id}`, data);
     }
-    return this.http.post(`${this.apiUrl}/notifications/admin/smtp-settings`, data);
+    return this.http.post(`${this.baseUrl}/notifications/admin/smtp-settings`, data);
   }
 
   deleteSmtpSetting(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/admin/smtp-settings/${id}`);
+    return this.http.delete(`${this.baseUrl}/notifications/admin/smtp-settings/${id}`);
   }
 
-  // --- TEST NOTIFICATION ---
   testNotification(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/notifications/send-jwt`, data);
+    return this.http.post(`${this.baseUrl}/notifications/send-jwt`, data);
   }
 
   sendNotificationToAny(data: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/notifications/send`, data);
+    return this.http.post(`${this.baseUrl}/notifications/send`, data);
   }
 
-  // --- VAPID GENERATOR ---
   generateVapid(): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/admin/generate-vapid`);
+    return this.http.get(`${this.baseUrl}/notifications/admin/generate-vapid`);
   }
 
-  // --- SUPERADMIN TELEMETRY ---
   getNotificationsHistory(params?: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/superadmin/notifications`, { params });
+    return this.http.get(`${this.baseUrl}/notifications/superadmin/notifications`, { params });
   }
 
   deleteNotificationHistory(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/superadmin/notifications/${id}`);
+    return this.http.delete(`${this.baseUrl}/notifications/superadmin/notifications/${id}`);
   }
 
   getUserDevices(params?: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/superadmin/user-devices`, { params });
+    return this.http.get(`${this.baseUrl}/notifications/superadmin/user-devices`, { params });
   }
 
   deleteUserDevice(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/superadmin/user-devices/${id}`);
+    return this.http.delete(`${this.baseUrl}/notifications/superadmin/user-devices/${id}`);
   }
 
   getSendAttempts(params?: any): Observable<any> {
-    return this.http.get(`${this.apiUrl}/notifications/superadmin/send-attempts`, { params });
+    return this.http.get(`${this.baseUrl}/notifications/superadmin/send-attempts`, { params });
   }
 
   deleteSendAttempt(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/notifications/superadmin/send-attempts/${id}`);
+    return this.http.delete(`${this.baseUrl}/notifications/superadmin/send-attempts/${id}`);
   }
 
   deleteSendAttemptGql(id: number): Observable<any> {
-    return this.gql.query<{ deleteSendAttempt: boolean }>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, { id }).pipe(map(d => d.deleteSendAttempt));
+    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id });
   }
 
-  // ─── GraphQL Reads ───
-
   getSendAttemptsGql(): Observable<any[]> {
-    return this.gql.query<{ sendAttempts: any[] }>('notification', NOTIFICATION_QUERIES.SEND_ATTEMPTS).pipe(map(d => d.sendAttempts));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.SEND_ATTEMPTS, 'sendAttempts');
   }
 
   getNotificationsHistoryGql(): Observable<any[]> {
-    return this.gql.query<{ notifications: any[] }>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS).pipe(map(d => d.notifications));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS, 'notifications');
   }
 
   deleteNotificationHistoryGql(id: number): Observable<any> {
-    return this.gql.query<{ deleteNotification: boolean }>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, { id }).pipe(map(d => d.deleteNotification));
+    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id });
   }
 
   getUserDevicesGql(): Observable<any[]> {
-    return this.gql.query<{ userDevices: any[] }>('notification', NOTIFICATION_QUERIES.USER_DEVICES).pipe(map(d => d.userDevices));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.USER_DEVICES, 'userDevices');
   }
 
   deleteUserDeviceGql(id: number): Observable<any> {
-    return this.gql.query<{ deleteDevice: boolean }>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, { id }).pipe(map(d => d.deleteDevice));
+    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id });
   }
 
   getPushSettingsGql(): Observable<any[]> {
-    return this.gql.query<{ pushSettings: any[] }>('notification', NOTIFICATION_QUERIES.PUSH_SETTINGS).pipe(map(d => d.pushSettings));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.PUSH_SETTINGS, 'pushSettings');
   }
 
   getSmtpSettingsGql(): Observable<any[]> {
-    return this.gql.query<{ smtpSettings: any[] }>('notification', NOTIFICATION_QUERIES.SMTP_SETTINGS).pipe(map(d => d.smtpSettings));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.SMTP_SETTINGS, 'smtpSettings');
   }
 
   getAppsGql(): Observable<any[]> {
-    return this.gql.query<{ apps: any[] }>('notification', NOTIFICATION_QUERIES.APPS).pipe(map(d => d.apps));
+    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.APPS, 'apps');
   }
 }

@@ -1,22 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { ConfigService } from './config.service';
-import { GraphqlService } from '../graphql/graphql.service';
+import { BaseApiService } from './base-api.service';
 import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.queries';
 
 @Injectable({ providedIn: 'root' })
-export class CompanyService {
-  private http = inject(HttpClient);
-  private configService = inject(ConfigService);
-  private gql = inject(GraphqlService);
-
-  private get baseUrl(): string {
-    return this.configService.apiUrl;
-  }
-
-  // REST
+export class CompanyService extends BaseApiService {
   getCompanies(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/companies`); }
   createCompany(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/companies`, data); }
   updateCompany(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/companies/${uuid}`, data); }
@@ -28,9 +16,8 @@ export class CompanyService {
   updateBranch(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/branches/${uuid}`, data); }
   deleteBranch(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/branches/${uuid}`); }
 
-  // GraphQL
   getCompaniesWithBranches(): Observable<any[]> {
-    return this.gql.query<{ companies: any[] }>('security', SECUREX_QUERIES.COMPANIES).pipe(map(d => d.companies));
+    return this.gqlQueryList<any>('security', SECUREX_QUERIES.COMPANIES, 'companies');
   }
 
   getCompaniesPageData(): Observable<{ apps: any[]; companies: any[] }> {
@@ -38,11 +25,11 @@ export class CompanyService {
   }
 
   getCompanyWithBranches(uuid: string): Observable<any> {
-    return this.gql.query<{ company: any }>('security', SECUREX_QUERIES.COMPANY, { uuid }).pipe(map(d => d.company));
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.COMPANY, 'company', { uuid });
   }
 
   getBranchesList(): Observable<any[]> {
-    return this.gql.query<{ branches: any[] }>('security', SECUREX_QUERIES.BRANCHES).pipe(map(d => d.branches));
+    return this.gqlQueryList<any>('security', SECUREX_QUERIES.BRANCHES, 'branches');
   }
 
   getBranchesPageData(): Observable<{ companies: any[]; branches: any[] }> {
@@ -50,43 +37,30 @@ export class CompanyService {
   }
 
   createCompanyGql(data: any): Observable<any> {
-    return this.gql.query<{ createCompany: any }>('security', SECUREX_MUTATIONS.CREATE_COMPANY, {
+    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_COMPANY, 'createCompany', {
       name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: !!data.is_active,
-    }).pipe(map(d => d.createCompany));
+    });
   }
 
   updateCompanyGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateCompany: any }>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, { uuid, ...this.bool(data) }).pipe(map(d => d.updateCompany));
+    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, 'updateCompany', { uuid, ...this.boolify(data) });
   }
 
   deleteCompanyGql(uuid: string): Observable<any> {
-    return this.gql.query<{ deleteCompany: boolean }>('security', SECUREX_MUTATIONS.DELETE_COMPANY, { uuid }).pipe(map(d => d.deleteCompany));
+    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_COMPANY, 'deleteCompany', { uuid });
   }
 
   createBranchGql(data: any): Observable<any> {
-    return this.gql.query<{ createBranch: any }>('security', SECUREX_MUTATIONS.CREATE_BRANCH, {
+    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_BRANCH, 'createBranch', {
       name: data.name, company_id: data.company_id, address: data.address, phone: data.phone, is_active: !!data.is_active,
-    }).pipe(map(d => d.createBranch));
+    });
   }
 
   updateBranchGql(uuid: string, data: any): Observable<any> {
-    return this.gql.query<{ updateBranch: any }>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, { uuid, ...this.bool(data) }).pipe(map(d => d.updateBranch));
+    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, 'updateBranch', { uuid, ...this.boolify(data) });
   }
 
   deleteBranchGql(uuid: string): Observable<any> {
-    return this.gql.query<{ deleteBranch: boolean }>('security', SECUREX_MUTATIONS.DELETE_BRANCH, { uuid }).pipe(map(d => d.deleteBranch));
-  }
-
-  private bool(data: any): any {
-    const out: any = {};
-    for (const key of Object.keys(data)) {
-      const val = data[key];
-      if (key === 'is_active' || key === 'is_visible' || key === 'is_super_admin') {
-        out[key] = !!val;
-      } else {
-        out[key] = val;
-      }
-    }
-    return out;
+    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_BRANCH, 'deleteBranch', { uuid });
   }
 }

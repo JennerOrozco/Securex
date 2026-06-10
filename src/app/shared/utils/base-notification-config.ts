@@ -67,7 +67,7 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
     this.isSaving = true;
     this.saveSetting(data, mode).subscribe({
       next: () => {
-        this.notificationService.showSuccess(
+        this.notificationService.success(
           `${this.resourceName} ${mode === 'add' ? 'creada' : 'actualizada'} correctamente`
         );
         this.load();
@@ -82,7 +82,7 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
     this.isSaving = true;
     this.deleteSetting(this.selectedItem).subscribe({
       next: () => {
-        this.notificationService.showSuccess(`${this.resourceName} eliminada`);
+        this.notificationService.success(`${this.resourceName} eliminada`);
         this.load();
         this.isSaving = false;
       },

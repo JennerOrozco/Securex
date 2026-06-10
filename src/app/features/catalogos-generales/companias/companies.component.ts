@@ -129,7 +129,7 @@ export class CompaniesComponent implements OnInit {
     if (finalData.logo_url instanceof File) {
       const reader = new FileReader();
       reader.onload = () => { finalData.logo_url = reader.result as string; proceedWithSave(finalData); };
-      reader.onerror = () => { this.notificationService.showError('Error al procesar la imagen del logo'); this.isSaving = false; };
+      reader.onerror = () => { this.notificationService.error('Error al procesar la imagen del logo'); this.isSaving = false; };
       reader.readAsDataURL(finalData.logo_url);
     } else {
       proceedWithSave(finalData);

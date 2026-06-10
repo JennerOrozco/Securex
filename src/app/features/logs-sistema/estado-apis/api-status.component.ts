@@ -131,11 +131,11 @@ export class ApiStatusComponent implements OnInit {
     this.appService.broadcastAppSync().subscribe({
       next: () => {
         this.isSyncing.set(false);
-        this.notificationService.showSuccess('Sincronización Completada. Se ha enviado la orden de sincronizar apps a todos los microservicios.');
+        this.notificationService.success('Sincronización Completada. Se ha enviado la orden de sincronizar apps a todos los microservicios.');
       },
       error: () => {
         this.isSyncing.set(false);
-        this.notificationService.showError('Hubo un error al intentar sincronizar las aplicaciones.');
+        this.notificationService.error('Hubo un error al intentar sincronizar las aplicaciones.');
       }
     });
   }

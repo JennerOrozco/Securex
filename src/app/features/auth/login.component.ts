@@ -368,9 +368,9 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   showToast(message: string, type: 'success' | 'error' = 'error') {
     if (type === 'success') {
-      this.notificationService.showSuccess(message);
+      this.notificationService.success(message);
     } else {
-      this.notificationService.showError(message);
+      this.notificationService.error(message);
     }
   }
 

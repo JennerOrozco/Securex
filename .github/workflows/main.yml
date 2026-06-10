@@ -30,9 +30,7 @@ jobs:
         run: |
           cat << 'EOF' > public/assets/config.json
           {
-            "apiUrl": "https://secureapi.jennerorozcoa.dev/v1",
-            "apiMailUrl": "http://localhost:8080/api-mail.php",
-            "apiAdminTowerUrl": "http://localhost:8080/api-adminTower.php",
+            "apiUrl": "https://secureapi.jennerorozcoa.dev/v1",            
             "recaptchaSiteKey": "6LdC_R4sAAAAALdkIRCXk4rtgo42XPwgRSEd7A2w",
             "googleClientId": "966637622172-7pu5ak4ujjif94pphjum28uppir4ursn.apps.googleusercontent.com",
             "appUuid": "373166e7-5491-11f1-9e08-b904e36964b7",

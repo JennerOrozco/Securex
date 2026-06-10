@@ -32,12 +32,12 @@ export const routes: Routes = [
       {
         path: 'security/users',
         title: 'Usuarios',
-        loadComponent: () => import('./features/seguridad/gestion-usuarios/usuarios/component').then(m => m.SecurityUserCrudComponent)
+        loadComponent: () => import('./features/seguridad/gestion-usuarios/usuarios/usuarios.component').then(m => m.SecurityUserCrudComponent)
       },
       {
         path: 'security/roles',
         title: 'Roles',
-        loadComponent: () => import('./features/seguridad/roles-permisos/roles/component').then(m => m.SecurityRoleCrudComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/roles/roles.component').then(m => m.SecurityRoleCrudComponent)
       },
       {
         path: 'catalog/apps',
@@ -47,7 +47,7 @@ export const routes: Routes = [
       {
         path: 'security/permissions',
         title: 'Permisos',
-        loadComponent: () => import('./features/seguridad/roles-permisos/permisos/component').then(m => m.SecurityPermissionCrudComponent)
+        loadComponent: () => import('./features/seguridad/roles-permisos/permisos/permisos.component').then(m => m.SecurityPermissionCrudComponent)
       },
       {
         path: 'catalog/companies',
@@ -117,32 +117,32 @@ export const routes: Routes = [
       {
         path: 'notifications/push-settings',
         title: 'Configuraciones Push',
-        loadComponent: () => import('./features/notificaciones/config-push/push-settings').then(m => m.PushSettingsComponent)
+        loadComponent: () => import('./features/notificaciones/config-push/push-settings.component').then(m => m.PushSettingsComponent)
       },
       {
         path: 'notifications/smtp-settings',
         title: 'Configuraciones SMTP',
-        loadComponent: () => import('./features/notificaciones/config-smtp/smtp-settings').then(m => m.SmtpSettingsComponent)
+        loadComponent: () => import('./features/notificaciones/config-smtp/smtp-settings.component').then(m => m.SmtpSettingsComponent)
       },
       {
         path: 'notifications/test',
         title: 'Probar Notificaciones',
-        loadComponent: () => import('./features/notificaciones/probar-envio/notification-test').then(m => m.NotificationTestComponent)
+        loadComponent: () => import('./features/notificaciones/probar-envio/notification-test.component').then(m => m.NotificationTestComponent)
       },
       {
         path: 'notifications/history',
         title: 'Historial de Notificaciones',
-        loadComponent: () => import('./features/notificaciones/historial-notificaciones/notifications-list').then(m => m.NotificationsListComponent)
+        loadComponent: () => import('./features/notificaciones/historial-notificaciones/notifications-list.component').then(m => m.NotificationsListComponent)
       },
       {
         path: 'notifications/devices',
         title: 'Dispositivos de Usuario',
-        loadComponent: () => import('./features/notificaciones/dispositivos-usuario/user-devices').then(m => m.UserDevicesComponent)
+        loadComponent: () => import('./features/notificaciones/dispositivos-usuario/user-devices.component').then(m => m.UserDevicesComponent)
       },
       {
         path: 'notifications/send-attempts',
         title: 'Intentos de Envío',
-        loadComponent: () => import('./features/notificaciones/intentos-envio/send-attempts').then(m => m.SendAttemptsComponent)
+        loadComponent: () => import('./features/notificaciones/intentos-envio/send-attempts.component').then(m => m.SendAttemptsComponent)
       }
     ]
   },
