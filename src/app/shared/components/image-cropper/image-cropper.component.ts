@@ -37,6 +37,7 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   private internalFile: File | null = null;
   private imageObj: HTMLImageElement | null = null;
   private isDragging = false;
+  private isPinching = false;
   private dragStartX = 0;
   private dragStartY = 0;
   private cropStartX = 0;
@@ -44,6 +45,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   private cropStartW = 0;
   private cropStartH = 0;
   private dragHandle: HandleId | null = null;
+  private pinchStartDist = 0;
+  private pinchStartSize = 0;
 
   readonly HANDLE_HIT = 12;
 
@@ -381,6 +384,133 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   onMouseUp() {
     this.isDragging = false;
     this.dragHandle = null;
+  }
+
+  onTouchStart(event: TouchEvent) {
+    event.preventDefault();
+    if (!this.imgCanvasRef) return;
+
+    if (event.touches.length === 2) {
+      this.isPinching = true;
+      this.isDragging = false;
+      this.pinchStartDist = this.getTouchDist(event.touches);
+      this.pinchStartSize = this.cropSize;
+      return;
+    }
+
+    if (event.touches.length !== 1) return;
+    if (this.isPinching) return;
+
+    const touch = event.touches[0];
+    const rect = this.imgCanvasRef.nativeElement.getBoundingClientRect();
+    const mx = touch.clientX - rect.left;
+    const my = touch.clientY - rect.top;
+
+    const canvas = this.imgCanvasRef.nativeElement;
+
+    const handle = this.getHandleAt(mx, my);
+    if (handle) {
+      this.dragHandle = handle;
+      this.isDragging = true;
+      this.dragStartX = touch.clientX;
+      this.dragStartY = touch.clientY;
+      const { bx, by, bw, bh } = this.getBoxPx(canvas.width, canvas.height);
+      this.cropStartX = bx;
+      this.cropStartY = by;
+      this.cropStartW = bw;
+      this.cropStartH = bh;
+      return;
+    }
+
+    const { bx, by, bw, bh } = this.getBoxPx(canvas.width, canvas.height);
+
+    if (mx >= bx && mx <= bx + bw && my >= by && my <= by + bh) {
+      this.dragHandle = null;
+      this.isDragging = true;
+      this.dragStartX = touch.clientX;
+      this.dragStartY = touch.clientY;
+      this.cropStartX = this.cropX;
+      this.cropStartY = this.cropY;
+      return;
+    }
+
+    const cw = canvas.width;
+    const ch = canvas.height;
+    this.cropX = Math.round(((mx - bw / 2) / cw) * 1000) / 10;
+    this.cropY = Math.round(((my - bh / 2) / ch) * 1000) / 10;
+
+    if (this.cropX + (bw / cw) * 100 > 100) this.cropX = 100 - (bw / cw) * 100;
+    if (this.cropY + (bh / ch) * 100 > 100) this.cropY = 100 - (bh / ch) * 100;
+    this.cropX = Math.max(0, this.cropX);
+    this.cropY = Math.max(0, this.cropY);
+    this.cropX = Math.round(this.cropX * 10) / 10;
+    this.cropY = Math.round(this.cropY * 10) / 10;
+
+    this.redraw();
+  }
+
+  onTouchMove(event: TouchEvent) {
+    event.preventDefault();
+    if (!this.imgCanvasRef) return;
+
+    if (this.isPinching && event.touches.length === 2) {
+      const dist = this.getTouchDist(event.touches);
+      const scale = this.pinchStartDist > 0 ? dist / this.pinchStartDist : 1;
+      let newSize = Math.round(this.pinchStartSize / scale);
+      newSize = Math.max(5, Math.min(100, newSize));
+      if (this.cropX + newSize > 100 || this.cropY + newSize > 100) {
+        newSize = Math.max(5, this.cropSize);
+      }
+      this.cropSize = newSize;
+      this.redraw();
+      return;
+    }
+
+    if (!this.isDragging || event.touches.length !== 1) return;
+
+    const touch = event.touches[0];
+    const canvas = this.imgCanvasRef.nativeElement;
+    const cw = canvas.width;
+    const ch = canvas.height;
+    const rect = canvas.getBoundingClientRect();
+    const dxpx = touch.clientX - this.dragStartX;
+    const dypx = touch.clientY - this.dragStartY;
+
+    if (this.dragHandle) {
+      this.resizeFromHandle(dxpx, dypx, cw, ch);
+    } else {
+      const dx = (dxpx / rect.width) * 100;
+      const dy = (dypx / rect.height) * 100;
+      let newX = this.cropStartX + dx;
+      let newY = this.cropStartY + dy;
+      let bw = this.cropSize;
+      let bh = this.cropSize;
+      if (this.currentAspectRatio) {
+        const ar = this.currentAspectRatio;
+        if (bw / bh > ar) bh = bw / ar;
+        else bw = bh * ar;
+      }
+      newX = Math.max(0, Math.min(100 - bw, newX));
+      newY = Math.max(0, Math.min(100 - bh, newY));
+      this.cropX = Math.round(newX * 10) / 10;
+      this.cropY = Math.round(newY * 10) / 10;
+    }
+
+    this.redraw();
+  }
+
+  onTouchEnd() {
+    this.isDragging = false;
+    this.isPinching = false;
+    this.dragHandle = null;
+    this.pinchStartDist = 0;
+  }
+
+  private getTouchDist(touches: TouchList): number {
+    if (touches.length < 2) return 0;
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
   }
 
   onWheel(event: WheelEvent) {

@@ -73,6 +73,28 @@
             </div>
           </div>
         </div>
+
+        <!-- Tabs para Mobile (dentro del header) -->
+        <nav class="gm-profile-mobile-tabs" role="tablist">
+          <button
+            [class.active]="activeTab() === 'info'"
+            (click)="setTab('info')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'info'"
+          >
+            <i class="pi pi-user"></i>
+            <span>Información</span>
+          </button>
+          <button
+            [class.active]="activeTab() === 'security'"
+            (click)="setTab('security')"
+            role="tab"
+            [attr.aria-selected]="activeTab() === 'security'"
+          >
+            <i class="pi pi-shield"></i>
+            <span>Seguridad</span>
+          </button>
+        </nav>
       </div>
 
       <!-- Cuerpo del Card (Navegación + Contenido) -->
@@ -99,28 +121,6 @@
             <i class="pi pi-lock"></i>
             <span>Seguridad & Accesos</span>
             <i class="pi pi-chevron-right gm-menu-chevron"></i>
-          </button>
-        </nav>
-
-        <!-- Menú de pestañas para Mobile (Pills Horizontales) -->
-        <nav class="gm-profile-mobile-tabs" role="tablist">
-          <button
-            [class.active]="activeTab() === 'info'"
-            (click)="setTab('info')"
-            role="tab"
-            [attr.aria-selected]="activeTab() === 'info'"
-          >
-            <i class="pi pi-user"></i>
-            <span>Información</span>
-          </button>
-          <button
-            [class.active]="activeTab() === 'security'"
-            (click)="setTab('security')"
-            role="tab"
-            [attr.aria-selected]="activeTab() === 'security'"
-          >
-            <i class="pi pi-shield"></i>
-            <span>Seguridad</span>
           </button>
         </nav>
 
