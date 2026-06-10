@@ -30,17 +30,17 @@ export class PermissionService extends BaseApiService {
   }
 
   createPermissionGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_PERMISSION, 'createPermission', this.boolify({
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_PERMISSION, 'createPermission', this.boolify({
       name: data.name, slug: data.slug, type: data.type, icon: data.icon,
       route: data.route, parent_id: data.parent_id, sort_order: data.sort_order, is_visible: data.is_visible,
     }));
   }
 
   updatePermissionGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_PERMISSION, 'updatePermission', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_PERMISSION, 'updatePermission', { uuid, ...this.boolify(data) });
   }
 
   deletePermissionGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_PERMISSION, 'deletePermission', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_PERMISSION, 'deletePermission', { uuid });
   }
 }

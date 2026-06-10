@@ -17,16 +17,16 @@
 
 .stepper-track {
   height: 3px;
-  background: #e2e8f0;
-  border-radius: 99px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
   position: relative;
   margin-bottom: 0.75rem;
 }
 
 .stepper-progress {
   height: 100%;
-  background: linear-gradient(90deg, #2c0707, #4a0e0e);
-  border-radius: 99px;
+  background: linear-gradient(90deg, var(--app-main-primary), var(--app-main-primary-light));
+  border-radius: var(--radius-full);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -52,36 +52,36 @@
   align-items: center;
   justify-content: center;
   font-size: 0.75rem;
-  background: #e2e8f0;
-  color: #94a3b8;
+  background: var(--color-border);
+  color: var(--color-text-light);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stepper-step.active .stepper-dot {
-  background: #2c0707;
+  background: var(--app-main-primary);
   color: #fff;
 }
 
 .stepper-step.current .stepper-dot {
-  box-shadow: 0 0 0 4px rgba(44, 7, 7, 0.15);
+  box-shadow: 0 0 0 4px var(--color-red-15);
 }
 
 .stepper-step.done .stepper-dot {
-  background: #16a34a;
+  background: var(--color-emerald);
   color: #fff;
 }
 
 .stepper-label {
   font-size: 0.7rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--color-text-light);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   transition: color 0.3s;
 }
 
 .stepper-step.active .stepper-label {
-  color: #2c0707;
+  color: var(--app-main-primary);
 }
 
 /* ========== Card Headers ========== */
@@ -92,13 +92,13 @@
   padding: 1rem 1.25rem 0;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #2c0707;
+  color: var(--app-main-primary);
   letter-spacing: -0.01em;
 }
 
 .card-header i {
   font-size: 1rem;
-  color: #4a0e0e;
+  color: var(--app-main-primary-light);
 }
 
 /* ========== Summary ========== */
@@ -118,7 +118,7 @@
 .summary-label {
   font-size: 0.62rem;
   font-weight: 600;
-  color: #94a3b8;
+  color: var(--color-text-light);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -126,12 +126,12 @@
 .summary-value {
   font-size: 0.85rem;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--color-text-main);
 }
 
 .summary-email {
   font-size: 0.78rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   word-break: break-all;
 }
 
@@ -145,13 +145,13 @@
 .field-label {
   font-size: 0.62rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
   letter-spacing: 0.03em;
   text-transform: uppercase;
 }
 
 .field-required {
-  color: #e11d48;
+  color: var(--color-red);
   font-size: 0.75rem;
 }
 
@@ -166,7 +166,7 @@
   left: 10px;
   top: 10px;
   z-index: 2;
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.75rem;
   pointer-events: none;
 }
@@ -174,12 +174,12 @@
 .field-textarea {
   width: 100%;
   min-height: 80px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
   padding: 0.5rem 0.65rem 0.5rem 2rem;
   font-size: 0.85rem;
-  color: #0f172a;
-  background: rgba(248, 250, 252, 0.75);
+  color: var(--color-text-main);
+  background: var(--color-bg-subtle);
   backdrop-filter: blur(4px);
   transition: all 0.2s;
   outline: none;
@@ -189,13 +189,13 @@
 }
 
 .field-textarea:focus {
-  border-color: #6366f1;
-  background: rgba(255, 255, 255, 0.95);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+  border-color: var(--app-main-indigo);
+  background: var(--color-bg-card);
+  box-shadow: 0 0 0 2px var(--color-indigo-08);
 }
 
 .field-textarea::placeholder {
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 /* ========== Form Actions ========== */

@@ -12,10 +12,10 @@
     backdrop-filter: blur(20px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
     box-shadow:
-        0 8px 32px rgba(0, 0, 0, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid rgba(255, 255, 255, 0.07) !important;
+        0 8px 32px var(--color-black-30),
+        0 2px 8px var(--color-black-10),
+        inset 0 1px 0 var(--color-white-06) !important;
+    border: 1px solid var(--color-white-06) !important;
     margin-bottom: 0.5rem !important;
     padding: 0.65rem 0.875rem !important;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
@@ -35,9 +35,9 @@
 
 .app-toast .p-toast-message:hover {
     box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.35),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+        0 12px 40px var(--color-black-35),
+        0 4px 12px var(--color-black-15),
+        inset 0 1px 0 var(--color-white-08) !important;
     transform: translateY(-1px) !important;
 }
 
@@ -75,14 +75,14 @@
 
 .app-toast .p-toast-close-icon:hover {
     opacity: 1 !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    background: var(--color-white-10) !important;
 }
 
 /* Severity tones */
 .app-toast .p-toast-message.p-toast-message-success {
-    background: linear-gradient(135deg, rgba(22, 101, 52, 0.88), rgba(20, 83, 45, 0.82)) !important;
-    color: #e5f5e5 !important;
-    border-color: rgba(34, 197, 94, 0.2) !important;
+    background: linear-gradient(135deg, var(--color-emerald-85), var(--color-emerald-80)) !important;
+    color: var(--color-success-bg) !important;
+    border-color: var(--color-emerald-20) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-success::before {
@@ -97,31 +97,31 @@
 .app-toast .p-toast-message.p-toast-message-error {
     background: linear-gradient(135deg, rgba(153, 27, 27, 0.88), rgba(127, 29, 29, 0.82)) !important;
     color: #fce4e4 !important;
-    border-color: rgba(239, 68, 68, 0.2) !important;
+    border-color: var(--color-red-20) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-error::before {
-    background: linear-gradient(180deg, #f87171, #ef4444) !important;
+    background: linear-gradient(180deg, var(--color-red), var(--color-red)) !important;
     box-shadow: 0 0 8px rgba(248, 113, 113, 0.4) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-error .p-toast-message-icon {
-    color: #f87171 !important;
+    color: var(--color-red) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-info {
     background: linear-gradient(135deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.82)) !important;
-    color: #dbeafe !important;
+    color: var(--color-info-bg) !important;
     border-color: rgba(59, 130, 246, 0.2) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-info::before {
-    background: linear-gradient(180deg, #60a5fa, #3b82f6) !important;
+    background: linear-gradient(180deg, var(--color-accent-blue-light), var(--color-accent-blue)) !important;
     box-shadow: 0 0 8px rgba(96, 165, 250, 0.4) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-info .p-toast-message-icon {
-    color: #60a5fa !important;
+    color: var(--color-accent-blue-light) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-warn {
@@ -131,12 +131,12 @@
 }
 
 .app-toast .p-toast-message.p-toast-message-warn::before {
-    background: linear-gradient(180deg, #fbbf24, #f59e0b) !important;
+    background: linear-gradient(180deg, var(--color-amber), var(--color-amber)) !important;
     box-shadow: 0 0 8px rgba(251, 191, 36, 0.4) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-warn .p-toast-message-icon {
-    color: #fbbf24 !important;
+    color: var(--color-amber) !important;
 }
 
 @media (max-width: 640px) {
@@ -174,14 +174,14 @@
     padding: 0.3rem 0.65rem !important;
     border-radius: 7px !important;
     background: rgba(15, 23, 42, 0.88) !important;
-    color: #f1f5f9 !important;
+    color: var(--color-bg-page) !important;
     letter-spacing: 0.01em !important;
     backdrop-filter: blur(8px) !important;
     -webkit-backdrop-filter: blur(8px) !important;
     box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.25),
-        0 1px 3px rgba(0, 0, 0, 0.15) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        0 1px 3px var(--color-black-15) !important;
+    border: 1px solid var(--color-white-08) !important;
     white-space: nowrap !important;
 }
 
@@ -204,83 +204,83 @@
 .p-datatable-filter-overlay,
 .p-multiselect-panel,
 .p-select-overlay {
-    --p-primary-50:  #fef2f2;
-    --p-primary-100: #fee2e2;
-    --p-primary-200: #fecaca;
+    --p-primary-50:  var(--color-danger-light);
+    --p-primary-100: var(--color-danger-bg);
+    --p-primary-200: var(--color-danger-border);
     --p-primary-300: #fca5a5;
-    --p-primary-400: #f87171;
-    --p-primary-500: #ef4444;
-    --p-primary-600: #dc2626;
-    --p-primary-700: #b91c1c;
+    --p-primary-400: var(--color-red);
+    --p-primary-500: var(--color-red);
+    --p-primary-600: var(--color-danger-text);
+    --p-primary-700: var(--color-red-dark);
     --p-primary-800: #991b1b;
     --p-primary-900: #7f1d1d;
     --p-primary-950: #450a0a;
-    --p-highlight-background: #fef2f2;
-    --p-highlight-focus-background: #fee2e2;
-    --p-highlight-color: #b91c1c;
+    --p-highlight-background: var(--color-danger-light);
+    --p-highlight-focus-background: var(--color-danger-bg);
+    --p-highlight-color: var(--color-red-dark);
     --p-highlight-focus-color: #991b1b;
     --p-primary-contrast-color: #ffffff;
-    --p-primary-hover-color: #dc2626;
-    --p-primary-active-color: #b91c1c;
+    --p-primary-hover-color: var(--color-danger-text);
+    --p-primary-active-color: var(--color-red-dark);
 
     /* p-select option selected */
-    --p-select-option-selected-background: #fef2f2;
-    --p-select-option-selected-color: #b91c1c;
-    --p-select-option-selected-focus-background: #fee2e2;
+    --p-select-option-selected-background: var(--color-danger-light);
+    --p-select-option-selected-color: var(--color-red-dark);
+    --p-select-option-selected-focus-background: var(--color-danger-bg);
     --p-select-option-selected-focus-color: #991b1b;
 
     /* p-multiselect option selected */
-    --p-multiselect-option-selected-background: #fef2f2;
-    --p-multiselect-option-selected-color: #b91c1c;
-    --p-multiselect-option-selected-focus-background: #fee2e2;
+    --p-multiselect-option-selected-background: var(--color-danger-light);
+    --p-multiselect-option-selected-color: var(--color-red-dark);
+    --p-multiselect-option-selected-focus-background: var(--color-danger-bg);
     --p-multiselect-option-selected-focus-color: #991b1b;
 }
 
 .my-app-dark .p-datatable-filter-overlay,
 .my-app-dark .p-multiselect-panel,
 .my-app-dark .p-select-overlay {
-    --p-primary-50:  #fef2f2;
-    --p-primary-100: #fee2e2;
-    --p-primary-200: #fecaca;
+    --p-primary-50:  var(--color-danger-light);
+    --p-primary-100: var(--color-danger-bg);
+    --p-primary-200: var(--color-danger-border);
     --p-primary-300: #fca5a5;
-    --p-primary-400: #f87171;
-    --p-primary-500: #ef4444;
-    --p-primary-600: #dc2626;
-    --p-primary-700: #b91c1c;
+    --p-primary-400: var(--color-red);
+    --p-primary-500: var(--color-red);
+    --p-primary-600: var(--color-danger-text);
+    --p-primary-700: var(--color-red-dark);
     --p-primary-800: #991b1b;
     --p-primary-900: #7f1d1d;
     --p-primary-950: #450a0a;
-    --p-highlight-background: color-mix(in srgb, #ef4444, transparent 84%);
-    --p-highlight-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-highlight-background: color-mix(in srgb, var(--color-red), transparent 84%);
+    --p-highlight-focus-background: color-mix(in srgb, var(--color-red), transparent 76%);
     --p-highlight-color: rgba(255, 255, 255, 0.87);
     --p-highlight-focus-color: rgba(255, 255, 255, 0.87);
     --p-primary-contrast-color: #ffffff;
-    --p-primary-hover-color: #dc2626;
-    --p-primary-active-color: #b91c1c;
+    --p-primary-hover-color: var(--color-danger-text);
+    --p-primary-active-color: var(--color-red-dark);
 
     /* p-select option selected */
-    --p-select-option-selected-background: color-mix(in srgb, #ef4444, transparent 84%);
+    --p-select-option-selected-background: color-mix(in srgb, var(--color-red), transparent 84%);
     --p-select-option-selected-color: rgba(255, 255, 255, 0.87);
-    --p-select-option-selected-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-select-option-selected-focus-background: color-mix(in srgb, var(--color-red), transparent 76%);
     --p-select-option-selected-focus-color: rgba(255, 255, 255, 0.87);
 
     /* p-multiselect option selected */
-    --p-multiselect-option-selected-background: color-mix(in srgb, #ef4444, transparent 84%);
+    --p-multiselect-option-selected-background: color-mix(in srgb, var(--color-red), transparent 84%);
     --p-multiselect-option-selected-color: rgba(255, 255, 255, 0.87);
-    --p-multiselect-option-selected-focus-background: color-mix(in srgb, #ef4444, transparent 76%);
+    --p-multiselect-option-selected-focus-background: color-mix(in srgb, var(--color-red), transparent 76%);
     --p-multiselect-option-selected-focus-color: rgba(255, 255, 255, 0.87);
 }
 
 .p-multiselect-filter-custom .p-multiselect-token {
     background: rgba(239, 68, 68, 0.12) !important;
-    color: #dc2626 !important;
+    color: var(--color-danger-text) !important;
     border-radius: 6px !important;
     font-size: 0.72rem !important;
     padding: 0.15rem 0.4rem !important;
 }
 
 .p-multiselect-filter-custom .p-multiselect-token .p-multiselect-token-icon {
-    color: #dc2626 !important;
+    color: var(--color-danger-text) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -290,8 +290,8 @@
 .p-paginator .p-paginator-page-selected,
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight,
 .p-paginator .p-link.p-highlight {
-    background: #fef2f2 !important;
-    color: #b91c1c !important;
+    background: var(--color-danger-light) !important;
+    color: var(--color-red-dark) !important;
     font-weight: 700 !important;
 }
 
@@ -299,5 +299,5 @@
 .p-paginator .p-paginator-page-selected:hover,
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight:hover,
 .p-paginator .p-link.p-highlight:hover {
-    background: #fee2e2 !important;
+    background: var(--color-danger-bg) !important;
 }

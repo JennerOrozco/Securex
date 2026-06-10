@@ -63,8 +63,17 @@ export class AuthService {
     private isRefreshingSignal = signal<boolean>(false);
     public isRefreshing = this.isRefreshingSignal.asReadonly();
 
-    private refreshInProgress = false;
-    private refreshResult = new ReplaySubject<string | null>(1);
+  private refreshInProgress = false;
+  private refreshResult = new ReplaySubject<string | null>(1);
+
+  /** Exposed for sibling services (ProfileService, WebAuthnService) */
+  setCurrentUser(user: User | null): void {
+    this.currentUserSignal.set(user);
+  }
+
+  setUserPermissions(permissions: string[]): void {
+    this.userPermissionsSignal.set(permissions);
+  }
 
     private http = inject(HttpClient);
     private router = inject(Router);

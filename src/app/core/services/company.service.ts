@@ -37,30 +37,30 @@ export class CompanyService extends BaseApiService {
   }
 
   createCompanyGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_COMPANY, 'createCompany', {
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_COMPANY, 'createCompany', {
       name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: !!data.is_active,
     });
   }
 
   updateCompanyGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, 'updateCompany', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_COMPANY, 'updateCompany', { uuid, ...this.boolify(data) });
   }
 
   deleteCompanyGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_COMPANY, 'deleteCompany', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_COMPANY, 'deleteCompany', { uuid });
   }
 
   createBranchGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_BRANCH, 'createBranch', {
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_BRANCH, 'createBranch', {
       name: data.name, company_id: data.company_id, address: data.address, phone: data.phone, is_active: !!data.is_active,
     });
   }
 
   updateBranchGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, 'updateBranch', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_BRANCH, 'updateBranch', { uuid, ...this.boolify(data) });
   }
 
   deleteBranchGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_BRANCH, 'deleteBranch', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_BRANCH, 'deleteBranch', { uuid });
   }
 }

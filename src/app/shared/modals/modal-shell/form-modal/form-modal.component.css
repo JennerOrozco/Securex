@@ -7,13 +7,13 @@
   transition: right 0.2s ease;
 }
 
-.gm-valid { color: #059669; }
-.gm-invalid { color: #e11d48; }
+.gm-valid { color: var(--color-emerald); }
+.gm-invalid { color: var(--color-red); }
 
 :host ::ng-deep .p-inputtext::placeholder {
-  color: #94a3b8 !important;
+  color: var(--color-text-light) !important;
 }
 
 :host ::ng-deep .p-textarea::placeholder {
-  color: #94a3b8 !important;
+  color: var(--color-text-light) !important;
 }

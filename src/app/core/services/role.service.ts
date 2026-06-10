@@ -26,20 +26,20 @@ export class RoleService extends BaseApiService {
   }
 
   createRoleGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_ROLE, 'createRole', {
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_ROLE, 'createRole', {
       name: data.name, slug: data.slug, description: data.description, is_active: !!data.is_active,
     });
   }
 
   updateRoleGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_ROLE, 'updateRole', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_ROLE, 'updateRole', { uuid, ...this.boolify(data) });
   }
 
   deleteRoleGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_ROLE, 'deleteRole', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_ROLE, 'deleteRole', { uuid });
   }
 
   syncRolePermissionsGql(uuid: string, permissionIds: number[]): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.SYNC_ROLE_PERMISSIONS, 'syncRolePermissions', { uuid, permissionIds });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.SYNC_ROLE_PERMISSIONS, 'syncRolePermissions', { uuid, permissionIds });
   }
 }

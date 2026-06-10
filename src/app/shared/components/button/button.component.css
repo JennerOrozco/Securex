@@ -33,7 +33,7 @@
 :host ::ng-deep .p-button.gm-btn.p-button-navy {
   background: var(--navy-light) !important;
   border-color: var(--navy-light) !important;
-  color: #ffffff !important;
+  color: var(--color-bg-card) !important;
   height: 36px;
   padding: 0 1rem;
   border-radius: 8px;
@@ -70,17 +70,17 @@
    ===================================================== */
 :host ::ng-deep .gm-btn.btn--ghost-indigo,
 :host ::ng-deep .p-button.gm-btn.btn--ghost-indigo {
-  background: #ffffff !important;
-  color: #6366f1 !important;
+  background: var(--color-bg-card) !important;
+  color: var(--app-main-indigo) !important;
   border: 1px solid var(--border) !important;
   box-shadow: none !important;
 }
 
 :host ::ng-deep .gm-btn.btn--ghost-indigo:hover,
 :host ::ng-deep .p-button.gm-btn.btn--ghost-indigo:hover {
-  background: #eef2ff !important;
-  border-color: #c7d2fe !important;
-  color: #6366f1 !important;
+  background: var(--app-main-indigo-light) !important;
+  border-color: var(--app-main-indigo-border) !important;
+  color: var(--app-main-indigo) !important;
 }
 
 /* =====================================================

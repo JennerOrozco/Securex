@@ -1,9 +1,9 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { LayoutService } from '@core/services/layout.service';
-import { delay } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 
 interface MenuItem {
@@ -37,6 +37,7 @@ export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
   private layoutService = inject(LayoutService);
+  private destroyRef = inject(DestroyRef);
 
   sidebarOpen = this.layoutService.sidebarOpen;
 
@@ -99,12 +100,10 @@ export class SidebarComponent implements OnInit {
   // El menú viene ahora dinámicamente del servicio
   visibleMenuItems = computed(() => {
     const menu = this.authService.userMenu();
-    console.log('Sidebar: Recalculating visible items', menu);
     return this.mapMenuToItems(menu);
   });
 
   private mapMenuToItems(items: any[]): MenuItem[] {
-    console.log('Sidebar: Mapping items', items.length);
     return items.map(item => ({
       label: item.name,
       icon: item.icon || 'pi pi-circle',
@@ -155,18 +154,23 @@ export class SidebarComponent implements OnInit {
     // Same company, different branch
     if (item.companyUuid === this.company()?.uuid && item.branchUuid && item.branchUuid !== this.branch()?.uuid) {
       this.switchingCompany.set(true);
-      this.authService.switchBranch(item.branchUuid).pipe(delay(1000)).subscribe({
-        next: () => window.location.reload(),
+      this.authService.switchBranch(item.branchUuid).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.switchingCompany.set(false);
+          this.router.navigate(['/home']);
+        },
         error: () => this.switchingCompany.set(false)
       });
       return;
     }
 
-    // Different company
     if (item.companyUuid !== this.company()?.uuid) {
       this.switchingCompany.set(true);
-      this.authService.switchCompany(item.companyUuid).pipe(delay(1000)).subscribe({
-        next: () => window.location.reload(),
+      this.authService.switchCompany(item.companyUuid).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: () => {
+          this.switchingCompany.set(false);
+          this.router.navigate(['/home']);
+        },
         error: () => this.switchingCompany.set(false)
       });
       return;

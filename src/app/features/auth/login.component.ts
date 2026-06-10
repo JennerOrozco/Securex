@@ -3,14 +3,16 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '@core/services/auth.service';
+import { WebAuthnService } from '@core/services/webauthn.service';
+import { ProfileService } from '@core/services/profile.service';
 import { ConfigService } from '@core/services/config.service';
 import { NotificationService } from '@core/services/notification.service';
+import { base64ToBuffer, bufferToBase64, extractBase64 } from '@shared/utils/webauthn-utils';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { RegisterFormComponent } from './register-form/register-form.component';
 import { ForgotPasswordFormComponent } from './forgot-password-form/forgot-password-form.component';
 import { ResetPasswordFormComponent } from './reset-password-form/reset-password-form.component';
 import { CompanyCardComponent } from './shared/company-card.component';
-import { forkJoin, timer } from 'rxjs';
 
 declare var google: any;
 
@@ -64,6 +66,8 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   googleIdToken: string | null = null;
 
   private authService = inject(AuthService);
+  private webauthnService = inject(WebAuthnService);
+  private profileService = inject(ProfileService);
   private router = inject(Router);
   private ngZone = inject(NgZone);
   private cdr = inject(ChangeDetectorRef);
@@ -217,18 +221,22 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
               // All good, proceed to fetch profile and menu then redirect
               this.loadingConfig = true;
               this.cdr.detectChanges();
-              forkJoin([
-                this.authService.getUserProfile(),
-                this.authService.refreshPermissions(),
-                timer(2000)
-              ]).subscribe({
+              this.profileService.getProfile().subscribe({
                 next: () => {
-                  this.loadingConfig = false;
-                  this.redirectUser(user);
+                  this.authService.refreshPermissions().subscribe({
+                    next: () => {
+                      this.loadingConfig = false;
+                      this.redirectUser(user);
+                    },
+                    error: () => {
+                      this.loadingConfig = false;
+                      this.redirectUser(user);
+                    }
+                  });
                 },
                 error: () => {
                   this.loadingConfig = false;
-                  this.redirectUser(user); // Fallback
+                  this.redirectUser(user);
                 }
               });
             } else {
@@ -395,14 +403,18 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           this.showCompanySelect = false;
           this.loadingConfig = true;
           this.cdr.detectChanges();
-          forkJoin([
-            this.authService.getUserProfile(),
-            this.authService.refreshPermissions(),
-            timer(2000)
-          ]).subscribe({
+          this.profileService.getProfile().subscribe({
             next: () => {
-              this.loadingConfig = false;
-              this.redirectUser(res.user);
+              this.authService.refreshPermissions().subscribe({
+                next: () => {
+                  this.loadingConfig = false;
+                  this.redirectUser(res.user);
+                },
+                error: () => {
+                  this.loadingConfig = false;
+                  this.redirectUser(res.user);
+                }
+              });
             },
             error: () => {
               this.loadingConfig = false;
@@ -450,14 +462,18 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             const user = res.user;
             this.loadingConfig = true;
             this.cdr.detectChanges();
-            forkJoin([
-              this.authService.getUserProfile(),
-              this.authService.refreshPermissions(),
-              timer(2000)
-            ]).subscribe({
+            this.profileService.getProfile().subscribe({
               next: () => {
-                this.loadingConfig = false;
-                this.redirectUser(user);
+                this.authService.refreshPermissions().subscribe({
+                  next: () => {
+                    this.loadingConfig = false;
+                    this.redirectUser(user);
+                  },
+                  error: () => {
+                    this.loadingConfig = false;
+                    this.redirectUser(user);
+                  }
+                });
               },
               error: () => {
                 this.loadingConfig = false;
@@ -491,14 +507,18 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             this.authService.setUserCompanies(this.availableCompanies);
             this.loadingConfig = true;
             this.cdr.detectChanges();
-            forkJoin([
-              this.authService.getUserProfile(),
-              this.authService.refreshPermissions(),
-              timer(2000)
-            ]).subscribe({
+            this.profileService.getProfile().subscribe({
               next: () => {
-                this.loadingConfig = false;
-                this.redirectUser(res.user);
+                this.authService.refreshPermissions().subscribe({
+                  next: () => {
+                    this.loadingConfig = false;
+                    this.redirectUser(res.user);
+                  },
+                  error: () => {
+                    this.loadingConfig = false;
+                    this.redirectUser(res.user);
+                  }
+                });
               },
               error: () => {
                 this.loadingConfig = false;
@@ -536,7 +556,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Si no hay email, el backend genera challenge sin allowCredentials
     // y el browser muestra todas las huellas disponibles en el dispositivo
-    this.authService.getWebAuthnLoginOptions(email || undefined).subscribe({
+    this.webauthnService.getLoginOptions(email || undefined).subscribe({
       next: async (response) => {
         try {
           const data = (response as any).options ? (response as any) : ((response as any).data ?? response);
@@ -550,23 +570,13 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             throw new Error('El backend no incluyó el challenge en las opciones.');
           }
 
-          // Función para limpiar el formato =?BINARY?B?...?= que manda la librería PHP
-          const extractBase64 = (str: string) => {
-            if (typeof str !== 'string') return str;
-            const match = str.match(/^=\?BINARY\?B\?(.+)\?=$/);
-            return match ? match[1] : str;
-          };
-
-          // Convertir challenge de base64 a Buffer
           const base64Challenge = extractBase64(pubKeyOptions.challenge);
-          pubKeyOptions.challenge = this.base64ToBuffer(base64Challenge);
+          pubKeyOptions.challenge = base64ToBuffer(base64Challenge);
 
-          // Si el backend mandó allowCredentials con items, los convertimos.
-          // Si vino vacío, lo eliminamos para que el browser use las passkeys del dispositivo.
           if (pubKeyOptions.allowCredentials && pubKeyOptions.allowCredentials.length > 0) {
             pubKeyOptions.allowCredentials = pubKeyOptions.allowCredentials.map((cred: any) => {
               if (cred && cred.id) {
-                return { ...cred, id: this.base64ToBuffer(extractBase64(cred.id)) };
+                return { ...cred, id: base64ToBuffer(extractBase64(cred.id)) };
               }
               return cred;
             });
@@ -589,28 +599,31 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           // El userHandle identifica al usuario cuando no se mandó email
           const loginData = {
             id: credential.id,
-            clientDataJSON: this.bufferToBase64(responseObj.clientDataJSON),
-            authenticatorData: this.bufferToBase64(responseObj.authenticatorData),
-            signature: this.bufferToBase64(responseObj.signature),
-            userHandle: responseObj.userHandle ? this.bufferToBase64(responseObj.userHandle) : null,
+            clientDataJSON: bufferToBase64(responseObj.clientDataJSON),
+            authenticatorData: bufferToBase64(responseObj.authenticatorData),
+            signature: bufferToBase64(responseObj.signature),
+            userHandle: responseObj.userHandle ? bufferToBase64(responseObj.userHandle) : null,
             challenge: challengeBase64
           };
 
-          // Enviar al backend
-          this.authService.loginWithWebAuthn(loginData).subscribe({
+          this.webauthnService.login(loginData).subscribe({
             next: (res) => {
               this.loading = false;
               if (res.success) {
                 this.loadingConfig = true;
                 this.cdr.detectChanges();
-                forkJoin([
-                  this.authService.getUserProfile(),
-                  this.authService.refreshPermissions(),
-                  timer(2000)
-                ]).subscribe({
+                this.profileService.getProfile().subscribe({
                   next: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(res.user);
+                    this.authService.refreshPermissions().subscribe({
+                      next: () => {
+                        this.loadingConfig = false;
+                        this.redirectUser(res.user);
+                      },
+                      error: () => {
+                        this.loadingConfig = false;
+                        this.redirectUser(res.user);
+                      }
+                    });
                   },
                   error: () => {
                     this.loadingConfig = false;
@@ -648,27 +661,4 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  // Helper to convert base64 to ArrayBuffer (supports Base64URL)
-  private base64ToBuffer(base64Url: string): ArrayBuffer {
-    let base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    while (base64.length % 4 !== 0) {
-      base64 += '=';
-    }
-    const binary = window.atob(base64);
-    const buffer = new Uint8Array(binary.length);
-    for (let i = 0; i < binary.length; i++) {
-      buffer[i] = binary.charCodeAt(i);
-    }
-    return buffer.buffer;
-  }
-
-  // Helper to convert ArrayBuffer to base64
-  private bufferToBase64(buffer: ArrayBuffer): string {
-    const bytes = new Uint8Array(buffer);
-    let binary = '';
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
-    }
-    return window.btoa(binary);
-  }
 }

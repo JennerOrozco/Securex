@@ -17,16 +17,16 @@ export class AppService extends BaseApiService {
   }
 
   createAppGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_APP, 'createApp', {
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_APP, 'createApp', {
       name: data.name, slug: data.slug, is_active: !!data.is_active,
     });
   }
 
   updateAppGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_APP, 'updateApp', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_APP, 'updateApp', { uuid, ...this.boolify(data) });
   }
 
   deleteAppGql(uuid: string): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.DELETE_APP, 'deleteApp', { uuid });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.DELETE_APP, 'deleteApp', { uuid });
   }
 }

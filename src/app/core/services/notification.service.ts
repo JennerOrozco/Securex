@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
+import { StorageService } from './storage.service';
 import { Observable, catchError, firstValueFrom, of, tap, timeout } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
@@ -23,6 +24,7 @@ export class NotificationService {
   private http = inject(HttpClient);
   private swPush = inject(SwPush);
   private configService = inject(ConfigService);
+  private storage = inject(StorageService);
   private messageService = inject(MessageService);
 
   constructor() { }
@@ -75,16 +77,7 @@ export class NotificationService {
   }
 
   private getCompanyUuid(): string | null {
-    const storedCompany = sessionStorage.getItem('currentCompany');
-    if (storedCompany) {
-      try {
-        const company = JSON.parse(storedCompany);
-        return company?.uuid || null;
-      } catch {
-        return null;
-      }
-    }
-    return null;
+    return this.storage.getCompany()?.uuid ?? null;
   }
 
   private sendSubscriptionToApi(sub: PushSubscription) {

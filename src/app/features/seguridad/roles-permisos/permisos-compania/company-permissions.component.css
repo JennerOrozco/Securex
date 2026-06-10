@@ -1,28 +1,10 @@
-.selectors-bar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.25rem;
-  padding: 1.25rem 1.5rem;
-  background: transparent;
-  border-bottom: 1px solid #e2e8f0;
-  margin: 0;
-}
-
-.selector-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  min-width: 240px;
-  flex: 1;
-  max-width: 360px;
-}
-
-.selector-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #94a3b8;
+/* selectors-bar/group/label inherited from _tree-tables.css with light overrides */
+:host {
+  --selectors-bar-bg: transparent;
+  --selectors-bar-border: var(--color-border);
+  --selectors-bar-mt: 0;
+  --selectors-bar-mb: 0;
+  --selectors-label-color: var(--color-text-light);
 }
 
 .perm-skeleton {
@@ -32,7 +14,7 @@
 
 .perm-skeleton-header {
   height: 38px;
-  background: #e2e8f0;
+  background: var(--color-border);
   margin-bottom: 1px;
 }
 
@@ -40,7 +22,7 @@
   display: flex;
   align-items: center;
   height: 44px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-bg-page);
 }
 
 .perm-skeleton-row.depth-0 { padding-left: 16px; }
@@ -49,8 +31,8 @@
 
 .perm-skeleton-bar {
   height: 12px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(90deg, var(--color-border) 25%, var(--color-bg-page) 50%, var(--color-border) 75%);
   background-size: 200% 100%;
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
   display: inline-block;
@@ -61,11 +43,6 @@
 .perm-skeleton-bar.w-48 { width: 48%; }
 .perm-skeleton-bar.w-56 { width: 56%; }
 .perm-skeleton-bar.w-72 { width: 72%; }
-
-@keyframes skeleton-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
 
 @media (max-width: 768px) {
   ::ng-deep .type-chip {

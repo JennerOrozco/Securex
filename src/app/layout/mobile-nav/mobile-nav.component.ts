@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, Router, NavigationEnd } from '@angular/router';
 import { LayoutService } from '@core/services/layout.service';
 import { AuthService } from '@core/services/auth.service';
-import { NotificationService, AppNotification } from '@core/services/notification.service';
+import { StorageService } from '@core/services/storage.service';
+import { NotificationPanelService } from '@shared/services/notification-panel.service';
 import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -40,7 +41,8 @@ export class MobileNavComponent implements OnInit {
   private layoutService = inject(LayoutService);
   private router = inject(Router);
   private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
+  private storage = inject(StorageService);
+  notifPanel = inject(NotificationPanelService);
   private destroyRef = inject(DestroyRef);
 
   branch = signal<any>(null);
@@ -48,16 +50,11 @@ export class MobileNavComponent implements OnInit {
   mobileComponents = signal<any[]>([]);
   currentUrl = signal<string>(this.router.url);
 
-  showNotifications = signal(false);
-  notifications = signal<AppNotification[]>([]);
-
   // Touch properties for swipe to delete
   activeSwipeId = signal<number | null>(null);
   currentDeltaX = signal<number>(0);
   private touchStartX = 0;
   private hasVibrated = false;
-
-  unreadCount = computed(() => this.notifications().filter(n => !n.is_read).length);
 
   visibleMenuItems = computed(() => {
     const components = this.mobileComponents();
@@ -97,13 +94,9 @@ export class MobileNavComponent implements OnInit {
       )
       .subscribe(e => this.currentUrl.set(e.urlAfterRedirects));
 
-    const companyBranch = localStorage.getItem('currentBranch');
-    if (companyBranch) {
-      try {
-        this.branch.set(JSON.parse(companyBranch));
-      } catch (e) {
-        console.error('Error parsing company branch', e);
-      }
+    const branch = this.storage.getBranch();
+    if (branch) {
+      this.branch.set(branch);
     }
 
     this.authService.getMobileComponents()
@@ -113,7 +106,7 @@ export class MobileNavComponent implements OnInit {
           const data = res.data || res;
           this.mobileComponents.set(Array.isArray(data) ? data : []);
         },
-        error: (err) => console.error('Error fetching mobile components', err)
+        error: () => {}
       });
 
     if (this.authService.userMenu().length === 0) {
@@ -122,7 +115,7 @@ export class MobileNavComponent implements OnInit {
         .subscribe();
     }
 
-    this.loadNotifications();
+    this.notifPanel.loadNotifications();
   }
 
   toggleSidebar(): void {
@@ -131,58 +124,6 @@ export class MobileNavComponent implements OnInit {
 
   closeSidebar(): void {
     this.layoutService.closeSidebar();
-  }
-
-  toggleNotifications(): void {
-    this.showNotifications.update(v => !v);
-    if (this.showNotifications()) {
-      this.loadNotifications();
-    }
-  }
-
-  loadNotifications(): void {
-    this.notificationService.getNotifications()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (res) => {
-          this.notifications.set(res ?? []);
-        },
-        error: () => {
-          this.notifications.set([]);
-        }
-      });
-  }
-
-  markAsRead(id: number): void {
-    const notif = this.notifications().find(n => n.id === id);
-    if (!notif) return;
-    if (!notif.is_read) {
-      notif.is_read = true;
-      this.notificationService.markAsRead(id)
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          error: () => {
-            notif.is_read = false;
-          }
-        });
-    }
-    if (notif.route_url) {
-      this.showNotifications.set(false);
-      this.router.navigateByUrl(notif.route_url);
-    }
-  }
-
-  deleteNotification(id: number): void {
-    this.notificationService.deleteNotification(id)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => {
-          this.notifications.update(notifs => notifs.filter(n => n.id !== id));
-        },
-        error: () => {
-          alert('Error al eliminar la notificación');
-        }
-      });
   }
 
   onTouchStart(event: TouchEvent, id: number) {
@@ -199,14 +140,13 @@ export class MobileNavComponent implements OnInit {
     if (delta > 0) {
       this.currentDeltaX.set(delta);
       
-      // Vibrar si sobrepasa el umbral
       if (delta > 120 && !this.hasVibrated) {
         if ('vibrate' in navigator) {
-          navigator.vibrate(50); // Vibración corta de 50ms
+          navigator.vibrate(50);
         }
         this.hasVibrated = true;
       } else if (delta <= 120) {
-        this.hasVibrated = false; // Permitir vibrar de nuevo si regresa
+        this.hasVibrated = false;
       }
     }
   }
@@ -215,26 +155,11 @@ export class MobileNavComponent implements OnInit {
     if (this.activeSwipeId() !== id) return;
     
     if (this.currentDeltaX() > 120) {
-      this.deleteNotification(id);
+      this.notifPanel.deleteNotification(id);
     }
     
     this.activeSwipeId.set(null);
     this.currentDeltaX.set(0);
-  }
-
-  markAllAsRead(): void {
-    this.notifications().forEach(n => {
-      if (!n.is_read) {
-        n.is_read = true;
-        this.notificationService.markAsRead(n.id)
-          .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe({
-            error: () => {
-              n.is_read = false;
-            }
-          });
-      }
-    });
   }
 
   @HostListener('document:keydown.escape')

@@ -12,7 +12,7 @@
 .p-dialog-mask {
     backdrop-filter: blur(6px) brightness(0.92);
     -webkit-backdrop-filter: blur(6px) brightness(0.92);
-    background: rgba(15, 23, 42, 0.28) !important;
+    background: var(--color-black-30) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -21,29 +21,29 @@
    a single color.  Default = neutral (light).
    ───────────────────────────────────────────────────────────── */
 .gm-dialog {
-    --gm-dialog-header-bg: rgba(255, 255, 255, 0.55);
-    --gm-dialog-header-border: rgba(226, 232, 240, 0.5);
-    --gm-dialog-header-title-color: #0f172a;
+    --gm-dialog-header-bg: var(--color-white-50);
+    --gm-dialog-header-border: var(--color-border);
+    --gm-dialog-header-title-color: var(--color-text-main);
     --gm-dialog-header-icon-bg: transparent;
-    --gm-dialog-header-icon-color: #475569;
-    --gm-dialog-header-close-color: #475569;
-    --gm-dialog-content-bg: rgba(255, 255, 255, 0.38);
-    --gm-dialog-footer-bg: rgba(248, 250, 252, 0.55);
-    --gm-dialog-footer-border: rgba(226, 232, 240, 0.45);
+    --gm-dialog-header-icon-color: var(--color-text-secondary);
+    --gm-dialog-header-close-color: var(--color-text-secondary);
+    --gm-dialog-content-bg: var(--color-white-35);
+    --gm-dialog-footer-bg: var(--color-bg-subtle);
+    --gm-dialog-footer-border: var(--color-border);
 }
 
 .gm-dialog .p-dialog {
     border-radius: 20px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 0.72);
+    background: var(--color-white-70);
     backdrop-filter: blur(24px) saturate(1.6);
     -webkit-backdrop-filter: blur(24px) saturate(1.6);
     box-shadow:
-        0 8px 32px rgba(15, 23, 42, 0.14),
-        0 2px 8px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.6),
-        inset 0 1px 0 rgba(255, 255, 255, 0.85);
-    border: 1px solid rgba(255, 255, 255, 0.45);
+        0 8px 32px var(--color-black-15),
+        0 2px 8px var(--color-black-08),
+        0 0 0 1px var(--color-white-60),
+        inset 0 1px 0 var(--color-white-85);
+    border: 1px solid var(--color-white-45);
     max-height: 90vh;
     display: flex;
     flex-direction: column;
@@ -120,7 +120,7 @@
 
 .gm-dialog .p-dialog-header .p-dialog-header-icon:hover,
 .gm-dialog .p-dialog-header .p-dialog-close-button:hover {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: var(--color-white-15) !important;
     color: var(--color-bg-card) !important;
 }
 
@@ -189,44 +189,44 @@
 .gm-dialog--info {
     --gm-dialog-header-border: rgba(255, 255, 255, 0.12);
     --gm-dialog-header-title-color: #ffffff;
-    --gm-dialog-header-icon-bg: rgba(255, 255, 255, 0.15);
+    --gm-dialog-header-icon-bg: var(--color-white-15);
     --gm-dialog-header-icon-color: #ffffff;
     --gm-dialog-header-close-color: #ffffff;
-    --gm-dialog-content-bg: rgba(255, 255, 255, 0.38);
-    --gm-dialog-footer-bg: rgba(203, 213, 225, 0.93);
-    --gm-dialog-footer-border: rgba(148, 163, 184, 0.4);
+    --gm-dialog-content-bg: var(--color-white-35);
+    --gm-dialog-footer-bg: var(--color-border);
+    --gm-dialog-footer-border: var(--color-border-light);
 }
 
 /* ─────────────────────────────────────────────────────────────
    VARIANT — ADD (Deep Emerald)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--add { --gm-dialog-header-bg: #064e3b; }
+.gm-dialog--add { --gm-dialog-header-bg: var(--color-success-text); }
 
 /* ─────────────────────────────────────────────────────────────
    VARIANT — VIEW (Royal Indigo)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--view { --gm-dialog-header-bg: #323462; }
+.gm-dialog--view { --gm-dialog-header-bg: var(--app-main-primary); }
 
 /* ─────────────────────────────────────────────────────────────
    VARIANT — EDIT (Royal Blue)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--edit { --gm-dialog-header-bg: #172554; }
+.gm-dialog--edit { --gm-dialog-header-bg: var(--app-main-primary); }
 
 /* ─────────────────────────────────────────────────────────────
    VARIANT — DELETE (Soft Crimson)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--delete { --gm-dialog-header-bg: #991b1b; }
+.gm-dialog--delete { --gm-dialog-header-bg: var(--color-danger-text); }
 
 .gm-dialog--delete .gm-delete-icon {
     color: var(--color-danger-text) !important;
 }
 
 .gm-dialog--delete .gm-delete-ring--1 {
-    background: rgba(254, 226, 226, 0.8) !important;
+    background: var(--color-danger-bg) !important;
 }
 
 .gm-dialog--delete .gm-delete-ring--2 {
-    background: rgba(252, 165, 165, 0.35) !important;
+    background: var(--color-danger-border) !important;
 }
 
 .gm-dialog--delete .gm-delete-ring--3 {
@@ -247,12 +247,12 @@
 /* ─────────────────────────────────────────────────────────────
    VARIANT — SEND (Electric Blue)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--send { --gm-dialog-header-bg: #1e40af; }
+.gm-dialog--send { --gm-dialog-header-bg: var(--color-accent-blue); }
 
 /* ─────────────────────────────────────────────────────────────
    VARIANT — INFO (Navy Indigo)
    ───────────────────────────────────────────────────────────── */
-.gm-dialog--info { --gm-dialog-header-bg: #323462; }
+.gm-dialog--info { --gm-dialog-header-bg: var(--app-main-primary); }
 
 @media screen and (max-width: 480px) {
     .p-dialog:not(.p-dialog-maximized) {
@@ -289,32 +289,32 @@
 }
 
 .gm-icon--add {
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+    background: linear-gradient(135deg, var(--color-success-bg), var(--color-success-border));
     color: var(--color-success-text);
 }
 
 .gm-icon--edit {
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-border));
     color: var(--app-main-indigo);
 }
 
 .gm-icon--delete {
-    background: linear-gradient(135deg, #ffe4e6, #fecdd3);
+    background: linear-gradient(135deg, var(--color-danger-light), var(--color-danger-border));
     color: var(--color-danger-text);
 }
 
 .gm-icon--view {
-    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    background: linear-gradient(135deg, var(--color-indigo-light), var(--color-indigo-border));
     color: var(--app-main-primary);
 }
 
 .gm-icon--send {
-    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-border));
     color: var(--app-main-indigo);
 }
 
 .gm-icon--info {
-    background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+    background: linear-gradient(135deg, var(--color-indigo-light), var(--color-indigo-border));
     color: var(--app-main-primary);
 }
 
@@ -337,17 +337,17 @@
 
 .gm-badge--add {
     background: rgba(209, 250, 229, 0.9);
-    color: #047857;
+    color: var(--color-success-text);
 }
 
 .gm-badge--edit {
     background: rgba(219, 234, 254, 0.9);
-    color: #1d4ed8;
+    color: var(--color-accent-blue);
 }
 
 .gm-badge--delete {
     background: rgba(255, 228, 230, 0.9);
-    color: #be123c;
+    color: var(--color-red);
 }
 
 .gm-badge--view {
@@ -416,7 +416,7 @@
 .gm-delete-ring--1 {
     width: 32px;
     height: 32px;
-    background: #ffe4e6;
+    background: var(--color-danger-light);
     animation-delay: 0s;
 }
 

@@ -17,7 +17,7 @@
   align-items: center;
   gap: 1rem;
   padding: 1.5rem;
-  background: #fff;
+  background: var(--color-bg-card);
   border-bottom: 1px solid var(--border);
 }
 
@@ -84,25 +84,25 @@
   height: 40px;
   padding: 0 16px 0 38px;
   width: 100%;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 14px;
   color: var(--text-main);
   outline: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+  box-shadow: inset 0 2px 4px var(--color-black-04);
 }
 
 .search-inp:hover {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
+  background: var(--color-bg-page);
+  border-color: var(--color-border-light);
 }
 
 .search-inp:focus {
-  background: #ffffff;
+  background: var(--color-bg-card);
   border-color: var(--teal);
-  box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.1), 0 4px 12px -2px rgba(13, 148, 136, 0.08);
+  box-shadow: 0 0 0 4px var(--color-emerald-10), 0 4px 12px -2px var(--color-emerald-08);
 }
 
 .search-box:focus-within .search-ic {

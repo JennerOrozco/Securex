@@ -1,0 +1,9 @@
+export { SecurityUserCrudComponent } from './gestion-usuarios/usuarios/usuarios.component';
+export { AdminUsersComponent } from './gestion-usuarios/usuarios-admin/admin-users.component';
+export { AdminAccessComponent } from './gestion-usuarios/accesos/admin-access.component';
+export { UserAccessComponent } from './gestion-usuarios/accesos-usuario/user-access.component';
+export { UserWebauthnCredentials } from './gestion-usuarios/credenciales-webauthn/user-webauthn-credentials.component';
+export { SecurityRoleCrudComponent } from './roles-permisos/roles/roles.component';
+export { SecurityPermissionCrudComponent } from './roles-permisos/permisos/permisos.component';
+export { CompanyPermissionsComponent } from './roles-permisos/permisos-compania/company-permissions.component';
+export { AdminPermissionsComponent } from './roles-permisos/permisos-admin/admin-permissions.component';

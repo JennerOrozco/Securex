@@ -1,0 +1,9 @@
+export { NotificationsListComponent } from './historial-notificaciones/notifications-list.component';
+export { NotificationTestComponent } from './probar-envio/notification-test.component';
+export { SendAttemptsComponent } from './intentos-envio/send-attempts.component';
+export { UserDevicesComponent } from './dispositivos-usuario/user-devices.component';
+export { PushSettingsComponent } from './config-push/push-settings.component';
+export { SmtpSettingsComponent } from './config-smtp/smtp-settings.component';
+export { AppsComponent } from './apps/apps.component';
+export { NotificationPromptComponent } from './notification-prompt.component';
+export { InstallPromptComponent } from './install-prompt.component';

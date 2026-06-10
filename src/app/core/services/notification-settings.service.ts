@@ -84,7 +84,7 @@ export class NotificationSettingsService extends BaseApiService {
   }
 
   deleteSendAttemptGql(id: number): Observable<any> {
-    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id });
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id });
   }
 
   getSendAttemptsGql(): Observable<any[]> {
@@ -96,7 +96,7 @@ export class NotificationSettingsService extends BaseApiService {
   }
 
   deleteNotificationHistoryGql(id: number): Observable<any> {
-    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id });
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id });
   }
 
   getUserDevicesGql(): Observable<any[]> {
@@ -104,7 +104,7 @@ export class NotificationSettingsService extends BaseApiService {
   }
 
   deleteUserDeviceGql(id: number): Observable<any> {
-    return this.gqlMutation<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id });
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id });
   }
 
   getPushSettingsGql(): Observable<any[]> {

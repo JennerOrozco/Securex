@@ -1,4 +1,4 @@
-﻿/* =======================================================================
+/* =======================================================================
    TOKENS — single source of truth for the design system
    All partials in src/styles/ MUST reference these. No hardcoded values.
    ======================================================================= */
@@ -86,6 +86,12 @@
   --app-main-indigo-light:   #e0e7ff;
   --app-main-indigo-border:  #c7d2fe;
 
+  /* ──────────────── RED ACCENT (profile, badges, alerts) ──────────────── */
+  --color-red:         #c0111a;
+  --color-red-dark:    #960d14;
+  --color-red-muted:   rgba(192, 17, 26, 0.08);
+  --color-red-glow:    rgba(192, 17, 26, 0.15);
+
   /* ──────────────── SEMANTIC COLORS ──────────────── */
   --color-success-bg:     #dcfce7;
   --color-success-text:   #166534;
@@ -145,9 +151,174 @@
   --font-body: 'DM Sans', sans-serif;
 
   /* ──────────────── SHADOWS ──────────────── */
+  --shadow-xs:     0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-sm:     0 2px 8px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-soft:   0 4px 20px -2px rgba(15, 23, 42, 0.08);
+  --shadow-md:     0 4px 20px rgba(0, 0, 0, 0.09), 0 1px 4px rgba(0, 0, 0, 0.05);
   --shadow-medium: 0 8px 30px -4px rgba(15, 23, 42, 0.12);
+  --shadow-lg:     0 8px 40px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
   --shadow-glow:   0 0 40px rgba(99, 102, 241, 0.15);
+
+    /* ──────────────── EASING ──────────────── */
+  --ease-spring: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ──────────────── WHITE OPACITY PRESETS ──────────────── */
+  --color-white-05: rgba(255, 255, 255, 0.05);
+  --color-white-06: rgba(255, 255, 255, 0.06);
+  --color-white-08: rgba(255, 255, 255, 0.08);
+  --color-white-10: rgba(255, 255, 255, 0.10);
+  --color-white-12: rgba(255, 255, 255, 0.12);
+  --color-white-15: rgba(255, 255, 255, 0.15);
+  --color-white-16: rgba(255, 255, 255, 0.16);
+  --color-white-20: rgba(255, 255, 255, 0.20);
+  --color-white-25: rgba(255, 255, 255, 0.25);
+  --color-white-30: rgba(255, 255, 255, 0.30);
+  --color-white-35: rgba(255, 255, 255, 0.35);
+  --color-white-40: rgba(255, 255, 255, 0.40);
+  --color-white-45: rgba(255, 255, 255, 0.45);
+  --color-white-50: rgba(255, 255, 255, 0.50);
+  --color-white-60: rgba(255, 255, 255, 0.60);
+  --color-white-65: rgba(255, 255, 255, 0.65);
+  --color-white-70: rgba(255, 255, 255, 0.70);
+  --color-white-75: rgba(255, 255, 255, 0.75);
+  --color-white-80: rgba(255, 255, 255, 0.80);
+  --color-white-85: rgba(255, 255, 255, 0.85);
+
+  /* ──────────────── BLACK OPACITY PRESETS ──────────────── */
+  --color-black-04: rgba(0, 0, 0, 0.04);
+  --color-black-05: rgba(0, 0, 0, 0.05);
+  --color-black-08: rgba(0, 0, 0, 0.08);
+  --color-black-10: rgba(0, 0, 0, 0.10);
+  --color-black-15: rgba(0, 0, 0, 0.15);
+  --color-black-30: rgba(0, 0, 0, 0.30);
+  --color-black-35: rgba(0, 0, 0, 0.35);
+  --color-black-40: rgba(0, 0, 0, 0.40);
+  --color-black-45: rgba(0, 0, 0, 0.45);
+  --color-black-50: rgba(0, 0, 0, 0.50);
+  --color-black-55: rgba(0, 0, 0, 0.55);
+
+  /* ──────────────── RED OPACITY PRESETS ──────────────── */
+  --color-red-06: rgba(192, 17, 26, 0.06);
+  --color-red-08: rgba(192, 17, 26, 0.08);
+  --color-red-12: rgba(192, 17, 26, 0.12);
+  --color-red-15: rgba(192, 17, 26, 0.15);
+  --color-red-20: rgba(192, 17, 26, 0.20);
+  --color-red-35: rgba(192, 17, 26, 0.35);
+  --color-red-40: rgba(192, 17, 26, 0.40);
+  --color-red-50: rgba(192, 17, 26, 0.50);
+
+  /* ──────────────── INDIGO OPACITY PRESETS ──────────────── */
+  --color-indigo-04: rgba(99, 102, 241, 0.04);
+  --color-indigo-06: rgba(99, 102, 241, 0.06);
+  --color-indigo-08: rgba(99, 102, 241, 0.08);
+  --color-indigo-10: rgba(99, 102, 241, 0.10);
+  --color-indigo-15: rgba(99, 102, 241, 0.15);
+  --color-indigo-20: rgba(99, 102, 241, 0.20);
+  --color-indigo-25: rgba(99, 102, 241, 0.25);
+  --color-indigo-30: rgba(99, 102, 241, 0.30);
+  --color-indigo-35: rgba(99, 102, 241, 0.35);
+  --color-indigo-40: rgba(99, 102, 241, 0.40);
+
+  /* ──────────────── GRAY SCALE ──────────────── */
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  /* ──────────────── BLUE ACCENT ──────────────── */
+  --color-accent-blue:        #3b82f6;
+  --color-accent-blue-light:  #60a5fa;
+  --color-accent-blue-soft:   #93c5fd;
+  --color-accent-blue-deep:   #818cf8;
+  --color-accent-blue-glow:   rgba(96, 165, 250, 0.50);
+  --color-accent-blue-bg:     rgba(96, 165, 250, 0.15);
+  --color-accent-blue-border: rgba(96, 165, 250, 0.20);
+  --color-accent-blue-ring:   rgba(96, 165, 250, 0.25);
+  --color-accent-blue-pulse:  rgba(96, 165, 250, 0.30);
+  --color-accent-blue-dim:    rgba(129, 140, 248, 0.12);
+  --color-accent-blue-dim-2:  rgba(129, 140, 248, 0.20);
+
+  /* ──────────────── DARK SURFACE (mobile nav) ──────────────── */
+  --color-dark-surface:       rgb(17, 24, 39);
+  --color-dark-surface-2:     rgb(20, 32, 56);
+  --color-dark-border:        rgb(31, 41, 55);
+  --color-dark-border-light:  rgb(55, 65, 81);
+  --color-dark-hover:         rgba(255, 255, 255, 0.05);
+  --color-dark-text:          #d1d5db;
+  --color-dark-text-muted:    #9ca3af;
+  --color-dark-text-light:    #6b7280;
+
+  /* ──────────────── SIDEBAR SPECIFIC ──────────────── */
+  --color-sidebar-bg:         linear-gradient(169deg, #490606 0%, #000000 100%);
+  --color-sidebar-text:       #e9e6e6;
+  --color-sidebar-text-hover: #000000;
+  --color-sidebar-sub-text:   #c5c5c5;
+  --color-sidebar-sub-hover:  #575757;
+  --color-sidebar-active:     linear-gradient(104deg, rgb(54, 54, 54) 0%, rgb(70, 36, 42) 100%);
+  --color-sidebar-avatar:     linear-gradient(135deg, #2b3a8b, #ef4444);
+  --color-sidebar-logout-bg:  rgba(239, 68, 68, 0.08);
+  --color-sidebar-logout-border: rgba(239, 68, 68, 0.15);
+  --color-sidebar-context-bg: rgba(26, 34, 48, 0.98);
+  --color-sidebar-switch-bg:  rgba(30, 30, 45, 0.85);
+
+  /* ──────────────── MOBILE NAV INDICATOR ──────────────── */
+  --color-nav-indicator:      linear-gradient(188deg, rgba(173, 0, 0, 1) 0%, rgb(46, 8, 8) 100%);
+
+  /* ──────────────── BRAND DEEP RED ──────────────── */
+  --color-brand-deep:   #8b0000;
+  --color-brand-shadow: #450a0a;
+  --color-brand-dim:    #5c0a0a;
+
+  /* ──────────────── BIOMETRIC PANEL ──────────────── */
+  --color-bg-biometric: #f0f5fb;
+
+  /* ──────────────── CUSTOM VARIABLE MIGRATIONS ──────────────── */
+  --color-orange-bg:     #fff7ed;
+  --color-orange-border: #fed7aa;
+  --color-orange-text:   #9a3412;
+
+  --color-pink-bg:       #fce7f3;
+  --color-pink-border:   #fbcfe8;
+  --color-pink-text:     #9d174d;
+
+  --color-teal-bg:       #ccfbf1;
+  --color-teal-border:   #99f6e4;
+  --color-teal-text:     #134e4a;
+
+  --color-red-bg:        #ffe4e6;
+  --color-red-border:    #fecdd3;
+  --color-red-text:      #9f1239;
+
+  --dashboard-primary:       #0d9488;
+  --dashboard-primary-hover: #0b7a70;
+}
+
+/* =======================================================================
+   DARK MODE — single source of truth
+   Drop .my-app-dark overrides from individual components.
+   ======================================================================= */
+[class="my-app-dark"] {
+  --color-bg-card:        #1e293b;
+  --color-border:         #334155;
+  --color-text-main:      #f1f5f9;
+  --color-text-secondary: #e2e8f0;
+  --color-text-muted:     #94a3b8;
+  --color-text-light:     #94a3b8;
+  --color-bg-subtle:      #1e293b;
+  --color-bg-page:        #0f172a;
+  --color-danger-bg:      rgba(239, 68, 68, 0.12);
+  --color-danger-border:  rgba(239, 68, 68, 0.2);
+  --color-danger-text:    #fca5a5;
+  --app-main-bg-card:     var(--color-bg-card);
+  --app-main-border:      var(--color-border);
+  --app-main-text-main:   var(--color-text-main);
+  --app-main-text-muted:  var(--color-text-muted);
+  --app-main-text-light:  var(--color-text-light);
 }
 
 /* ──────────────── BODY ──────────────── */

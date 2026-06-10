@@ -6,7 +6,7 @@
       [stripedRows]="stripedRows" responsiveLayout="scroll"
       [resizableColumns]="true" columnResizeMode="expand"
       currentPageReportTemplate=" {first} - {last} de {totalRecords} registros" [showCurrentPageReport]="true"
-      class="users-table" [columns]="selectedColumns" [rowGroupMode]="enableRowGroup ? 'subheader' : undefined"
+      class="gm-data-table" [columns]="selectedColumns" [rowGroupMode]="enableRowGroup ? 'subheader' : undefined"
       [groupRowsBy]="enableRowGroup ? groupRowsBy : ''" [sortField]="enableRowGroup ? groupRowsBy : ''"
       [sortMode]="enableRowGroup ? 'single' : 'multiple'"
       [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'" [reorderableColumns]="reorderableColumns"

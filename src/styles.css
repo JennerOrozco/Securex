@@ -8,6 +8,7 @@
 
 /* App Styles & Partials */
 @import './styles/_tokens.css';
+@import './styles/_animations.css';
 @import './styles/_toast.css';
 @import './styles/_login.css';
 @import './styles/_modals.css';

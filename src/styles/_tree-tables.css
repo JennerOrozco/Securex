@@ -1,4 +1,4 @@
-﻿/* =======================================================================
+/* =======================================================================
    TREE-TABLES — global styles
    Shared styles for PrimeNG TreeTable (used by TreeTableComponent,
    role-permissions-modal, company-permissions).  Imported from styles.css.
@@ -16,7 +16,7 @@
 
 .p-treetable .p-treetable-thead > tr > th {
     background: var(--app-main-primary) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--color-white-80) !important;
     font-size: var(--font-sm) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -90,7 +90,7 @@
 .p-treetable .p-treetable-tbody > tr.row-action,
 .p-treetable .p-treetable-tbody > tr.row-component {
     background-color: var(--color-bg-card) !important;
-    color: #000000 !important;
+    color: var(--color-text-main) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-menu:hover,
@@ -127,7 +127,7 @@
 .p-treetable .p-treetable-tbody > tr.row-submenu .body-text,
 .p-treetable .p-treetable-tbody > tr.row-action .body-text,
 .p-treetable .p-treetable-tbody > tr.row-component .body-text {
-    color: #000000 !important;
+    color: var(--color-text-main) !important;
 }
 
 /* Hierarchical padding & left borders per row type */
@@ -135,19 +135,19 @@
     padding: 6px 12px !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-menu > td:first-child {
-    border-left: 4px solid #170000 !important;
+    border-left: 4px solid var(--app-main-primary) !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-submenu > td {
     padding: 5px 12px !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-submenu > td:first-child {
-    border-left: 4px solid #350a06 !important;
+    border-left: 4px solid var(--app-main-primary-light) !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-action > td {
     padding: 4px 12px !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-action > td:first-child {
-    border-left: 4px solid #56070c !important;
+    border-left: 4px solid var(--color-red-dark) !important;
 }
 .p-treetable .p-treetable-tbody > tr.row-component > td {
     padding: 4px 12px !important;
@@ -180,7 +180,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  border-left: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -191,7 +191,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  border-left: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -202,7 +202,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  border-left: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -213,7 +213,7 @@
   top: 0;
   bottom: 0;
   width: 1px;
-  border-left: 1px dashed rgba(99, 102, 241, 0.45);
+  border-left: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -225,7 +225,7 @@
   top: 50%;
   width: 12px;
   height: 1px;
-  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  border-top: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -236,7 +236,7 @@
   top: 50%;
   width: 12px;
   height: 1px;
-  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  border-top: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -247,7 +247,7 @@
   top: 50%;
   width: 12px;
   height: 1px;
-  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  border-top: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -258,7 +258,7 @@
   top: 50%;
   width: 12px;
   height: 1px;
-  border-top: 1px dashed rgba(99, 102, 241, 0.45);
+  border-top: 1px dashed var(--color-indigo-45);
   z-index: 5;
 }
 
@@ -266,42 +266,42 @@
    ICON-WRAP PER LEVEL (menu / submenu / action / component)
    ───────────────────────────────────────────────────────────── */
 .p-treetable .p-treetable-tbody > tr.row-menu .p-treetable-toggler {
-    color: #170000 !important;
+    color: var(--app-main-primary) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-menu .node-icon-wrap {
-    background: rgba(23, 0, 0, 0.05) !important;
-    border: 1px solid rgba(23, 0, 0, 0.15) !important;
+    background: var(--color-primary-05) !important;
+    border: 1px solid var(--color-primary-15) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-menu .node-icon-wrap i {
-    color: #170000 !important;
+    color: var(--app-main-primary) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-submenu .p-treetable-toggler {
-    color: #350a06 !important;
+    color: var(--app-main-primary-light) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-submenu .node-icon-wrap {
-    background: rgba(53, 10, 6, 0.05) !important;
-    border: 1px solid rgba(53, 10, 6, 0.15) !important;
+    background: var(--color-primary-light-05) !important;
+    border: 1px solid var(--color-primary-light-15) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-submenu .node-icon-wrap i {
-    color: #350a06 !important;
+    color: var(--app-main-primary-light) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-action .p-treetable-toggler {
-    color: #56070c !important;
+    color: var(--color-red-dark) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-action .node-icon-wrap {
-    background: rgba(86, 7, 12, 0.05) !important;
-    border: 1px solid rgba(86, 7, 12, 0.15) !important;
+    background: var(--color-red-05) !important;
+    border: 1px solid var(--color-red-15) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-action .node-icon-wrap i {
-    color: #56070c !important;
+    color: var(--color-red-dark) !important;
 }
 
 .p-treetable .p-treetable-tbody > tr.row-component .node-icon-wrap {
@@ -377,119 +377,25 @@ tr.drag-over {
 
 .type-submenu {
     background: var(--color-emerald-bg);
-    color: #047857;
+    color: var(--color-emerald);
     border-color: var(--color-emerald-border);
 }
 
 .type-action {
-    background: #fffbeb;
-    color: #b45309;
-    border-color: #fde68a;
+    background: var(--color-amber-bg);
+    color: var(--color-amber);
+    border-color: var(--color-amber-border);
 }
 
 .type-component {
     background: #fff1f2;
-    color: #be123c;
+    color: var(--color-red);
     border-color: #fecdd3;
-}
-
-.type-activo {
-    background: var(--color-success-bg) !important;
-    color: var(--color-success-text) !important;
-    border-color: var(--color-success-border) !important;
-}
-
-.type-activo::before    { background: #16a34a; }
-
-.type-inactivo {
-    background: var(--color-bg-page) !important;
-    color: var(--color-text-muted) !important;
-    border-color: var(--color-border) !important;
-}
-
-.type-inactivo::before  { background: var(--color-text-light); }
-
-/* Aliases used by admin-access / admin-permissions — correct semantic colors */
-.type-approved,
-.type-active {
-    background: var(--color-success-bg) !important;
-    color: var(--color-success-text) !important;
-    border-color: var(--color-success-border) !important;
-}
-
-.type-approved::before,
-.type-active::before {
-    background: #16a34a !important;
-}
-
-.type-rejected,
-.type-inactive {
-    background: var(--color-danger-bg) !important;
-    color: var(--color-danger-text) !important;
-    border-color: var(--color-danger-border) !important;
-}
-
-.type-rejected::before,
-.type-inactive::before {
-    background: #ef4444 !important;
-}
-
-.type-pending {
-    background: var(--color-warning-bg) !important;
-    color: var(--color-warning-text) !important;
-    border-color: #fef08a !important;
-}
-
-.type-pending::before {
-    background: var(--color-amber) !important;
-}
-
-/* Boolean & provider chips (used by admin-users / regular tables) */
-.type-true {
-    background: var(--color-success-bg);
-    color: var(--color-success-text);
-    border-color: var(--color-success-border);
-}
-
-.type-true::before {
-    background: #16a34a !important;
-}
-
-.type-false {
-    background: var(--color-bg-page);
-    color: var(--color-text-muted);
-    border-color: var(--color-border);
-}
-
-.type-false::before {
-    background: var(--color-text-light) !important;
-}
-
-.type-default,
-.type-local {
-    background: var(--color-bg-page);
-    color: var(--color-text-secondary);
-    border-color: var(--color-border);
-}
-
-.type-default::before,
-.type-local::before {
-    background: var(--color-text-light) !important;
-}
-
-.type-google {
-    background: #e0f2fe;
-    color: #0369a1;
-    border-color: #bae6fd;
-}
-
-.type-google::before {
-    background: #0284c7 !important;
 }
 
 .type-microsoft {
     background: var(--app-main-indigo-light);
-    color: #3730a3;
+    color: var(--app-main-indigo);
     border-color: var(--app-main-indigo-border);
 }
 
@@ -499,12 +405,12 @@ tr.drag-over {
 
 .type-github {
     background: #f3e8ff;
-    color: #6b21a8;
+    color: var(--app-main-indigo);
     border-color: #d8b4fe;
 }
 
 .type-github::before {
-    background: #7c3aed !important;
+    background: var(--app-main-indigo) !important;
 }
 
 /* Module icon colors (used by <app-tree-table> children) */
@@ -517,7 +423,7 @@ tr.drag-over {
 .bg-indigo { color: var(--app-main-indigo) !important; }
 .bg-emerald{ color: var(--color-emerald) !important; }
 .bg-amber  { color: var(--color-amber) !important; }
-.bg-rose   { color: #f43f5e !important; }
+.bg-rose   { color: var(--color-red) !important; }
 .bg-slate  { color: var(--color-text-muted) !important; }
 
 /* ─────────────────────────────────────────────────────────────
@@ -682,14 +588,18 @@ tr.drag-over {
    SELECTORS BAR (dark navy, used in permission pages)
    ───────────────────────────────────────────────────────────── */
 .selectors-bar {
+    --selectors-bar-bg: var(--app-main-primary);
+    --selectors-bar-border: rgba(255, 255, 255, 0.1);
+    --selectors-bar-mt: 1.25rem;
+    --selectors-bar-mb: 1.25rem;
     display: flex;
     flex-wrap: wrap;
     gap: 1.25rem;
     padding: 1.25rem 1.5rem;
-    background: var(--app-main-primary);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
+    background: var(--selectors-bar-bg);
+    border-bottom: 1px solid var(--selectors-bar-border);
+    margin-top: var(--selectors-bar-mt);
+    margin-bottom: var(--selectors-bar-mb);
 }
 
 .selector-group {
@@ -702,11 +612,12 @@ tr.drag-over {
 }
 
 .selector-label {
+    --selectors-label-color: rgba(255, 255, 255, 0.65);
     font-size: var(--font-xs);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--selectors-label-color);
 }
 
 /* ─────────────────────────────────────────────────────────────

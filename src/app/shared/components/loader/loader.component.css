@@ -11,7 +11,7 @@
 .loader-bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #b91c1c, #450a0a, #b91c1c);
+  background: linear-gradient(90deg, var(--color-red-dark), var(--color-brand-shadow), var(--color-red-dark));
   background-size: 200% 100%;
   border-radius: 0 2px 2px 0;
   animation: loader-slide 1.2s ease-in-out infinite, loader-glow 1.4s ease-in-out infinite;
@@ -28,6 +28,6 @@
 }
 
 @keyframes loader-glow {
-  0%, 100% { box-shadow: 0 0 6px rgba(99, 102, 241, 0.4); }
-  50%      { box-shadow: 0 0 14px rgba(99, 102, 241, 0.7); }
+  0%, 100% { box-shadow: 0 0 6px var(--color-indigo-40); }
+  50%      { box-shadow: 0 0 14px var(--color-indigo-30); }
 }

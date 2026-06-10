@@ -1,4 +1,4 @@
-export { AuthService } from './auth.service';
+export { AuthService, type User, type Company, type Branch } from './auth.service';
 export { ConfigService } from './config.service';
 export { LayoutService } from './layout.service';
 export { LoadingService } from './loading.service';
@@ -13,3 +13,6 @@ export { UserService } from './user.service';
 export { RoleService } from './role.service';
 export { PermissionService } from './permission.service';
 export { AuditService } from './audit.service';
+
+export { WebAuthnService } from './webauthn.service';
+export { ProfileService } from './profile.service';

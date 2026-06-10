@@ -21,7 +21,7 @@
 .gm-dialog .gm-label {
   font-size: 0.62rem;
   font-weight: 600;
-  color: #000000;
+  color: var(--color-text-main);
   letter-spacing: 0.03em;
   text-transform: uppercase;
   display: flex;
@@ -29,7 +29,7 @@
   gap: 4px;
 }
 
-.gm-required { color: #e11d48; font-size: 0.75rem; line-height: 1; }
+.gm-required { color: var(--color-red); font-size: 0.75rem; line-height: 1; }
 
 /* === FIELD ICONS === */
 .gm-control-wrap {
@@ -48,7 +48,7 @@ span.gm-field-icon,
   top: 50%;
   transform: translateY(-50%);
   z-index: 2;
-  color: #94a3b8;
+  color: var(--color-text-light);
   font-size: 0.75rem;
   pointer-events: none;
 }
@@ -62,13 +62,13 @@ span.gm-field-icon,
   pointer-events: none;
   transition: right 0.2s ease;
 }
-.gm-valid { color: #059669; }
-.gm-invalid { color: #e11d48; }
+.gm-valid { color: var(--color-emerald); }
+.gm-invalid { color: var(--color-red); }
 
 /* === ERROR MESSAGE === */
 .gm-error-msg {
   font-size: 0.65rem;
-  color: #e11d48;
+  color: var(--color-red);
   margin: 0;
   display: flex;
   align-items: center;
@@ -92,12 +92,12 @@ span.gm-field-icon,
 .p-password-input {
     width: 100% !important;
     min-height: 32px !important;
-    border: 1px solid rgba(226, 232, 240, 0.9) !important;
-    border-radius: 8px !important;
+    border: 1px solid var(--color-border-light) !important;
+    border-radius: var(--radius-md) !important;
     padding: 0.4rem 2.0rem !important;
     font-size: 0.85rem !important;
-    color: #0f172a !important;
-    background: #ffffff !important;
+    color: var(--color-text-main) !important;
+    background: var(--color-bg-card) !important;
     backdrop-filter: blur(4px);
     transition: all 0.2s !important;
     outline: none !important;
@@ -117,9 +117,9 @@ span.gm-field-icon,
 .gm-datepicker .p-datepicker-input:focus,
 .gm-datepicker .p-inputtext:focus,
 .p-password-input:focus {
-    border-color: #6366f1 !important;
-    background: #ffffff !important;
-    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08) !important;
+    border-color: var(--app-main-indigo) !important;
+    background: var(--color-bg-card) !important;
+    box-shadow: 0 0 0 2px var(--color-indigo-08) !important;
 }
 
 /* === PLACEHOLDER === */
@@ -128,7 +128,7 @@ span.gm-field-icon,
 .gm-input.p-inputtext::placeholder,
 .p-inputtext::placeholder,
 .p-textarea::placeholder {
-    color: #94a3b8 !important;
+    color: var(--color-text-light) !important;
 }
 
 /* === ICON PADDING === */
@@ -154,12 +154,12 @@ span.gm-field-icon,
 .p-textarea.gm-textarea {
   width: 100%;
   min-height: 32px;
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 8px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
   padding: 0.4rem 0.65rem;
   font-size: 0.85rem !important;
-  color: #0f172a;
-  background: #ffffff;
+  color: var(--color-text-main);
+  background: var(--color-bg-card);
   backdrop-filter: blur(4px);
   transition: all 0.2s;
   outline: none;
@@ -169,12 +169,12 @@ span.gm-field-icon,
   padding-left: 2rem !important;
 }
 .gm-textarea:focus {
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+  border-color: var(--app-main-indigo);
+  box-shadow: 0 0 0 2px var(--color-indigo-08);
 }
 .gm-textarea::placeholder {
   font-size: 0.85rem;
-  color: #94a3b8 !important;
+  color: var(--color-text-light) !important;
 }
 
 /* p-inputNumber wrapper */
@@ -184,9 +184,9 @@ span.gm-field-icon,
     width: 100% !important;
 }
 .gm-dialog .p-inputnumber-input.p-inputtext {
-    border-radius: 8px !important;
-    border: 1px solid rgba(226, 232, 240, 0.9) !important;
-    background: #ffffff !important;
+    border-radius: var(--radius-md) !important;
+    border: 1px solid var(--color-border-light) !important;
+    background: var(--color-bg-card) !important;
     font-size: 0.85rem !important;
     min-height: 32px !important;
 }
@@ -206,14 +206,14 @@ app-select .gm-control-wrap {
 }
 
 .gm-select .p-select:focus-within {
-  border-color: #6366f1;
-  background: rgba(255, 255, 255, 1);
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08);
+  border-color: var(--app-main-indigo);
+  background: var(--color-bg-card);
+  box-shadow: 0 0 0 2px var(--color-indigo-08);
 }
 
 .gm-select .p-select-label {
   font-size: 0.85rem;
-  color: #0f172a;
+  color: var(--color-text-main);
   padding: 0.15rem 0.65rem;
   display: flex;
   align-items: center;
@@ -222,18 +222,18 @@ app-select .gm-control-wrap {
 
 .p-select .p-select-placeholder,
 .p-select .p-placeholder {
-  color: #94a3b8 !important;
+  color: var(--color-text-light) !important;
 }
 
 .p-select .p-select-dropdown {
-  background: rgba(226, 232, 240, 0.5) !important;
-  border-left: 1px solid rgba(226, 232, 240, 0.9) !important;
+  background: var(--color-border-light) !important;
+  border-left: 1px solid var(--color-border-light) !important;
   width: 32px !important;
   align-self: stretch !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  color: #64748b !important;
+  color: var(--color-text-muted) !important;
 }
 
 .p-select .p-select-clear-icon {
@@ -248,15 +248,15 @@ app-select .gm-control-wrap {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  border-radius: 4px;
-  color: #94a3b8 !important;
+  border-radius: var(--radius-xs);
+  color: var(--color-text-light) !important;
   transition: all 0.15s ease;
 }
 
 .p-select .p-select-clear-icon:hover {
-  color: #ef4444 !important;
-  background: rgba(239, 68, 68, 0.08) !important;
-  border-radius: 6px;
+  color: var(--color-red) !important;
+  background: var(--color-red-08) !important;
+  border-radius: var(--radius-sm);
 }
 
 .p-select .p-select-clear {
@@ -321,18 +321,18 @@ app-select .gm-control-wrap {
   min-width: 100px !important;
   max-width: 120px !important;
   height: 32px !important;
-  border: 1px solid rgba(226, 232, 240, 0.9) !important;
-  border-radius: 8px !important;
-  background: #fff !important;
+  border: 1px solid var(--color-border-light) !important;
+  border-radius: var(--radius-md) !important;
+  background: var(--color-bg-card) !important;
   transition: all 0.2s;
 }
 .gm-phone-country-select .p-select-label-container { flex: none !important; }
 .gm-phone-country-select .p-select-label { padding-inline: 0.5rem !important; font-size: 0.85rem; }
 .gm-phone-country-select .p-select-dropdown { width: 20px !important; }
-.gm-phone-country-select:not(.p-disabled):hover { border-color: #6366f1 !important; }
+.gm-phone-country-select:not(.p-disabled):hover { border-color: var(--app-main-indigo) !important; }
 .gm-phone-country-select.p-select.p-focus {
-  border-color: #6366f1 !important;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.08) !important;
+  border-color: var(--app-main-indigo) !important;
+  box-shadow: 0 0 0 2px var(--color-indigo-08) !important;
 }
 
 /* ════════════════════════════════════════════
@@ -364,7 +364,7 @@ app-select-grid .p-select {
 .sg-item-main {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text-main);
 }
 
 .sg-item-details {
@@ -378,13 +378,13 @@ app-select-grid .p-select {
   align-items: center;
   gap: 4px;
   font-size: 0.72rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
 .sg-item-col-icon {
   font-size: 0.65rem;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .sg-empty {
@@ -394,22 +394,22 @@ app-select-grid .p-select {
   gap: 8px;
   padding: 12px;
   font-size: 0.75rem;
-  color: #94a3b8;
+  color: var(--color-text-light);
 }
 
 .sg-empty button {
   padding: 5px 12px;
   font-size: 0.72rem;
   font-weight: 600;
-  color: #0284c7;
-  background: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 6px;
+  color: var(--color-info-text);
+  background: var(--color-info-bg);
+  border: 1px solid var(--color-info-border);
+  border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.15s;
 }
 
 .sg-empty button:hover {
-  background: #e0f2fe;
-  border-color: #7dd3fc;
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
 }

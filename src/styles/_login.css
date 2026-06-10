@@ -24,7 +24,7 @@
     align-items: center;
     justify-content: center;
     margin: 0 auto 14px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px var(--color-black-15);
 }
 
 .form-icon svg {
@@ -43,7 +43,7 @@
 
 .card-sub {
     font-size: 0.83rem;
-    color: rgba(255, 255, 255, 0.48);
+    color: var(--color-white-50);
     margin: 0 0 3rem 0 !important;
     line-height: 1.5;
 }
@@ -68,7 +68,7 @@
     display: block;
     font-size: 0.76rem;
     font-weight: 500;
-    color: rgba(255, 255, 255, 0.55);
+    color: var(--color-white-50);
     letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 7px;
@@ -88,7 +88,7 @@
     transform: translateY(-50%);
     width: 16px;
     height: 16px;
-    color: rgba(255, 255, 255, 0.3);
+    color: var(--color-white-30);
     pointer-events: none;
     transition: color 0.2s;
 }
@@ -97,8 +97,8 @@
 .input-wrap select {
     width: 100%;
     padding: 13px 14px 13px 42px;
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--color-white-06);
+    border: 1px solid var(--color-white-12);
     border-radius: 12px;
     color: var(--color-bg-card);
     font-size: 0.9rem;
@@ -109,7 +109,7 @@
 }
 
 .input-wrap input::placeholder {
-    color: rgba(255, 255, 255, 0.22);
+    color: var(--color-white-25);
 }
 
 .input-wrap select option {
@@ -120,8 +120,8 @@
 .input-wrap input:focus,
 .input-wrap select:focus {
     border-color: var(--teal-bright);
-    background: rgba(220, 38, 38, 0.08);
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15);
+    background: var(--color-red-08);
+    box-shadow: 0 0 0 3px var(--color-red-15);
 }
 
 .input-wrap:focus-within svg {
@@ -138,7 +138,7 @@
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 6px solid rgba(255, 255, 255, 0.4);
+    border-top: 6px solid var(--color-white-40);
     pointer-events: none;
 }
 
@@ -157,7 +157,7 @@
     align-items: center;
     gap: 7px;
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--color-white-50);
     cursor: pointer;
 }
 
@@ -186,7 +186,7 @@
 /* Base styles shared by login page buttons */
 .btn-login,
 .btn-biometric {
-    background: linear-gradient(135deg, #ff4444 0%, var(--teal-bright) 100%) !important;
+    background: linear-gradient(135deg, var(--color-red) 0%, var(--teal-bright) 100%) !important;
     color: var(--teal-darkest) !important;
     border: none;
     border-radius: 14px;
@@ -195,13 +195,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 24px rgba(220, 38, 38, 0.4) !important;
+    box-shadow: 0 8px 24px var(--color-red-40) !important;
 }
 
 .btn-login:hover,
 .btn-biometric:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.55);
+    box-shadow: 0 12px 32px var(--color-red-55);
     filter: brightness(1.08);
 }
 
@@ -230,7 +230,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+    background: linear-gradient(135deg, var(--color-white-15), transparent);
     opacity: 0;
     transition: opacity 0.2s;
 }
@@ -285,12 +285,12 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--color-white-10);
 }
 
 .divider span {
     font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--color-white-35);
     letter-spacing: 0.06em;
     white-space: nowrap;
 }
@@ -311,7 +311,7 @@
     text-align: center;
     margin-top: 20px;
     font-size: 0.82rem;
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white-40);
 }
 
 .bottom-link a {
@@ -368,7 +368,7 @@
    app-password, app-select) inside auth forms
    ───────────────────────────────────────────────────────────── */
 .auth-field-wrap .gm-label {
-    color: rgba(255, 255, 255, 0.55) !important;
+    color: var(--color-white-50) !important;
     font-weight: 500;
     letter-spacing: 0.08em;
 }
@@ -379,8 +379,8 @@
 }
 
 .auth-field-wrap .gm-input.p-inputtext.p-component {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: var(--color-white-06) !important;
+    border: 1px solid var(--color-white-12) !important;
     border-radius: 12px !important;
     color: var(--color-bg-card) !important;
     font-family: var(--font-body) !important;
@@ -391,13 +391,13 @@
 }
 
 .auth-field-wrap .gm-input.p-inputtext.p-component::placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
+    color: var(--color-white-25) !important;
 }
 
 .auth-field-wrap .gm-input.p-inputtext.p-component:focus {
     border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+    background: var(--color-red-08) !important;
+    box-shadow: 0 0 0 3px var(--color-red-15) !important;
 }
 
 .auth-field-wrap .gm-has-icon .gm-input.p-inputtext.p-component {
@@ -405,7 +405,7 @@
 }
 
 .auth-field-wrap .gm-field-icon {
-    color: rgba(255, 255, 255, 0.3) !important;
+    color: var(--color-white-30) !important;
     font-size: 0.85rem !important;
 }
 
@@ -431,8 +431,8 @@
 }
 
 .auth-field-wrap .p-password .p-inputtext {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: var(--color-white-06) !important;
+    border: 1px solid var(--color-white-12) !important;
     border-radius: 12px !important;
     color: var(--color-bg-card) !important;
     font-family: var(--font-body) !important;
@@ -443,23 +443,23 @@
 }
 
 .auth-field-wrap .p-password .p-inputtext::placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
+    color: var(--color-white-25) !important;
 }
 
 .auth-field-wrap .p-password .p-inputtext:focus {
     border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+    background: var(--color-red-08) !important;
+    box-shadow: 0 0 0 3px var(--color-red-15) !important;
 }
 
 .auth-field-wrap .p-password .p-password-toggle-mask-icon,
 .auth-field-wrap .p-password .p-icon {
-    color: rgba(255, 255, 255, 0.4) !important;
+    color: var(--color-white-40) !important;
 }
 
 .auth-field-wrap .p-select {
-    background: rgba(255, 255, 255, 0.07) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: var(--color-white-06) !important;
+    border: 1px solid var(--color-white-12) !important;
     border-radius: 12px !important;
     min-height: 44px !important;
     height: 44px !important;
@@ -472,19 +472,19 @@
 }
 
 .auth-field-wrap .p-select .p-select-placeholder {
-    color: rgba(255, 255, 255, 0.22) !important;
+    color: var(--color-white-25) !important;
 }
 
 .auth-field-wrap .p-select:focus-within {
     border-color: var(--teal-bright) !important;
-    background: rgba(220, 38, 38, 0.08) !important;
-    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.15) !important;
+    background: var(--color-red-08) !important;
+    box-shadow: 0 0 0 3px var(--color-red-15) !important;
 }
 
 .auth-field-wrap .p-select .p-select-dropdown {
     background: rgba(255, 255, 255, 0.05) !important;
-    border-left: 1px solid rgba(255, 255, 255, 0.12) !important;
-    color: rgba(255, 255, 255, 0.4) !important;
+    border-left: 1px solid var(--color-white-12) !important;
+    color: var(--color-white-40) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -505,7 +505,7 @@
     .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component:focus {
         border-color: var(--teal-bright) !important;
         background: var(--color-bg-card) !important;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+        box-shadow: 0 0 0 3px var(--color-red-12) !important;
     }
     .m-sheet .auth-field-wrap .gm-field-icon {
         color: var(--color-border-light) !important;
@@ -530,7 +530,7 @@
     .m-sheet .auth-field-wrap .p-password-input:focus {
         border-color: var(--teal-bright) !important;
         background: var(--color-bg-card) !important;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+        box-shadow: 0 0 0 3px var(--color-red-12) !important;
     }
     .m-sheet .auth-field-wrap .p-password .p-password-toggle-mask-icon,
     .m-sheet .auth-field-wrap .p-password .p-icon {
@@ -549,7 +549,7 @@
     .m-sheet .auth-field-wrap .p-select:focus-within {
         border-color: var(--teal-bright) !important;
         background: var(--color-bg-card) !important;
-        box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12) !important;
+        box-shadow: 0 0 0 3px var(--color-red-12) !important;
     }
     .m-sheet .auth-field-wrap .p-select .p-select-dropdown {
         background: rgba(226, 232, 240, 0.5) !important;

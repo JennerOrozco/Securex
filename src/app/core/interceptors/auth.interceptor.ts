@@ -2,6 +2,7 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResp
 import { inject } from '@angular/core';
 import { catchError, throwError, switchMap, Observable } from 'rxjs';
 import { AuthService } from '../services/auth.service';
+import { StorageService } from '../services/storage.service';
 import { NotificationService } from '../services/notification.service';
 
 /** Regex precisas para endpoints públicos de autenticación */
@@ -18,9 +19,9 @@ const PUBLIC_ENDPOINT_PATTERNS = [
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
     const authService = inject(AuthService);
+    const storage = inject(StorageService);
     const notificationService = inject(NotificationService);
-    // Lee el token de localStorage, consistente con donde auth.service.ts lo guarda
-    const token = localStorage.getItem('accessToken');
+    const token = storage.getAccessToken();
 
     const isPublicEndpoint = PUBLIC_ENDPOINT_PATTERNS.some(pattern => pattern.test(req.url));
 

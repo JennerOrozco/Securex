@@ -22,54 +22,54 @@
 /* ─────────────────────────────────────────────────────────────
    TABLE CONTAINER
    ───────────────────────────────────────────────────────────── */
-.users-table {
+.gm-data-table {
     /* border/radius/shadow heredados de .card-base */ }
 
-.users-table .p-datatable-wrapper,
-.users-table.p-datatable-scrollable .p-datatable-scrollable-body {
+.gm-data-table .p-datatable-wrapper,
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
     overflow-x: auto !important;
     width: 100%;
     -webkit-overflow-scrolling: touch;
 }
 
-.users-table .p-datatable-wrapper::-webkit-scrollbar,
-.users-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar {
+.gm-data-table .p-datatable-wrapper::-webkit-scrollbar,
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar {
     height: 8px;
 }
 
-.users-table .p-datatable-wrapper::-webkit-scrollbar-thumb,
-.users-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
+.gm-data-table .p-datatable-wrapper::-webkit-scrollbar-thumb,
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
     background: var(--color-text-light);
     border-radius: var(--radius-xs);
 }
 
-.users-table .p-datatable-wrapper::-webkit-scrollbar-track,
-.users-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-track {
+.gm-data-table .p-datatable-wrapper::-webkit-scrollbar-track,
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-track {
     background: var(--color-bg-page);
 }
 
-.users-table .p-datatable-table {
+.gm-data-table .p-datatable-table {
     min-width: 800px;
     table-layout: auto !important;
 }
 
-.users-table.p-datatable-scrollable .p-datatable-scrollable-body {
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
     min-width: 100%;
 }
 
 @media (max-width: 768px) {
-    .users-table .p-datatable-wrapper,
-    .users-table.p-datatable-scrollable .p-datatable-scrollable-body {
+    .gm-data-table .p-datatable-wrapper,
+    .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
         overflow-x: auto !important;
         padding: 0 0.75rem;
     }
-    .users-table .p-datatable-table {
+    .gm-data-table .p-datatable-table {
         min-width: 500px !important;
     }
 }
 
 @media (min-width: 769px) {
-    .users-table .p-datatable-table {
+    .gm-data-table .p-datatable-table {
         width: 99% !important;
         margin: 0 auto;
     }
@@ -78,9 +78,9 @@
 /* ─────────────────────────────────────────────────────────────
    TABLE HEADER & CELLS
    ───────────────────────────────────────────────────────────── */
-.users-table .p-datatable-thead>tr>th {
+.gm-data-table .p-datatable-thead>tr>th {
     background: var(--app-main-primary) !important;
-    color: rgba(255, 255, 255, 0.9) !important;
+    color: var(--color-white-80) !important;
     font-size: var(--font-sm) !important;
     font-weight: 700 !important;
     text-transform: uppercase !important;
@@ -89,12 +89,12 @@
     border: none !important;
 }
 
-.users-table .p-datatable-thead>tr>th:hover {
+.gm-data-table .p-datatable-thead>tr>th:hover {
     background: var(--app-main-primary) !important;
     color: white !important;
 }
 
-.users-table .p-datatable-thead .th-content {
+.gm-data-table .p-datatable-thead .th-content {
     display: flex !important;
     align-items: center;
     gap: 6px;
@@ -102,35 +102,35 @@
     width: 100%;
 }
 
-.users-table .p-datatable-tbody>tr>td {
+.gm-data-table .p-datatable-tbody>tr>td {
     padding: 8px 10px !important;
     font-size: var(--font-sm) !important;
     border-bottom: 1px solid var(--app-main-border) !important;
     vertical-align: middle;
 }
 
-.users-table .p-datatable-striped .p-datatable-tbody>tr:nth-child(even) {
+.gm-data-table .p-datatable-striped .p-datatable-tbody>tr:nth-child(even) {
     background-color: var(--color-bg-subtle) !important;
 }
 
-.users-table .p-datatable-hoverable-rows .p-datatable-tbody>tr:hover {
+.gm-data-table .p-datatable-hoverable-rows .p-datatable-tbody>tr:hover {
     background-color: var(--color-bg-page) !important;
 }
 
-.users-table .p-datatable-tbody>tr {
+.gm-data-table .p-datatable-tbody>tr {
     cursor: context-menu;
     transition: background-color 0.15s ease;
 }
 
 @media (max-width: 768px) {
-    .users-table .p-datatable-tbody>tr {
+    .gm-data-table .p-datatable-tbody>tr {
         cursor: pointer;
     }
 }
 
 @media (max-width: 640px) {
-    .users-table .p-datatable-thead>tr>th,
-    .users-table .p-datatable-tbody>tr>td {
+    .gm-data-table .p-datatable-thead>tr>th,
+    .gm-data-table .p-datatable-tbody>tr>td {
         padding: 2px 4px !important;
     }
 }
@@ -213,42 +213,6 @@
     transition: all 0.15s;
 }
 
-.estado-badge.activo,
-.estado-badge.aprobada,
-.estado-badge.approved,
-.estado-badge.facturada,
-.badge-toggle.badge-on {
-    background: var(--color-success-bg);
-    color: var(--color-success-text);
-}
-
-.estado-badge.inactivo,
-.estado-badge.rechazada,
-.estado-badge.rejected,
-.estado-badge.cancelada,
-.badge-toggle.badge-off {
-    background: var(--color-danger-bg);
-    color: var(--color-danger-text);
-}
-
-.estado-badge.cerrada,
-.estado-badge.bloqueado {
-    background: var(--color-bg-page);
-    color: var(--color-text-secondary);
-}
-
-.estado-badge.pendiente_aprobacion,
-.estado-badge.pending,
-.estado-badge.en_revision {
-    background: var(--color-warning-bg);
-    color: var(--color-warning-text);
-}
-
-.estado-badge.borrador {
-    background: var(--color-info-bg);
-    color: var(--color-info-text);
-}
-
 .edo-dot {
     width: 6px;
     height: 6px;
@@ -273,8 +237,8 @@
 }
 
 .rol-admin {
-    background: #e0e7ff;
-    color: #3730a3;
+    background: var(--color-indigo-light);
+    color: var(--app-main-indigo);
 }
 
 .rol-viewer {
@@ -295,7 +259,7 @@
     height: 28px;
     border-radius: var(--radius-sm);
     border: 1px solid var(--app-main-border);
-    background: #fff;
+    background: var(--color-bg-card);
     color: var(--app-main-text-muted);
     cursor: pointer;
     display: flex;
@@ -304,16 +268,16 @@
     transition: all 0.2s ease;
 }
 
-/* ── act-btn hover variants (CSS variables → 1 regla) ── */
-.act-btn.view    { --act-hover-clr: var(--app-main-teal); --act-hover-bg: #f0fdfa; }
-.act-btn.edit    { --act-hover-clr: #3b82f6; --act-hover-bg: var(--app-main-indigo-light); }
+/* ── act-btn hover variants (agrupados) ── */
+.act-btn.view    { --act-hover-clr: var(--app-main-teal); --act-hover-bg: var(--color-bg-subtle); }
+.act-btn.edit,
+.act-btn.activate { --act-hover-clr: var(--color-accent-blue); --act-hover-bg: var(--app-main-indigo-light); }
 .act-btn.perm    { --act-hover-clr: var(--color-amber); --act-hover-bg: var(--color-amber-bg); }
-.act-btn.del     { --act-hover-clr: var(--color-danger-text); --act-hover-bg: var(--color-danger-light); }
-.act-btn.duplicate { --act-hover-clr: #9333ea; --act-hover-bg: #faf5ff; }
+.act-btn.del,
 .act-btn.pdf     { --act-hover-clr: var(--color-danger-text); --act-hover-bg: var(--color-danger-light); }
-.act-btn.send    { --act-hover-clr: var(--color-emerald); --act-hover-bg: var(--color-emerald-bg); }
-.act-btn.activate{ --act-hover-clr: #3b82f6; --act-hover-bg: var(--app-main-indigo-light); }
-.act-btn.select  { --act-hover-clr: var(--color-emerald); --act-hover-bg: var(--color-emerald-bg); }
+.act-btn.duplicate { --act-hover-clr: var(--color-purple); --act-hover-bg: var(--color-purple-bg); }
+.act-btn.send,
+.act-btn.select,
 .act-btn.add-child-btn { --act-hover-clr: var(--color-emerald); --act-hover-bg: var(--color-emerald-bg); }
 
 .act-btn:hover {
@@ -323,24 +287,6 @@
 }
 
 .act-btn.add-child-btn:hover { transform: scale(1.05); }
-
-.act-btn-create {
-    background: var(--app-main-primary-light);
-    color: white;
-    border-radius: var(--radius-sm);
-    padding: 4px 12px;
-    border: none;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.act-btn-create:hover {
-    background: var(--app-main-primary);
-    transform: translateY(-1px);
-}
 
 /* ─────────────────────────────────────────────────────────────
    EMPTY STATE
@@ -378,13 +324,13 @@
     background: var(--color-bg-card);
     border: 1px solid var(--app-main-border);
     overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 5px var(--color-black-05);
     transition: all 0.2s ease;
 }
 
 .table-logo-container:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--color-black-10);
     border-color: var(--color-border-light);
 }
 
@@ -411,7 +357,7 @@
    COLUMN-FILTER OVERLAY (PrimeNG)
    ───────────────────────────────────────────────────────────── */
 .p-datatable-filter-overlay {
-    background: rgba(255, 255, 255, 0.92) !important;
+    background: var(--color-white-90) !important;
     backdrop-filter: blur(16px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
     border: 1px solid rgba(226, 232, 240, 0.8) !important;
@@ -419,7 +365,7 @@
     box-shadow:
         0 12px 40px -8px rgba(0, 0, 0, 0.12),
         0 4px 12px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+        inset 0 1px 0 var(--color-white-60) !important;
     padding: 12px !important;
     min-width: 240px !important;
     animation: filterFadeIn 0.15s ease;
@@ -446,7 +392,7 @@
     width: 100% !important;
     border-radius: var(--radius-md) !important;
     border: 1px solid var(--color-border) !important;
-    background: #fff !important;
+    background: var(--color-bg-card) !important;
     font-size: var(--font-sm) !important;
     height: 34px !important;
     transition: all 0.2s;
@@ -471,7 +417,7 @@
     width: 100% !important;
     border-radius: var(--radius-md) !important;
     border: 1px solid var(--color-border) !important;
-    background: #fff !important;
+    background: var(--color-bg-card) !important;
     font-size: var(--font-sm) !important;
     padding: 0.5rem 0.75rem !important;
     height: 34px !important;
@@ -518,13 +464,13 @@
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:last-child {
-    background: #0b1930 !important;
+    background: var(--app-main-primary) !important;
     border: none !important;
     color: white !important;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:last-child:hover {
-    background: #334155 !important;
+    background: var(--app-main-primary-light) !important;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-add-rule-button {
@@ -541,47 +487,47 @@
 .p-datatable-filter-overlay .p-datatable-filter-add-rule-button:hover {
     background: rgba(13, 148, 136, 0.06) !important;
     border-color: var(--app-main-teal) !important;
-    color: #0f766e !important;
+    color: var(--color-success-text) !important;
 }
 
-.users-table .p-column-filter-menu-button {
+.gm-data-table .p-column-filter-menu-button {
     width: 24px !important;
     height: 24px !important;
     border-radius: var(--radius-sm) !important;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: var(--color-white-60) !important;
     transition: all 0.15s;
 }
 
-.users-table .p-column-filter-menu-button:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
+.gm-data-table .p-column-filter-menu-button:hover {
+    background: var(--color-white-10) !important;
     color: white !important;
 }
 
-.users-table .p-column-filter-menu-button.p-column-filter-menu-button-active {
-    background: rgba(255, 255, 255, 0.15) !important;
-    color: #5eead4 !important;
+.gm-data-table .p-column-filter-menu-button.p-column-filter-menu-button-active {
+    background: var(--color-white-15) !important;
+    color: var(--color-success-text) !important;
 }
 
-.users-table .p-column-filter-menu-button .p-icon,
-.users-table .p-datatable-column-filter-button .p-icon {
+.gm-data-table .p-column-filter-menu-button .p-icon,
+.gm-data-table .p-datatable-column-filter-button .p-icon {
     width: 0.75rem !important;
     height: 0.75rem !important;
 }
 
 @media (max-width: 768px) {
-    .users-table .p-column-filter-menu-button,
-    .users-table .p-datatable-column-filter-button.p-button {
+    .gm-data-table .p-column-filter-menu-button,
+    .gm-data-table .p-datatable-column-filter-button.p-button {
         width: 1.65rem !important;
         height: 1.65rem !important;
         margin-left: 1px !important;
         padding: 0 !important;
     }
-    .users-table .p-column-filter-menu-button .p-icon,
-    .users-table .p-datatable-column-filter-button .p-icon {
+    .gm-data-table .p-column-filter-menu-button .p-icon,
+    .gm-data-table .p-datatable-column-filter-button .p-icon {
         width: 0.85rem !important;
         height: 0.85rem !important;
     }
-    .users-table p-sortIcon .p-sortable-column-icon {
+    .gm-data-table p-sortIcon .p-sortable-column-icon {
         width: 0.85rem !important;
         height: 0.85rem !important;
         font-size: var(--font-base) !important;
@@ -591,18 +537,18 @@
 /* ─────────────────────────────────────────────────────────────
    PAGINATOR
    ───────────────────────────────────────────────────────────── */
-.users-table .p-paginator {
+.gm-data-table .p-paginator {
     padding: 0.75rem !important;
     border-top: 1px solid var(--app-main-border) !important;
 }
 
-.users-table .p-paginator .p-paginator-element {
+.gm-data-table .p-paginator .p-paginator-element {
     min-width: 2rem !important;
     height: 2rem !important;
     font-size: var(--font-sm) !important;
 }
 
-.users-table .p-paginator .p-paginator-current {
+.gm-data-table .p-paginator .p-paginator-current {
     font-size: var(--font-md);
     color: var(--app-main-text-muted);
 }
@@ -610,31 +556,31 @@
 
 
 @media (max-width: 640px) {
-    .users-table .p-paginator {
+    .gm-data-table .p-paginator {
         padding: 0.15rem !important;
         gap: 0.15rem !important;
         min-height: auto !important;
     }
-    .users-table .p-paginator .p-paginator-element {
+    .gm-data-table .p-paginator .p-paginator-element {
         min-width: 1.25rem !important;
         height: 1.25rem !important;
         font-size: var(--font-3xs) !important;
         margin: 0 !important;
         padding: 0 !important;
     }
-    .users-table .p-paginator .p-paginator-icon {
+    .gm-data-table .p-paginator .p-paginator-icon {
         font-size: 8px !important;
         width: 8px !important;
         height: 8px !important;
     }
-    .users-table .p-paginator .p-paginator-current {
+    .gm-data-table .p-paginator .p-paginator-current {
         font-size: var(--font-3xs) !important;
         margin-bottom: 0.1rem !important;
         width: 100% !important;
         text-align: center !important;
         display: block !important;
     }
-    .users-table .p-paginator .p-paginator-pages .p-paginator-page {
+    .gm-data-table .p-paginator .p-paginator-pages .p-paginator-page {
         min-width: 1.25rem !important;
         height: 1.25rem !important;
     }
@@ -678,35 +624,35 @@ td.td-actions app-table-actions {
 /* ─────────────────────────────────────────────────────────────
    TABLE EDIT (input / dropdown inside cells)
    ───────────────────────────────────────────────────────────── */
-.users-table app-input-number {
+.gm-data-table app-input-number {
     min-width: 120px !important;
 }
 
-.users-table app-select {
+.gm-data-table app-select {
     width: 100% !important;
     max-width: 100% !important;
     display: block;
 }
 
-.users-table .p-dropdown {
+.gm-data-table .p-dropdown {
     width: 100% !important;
 }
 
-.users-table .p-dropdown .p-dropdown-label {
+.gm-data-table .p-dropdown .p-dropdown-label {
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
 }
 
-.users-table tr.p-datatable-row-expansion td {
+.gm-data-table tr.p-datatable-row-expansion td {
     padding: 0 !important;
 }
 
-.users-table tr.p-datatable-row-expansion {
+.gm-data-table tr.p-datatable-row-expansion {
     background: var(--color-bg-subtle);
 }
 
-.users-table .p-datatable-header {
+.gm-data-table .p-datatable-header {
     padding: 0 !important;
 }
 
@@ -736,19 +682,19 @@ td.td-actions app-table-actions {
     background: transparent !important;
 }
 
-.minimal .users-table {
+.minimal .gm-data-table {
     border: none !important;
     box-shadow: none !important;
     border-radius: 0 !important;
 }
 
-.minimal .users-table .p-datatable-thead>tr>th,
-.minimal .users-table .p-datatable-tbody>tr>td {
+.minimal .gm-data-table .p-datatable-thead>tr>th,
+.minimal .gm-data-table .p-datatable-tbody>tr>td {
     padding: 4px 8px !important;
 }
 
 @media (max-width: 768px) {
-    .users-table .p-tag,
+    .gm-data-table .p-tag,
     .p-tag,
     .p-component.p-tag {
         font-size: var(--font-xs) !important;
@@ -766,12 +712,12 @@ td.td-actions app-table-actions {
 /* ─────────────────────────────────────────────────────────────
    SELECTED ROW — rojo en vez de verde de PrimeNG
    ───────────────────────────────────────────────────────────── */
-.users-table .p-datatable-tbody > tr.p-highlight {
+.gm-data-table .p-datatable-tbody > tr.p-highlight {
     background: var(--color-danger-light) !important;
     color: var(--color-danger-text) !important;
 }
 
-.users-table .p-datatable-tbody > tr.p-highlight:hover {
+.gm-data-table .p-datatable-tbody > tr.p-highlight:hover {
     background: var(--color-danger-bg) !important;
 }
 

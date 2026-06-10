@@ -50,15 +50,15 @@ export class UserService extends BaseApiService {
   }
 
   createUserAccessGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_USER_ACCESS, 'createUserAccess', data);
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_USER_ACCESS, 'createUserAccess', data);
   }
 
   updateUserAccessGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_USER_ACCESS, 'updateUserAccess', { uuid, ...data });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_USER_ACCESS, 'updateUserAccess', { uuid, ...data });
   }
 
   deleteUserAccessGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_USER_ACCESS, 'deleteUserAccess', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_USER_ACCESS, 'deleteUserAccess', { uuid });
   }
 
   getUserWebauthnCredentials(params?: any): Observable<any> {
@@ -66,25 +66,25 @@ export class UserService extends BaseApiService {
   }
 
   deleteUserWebauthnCredential(id: number): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_WEBAUTHN_CREDENTIAL, 'deleteUserWebauthnCredential', { id });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_WEBAUTHN_CREDENTIAL, 'deleteUserWebauthnCredential', { id });
   }
 
   createUserGql(data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.CREATE_USER, 'createUser', {
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_USER, 'createUser', {
       full_name: data.full_name, email: data.email,
       is_super_admin: !!data.is_super_admin, auth_provider: data.auth_provider,
     });
   }
 
   updateUserGql(uuid: string, data: any): Observable<any> {
-    return this.gqlMutation<any>('security', SECUREX_MUTATIONS.UPDATE_USER, 'updateUser', { uuid, ...this.boolify(data) });
+    return this.gqlMutate<any>('security', SECUREX_MUTATIONS.UPDATE_USER, 'updateUser', { uuid, ...this.boolify(data) });
   }
 
   deleteUserGql(uuid: string): Observable<any> {
-    return this.gqlMutation<boolean>('security', SECUREX_MUTATIONS.DELETE_USER, 'deleteUser', { uuid });
+    return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_USER, 'deleteUser', { uuid });
   }
 
   sendUserInvitationGql(data: { email: string; full_name?: string }): Observable<any> {
-    return this.gqlMutation<{ success: boolean; message: string }>('security', SECUREX_MUTATIONS.SEND_USER_INVITATION, 'sendUserInvitation', data);
+    return this.gqlMutate<{ success: boolean; message: string }>('security', SECUREX_MUTATIONS.SEND_USER_INVITATION, 'sendUserInvitation', data);
   }
 }

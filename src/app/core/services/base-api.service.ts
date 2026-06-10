@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { GraphqlService } from '../graphql/graphql.service';
 
+export type GraphqlDomain = 'crm' | 'finance' | 'security' | 'notification' | 'report';
+
 export abstract class BaseApiService {
   protected http = inject(HttpClient);
   protected configService = inject(ConfigService);
@@ -14,8 +16,8 @@ export abstract class BaseApiService {
     return this.configService.apiUrl;
   }
 
-  protected boolify(data: Record<string, any>): Record<string, any> {
-    const BOOL_KEYS = new Set(['is_active', 'is_visible', 'is_super_admin']);
+  protected boolify(data: Record<string, any>, extraKeys: string[] = []): Record<string, any> {
+    const BOOL_KEYS = new Set(['is_active', 'is_visible', 'is_super_admin', ...extraKeys]);
     const out: Record<string, any> = {};
     for (const [key, val] of Object.entries(data)) {
       out[key] = BOOL_KEYS.has(key) ? !!val : val;
@@ -24,7 +26,7 @@ export abstract class BaseApiService {
   }
 
   protected gqlQueryList<T>(
-    domain: 'crm' | 'finance' | 'security' | 'notification' | 'report',
+    domain: GraphqlDomain,
     query: string,
     field: string,
     variables?: Record<string, any>,
@@ -33,7 +35,7 @@ export abstract class BaseApiService {
   }
 
   protected gqlQuerySingle<T>(
-    domain: 'crm' | 'finance' | 'security' | 'notification' | 'report',
+    domain: GraphqlDomain,
     query: string,
     field: string,
     variables?: Record<string, any>,
@@ -41,8 +43,8 @@ export abstract class BaseApiService {
     return this.gql.query<Record<string, T>>(domain, query, variables).pipe(map(d => d[field]));
   }
 
-  protected gqlMutation<T>(
-    domain: 'crm' | 'finance' | 'security' | 'notification' | 'report',
+  protected gqlMutate<T>(
+    domain: GraphqlDomain,
     query: string,
     field: string,
     variables?: Record<string, any>,

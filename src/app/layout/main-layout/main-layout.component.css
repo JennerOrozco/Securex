@@ -30,8 +30,8 @@
   padding: 0;
   -webkit-overflow-scrolling: touch;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 20%, rgba(200, 50, 50, 0.04) 0%, transparent 70%),
-    #f3f4f6;
+    radial-gradient(ellipse 80% 60% at 50% 20%, var(--color-red-06) 0%, transparent 70%),
+    var(--color-bg-page);
 }
 
 /* Full layout variant for builders/editors */
