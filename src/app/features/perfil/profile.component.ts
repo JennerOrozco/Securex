@@ -142,6 +142,14 @@ export class ProfileComponent implements OnInit {
 
   handleConfirmDelete() {
     if (!this.itemToDelete) return;
+    
+    if (this.itemToDelete.type === 'picture') {
+      this.deleteModalVisible.set(false);
+      this.itemToDelete = null;
+      this.performDeletePicture();
+      return;
+    }
+    
     this.webauthnService.deleteCredential(this.itemToDelete.id)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -212,22 +220,25 @@ export class ProfileComponent implements OnInit {
 
   deleteProfilePicture(event: Event) {
     event.stopPropagation();
-    
-    if (confirm('¿Está seguro de que desea eliminar su foto de perfil?')) {
-      this.avatarLoading.set(true);
-      this.profileService.deletePicture()
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: () => {
-            this.profileData.update(profile => profile ? { ...profile, profile_picture: undefined } : null);
-            this.avatarLoading.set(false);
-          },
-          error: (err) => {
+    this.itemToDelete = { type: 'picture' };
+    this.deleteModalVisible.set(true);
+  }
+
+  private performDeletePicture() {
+    this.avatarLoading.set(true);
+    this.profileService.deletePicture()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: () => {
+          this.profileData.update(profile => profile ? { ...profile, profile_picture: undefined } : null);
+          this.notificationService.success('Foto de perfil eliminada correctamente.');
+          this.avatarLoading.set(false);
+        },
+        error: (err) => {
           this.notificationService.error(err.error?.message || 'Error al eliminar la foto de perfil.');
-            this.avatarLoading.set(false);
-          }
-        });
-    }
+          this.avatarLoading.set(false);
+        }
+      });
   }
 
   changePassword() {

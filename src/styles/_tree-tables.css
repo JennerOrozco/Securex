@@ -590,7 +590,7 @@ tr.drag-over {
 .selectors-bar {
     --selectors-bar-bg: var(--app-main-primary);
     --selectors-bar-border: rgba(255, 255, 255, 0.1);
-    --selectors-bar-mt: 1.25rem;
+    --selectors-bar-mt: 0;
     --selectors-bar-mb: 1.25rem;
     display: flex;
     flex-wrap: wrap;

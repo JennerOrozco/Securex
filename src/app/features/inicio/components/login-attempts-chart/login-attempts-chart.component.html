@@ -1,0 +1,11 @@
+<app-chart-card
+  title="Monitoreo de Accesos"
+  subtitle="Intentos de inicio de sesión exitosos vs fallidos"
+  type="bar"
+  [data]="chartData"
+  [options]="chartOptions"
+  [loading]="loading"
+  [periods]="periods"
+  [activePeriod]="activePeriod"
+  (onPeriodChange)="onPeriodChange($event)"
+></app-chart-card>

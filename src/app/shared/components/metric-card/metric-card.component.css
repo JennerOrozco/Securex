@@ -1,0 +1,109 @@
+.summary-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
+  user-select: none;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-light);
+}
+
+.summary-card-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.summary-card-icon-wrapper {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  background: var(--color-bg-subtle);
+  transition: transform 0.3s ease, background 0.3s;
+  flex-shrink: 0;
+  margin-left: 1rem;
+}
+
+.summary-card:hover .summary-card-icon-wrapper {
+  transform: scale(1.08) rotate(3deg);
+}
+
+/* Trend Indicators */
+.trend-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-weight: 700;
+  font-size: 0.725rem;
+  padding: 1px 6px;
+  border-radius: var(--radius-xs);
+  line-height: 1;
+}
+
+.trend-up {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.trend-down {
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+}
+
+.trend-neutral {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+}
+
+.trend-label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}
+
+/* Skeleton Shimmer Loading */
+.skeleton-shimmer {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.skeleton-line {
+  background: linear-gradient(90deg, var(--color-bg-subtle) 25%, var(--color-border) 50%, var(--color-bg-subtle) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-xs);
+}
+
+.skeleton-line.title {
+  width: 50%;
+  height: 0.75rem;
+}
+
+.skeleton-line.value {
+  width: 30%;
+  height: 1.5rem;
+  margin-top: 0.25rem;
+}
+
+.skeleton-line.footer {
+  width: 70%;
+  height: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

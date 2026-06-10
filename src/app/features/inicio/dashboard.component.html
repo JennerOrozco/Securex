@@ -1,17 +1,55 @@
-<div class="dashboard-welcome-container">
-  <div class="welcome-card animate-fade-in">
-    <div class="welcome-avatar">
-      <i class="pi pi-user welcome-avatar-icon"></i>
+<div class="gm-crud-page-container animate-fade-in">
+  <div class="content-card">
+    <!-- Cabecera con app-toolbar -->
+    <app-toolbar
+      title="Panel de Control"
+      subtitle="Bienvenido al dashboard principal de SECUREX"
+      [showSearch]="false"
+      [showAdd]="false">
+      @if (userCompanies().length > 0) {
+        <div toolbar-actions class="dashboard-filter">
+          <app-select
+            id="company-select"
+            label="Filtrar Compañía"
+            placeholder="Todas las Compañías"
+            [options]="userCompanies()"
+            optionLabel="name"
+            optionValue="uuid"
+            icon="pi pi-building"
+            [control]="companyControl">
+          </app-select>
+        </div>
+      }
+    </app-toolbar>
+
+    <!-- KPIs de Resumen -->
+    <div class="dashboard-section">
+      <app-metric-summary [companyUuid]="selectedCompanyUuid()"></app-metric-summary>
     </div>
-    <div class="welcome-content">
-      <span class="welcome-badge">Panel de Control</span>
-      <h1 class="welcome-title">¡Hola, {{ currentUser?.name || 'Usuario' }}!</h1>
-      <p class="welcome-subtitle">Te damos la bienvenida de nuevo a tu panel de control. Hoy es {{ today | date:'dd \'de\' MMMM, yyyy' }}.</p>
-      <div class="welcome-divider"></div>
-      <p class="welcome-footer-text">
-        <i class="pi pi-check-circle text-teal-500 mr-2"></i>
-        Tu sistema está activo y funcionando correctamente.
-      </p>
+
+    <!-- Grilla principal de reportes y monitoreo -->
+    <div class="dashboard-grid">
+      
+      <!-- Gráfico de Accesos -->
+      <div class="grid-item col-lg-8 col-sm-12">
+        <app-login-attempts-chart [companyUuid]="selectedCompanyUuid()"></app-login-attempts-chart>
+      </div>
+
+      <!-- Monitoreo de APIs -->
+      <div class="grid-item col-lg-4 col-sm-12">
+        <app-api-status-summary></app-api-status-summary>
+      </div>
+
+      <!-- Historial de Notificaciones (Gráfico) -->
+      <div class="grid-item col-lg-4 col-sm-12">
+        <app-notifications-chart [companyUuid]="selectedCompanyUuid()"></app-notifications-chart>
+      </div>
+
+      <!-- Auditoría de Seguridad Reciente -->
+      <div class="grid-item col-lg-8 col-sm-12">
+        <app-recent-audit [companyUuid]="selectedCompanyUuid()"></app-recent-audit>
+      </div>
+
     </div>
   </div>
 </div>

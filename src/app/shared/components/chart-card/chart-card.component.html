@@ -1,0 +1,50 @@
+<div class="section-card animate-fade-in" [class.loading]="loading">
+  <div class="section-card-header">
+    <div class="header-left">
+      <h3 class="section-card-title">{{ title }}</h3>
+      @if (subtitle) {
+        <p class="section-card-subtitle">{{ subtitle }}</p>
+      }
+    </div>
+
+    <ng-content select="[extra-controls]"></ng-content>
+    
+    @if (periods && periods.length > 0) {
+      <div class="header-right period-selector">
+        @for (period of periods; track period) {
+          <button 
+            type="button" 
+            class="frequency-btn"
+            [class.active]="activePeriod === period"
+            (click)="selectPeriod(period)"
+          >
+            {{ period }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="chart-content-wrapper">
+    @if (loading) {
+      <div class="chart-skeleton">
+        <div class="shimmer-block bar-1"></div>
+        <div class="shimmer-block bar-2"></div>
+        <div class="shimmer-block bar-3"></div>
+        <div class="shimmer-block bar-4"></div>
+        <div class="shimmer-block bar-5"></div>
+      </div>
+    } @else {
+      @if (data) {
+        <div class="chart-container">
+          <p-chart [type]="type" [data]="data" [options]="options" height="100%"></p-chart>
+        </div>
+      } @else {
+        <div class="no-data-placeholder">
+          <i class="pi pi-chart-bar"></i>
+          <p>No hay datos disponibles para mostrar</p>
+        </div>
+      }
+    }
+  </div>
+</div>

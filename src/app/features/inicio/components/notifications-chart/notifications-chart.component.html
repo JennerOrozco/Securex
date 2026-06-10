@@ -1,0 +1,26 @@
+<app-chart-card
+  title="Canales de Envío"
+  subtitle="Distribución de notificaciones enviadas por tipo de canal"
+  type="doughnut"
+  [data]="chartData"
+  [options]="chartOptions"
+  [loading]="loading"
+>
+  <div extra-controls class="date-filter-controls">
+    <app-datepicker
+      id="start-date"
+      label="Desde"
+      placeholder="Fecha Inicio"
+      icon="pi pi-calendar"
+      [control]="startDateControl">
+    </app-datepicker>
+    <span class="date-separator"></span>
+    <app-datepicker
+      id="end-date"
+      label="Hasta"
+      placeholder="Fecha Fin"
+      icon="pi pi-calendar"
+      [control]="endDateControl">
+    </app-datepicker>
+  </div>
+</app-chart-card>

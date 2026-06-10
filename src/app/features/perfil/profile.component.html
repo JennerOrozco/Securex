@@ -363,8 +363,10 @@
 
 <app-delete-modal
   [visible]="deleteModalVisible()"
-  title="Eliminar Dispositivo"
-  [bodyMessage]="'¿Eliminar el dispositivo <strong>' + (itemToDelete?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'"
+  [title]="itemToDelete?.type === 'picture' ? 'Eliminar Foto de Perfil' : 'Eliminar Dispositivo'"
+  [bodyMessage]="itemToDelete?.type === 'picture' 
+    ? '¿Está seguro de que desea eliminar su foto de perfil? Esta acción no puede deshacerse.' 
+    : '¿Eliminar el dispositivo <strong>' + (itemToDelete?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'"
   (onConfirm)="handleConfirmDelete()"
   (onClose)="deleteModalVisible.set(false)"
 ></app-delete-modal>

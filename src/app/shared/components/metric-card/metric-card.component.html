@@ -1,0 +1,38 @@
+<div class="summary-card animate-fade-in" [class.loading]="loading">
+  @if (loading) {
+    <div class="skeleton-shimmer">
+      <div class="skeleton-line title"></div>
+      <div class="skeleton-line value"></div>
+      <div class="skeleton-line footer"></div>
+    </div>
+  } @else {
+    <div class="summary-card-content">
+      <h3 class="summary-card-label">{{ title }}</h3>
+      <p class="summary-card-value">{{ value }}</p>
+      
+      @if (trendValue) {
+        <div class="summary-card-states">
+          <span class="trend-indicator" [ngClass]="{
+            'trend-up': trendType === 'up',
+            'trend-down': trendType === 'down',
+            'trend-neutral': trendType === 'neutral'
+          }">
+            <i class="pi" [ngClass]="{
+              'pi-arrow-up-right': trendType === 'up',
+              'pi-arrow-down-right': trendType === 'down',
+              'pi-minus': trendType === 'neutral'
+            }"></i>
+            {{ trendValue }}
+          </span>
+          <span class="trend-label"> {{ trendLabel }}</span>
+        </div>
+      }
+    </div>
+    
+    @if (icon) {
+      <div class="summary-card-icon-wrapper" [ngClass]="iconColorClass">
+        <i [class]="icon"></i>
+      </div>
+    }
+  }
+</div>

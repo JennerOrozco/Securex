@@ -1,0 +1,122 @@
+.section-card {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.25s ease;
+}
+
+.section-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.period-selector {
+  display: flex;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+
+.frequency-btn {
+  border-radius: 0;
+}
+
+.frequency-btn:first-child {
+  border-top-left-radius: var(--radius-sm);
+  border-bottom-left-radius: var(--radius-sm);
+}
+
+.frequency-btn:last-child {
+  border-top-right-radius: var(--radius-sm);
+  border-bottom-right-radius: var(--radius-sm);
+}
+
+.chart-content-wrapper {
+  margin-top: 1rem;
+  flex: 1;
+  position: relative;
+  min-height: 250px;
+}
+
+.chart-container {
+  height: 280px;
+  width: 100%;
+  position: relative;
+}
+
+/* No data styling */
+.no-data-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+  color: var(--color-text-light);
+  gap: 0.5rem;
+}
+
+.no-data-placeholder i {
+  font-size: 2rem;
+  opacity: 0.5;
+}
+
+.no-data-placeholder p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Skeleton Loading Shimmer for Charts */
+.chart-skeleton {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  height: 250px;
+  width: 100%;
+  padding: 1rem;
+  border-bottom: 2px solid var(--color-border);
+}
+
+.shimmer-block {
+  width: 12%;
+  background: linear-gradient(180deg, var(--color-bg-subtle) 25%, var(--color-border) 50%, var(--color-bg-subtle) 75%);
+  background-size: 100% 200%;
+  animation: chartShimmer 1.5s infinite;
+  border-top-left-radius: var(--radius-xs);
+  border-top-right-radius: var(--radius-xs);
+}
+
+.bar-1 { height: 40%; animation-delay: 0s; }
+.bar-2 { height: 75%; animation-delay: 0.1s; }
+.bar-3 { height: 50%; animation-delay: 0.2s; }
+.bar-4 { height: 90%; animation-delay: 0.3s; }
+.bar-5 { height: 60%; animation-delay: 0.4s; }
+
+@keyframes chartShimmer {
+  0% {
+    background-position: 0 200%;
+  }
+  100% {
+    background-position: 0 -200%;
+  }
+}
+
+.section-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@media (max-width: 640px) {
+  .section-card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+}

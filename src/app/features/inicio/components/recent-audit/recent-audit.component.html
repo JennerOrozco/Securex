@@ -1,0 +1,93 @@
+<div class="card-base animate-fade-in">
+  <div class="section-card-header">
+    <div class="header-left">
+      <h3 class="section-card-title">Auditoría Reciente</h3>
+      <p class="section-card-subtitle">Últimas acciones registradas en la bitácora de seguridad</p>
+    </div>
+
+    <!-- Controles de Filtros -->
+    <div class="audit-filters">
+      @if (uniqueCompanies.length > 0) {
+        <app-select
+          id="audit-company-select"
+          placeholder="Todas las Compañías"
+          [options]="uniqueCompanies"
+          optionLabel="name"
+          optionValue="uuid"
+          icon="pi pi-building"
+          [control]="companyControl">
+        </app-select>
+      }
+
+      @if (uniqueApps.length > 0) {
+        <app-select
+          id="audit-app-select"
+          placeholder="Todas las Apps"
+          [options]="uniqueApps"
+          optionLabel="label"
+          optionValue="value"
+          icon="pi pi-window-maximize"
+          [control]="appControl">
+        </app-select>
+      }
+      
+      <button type="button" class="refresh-mini-btn" (click)="loadData()" [disabled]="loading" title="Actualizar">
+        <i class="pi pi-refresh" [class.pi-spin]="loading"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="audit-table-wrapper">
+    @if (loading) {
+      <div class="audit-skeleton">
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+        <div class="skeleton-row"></div>
+      </div>
+    } @else {
+      @if (logs.length > 0) {
+        <table class="audit-table">
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Evento</th>
+              <th>Descripción</th>
+              <th>Hora</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of logs; track log.uuid) {
+              <tr>
+                <td>
+                  <div class="user-info">
+                    <span class="user-name">{{ log.user_name }}</span>
+                    <span class="app-name">{{ log.app_name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getEventBadgeClass(log.event_type)">
+                    {{ log.event_type }}
+                  </span>
+                </td>
+                <td class="desc-cell" [title]="log.description">
+                  {{ log.description }}
+                </td>
+                <td class="date-cell">
+                  <span class="time">{{ log.created_at | date:'HH:mm:ss' }}</span>
+                  <span class="date-sub">{{ log.created_at | date:'dd/MM/yyyy' }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      } @else {
+        <div class="no-data-placeholder">
+          <i class="pi pi-info-circle"></i>
+          <p>No hay registros de auditoría que coincidan con los filtros</p>
+        </div>
+      }
+    }
+  </div>
+</div>

@@ -1,0 +1,34 @@
+<div class="card-base">
+  <div class="section-card-header">
+    <div class="header-left">
+      <h3 class="section-card-title">Estado de APIs</h3>
+      <p class="section-card-subtitle">Monitoreo de latencia y estado de servicios</p>
+    </div>
+    <button type="button" class="refresh-mini-btn" (click)="checkHealth()" [disabled]="loading()">
+      <i class="pi pi-refresh" [class.pi-spin]="loading()"></i>
+    </button>
+  </div>
+
+  <div class="api-list">
+    @for (api of apis(); track api.name) {
+      <div class="api-item">
+        <div class="api-info">
+          <span class="api-name">{{ api.name }}</span>
+          @if (api.status === 'ONLINE') {
+            <span class="api-latency">{{ api.latency }} ms</span>
+          }
+        </div>
+        <div class="api-indicator-wrap">
+          <span class="status-indicator-dot" [ngClass]="{
+            'online': api.status === 'ONLINE',
+            'offline': api.status === 'OFFLINE',
+            'checking': api.status === 'CHECKING'
+          }"></span>
+          <span class="status-text" [ngClass]="api.status.toLowerCase()">
+            {{ api.status === 'ONLINE' ? 'En línea' : api.status === 'OFFLINE' ? 'Inactivo' : 'Chequeando' }}
+          </span>
+        </div>
+      </div>
+    }
+  </div>
+</div>

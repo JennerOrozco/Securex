@@ -1,0 +1,15 @@
+<div class="welcome-card animate-fade-in">
+  <div class="welcome-avatar">
+    <i class="pi pi-user welcome-avatar-icon"></i>
+  </div>
+  <div class="welcome-content">
+    <span class="welcome-badge">Panel de Control</span>
+    <h1 class="welcome-title">¡Hola, {{ currentUser?.name || 'Usuario' }}!</h1>
+    <p class="welcome-subtitle">Te damos la bienvenida de nuevo a tu panel de control. Hoy es {{ today | date:'dd \'de\' MMMM, yyyy' }}.</p>
+    <div class="welcome-divider"></div>
+    <p class="welcome-footer-text">
+      <i class="pi pi-check-circle text-teal-500 mr-2"></i>
+      Tu sistema está activo y funcionando correctamente.
+    </p>
+  </div>
+</div>

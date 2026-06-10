@@ -1,0 +1,45 @@
+<div class="metrics-summary-grid">
+  <app-metric-card
+    title="Usuarios Activos"
+    [value]="usersCount"
+    icon="pi pi-users"
+    trendValue="+8%"
+    trendLabel="vs mes pasado"
+    trendType="up"
+    iconColorClass="color-indigo-text"
+    [loading]="loading"
+  ></app-metric-card>
+
+  <app-metric-card
+    title="Notificaciones Enviadas"
+    [value]="notificationsCount"
+    icon="pi pi-bell"
+    trendValue="+14%"
+    trendLabel="este mes"
+    trendType="up"
+    iconColorClass="color-teal-text"
+    [loading]="loading"
+  ></app-metric-card>
+
+  <app-metric-card
+    title="Servicios Activos"
+    [value]="activeApisCount + ' / ' + totalApisCount"
+    icon="pi pi-server"
+    trendValue="Estable"
+    trendLabel="estado general"
+    trendType="neutral"
+    iconColorClass="color-success-text"
+    [loading]="loading"
+  ></app-metric-card>
+
+  <app-metric-card
+    title="Intentos Fallidos (Alertas)"
+    [value]="failedAttemptsCount"
+    icon="pi pi-exclamation-triangle"
+    [trendValue]="failedAttemptsCount > 0 ? '+' + failedAttemptsCount : '0'"
+    trendLabel="hoy"
+    [trendType]="failedAttemptsCount > 0 ? 'down' : 'neutral'"
+    iconColorClass="color-danger-text"
+    [loading]="loading"
+  ></app-metric-card>
+</div>

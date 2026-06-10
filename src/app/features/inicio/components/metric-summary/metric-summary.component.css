@@ -1,0 +1,39 @@
+.metrics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1rem;
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .metrics-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .metrics-summary-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Color classes for Metric Cards icons */
+::ng-deep .color-indigo-text {
+  color: var(--app-main-indigo) !important;
+  background: var(--color-indigo-15) !important;
+}
+
+::ng-deep .color-teal-text {
+  color: var(--dashboard-primary) !important;
+  background: rgba(13, 148, 136, 0.08) !important;
+}
+
+::ng-deep .color-success-text {
+  color: var(--color-success-text) !important;
+  background: var(--color-success-bg) !important;
+}
+
+::ng-deep .color-danger-text {
+  color: var(--color-danger-text) !important;
+  background: var(--color-danger-bg) !important;
+}
