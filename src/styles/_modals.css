@@ -23,10 +23,10 @@
 .gm-dialog {
     --gm-dialog-header-bg: var(--color-white-50);
     --gm-dialog-header-border: var(--color-border);
-    --gm-dialog-header-title-color: var(--color-text-main);
+    --gm-dialog-header-title-color: var(--color-bg-card);
     --gm-dialog-header-icon-bg: transparent;
-    --gm-dialog-header-icon-color: var(--color-text-secondary);
-    --gm-dialog-header-close-color: var(--color-text-secondary);
+    --gm-dialog-header-icon-color: var(--color-bg-card);
+    --gm-dialog-header-close-color: var(--color-bg-card);
     --gm-dialog-content-bg: var(--color-white-35);
     --gm-dialog-footer-bg: var(--color-bg-subtle);
     --gm-dialog-footer-border: var(--color-border);
@@ -188,10 +188,10 @@
 .gm-dialog--send,
 .gm-dialog--info {
     --gm-dialog-header-border: rgba(255, 255, 255, 0.12);
-    --gm-dialog-header-title-color: var(--primary-foreground);
+    --gm-dialog-header-title-color: var(--color-bg-card);
     --gm-dialog-header-icon-bg: var(--color-white-15);
-    --gm-dialog-header-icon-color: var(--primary-foreground);
-    --gm-dialog-header-close-color: var(--primary-foreground);
+    --gm-dialog-header-icon-color: var(--color-bg-card);
+    --gm-dialog-header-close-color: var(--color-bg-card);
     --gm-dialog-content-bg: var(--color-white-35);
     --gm-dialog-footer-bg: var(--color-border);
     --gm-dialog-footer-border: var(--color-border-light);
@@ -359,7 +359,7 @@
     margin: 0;
     font-size: 0.8rem;
     font-weight: 700;
-    color: var(--color-text-main);
+    color: var(--color-bg-card);
     letter-spacing: -0.01em;
     white-space: nowrap;
     overflow: hidden;

@@ -105,7 +105,7 @@
    ----------------------------------------------------------------------- */
 .gm-profile-banner-hero {
   height: 190px;
-  background: linear-gradient(135deg, var(--color-brand-dim) 0%, var(--color-brand-shadow) 50%, var(--color-text-main) 100%);
+  background: linear-gradient(135deg, var(--color-brand-dim) 0%, var(--color-brand-shadow) 50%, #000000 100%);
   position: relative;
   overflow: visible;
 }
@@ -138,9 +138,10 @@
 .gm-profile-hero-content {
   position: absolute;
   left: 2.5rem;
-  bottom: 0;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   gap: 0.75rem;
   z-index: 4;
   width: calc(100% - 5rem);
@@ -287,7 +288,6 @@
    USER META (hero)
    ----------------------------------------------------------------------- */
 .gm-user-meta {
-  padding-bottom: 0.25rem;
   min-width: 0;
 }
 
@@ -1134,7 +1134,9 @@
     text-align: center;
     left: 0;
     right: 0;
+    top: auto;
     bottom: 4rem;
+    transform: none;
     width: 100%;
     padding: 0 1rem;
     gap: 0.75rem;

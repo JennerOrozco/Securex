@@ -80,7 +80,7 @@
 
 .logo-text {
   font-size: 1.15rem;
-  color: var(--primary-foreground) !important;
+  color: var(--color-bg-card) !important;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -318,7 +318,7 @@
 .user-name-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: var(--primary-foreground);
+  color: var(--color-bg-card);
   line-height: 1.2;
   word-break: break-word;
 }
