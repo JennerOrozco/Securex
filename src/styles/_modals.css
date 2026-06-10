@@ -1,4 +1,4 @@
-﻿/* =======================================================================
+/* =======================================================================
    MODALS — global styles
    Shared styles for PrimeNG Dialog (used by modal-shell, form-modal,
    delete-modal, columns-modal, role-permissions-modal and send-email-modal).
@@ -188,10 +188,10 @@
 .gm-dialog--send,
 .gm-dialog--info {
     --gm-dialog-header-border: rgba(255, 255, 255, 0.12);
-    --gm-dialog-header-title-color: #ffffff;
+    --gm-dialog-header-title-color: var(--primary-foreground);
     --gm-dialog-header-icon-bg: var(--color-white-15);
-    --gm-dialog-header-icon-color: #ffffff;
-    --gm-dialog-header-close-color: #ffffff;
+    --gm-dialog-header-icon-color: var(--primary-foreground);
+    --gm-dialog-header-close-color: var(--primary-foreground);
     --gm-dialog-content-bg: var(--color-white-35);
     --gm-dialog-footer-bg: var(--color-border);
     --gm-dialog-footer-border: var(--color-border-light);

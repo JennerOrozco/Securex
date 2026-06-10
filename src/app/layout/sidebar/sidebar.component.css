@@ -17,7 +17,7 @@
 
 .sidebar-header {
   padding: 1.25rem 0.6rem;
-  color: white !important;
+  color: var(--primary-foreground) !important;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -80,7 +80,7 @@
 
 .logo-text {
   font-size: 1.15rem;
-  color: white !important;
+  color: var(--primary-foreground) !important;
   font-weight: 700;
   letter-spacing: -0.025em;
 }
@@ -150,12 +150,12 @@
 /* --- Estados Activos --- */
 .active-gradient {
   background: var(--color-sidebar-active) !important;
-  color: white !important;
+  color: var(--primary-foreground) !important;
   box-shadow: 0 4px 12px -2px hsl(var(--nc-navy) / 0.3);
 }
 
 .active-gradient .icon-slot svg {
-  color: white;
+  color: var(--primary-foreground);
 }
 
 /* --- Submenús --- */
@@ -264,7 +264,7 @@
 
 .sub-submenu-item:hover {
   background-color: var(--color-white-06);
-  color: white !important;
+  color: var(--primary-foreground) !important;
 }
 
 /* --- Compact Footer --- */
@@ -318,7 +318,7 @@
 .user-name-label {
   font-size: 0.8rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--primary-foreground);
   line-height: 1.2;
   word-break: break-word;
 }
@@ -355,7 +355,7 @@
 
 .logout-compact-btn:hover {
   background: var(--color-red);
-  color: white;
+  color: var(--primary-foreground);
 }
 
 .logout-mini-icon {
@@ -531,7 +531,7 @@
 
 .context-item:hover {
   background: var(--color-white-06);
-  color: #fff;
+  color: var(--primary-foreground);
 }
 
 .context-item.active {

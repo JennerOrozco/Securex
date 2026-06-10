@@ -1,4 +1,4 @@
-﻿:host {
+:host {
   display: block;
 }
 
@@ -59,7 +59,7 @@
 
 .stepper-step.active .stepper-dot {
   background: var(--app-main-primary);
-  color: #fff;
+  color: var(--primary-foreground);
 }
 
 .stepper-step.current .stepper-dot {
@@ -68,7 +68,7 @@
 
 .stepper-step.done .stepper-dot {
   background: var(--color-emerald);
-  color: #fff;
+  color: var(--primary-foreground);
 }
 
 .stepper-label {

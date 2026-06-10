@@ -296,6 +296,14 @@
 
   --dashboard-primary:       #0d9488;
   --dashboard-primary-hover: #0b7a70;
+
+  --color-purple-bg:     #f3e8ff;
+  --color-purple-border: #d8b4fe;
+  --color-purple-text:   #6b21a8;
+
+  --color-indigo-bg:     #eef2ff;
+
+  --color-slate-text:    #334155;
 }
 
 /* =======================================================================

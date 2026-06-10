@@ -370,7 +370,7 @@ tr.drag-over {
 }
 
 .type-menu {
-    background: #eef2ff;
+    background: var(--color-indigo-bg);
     color: var(--app-main-indigo);
     border-color: var(--app-main-indigo-border);
 }
@@ -388,9 +388,9 @@ tr.drag-over {
 }
 
 .type-component {
-    background: #fff1f2;
+    background: var(--color-red-bg);
     color: var(--color-red);
-    border-color: #fecdd3;
+    border-color: var(--color-red-border);
 }
 
 .type-microsoft {
@@ -404,9 +404,9 @@ tr.drag-over {
 }
 
 .type-github {
-    background: #f3e8ff;
+    background: var(--color-purple-bg);
     color: var(--app-main-indigo);
-    border-color: #d8b4fe;
+    border-color: var(--color-purple-border);
 }
 
 .type-github::before {
@@ -581,7 +581,7 @@ tr.drag-over {
 .perm-search:focus {
     border-color: var(--app-main-indigo);
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
-    background: #fff;
+    background: var(--color-bg-card);
 }
 
 /* ─────────────────────────────────────────────────────────────

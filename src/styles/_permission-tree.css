@@ -1,4 +1,4 @@
-﻿/* =======================================================================
+/* =======================================================================
    PERMISSION-TREE — custom HTML tree table (not PrimeNG)
    Used by CompanyPermissions page and RolePermissionsModal.
    Distinct from src/styles/_tree-tables.css which is for the
@@ -187,11 +187,11 @@
 .mod-purple { background: linear-gradient(135deg,var(--color-indigo-light),var(--color-indigo-border)); color: var(--app-main-primary); }
 .mod-blue   { background: linear-gradient(135deg,var(--color-info-bg),var(--color-info-border)); color: var(--color-accent-blue); }
 .mod-green  { background: linear-gradient(135deg,var(--color-success-bg),var(--color-success-border)); color: var(--color-success-text); }
-.mod-orange { background: linear-gradient(135deg,#fff7ed,#fed7aa); color: #9a3412; }
-.mod-pink   { background: linear-gradient(135deg,#fce7f3,#fbcfe8); color: #9d174d; }
-.mod-teal   { background: linear-gradient(135deg,#ccfbf1,#99f6e4); color: #134e4a; }
-.mod-red    { background: linear-gradient(135deg,#ffe4e6,#fecdd3); color: #9f1239; }
-.mod-slate  { background: linear-gradient(135deg,var(--color-bg-page),var(--color-border)); color: #334155; }
+.mod-orange { background: linear-gradient(135deg, var(--color-orange-bg), var(--color-orange-border)); color: var(--color-orange-text); }
+.mod-pink   { background: linear-gradient(135deg, var(--color-pink-bg), var(--color-pink-border)); color: var(--color-pink-text); }
+.mod-teal   { background: linear-gradient(135deg, var(--color-teal-bg), var(--color-teal-border)); color: var(--color-teal-text); }
+.mod-red    { background: linear-gradient(135deg, var(--color-red-bg), var(--color-red-border)); color: var(--color-red-text); }
+.mod-slate  { background: linear-gradient(135deg, var(--color-bg-page), var(--color-border)); color: var(--color-slate-text); }
 
 /* Type icons (company-permissions scope color coding) */
 .icon-menu      { color: var(--app-main-indigo) !important; }

@@ -1155,7 +1155,7 @@
 
   .gm-user-meta h2 {
     font-size: 1.2rem;
-    color: var(--color-bg-card)fff !important;
+    color: var(--color-bg-card) !important;
     text-shadow: 0 1px 3px var(--color-black-35);
   }
 
