@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '@core/services/auth.service';
-import { map } from 'rxjs';
+import { AuthService } from '@core/services';
+import { map, of, catchError } from 'rxjs';
 
 export const authGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
@@ -24,6 +24,10 @@ export const authGuard: CanActivateFn = (route, state) => {
     return authService.refreshPermissions().pipe(
       map(() => {
         return checkAccess(authService, router, state.url);
+      }),
+      catchError(() => {
+        authService.logout();
+        return of(false);
       })
     );
   }
@@ -33,6 +37,10 @@ export const authGuard: CanActivateFn = (route, state) => {
     return authService.refreshPermissions().pipe(
       map(() => {
         return checkAccess(authService, router, state.url);
+      }),
+      catchError(() => {
+        authService.logout();
+        return of(false);
       })
     );
   }
@@ -53,3 +61,4 @@ function checkAccess(authService: AuthService, router: Router, url: string): boo
   }
   return false;
 }
+
