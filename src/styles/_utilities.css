@@ -369,9 +369,8 @@
    CARD BASE
    ───────────────────────────────────────────────────────────── */
 .card-base,
-.gm-data-table,
 .perm-card {
-    background: var(--app-main-bg-card, var(--color-bg-card)fff);
+    background: var(--app-main-bg-card, var(--color-bg-card, #fff));
     border-radius: 16px;
     border: 1px solid var(--app-main-border, var(--color-border));
     box-shadow: 0 4px 20px -2px var(--color-black-05);
@@ -379,8 +378,17 @@
     padding: 1.25rem 1.5rem;
 }
 
+.gm-data-table {
+    background: var(--app-main-bg-card, var(--color-bg-card, #fff));
+    border-radius: 16px;
+    border: 1px solid var(--app-main-border, var(--color-border));
+    box-shadow: 0 4px 20px -2px var(--color-black-05);
+    overflow: hidden;
+    padding: 0;
+}
+
 .card-compact {
-    background: var(--app-main-bg-card, var(--color-bg-card)fff);
+    background: var(--app-main-bg-card, var(--color-bg-card, #fff));
     border-radius: 12px;
     border: 1px solid var(--app-main-border, var(--color-border));
 }

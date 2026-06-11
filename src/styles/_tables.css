@@ -58,10 +58,13 @@
 }
 
 @media (max-width: 768px) {
+    .gm-data-table {
+        padding: 0 !important;
+    }
     .gm-data-table .p-datatable-wrapper,
     .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
         overflow-x: auto !important;
-        padding: 0 0.75rem;
+        padding: 0 !important;
     }
     .gm-data-table .p-datatable-table {
         min-width: 500px !important;
