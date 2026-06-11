@@ -33,8 +33,7 @@ export class GraphqlService {
       map(res => {
         if (res.errors && res.errors.length > 0) {
           const msg = res.errors.map(e => e.message).join(' | ');
-          console.error(`[GraphQL ${domain}]`, res.errors);
-          throw new Error(msg);
+          throw new Error(`[GraphQL ${domain}] ${msg}`);
         }
         return res.data as T;
       }),

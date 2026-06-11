@@ -355,7 +355,6 @@ export class ProfileComponent implements OnInit {
         } catch (err: any) {
           this.biometricsLoading.set(false);
           this.biometricsError.set(err.message || 'Error en el proceso de autenticación');
-          console.error(err);
         }
       },
       error: (err) => {

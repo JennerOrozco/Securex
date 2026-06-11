@@ -79,7 +79,6 @@ export class NotificationPromptComponent implements OnInit {
   async requestPermission() {
     const permission = await Notification.requestPermission();
     if (permission === 'granted') {
-      console.log('Notification permission granted.');
       await this.notificationService.registerForPush();
     }
     this.dismissPrompt();

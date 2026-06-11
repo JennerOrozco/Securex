@@ -42,6 +42,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   particlesContainer!: ElementRef;
   @ViewChild('waveCanvas') waveCanvas!: ElementRef<HTMLCanvasElement>;
   private waveAnimId: number = 0;
+  private onResize: (() => void) | null = null;
   loading = false;
   loadingConfig = false;
   error: string | null = null;
@@ -89,14 +90,14 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
     let t = 0;
 
-    const resize = () => {
+    this.onResize = () => {
       const rect = canvas.getBoundingClientRect();
       const h = canvas.clientHeight || 400;
       canvas.width = Math.round(rect.width);
       canvas.height = Math.round(h);
     };
-    resize();
-    window.addEventListener('resize', resize);
+    this.onResize();
+    window.addEventListener('resize', this.onResize);
 
     const draw = () => {
       const W = canvas.width;
@@ -136,6 +137,10 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy() {
     if (this.waveAnimId) cancelAnimationFrame(this.waveAnimId);
+    if (this.onResize) {
+      window.removeEventListener('resize', this.onResize);
+      this.onResize = null;
+    }
   }
 
   private initParticles() {
@@ -191,7 +196,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
         setTimeout(() => clearInterval(interval), 3000); // Stop after 3s
       }
     } catch (e) {
-      console.error('Error initializing Google Button:', e);
+      // Google Button initialization failed silently
     }
   }
 
@@ -216,29 +221,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
             if (res.success) {
               this.showCompanySelect = false;
-              const user = res.user;
-
-              // All good, proceed to fetch profile and menu then redirect
-              this.loadingConfig = true;
-              this.cdr.detectChanges();
-              this.profileService.getProfile().subscribe({
-                next: () => {
-                  this.authService.refreshPermissions().subscribe({
-                    next: () => {
-                      this.loadingConfig = false;
-                      this.redirectUser(user);
-                    },
-                    error: () => {
-                      this.loadingConfig = false;
-                      this.redirectUser(user);
-                    }
-                  });
-                },
-                error: () => {
-                  this.loadingConfig = false;
-                  this.redirectUser(user);
-                }
-              });
+              this.finalizeLogin(res.user);
             } else {
               this.error = res.error || 'Error al iniciar sesión con Google';
               this.cdr.detectChanges();
@@ -247,7 +230,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           },
           error: (err) => {
             this.loading = false;
-            console.error(err);
             this.error = 'Error de conexión con el servidor.';
             this.cdr.detectChanges();
           }
@@ -258,13 +240,34 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
 
 
+  private finalizeLogin(user: any) {
+    this.loadingConfig = true;
+    this.cdr.detectChanges();
+    this.profileService.getProfile().subscribe({
+      next: () => {
+        this.authService.refreshPermissions().subscribe({
+          next: () => {
+            this.loadingConfig = false;
+            this.redirectUser(user);
+          },
+          error: () => {
+            this.loadingConfig = false;
+            this.redirectUser(user);
+          }
+        });
+      },
+      error: () => {
+        this.loadingConfig = false;
+        this.redirectUser(user);
+      }
+    });
+  }
+
   redirectUser(user: any) {
     const firstRoute = this.authService.getFirstAccessibleRoute();
     if (firstRoute) {
       this.router.navigate([firstRoute]);
     } else {
-      // Si no tiene acceso a nada, o bien va a home si es público, 
-      // o se le desloguea según el requerimiento.
       this.router.navigate(['/home']);
     }
   }
@@ -366,7 +369,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
       },
       error: (err) => {
         this.loading = false;
-        console.error(err);
         this.error = 'Error de conexión.';
         this.showToast('Error de conexión.', 'error');
         this.cdr.detectChanges();
@@ -401,26 +403,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
 
         if (res.success) {
           this.showCompanySelect = false;
-          this.loadingConfig = true;
-          this.cdr.detectChanges();
-          this.profileService.getProfile().subscribe({
-            next: () => {
-              this.authService.refreshPermissions().subscribe({
-                next: () => {
-                  this.loadingConfig = false;
-                  this.redirectUser(res.user);
-                },
-                error: () => {
-                  this.loadingConfig = false;
-                  this.redirectUser(res.user);
-                }
-              });
-            },
-            error: () => {
-              this.loadingConfig = false;
-              this.redirectUser(res.user);
-            }
-          });
+          this.finalizeLogin(res.user);
         } else {
           this.error = res.error || 'Credenciales inválidas.';
           this.cdr.detectChanges();
@@ -459,27 +442,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           if (res.success) {
             this.showCompanySelect = false;
             this.authService.setUserCompanies(this.availableCompanies);
-            const user = res.user;
-            this.loadingConfig = true;
-            this.cdr.detectChanges();
-            this.profileService.getProfile().subscribe({
-              next: () => {
-                this.authService.refreshPermissions().subscribe({
-                  next: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(user);
-                  },
-                  error: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(user);
-                  }
-                });
-              },
-              error: () => {
-                this.loadingConfig = false;
-                this.redirectUser(user);
-              }
-            });
+            this.finalizeLogin(res.user);
           } else {
             this.error = res.error || 'Error al iniciar sesión.';
             this.cdr.detectChanges();
@@ -505,26 +468,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           if (res.success) {
             this.showCompanySelect = false;
             this.authService.setUserCompanies(this.availableCompanies);
-            this.loadingConfig = true;
-            this.cdr.detectChanges();
-            this.profileService.getProfile().subscribe({
-              next: () => {
-                this.authService.refreshPermissions().subscribe({
-                  next: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(res.user);
-                  },
-                  error: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(res.user);
-                  }
-                });
-              },
-              error: () => {
-                this.loadingConfig = false;
-                this.redirectUser(res.user);
-              }
-            });
+            this.finalizeLogin(res.user);
           } else {
             this.error = res.error || 'Error al iniciar sesión.';
             this.cdr.detectChanges();
@@ -610,26 +554,7 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
             next: (res) => {
               this.loading = false;
               if (res.success) {
-                this.loadingConfig = true;
-                this.cdr.detectChanges();
-                this.profileService.getProfile().subscribe({
-                  next: () => {
-                    this.authService.refreshPermissions().subscribe({
-                      next: () => {
-                        this.loadingConfig = false;
-                        this.redirectUser(res.user);
-                      },
-                      error: () => {
-                        this.loadingConfig = false;
-                        this.redirectUser(res.user);
-                      }
-                    });
-                  },
-                  error: () => {
-                    this.loadingConfig = false;
-                    this.redirectUser(res.user);
-                  }
-                });
+                this.finalizeLogin(res.user);
               } else {
                 this.error = res.error || 'Error al iniciar sesión con huella.';
                 this.cdr.detectChanges();
@@ -649,7 +574,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
           } else {
             this.error = err.message || 'Error en el proceso de autenticación';
           }
-          console.error(err);
           this.cdr.detectChanges();
         }
       },

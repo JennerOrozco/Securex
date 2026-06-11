@@ -9,7 +9,8 @@
     "test": "ng test",
     "tailwind:init": "node ./node_modules/tailwindcss/dist/cli.js init",
     "pwa:icons": "node scripts/generate-pwa-icons.js",
-    "analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/securex-app/stats.json"
+    "analyze": "ng build --configuration production --stats-json && npx webpack-bundle-analyzer dist/securex-app/stats.json",
+    "lint": "eslint src/"
   },
   "prettier": {
     "printWidth": 100,
@@ -51,11 +52,17 @@
     "zone.js": "^0.15.1"
   },
   "devDependencies": {
+    "@angular-eslint/eslint-plugin": "^21.3.1",
+    "@angular-eslint/eslint-plugin-template": "^21.3.1",
+    "@angular-eslint/template-parser": "^21.3.1",
     "@angular/build": "^21.2.9",
     "@angular/cli": "^21.0.0",
     "@angular/compiler-cli": "^21.2.11",
     "@types/canvas-confetti": "^1.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.60.0",
+    "@typescript-eslint/parser": "^8.60.0",
     "autoprefixer": "^10.4.22",
+    "eslint": "^10.4.0",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.6",
     "sharp": "^0.33.5",

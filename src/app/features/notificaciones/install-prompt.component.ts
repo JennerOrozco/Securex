@@ -184,8 +184,7 @@ export class InstallPromptComponent implements OnInit {
     // Show the prompt
     this.deferredPrompt.prompt();
     // Wait for the user to respond to the prompt
-    const { outcome } = await this.deferredPrompt.userChoice;
-    console.log(`User response to the install prompt: ${outcome}`);
+    await this.deferredPrompt.userChoice;
     this.deferredPrompt = null;
   }
 

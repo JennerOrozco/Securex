@@ -3,17 +3,30 @@ import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+export interface AppConfig {
+  apiUrl: string;
+  apiMailUrl: string;
+  apiAdminTowerUrl: string;
+  appUuid: string;
+  googleClientId: string;
+  vapidPublicKey: string;
+  notificationApiUrl: string;
+  financeApiUrl: string;
+  crmApiUrl: string;
+  reportApiUrl: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class ConfigService {
-  private config: any;
+  private config: AppConfig | null = null;
 
   private http = inject(HttpClient);
 
-  loadConfig(): Promise<any> {
+  loadConfig(): Promise<AppConfig> {
     return firstValueFrom(
-      this.http.get('assets/config.json').pipe(
+      this.http.get<AppConfig>('assets/config.json').pipe(
         tap(config => this.config = config)
       )
     );

@@ -539,14 +539,14 @@ export class AuthService {
             firstValueFrom(this.swPush.subscription)
                 .then(sub => {
                     if (sub) {
-                        firstValueFrom(
-                            this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, {
-                                body: { device_token: JSON.stringify(sub) }
-                            })
-                        ).catch(err => console.error('Failed to delete push device registration on logout:', err));
-                    }
-                })
-                .catch(err => console.error('Failed to get push subscription on logout:', err));
+                            firstValueFrom(
+                                this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, {
+                                    body: { device_token: JSON.stringify(sub) }
+                                })
+                            ).catch(() => {});
+                        }
+                    })
+                    .catch(() => {});
         }
 
         if (refreshToken && accessToken) {

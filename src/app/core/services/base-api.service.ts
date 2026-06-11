@@ -3,9 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConfigService } from './config.service';
-import { GraphqlService } from '../graphql/graphql.service';
-
-export type GraphqlDomain = 'crm' | 'finance' | 'security' | 'notification' | 'report';
+import { GraphqlService, GraphqlDomain } from '../graphql/graphql.service';
 
 export abstract class BaseApiService {
   protected http = inject(HttpClient);
