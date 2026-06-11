@@ -8,6 +8,7 @@
 
 /* App Styles & Partials */
 @import './styles/_tokens.css';
+@import './styles/_utilities.css';
 @import './styles/_animations.css';
 @import './styles/_toast.css';
 @import './styles/_login.css';
@@ -16,7 +17,6 @@
 @import './styles/_tree-tables.css';
 @import './styles/_permission-tree.css';
 @import './styles/_dashboard.css';
-@import './styles/_utilities.css';
 
 @tailwind base;
 @tailwind components;

@@ -286,26 +286,49 @@
 }
 
 .user-avatar-mini {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 3.25rem;
+  height: 3.25rem;
   border-radius: 50%;
-  /* Rounded for mini look */
   background: linear-gradient(135deg, var(--color-accent-blue), var(--color-red));
-  color: white;
+  padding: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 0.9rem;
-  border: 1px solid var(--color-white-15);
-  box-shadow: 0 4px 10px var(--color-black-30);
-  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 
+              0 0 8px rgba(96, 165, 250, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.user-avatar-mini:hover {
+  transform: scale(1.05) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6), 
+              0 0 15px rgba(96, 165, 250, 0.4),
+              0 0 15px rgba(239, 68, 68, 0.4);
 }
 
 .user-avatar-mini img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background-color: var(--color-dark-surface);
+}
+
+.user-avatar-mini .avatar-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2a0303, #090101);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.25rem;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
 .user-meta {

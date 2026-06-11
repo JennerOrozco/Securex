@@ -119,6 +119,10 @@ export class ProfileComponent implements OnInit {
     }
   }
 
+  fortifyAccount() {
+    this.setTab('security');
+  }
+
   loadDevices() {
     this.devicesLoading.set(true);
     this.webauthnService.getCredentials()

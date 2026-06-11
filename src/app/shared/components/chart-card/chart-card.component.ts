@@ -6,8 +6,7 @@ import { ChartModule } from 'primeng/chart';
   selector: 'app-chart-card',
   standalone: true,
   imports: [CommonModule, ChartModule],
-  templateUrl: './chart-card.component.html',
-  styleUrls: ['./chart-card.component.css']
+  templateUrl: './chart-card.component.html'
 })
 export class ChartCardComponent {
   @Input() title: string = '';

@@ -293,7 +293,8 @@
     color: var(--color-success-text);
 }
 
-.gm-icon--edit {
+.gm-icon--edit,
+.gm-icon--send {
     background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-border));
     color: var(--app-main-indigo);
 }
@@ -303,16 +304,7 @@
     color: var(--color-danger-text);
 }
 
-.gm-icon--view {
-    background: linear-gradient(135deg, var(--color-indigo-light), var(--color-indigo-border));
-    color: var(--app-main-primary);
-}
-
-.gm-icon--send {
-    background: linear-gradient(135deg, var(--color-info-bg), var(--color-info-border));
-    color: var(--app-main-indigo);
-}
-
+.gm-icon--view,
 .gm-icon--info {
     background: linear-gradient(135deg, var(--color-indigo-light), var(--color-indigo-border));
     color: var(--app-main-primary);
@@ -413,28 +405,32 @@
     animation: pulse-ring 2s ease-out infinite;
 }
 
-.gm-delete-ring--1 {
+.gm-delete-ring--1,
+.gm-send-ring--1 {
     width: 32px;
     height: 32px;
-    background: var(--color-danger-light);
     animation-delay: 0s;
 }
 
-.gm-delete-ring--2 {
+.gm-delete-ring--2,
+.gm-send-ring--2 {
     width: 40px;
     height: 40px;
-    background: var(--color-danger-border);
     opacity: 0.5;
     animation-delay: 0.3s;
 }
 
-.gm-delete-ring--3 {
+.gm-delete-ring--3,
+.gm-send-ring--3 {
     width: 48px;
     height: 48px;
-    background: var(--color-danger-bg);
     opacity: 0.25;
     animation-delay: 0.6s;
 }
+
+.gm-delete-ring--1 { background: var(--color-danger-light); }
+.gm-delete-ring--2 { background: var(--color-danger-border); }
+.gm-delete-ring--3 { background: var(--color-danger-bg); }
 
 @keyframes pulse-ring {
     0%   { transform: scale(0.95); opacity: 0.8; }
@@ -495,28 +491,9 @@
     animation: pulse-ring 2s ease-out infinite;
 }
 
-.gm-send-ring--1 {
-    width: 32px;
-    height: 32px;
-    background: var(--app-main-indigo-light);
-    animation-delay: 0s;
-}
-
-.gm-send-ring--2 {
-    width: 40px;
-    height: 40px;
-    background: var(--app-main-indigo-light);
-    opacity: 0.5;
-    animation-delay: 0.3s;
-}
-
-.gm-send-ring--3 {
-    width: 48px;
-    height: 48px;
-    background: var(--app-main-indigo-border);
-    opacity: 0.25;
-    animation-delay: 0.6s;
-}
+.gm-send-ring--1,
+.gm-send-ring--2 { background: var(--app-main-indigo-light); }
+.gm-send-ring--3 { background: var(--app-main-indigo-border); }
 
 .gm-send-icon {
     position: relative;

@@ -272,33 +272,25 @@
 
 .gm-sticky-note-btn-cancel,
 .gm-sticky-note-btn-save {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.15s !important;
     padding: 3px 8px !important;
     border-radius: 5px !important;
     font-size: 10px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    font-family: inherit !important;
-    transition: all 0.15s !important;
+    height: auto !important;
 }
 
 .gm-sticky-note-btn-cancel {
-    border: 1px solid var(--color-amber-30) !important;
-    background: var(--color-bg-card) !important;
-    color: var(--color-warning-text) !important;
-}
-.gm-sticky-note-btn-cancel:hover {
-    background: var(--color-amber-bg) !important;
+    @apply bg-[var(--color-bg-card)] text-[var(--color-warning-text)] border border-solid border-[var(--color-amber-30)] hover:bg-[var(--color-amber-bg)] !important;
 }
 
 .gm-sticky-note-btn-save {
-    border: none !important;
-    background: var(--color-amber) !important;
-    color: var(--color-bg-card) !important;
-    box-shadow: 0 1px 3px rgba(202, 138, 4, 0.2);
-}
-
-.gm-sticky-note-btn-save:hover {
-    background: var(--color-warning-text) !important;
+    @apply bg-[var(--color-amber)] text-[var(--color-bg-card)] border-none shadow-[0_1px_3px_rgba(202,138,4,0.2)] hover:bg-[var(--color-warning-text)] !important;
 }
 
 .gm-sticky-note::before,
@@ -345,45 +337,33 @@
 }
 
 .gm-sticky-note-new-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.15s !important;
     padding: 6px 14px !important;
     border: none !important;
     border-radius: 6px !important;
     background: var(--app-main-indigo) !important;
     font-size: 11px !important;
-    font-weight: 600 !important;
-    cursor: pointer !important;
-    font-family: inherit !important;
-    display: flex !important;
-    align-items: center !important;
     gap: 5px !important;
-    transition: all 0.15s !important;
     box-shadow: 0 2px 4px rgba(99, 102, 241, 0.2) !important;
+    height: auto !important;
 }
 
 .gm-sticky-note-new-btn:hover:not(:disabled) {
+    @apply shadow-[0_4px_8px_rgba(99,102,241,0.35)] !important;
     background: var(--app-main-indigo) !important;
-    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.35) !important;
 }
 
 .gm-sticky-note-new-btn:disabled {
-    background: var(--color-border) !important;
-    color: var(--color-text-light) !important;
-    cursor: not-allowed !important;
-    box-shadow: none !important;
+    @apply bg-[var(--color-border)] text-[var(--color-text-light)] shadow-none !important;
 }
 
-/* ─────────────────────────────────────────────────────────────
-   FLEX / LAYOUT UTILITIES
-   ───────────────────────────────────────────────────────────── */
-.flex-center  { display: flex; align-items: center; }
-.flex-between { display: flex; align-items: center; justify-content: space-between; }
-.flex-col     { display: flex; flex-direction: column; }
-.flex-row     { display: flex; flex-direction: row; }
-.gap-2  { gap: 0.25rem; }
-.gap-4  { gap: 0.5rem; }
-.gap-6  { gap: 0.75rem; }
-.gap-8  { gap: 1rem; }
-.gap-10 { gap: 1.25rem; }
+
 
 /* ─────────────────────────────────────────────────────────────
    CARD BASE
@@ -396,6 +376,7 @@
     border: 1px solid var(--app-main-border, var(--color-border));
     box-shadow: 0 4px 20px -2px var(--color-black-05);
     overflow: hidden;
+    padding: 1.25rem 1.5rem;
 }
 
 .card-compact {
@@ -552,19 +533,28 @@
 .btn--icon { width: 28px; height: 28px; padding: 0; border-radius: 6px; }
 
 /* Solid color variants */
-.btn--navy   { background: var(--app-main-primary); color: var(--color-bg-card); border: none; }
+.btn--navy,
+.btn--red,
+.btn--indigo,
+.btn--emerald,
+.btn--amber {
+    color: var(--color-bg-card);
+    border: none;
+}
+
+.btn--navy   { background: var(--app-main-primary); }
 .btn--navy:hover { background: var(--app-main-primary-light); }
 
-.btn--red    { background: var(--color-danger-text); color: var(--color-bg-card); border: none; }
+.btn--red    { background: var(--color-danger-text); }
 .btn--red:hover { background: var(--color-danger-hover); }
 
-.btn--indigo { background: var(--app-main-indigo); color: var(--color-bg-card); border: none; }
+.btn--indigo { background: var(--app-main-indigo); }
 .btn--indigo:hover { background: var(--app-main-indigo); }
 
-.btn--emerald { background: var(--color-emerald); color: var(--color-bg-card); border: none; }
+.btn--emerald { background: var(--color-emerald); }
 .btn--emerald:hover { background: var(--color-emerald); }
 
-.btn--amber  { background: var(--color-amber); color: var(--color-bg-card); border: none; }
+.btn--amber  { background: var(--color-amber); }
 .btn--amber:hover { background: var(--color-amber); }
 
 /* Ghost variants (border + white bg) */
@@ -586,83 +576,8 @@
     border-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Deprecated aliases — keep for backward compat (migrate to .btn.btn--navy) */
-.btn-save { height: 36px; padding: 0 1rem; gap: 6px; background: var(--app-main-primary); color: var(--color-bg-card); font-size: 13px; border: none; display: inline-flex; align-items: center; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
-.btn-save:hover { background: var(--app-main-primary-light); }
 
-.act-btn-create { background: var(--app-main-primary-light); color: var(--color-bg-card); border-radius: 6px; padding: 4px 12px; border: none; cursor: pointer; display: inline-flex; align-items: center; white-space: nowrap; font-weight: 600; font-size: 13px; transition: all 0.2s ease; }
-.act-btn-create:hover { background: var(--app-main-primary); }
 
-/* .bulk-btn — migrate to .btn.btn--ghost-indigo.btn-sm */
-.bulk-btn { font-size: 0.72rem; font-weight: 700; padding: 0.35rem 0.75rem; border-radius: 6px; border: 1px solid var(--app-main-border); background: var(--color-bg-card); color: var(--app-main-indigo); cursor: pointer; transition: all 0.15s; display: inline-flex; align-items: center; gap: 4px; }
-.bulk-btn:hover { background: var(--color-indigo-light); border-color: var(--app-main-indigo-border); }
-
-/* ============================================
-   SHARED UTILITY CLASSES
-   Centralized to eliminate duplication across
-   component CSS files.
-   ============================================ */
-
-/* ── Flex Layouts ── */
-.u-flex      { display: flex; }
-.u-flex-col  { display: flex; flex-direction: column; }
-.u-flex-wrap { display: flex; flex-wrap: wrap; }
-.u-flex-center   { display: flex; align-items: center; justify-content: center; }
-.u-flex-between  { display: flex; align-items: center; justify-content: space-between; }
-.u-flex-start    { display: flex; align-items: center; justify-content: flex-start; }
-.u-flex-end      { display: flex; align-items: center; justify-content: flex-end; }
-.u-inline-flex   { display: inline-flex; align-items: center; }
-
-/* ── Colors ── */
-.u-text-main        { color: var(--color-text-main); }
-.u-text-secondary   { color: var(--color-text-secondary); }
-.u-text-muted       { color: var(--color-text-muted); }
-.u-text-light       { color: var(--color-text-light); }
-.u-text-white       { color: var(--color-bg-card); }
-.u-text-indigo      { color: var(--app-main-indigo); }
-.u-text-red         { color: var(--color-red); }
-.u-text-amber       { color: var(--color-amber); }
-.u-text-emerald     { color: var(--color-emerald); }
-.u-text-blue        { color: var(--color-accent-blue); }
-.u-text-danger      { color: var(--color-danger-text); }
-
-/* ── Backgrounds ── */
-.u-bg-page       { background: var(--color-bg-page); }
-.u-bg-card       { background: var(--color-bg-card); }
-.u-bg-subtle     { background: var(--color-bg-subtle); }
-.u-bg-transparent { background: transparent; }
-.u-bg-indigo     { background: var(--app-main-indigo); }
-.u-bg-red        { background: var(--color-red); }
-.u-bg-amber      { background: var(--color-amber); }
-.u-bg-emerald    { background: var(--color-emerald); }
-
-/* ── Borders ── */
-.u-border-none { border: none !important; }
-.u-border      { border: 1px solid var(--color-border); }
-.u-border-light { border: 1px solid var(--color-border-light); }
-
-/* ── Border Radius ── */
-.u-radius-sm { border-radius: var(--radius-sm); }
-.u-radius-md { border-radius: var(--radius-md); }
-.u-radius-lg { border-radius: var(--radius-lg); }
-
-/* ── Transitions ── */
-.u-transition { transition: all 0.2s ease; }
-.u-transition-fast { transition: all 0.15s ease; }
-
-/* ── Width ── */
-.u-w-full { width: 100% !important; }
-
-/* ── Transform ── */
-.u-translate-y-0 { transform: translateY(0); }
-
-/* ── Text ── */
-.u-text-center { text-align: center; }
-.u-font-body   { font-family: var(--font-body); }
-.u-font-head   { font-family: var(--font-head); }
-.u-font-sm     { font-size: 0.875rem; }
-.u-font-xs     { font-size: 0.75rem; }
-.u-font-lg     { font-size: 1.125rem; }
-.u-font-bold   { font-weight: 700; }
-.u-font-semibold { font-weight: 600; }
-.u-font-medium { font-weight: 500; }
+@media (max-width: 640px) {
+    .card-base { padding: 1rem; }
+}

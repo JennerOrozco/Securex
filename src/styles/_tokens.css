@@ -113,6 +113,12 @@
   --color-emerald:        #10b981;
   --color-emerald-bg:     #ecfdf5;
   --color-emerald-border: #a7f3d0;
+  --color-emerald-08:     rgba(16, 185, 129, 0.08);
+  --color-emerald-12:     rgba(16, 185, 129, 0.12);
+  --color-emerald-20:     rgba(16, 185, 129, 0.20);
+  --color-emerald-25:     rgba(16, 185, 129, 0.25);
+  --color-emerald-80:     rgba(6, 78, 59, 0.82);
+  --color-emerald-85:     rgba(6, 78, 59, 0.88);
 
   /* ──────────────── NEUTRAL / SURFACE COLORS ──────────────── */
   --color-bg-page:        #f1f5f9;
@@ -218,6 +224,14 @@
   --color-indigo-30: rgba(99, 102, 241, 0.30);
   --color-indigo-35: rgba(99, 102, 241, 0.35);
   --color-indigo-40: rgba(99, 102, 241, 0.40);
+  --color-indigo-45: rgba(99, 102, 241, 0.45);
+
+  /* ──────────────── PRIMARY ACCENT OPACITY PRESETS ──────────────── */
+  --color-primary-05: rgba(37, 3, 3, 0.05);
+  --color-primary-15: rgba(37, 3, 3, 0.15);
+  --color-primary-25: rgba(37, 3, 3, 0.25);
+  --color-primary-light-05: rgba(59, 8, 8, 0.05);
+  --color-primary-light-15: rgba(59, 8, 8, 0.15);
 
   /* ──────────────── GRAY SCALE ──────────────── */
   --color-gray-100: #f3f4f6;

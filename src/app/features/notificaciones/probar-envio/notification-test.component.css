@@ -2,14 +2,6 @@
   display: block;
 }
 
-.content-card app-toolbar ::ng-deep .toolbar {
-  background: transparent !important;
-  border-bottom: none !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  padding-top: 0 !important;
-}
-
 /* ========== Stepper ========== */
 .stepper {
   margin-bottom: 1.5rem;
@@ -59,16 +51,16 @@
 
 .stepper-step.active .stepper-dot {
   background: var(--app-main-primary);
-  color: var(--primary-foreground);
+  color: #ffffff;
 }
 
 .stepper-step.current .stepper-dot {
-  box-shadow: 0 0 0 4px var(--color-red-15);
+  box-shadow: 0 0 0 4px var(--color-indigo-15);
 }
 
 .stepper-step.done .stepper-dot {
   background: var(--color-emerald);
-  color: var(--primary-foreground);
+  color: #ffffff;
 }
 
 .stepper-label {
@@ -89,7 +81,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 1rem 1.25rem 0;
+  padding: 0 0 0.75rem;
   font-size: 0.85rem;
   font-weight: 700;
   color: var(--app-main-primary);
@@ -203,6 +195,19 @@
   display: flex;
   justify-content: flex-end;
   padding-top: 0.5rem;
+}
+
+/* ========== Back Button Override ========== */
+.step-content ::ng-deep .gm-btn.p-button-text,
+.step-content ::ng-deep .p-button.gm-btn.p-button-text {
+  color: var(--app-main-primary) !important;
+  font-weight: 600;
+}
+
+.step-content ::ng-deep .gm-btn.p-button-text:hover,
+.step-content ::ng-deep .p-button.gm-btn.p-button-text:hover {
+  background: var(--app-main-primary) !important;
+  color: var(--color-white-80) !important;
 }
 
 /* ========== Step Content Animation ========== */

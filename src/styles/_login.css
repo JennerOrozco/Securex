@@ -37,7 +37,7 @@
     font-family: var(--font-head);
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--color-bg-card);
+    color: var(--auth-white);
     letter-spacing: -0.02em;
 }
 
@@ -100,7 +100,7 @@
     background: var(--color-white-06);
     border: 1px solid var(--color-white-12);
     border-radius: 12px;
-    color: var(--color-bg-card);
+    color: var(--auth-white);
     font-size: 0.9rem;
     outline: none;
     transition: border-color 0.25s, background 0.25s, box-shadow 0.25s;
@@ -114,7 +114,7 @@
 
 .input-wrap select option {
     background: var(--teal-dark);
-    color: var(--color-bg-card);
+    color: var(--auth-white);
 }
 
 .input-wrap input:focus,
@@ -186,22 +186,26 @@
 /* Base styles shared by login page buttons */
 .btn-login,
 .btn-biometric {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: inherit !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    white-space: nowrap !important;
+    border: 1px solid transparent !important;
+    border-radius: 14px !important;
     background: linear-gradient(135deg, var(--color-red) 0%, var(--teal-bright) 100%) !important;
     color: var(--teal-darkest) !important;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     box-shadow: 0 8px 24px var(--color-red-40) !important;
+    transition: transform 0.15s, box-shadow 0.2s, filter 0.2s !important;
 }
 
 .btn-login:hover,
 .btn-biometric:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 12px 32px var(--color-red-55);
+    box-shadow: 0 12px 32px var(--color-red-55) !important;
     filter: brightness(1.08);
 }
 
@@ -209,16 +213,16 @@
 .btn-biometric:disabled {
     opacity: 0.55;
     cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 /* Button-specific layouts & animations */
 .btn-login {
     width: 100%;
-    padding: 14px;
+    padding: 14px !important;
     font-family: var(--font-head);
-    font-size: 1rem;
+    font-size: 1rem !important;
     font-weight: 700;
     letter-spacing: 0.02em;
     gap: 8px;
@@ -378,23 +382,26 @@
     font-weight: 700;
 }
 
-.auth-field-wrap .gm-input.p-inputtext.p-component {
+/* Grouped Input / Password / Select Base styles */
+.auth-field-wrap .gm-input.p-inputtext.p-component,
+.auth-field-wrap .p-password .p-inputtext,
+.auth-field-wrap .p-select {
+    @apply w-full min-h-[44px] px-3.5 py-3 rounded-xl text-sm font-body !important;
     background: var(--color-white-06) !important;
     border: 1px solid var(--color-white-12) !important;
-    border-radius: 12px !important;
-    color: var(--color-bg-card) !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-    padding: 13px 14px !important;
-    min-height: 44px !important;
-    width: 100% !important;
+    color: var(--auth-white) !important;
 }
 
-.auth-field-wrap .gm-input.p-inputtext.p-component::placeholder {
+.auth-field-wrap .gm-input.p-inputtext.p-component::placeholder,
+.auth-field-wrap .p-password .p-inputtext::placeholder,
+.auth-field-wrap .p-select .p-select-placeholder {
     color: var(--color-white-25) !important;
 }
 
-.auth-field-wrap .gm-input.p-inputtext.p-component:focus {
+/* Grouped Input / Password / Select Focus states */
+.auth-field-wrap .gm-input.p-inputtext.p-component:focus,
+.auth-field-wrap .p-password .p-inputtext:focus,
+.auth-field-wrap .p-select:focus-within {
     border-color: var(--teal-bright) !important;
     background: var(--color-red-08) !important;
     box-shadow: 0 0 0 3px var(--color-red-15) !important;
@@ -417,10 +424,7 @@
     color: var(--teal-bright) !important;
 }
 
-.auth-field-wrap .gm-invalid {
-    color: var(--color-danger-text) !important;
-}
-
+.auth-field-wrap .gm-invalid,
 .auth-field-wrap .gm-error-msg {
     color: var(--color-danger-text) !important;
 }
@@ -430,55 +434,15 @@
     width: 100% !important;
 }
 
-.auth-field-wrap .p-password .p-inputtext {
-    background: var(--color-white-06) !important;
-    border: 1px solid var(--color-white-12) !important;
-    border-radius: 12px !important;
-    color: var(--color-bg-card) !important;
-    font-family: var(--font-body) !important;
-    font-size: 0.9rem !important;
-    padding: 13px 14px !important;
-    min-height: 44px !important;
-    width: 100% !important;
-}
-
-.auth-field-wrap .p-password .p-inputtext::placeholder {
-    color: var(--color-white-25) !important;
-}
-
-.auth-field-wrap .p-password .p-inputtext:focus {
-    border-color: var(--teal-bright) !important;
-    background: var(--color-red-08) !important;
-    box-shadow: 0 0 0 3px var(--color-red-15) !important;
-}
-
 .auth-field-wrap .p-password .p-password-toggle-mask-icon,
 .auth-field-wrap .p-password .p-icon {
     color: var(--color-white-40) !important;
 }
 
-.auth-field-wrap .p-select {
-    background: var(--color-white-06) !important;
-    border: 1px solid var(--color-white-12) !important;
-    border-radius: 12px !important;
-    min-height: 44px !important;
-    height: 44px !important;
-}
-
 .auth-field-wrap .p-select-label {
-    color: var(--color-bg-card) !important;
+    color: var(--auth-white) !important;
     font-family: var(--font-body) !important;
     font-size: 0.9rem !important;
-}
-
-.auth-field-wrap .p-select .p-select-placeholder {
-    color: var(--color-white-25) !important;
-}
-
-.auth-field-wrap .p-select:focus-within {
-    border-color: var(--teal-bright) !important;
-    background: var(--color-red-08) !important;
-    box-shadow: 0 0 0 3px var(--color-red-15) !important;
 }
 
 .auth-field-wrap .p-select .p-select-dropdown {
@@ -494,19 +458,34 @@
     .m-sheet .auth-field-wrap .gm-label {
         color: var(--color-text-muted) !important;
     }
-    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component {
+    
+    /* Grouped Mobile Input / Password / Select Base styles */
+    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component,
+    .m-sheet .auth-field-wrap .p-password .p-inputtext,
+    .m-sheet .auth-field-wrap .p-password-input,
+    .m-sheet .auth-field-wrap .p-select {
         background: var(--color-bg-subtle) !important;
         border: 1.5px solid var(--color-border) !important;
         color: var(--color-text-main) !important;
     }
-    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component::placeholder {
+
+    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component::placeholder,
+    .m-sheet .auth-field-wrap .p-password .p-inputtext::placeholder,
+    .m-sheet .auth-field-wrap .p-password-input::placeholder,
+    .m-sheet .auth-field-wrap .p-select .p-select-placeholder {
         color: var(--color-border-light) !important;
     }
-    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component:focus {
+
+    /* Grouped Mobile Input / Password / Select Focus states */
+    .m-sheet .auth-field-wrap .gm-input.p-inputtext.p-component:focus,
+    .m-sheet .auth-field-wrap .p-password .p-inputtext:focus,
+    .m-sheet .auth-field-wrap .p-password-input:focus,
+    .m-sheet .auth-field-wrap .p-select:focus-within {
         border-color: var(--teal-bright) !important;
         background: var(--color-bg-card) !important;
         box-shadow: 0 0 0 3px var(--color-red-12) !important;
     }
+
     .m-sheet .auth-field-wrap .gm-field-icon {
         color: var(--color-border-light) !important;
     }
@@ -516,40 +495,12 @@
     .m-sheet .auth-field-wrap .gm-error-msg {
         color: var(--color-danger-text) !important;
     }
-    .m-sheet .auth-field-wrap .p-password .p-inputtext,
-    .m-sheet .auth-field-wrap .p-password-input {
-        background: var(--color-bg-subtle) !important;
-        border: 1.5px solid var(--color-border) !important;
-        color: var(--color-text-main) !important;
-    }
-    .m-sheet .auth-field-wrap .p-password .p-inputtext::placeholder,
-    .m-sheet .auth-field-wrap .p-password-input::placeholder {
-        color: var(--color-border-light) !important;
-    }
-    .m-sheet .auth-field-wrap .p-password .p-inputtext:focus,
-    .m-sheet .auth-field-wrap .p-password-input:focus {
-        border-color: var(--teal-bright) !important;
-        background: var(--color-bg-card) !important;
-        box-shadow: 0 0 0 3px var(--color-red-12) !important;
-    }
     .m-sheet .auth-field-wrap .p-password .p-password-toggle-mask-icon,
     .m-sheet .auth-field-wrap .p-password .p-icon {
         color: var(--color-text-light) !important;
     }
-    .m-sheet .auth-field-wrap .p-select {
-        background: var(--color-bg-subtle) !important;
-        border: 1.5px solid var(--color-border) !important;
-    }
     .m-sheet .auth-field-wrap .p-select-label {
         color: var(--color-text-main) !important;
-    }
-    .m-sheet .auth-field-wrap .p-select .p-select-placeholder {
-        color: var(--color-border-light) !important;
-    }
-    .m-sheet .auth-field-wrap .p-select:focus-within {
-        border-color: var(--teal-bright) !important;
-        background: var(--color-bg-card) !important;
-        box-shadow: 0 0 0 3px var(--color-red-12) !important;
     }
     .m-sheet .auth-field-wrap .p-select .p-select-dropdown {
         background: rgba(226, 232, 240, 0.5) !important;

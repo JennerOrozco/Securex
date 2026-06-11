@@ -1,4 +1,4 @@
-<div *ngIf="hasPermission; else noPermission">
+@if (hasPermission) {
   <div class="api-status-body">
     <div class="api-card-panel">
       <div class="api-toolbar">
@@ -20,9 +20,13 @@
                 <i class="pi pi-server api-card-icon"></i>
                 <h3>{{ api.name }}</h3>
               </div>
-              <p-tag *ngIf="api.status === 'ONLINE'" severity="success" value="ONLINE" icon="pi pi-check"></p-tag>
-              <p-tag *ngIf="api.status === 'OFFLINE'" severity="danger" value="OFFLINE" icon="pi pi-times"></p-tag>
-              <p-tag *ngIf="api.status === 'CHECKING'" severity="info" value="VERIFICANDO" icon="pi pi-spin pi-spinner"></p-tag>
+              @if (api.status === 'ONLINE') {
+                <p-tag severity="success" value="ONLINE" icon="pi pi-check"></p-tag>
+              } @else if (api.status === 'OFFLINE') {
+                <p-tag severity="danger" value="OFFLINE" icon="pi pi-times"></p-tag>
+              } @else if (api.status === 'CHECKING') {
+                <p-tag severity="info" value="VERIFICANDO" icon="pi pi-spin pi-spinner"></p-tag>
+              }
             </div>
 
             <div class="api-card-url" [title]="api.url">{{ api.url }}</div>
@@ -54,7 +58,13 @@
       </div>
     </div>
   </div>
-</div>
+} @else {
+  <div class="no-permission">
+    <i class="pi pi-lock"></i>
+    <h3>Acceso Denegado</h3>
+    <p>No tienes permisos para ver el estado de las APIs.</p>
+  </div>
+}
 
 <p-dialog
   [(visible)]="showMetricsDialog"
@@ -114,11 +124,3 @@
     </div>
   </ng-template>
 </p-dialog>
-
-<ng-template #noPermission>
-  <div class="no-permission">
-    <i class="pi pi-lock"></i>
-    <h3>Acceso Denegado</h3>
-    <p>No tienes permisos para ver el estado de las APIs.</p>
-  </div>
-</ng-template>

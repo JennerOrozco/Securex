@@ -1,20 +1,20 @@
-<div class="section-card animate-fade-in" [class.loading]="loading">
-  <div class="section-card-header">
-    <div class="header-left">
-      <h3 class="section-card-title">{{ title }}</h3>
+<div class="relative w-full flex flex-col bg-[var(--surface)] border border-[var(--border)] p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 animate-fade-in" [class.loading]="loading">
+  <div class="flex items-center justify-between mb-4 max-sm:flex-col max-sm:items-stretch max-sm:gap-3">
+    <div class="flex flex-col gap-0.5">
+      <h3 class="text-base font-semibold text-[var(--text-primary)] m-0">{{ title }}</h3>
       @if (subtitle) {
-        <p class="section-card-subtitle">{{ subtitle }}</p>
+        <p class="text-xs text-[var(--text-muted)] m-0 mt-0.5">{{ subtitle }}</p>
       }
     </div>
 
     <ng-content select="[extra-controls]"></ng-content>
     
     @if (periods && periods.length > 0) {
-      <div class="header-right period-selector">
+      <div class="flex rounded-[var(--radius-sm)] overflow-hidden shadow-xs">
         @for (period of periods; track period) {
           <button 
             type="button" 
-            class="frequency-btn"
+            class="frequency-btn rounded-none first:rounded-l-[var(--radius-sm)] last:rounded-r-[var(--radius-sm)]"
             [class.active]="activePeriod === period"
             (click)="selectPeriod(period)"
           >
@@ -25,26 +25,27 @@
     }
   </div>
 
-  <div class="chart-content-wrapper">
+  <div class="mt-4 flex-1 relative min-h-[250px]">
     @if (loading) {
-      <div class="chart-skeleton">
-        <div class="shimmer-block bar-1"></div>
-        <div class="shimmer-block bar-2"></div>
-        <div class="shimmer-block bar-3"></div>
-        <div class="shimmer-block bar-4"></div>
-        <div class="shimmer-block bar-5"></div>
+      <div class="flex items-end justify-around h-[250px] w-full p-4 border-b-2 border-[var(--color-border)]">
+        <div class="w-[12%] bg-[var(--color-border)] animate-pulse rounded-t-[var(--radius-xs)] h-[40%]"></div>
+        <div class="w-[12%] bg-[var(--color-border)] animate-pulse rounded-t-[var(--radius-xs)] h-[75%]"></div>
+        <div class="w-[12%] bg-[var(--color-border)] animate-pulse rounded-t-[var(--radius-xs)] h-[50%]"></div>
+        <div class="w-[12%] bg-[var(--color-border)] animate-pulse rounded-t-[var(--radius-xs)] h-[90%]"></div>
+        <div class="w-[12%] bg-[var(--color-border)] animate-pulse rounded-t-[var(--radius-xs)] h-[60%]"></div>
       </div>
     } @else {
       @if (data) {
-        <div class="chart-container">
+        <div class="h-[280px] w-full relative">
           <p-chart [type]="type" [data]="data" [options]="options" height="100%"></p-chart>
         </div>
       } @else {
-        <div class="no-data-placeholder">
-          <i class="pi pi-chart-bar"></i>
-          <p>No hay datos disponibles para mostrar</p>
+        <div class="flex flex-col items-center justify-center h-[250px] text-[var(--color-text-light)] gap-2">
+          <i class="pi pi-chart-bar text-3xl opacity-50"></i>
+          <p class="text-[0.85rem] m-0">No hay datos disponibles para mostrar</p>
         </div>
       }
     }
   </div>
 </div>
+

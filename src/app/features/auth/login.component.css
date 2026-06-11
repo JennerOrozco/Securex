@@ -182,15 +182,18 @@
 
 /* Glass card */
 .glass-card {
-    background: var(--color-red-50);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid var(--color-red-20);
+    background: rgba(14, 2, 2, 0.85); /* Deep dark crimson translucent */
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(192, 17, 26, 0.32); /* Premium glowing border */
     border-radius: var(--radius-3xl);
     padding: 40px 42px;
     width: 100%;
     max-width: 420px;
-    box-shadow: 0 24px 60px var(--color-black-40), inset 0 1px 0 var(--color-white-06);
+    box-shadow: 
+        0 24px 60px rgba(0, 0, 0, 0.65), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 0 40px rgba(192, 17, 26, 0.15); /* Elegant dark red outer glow */
     animation: fadeUp 0.8s cubic-bezier(.22, .68, 0, 1.2) 0.1s both;
 }
 
@@ -446,30 +449,10 @@
     width: 100%;
 }
 
-.company-actions-row .btn-cancel-select {
-    flex: 1;
-    padding: 14px;
-    margin: 0;
-    background: var(--color-white-06);
-    border: 1px solid var(--color-white-10);
-    border-radius: var(--radius-lg);
-    color: var(--color-white-60);
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.company-actions-row .btn-cancel-select:hover {
-    background: var(--color-white-10);
-    border-color: var(--color-white-20);
-    color: var(--color-white-85);
-}
-
 .company-actions-row .btn-login {
     flex: 2;
     margin: 0;
+    width: auto !important; /* Override global full width inside flex row */
 }
 
 /* ════════════════════════════════════════════════════

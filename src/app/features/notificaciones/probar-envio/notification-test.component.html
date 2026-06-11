@@ -1,10 +1,9 @@
-<div *ngIf="hasPermission; else noPermission">
-  <div class="p-1 md:p-2">
-      <div class="content-card space-y-6">
-      <app-toolbar title="Probar Notificaciones" subtitle="Asistente para enviar notificaciones de prueba a usuarios específicos" [showAdd]="false"></app-toolbar>
-      
-      <!-- Stepper -->
-      <div class="stepper">
+<div class="gm-crud-page-container animate-fade-in" *ngIf="hasPermission; else noPermission">
+  <div class="content-card space-y-6">
+    <app-toolbar title="Probar Notificaciones" subtitle="Asistente para enviar notificaciones de prueba a usuarios específicos" [showAdd]="false"></app-toolbar>
+
+    <!-- Stepper -->
+    <div class="stepper !mt-0">
       <div class="stepper-track">
         <div class="stepper-progress" [style.width.%]="((step - 1) / 3) * 100"></div>
       </div>
@@ -70,13 +69,11 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
           <!-- Summary Card -->
           <div class="md:col-span-1">
-            <p-card>
-              <ng-template #header>
-                <div class="card-header">
-                  <i class="pi pi-info-circle"></i>
-                  <span>Resumen de Envío</span>
-                </div>
-              </ng-template>
+            <div class="card-base">
+              <div class="card-header">
+                <i class="pi pi-info-circle"></i>
+                <span>Resumen de Envío</span>
+              </div>
               <div class="summary-body">
                 <div class="summary-row">
                   <span class="summary-label">App</span>
@@ -95,18 +92,16 @@
                   <span class="summary-value summary-email">{{ selectedUser?.email }}</span>
                 </div>
               </div>
-            </p-card>
+            </div>
           </div>
 
           <!-- Form Card -->
           <div class="md:col-span-2">
-            <p-card>
-              <ng-template #header>
-                <div class="card-header">
-                  <i class="pi pi-pencil"></i>
-                  <span>4. Contenido del Mensaje</span>
-                </div>
-              </ng-template>
+            <div class="card-base">
+              <div class="card-header">
+                <i class="pi pi-pencil"></i>
+                <span>4. Contenido del Mensaje</span>
+              </div>
               <form [formGroup]="testForm" class="space-y-4 mt-1">
                 <app-input label="Título" placeholder="Ej. Alerta de Seguridad" icon="pi pi-tag" [required]="true" [control]="testForm.controls['title']"></app-input>
 
@@ -127,21 +122,20 @@
                   <app-button icon="pi pi-send" label="Enviar Notificación" class="p-button-success" [loading]="isSending" [disabled]="testForm.invalid" (onClick)="sendTest()"></app-button>
                 </div>
               </form>
-            </p-card>
+            </div>
           </div>
         </div>
       </div>
     }
   </div>
 </div>
-</div>
 
 <ng-template #noPermission>
-  <p-card>
-    <div class="text-center py-8">
-      <i class="pi pi-lock text-5xl text-gray-400 mb-4"></i>
-      <h3 class="text-xl font-medium text-gray-900 dark:text-white">Acceso restringido</h3>
-      <p class="text-gray-500 mt-2">No tienes permiso para utilizar la consola de prueba de notificaciones.</p>
+  <div class="gm-crud-page-container animate-fade-in">
+    <div class="access-denied">
+      <i class="pi pi-lock"></i>
+      <h2>Acceso restringido</h2>
+      <p>No tienes permiso para utilizar la consola de prueba de notificaciones.</p>
     </div>
-  </p-card>
+  </div>
 </ng-template>

@@ -119,7 +119,7 @@
         @if (user()?.profile_picture) {
           <img [src]="user()?.profile_picture" alt="Avatar" />
         } @else {
-          {{ user()?.name?.charAt(0) || 'U' }}
+          <span class="avatar-fallback">{{ user()?.name?.charAt(0) || 'U' }}</span>
         }
       </div>
       <div class="user-meta">

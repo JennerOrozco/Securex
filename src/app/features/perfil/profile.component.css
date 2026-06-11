@@ -524,83 +524,274 @@
 /* -----------------------------------------------------------------------
    SECURITY SCORE BAR
    ----------------------------------------------------------------------- */
-.gm-security-score-bar {
-  background: linear-gradient(135deg, var(--pro-slate-1) 0%, var(--color-bg-biometric) 100%);
+/* -----------------------------------------------------------------------
+   SECURITY HEALTH PANEL (Premium Radial Gauge & Checklist)
+   ----------------------------------------------------------------------- */
+.gm-security-health-panel {
+  background: linear-gradient(135deg, var(--pro-slate-1) 0%, var(--color-bg-biometric, #f0f5fb) 100%);
   border: 1px solid var(--pro-slate-2);
   border-radius: var(--pro-radius-lg);
-  padding: 1.25rem 1.5rem;
-  margin-bottom: 1.75rem;
+  padding: 1.75rem 2rem;
+  margin-bottom: 2rem;
   position: relative;
   overflow: hidden;
+  transition: border-color 0.3s var(--pro-ease), box-shadow 0.3s var(--pro-ease);
 }
 
-/* Decorative right accent */
-.gm-security-score-bar::after {
+/* Light / Dark Mode compliant adjustments */
+[class="my-app-dark"] .gm-security-health-panel {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(30, 41, 59, 0.7) 100%);
+}
+
+.gm-security-health-panel.secure {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.05);
+}
+
+.gm-security-health-panel::after {
   content: '';
   position: absolute;
-  right: -20px;
-  top: -20px;
-  width: 100px;
-  height: 100px;
+  right: -30px;
+  top: -30px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   background: radial-gradient(circle, var(--color-red-06) 0%, transparent 70%);
   pointer-events: none;
+  transition: background 0.3s;
 }
 
-.gm-score-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+.gm-security-health-panel.secure::after {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
 }
 
-.gm-score-title {
+.gm-security-health-card {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
+  gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .gm-security-health-card {
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* --- INDICADOR RADIAL --- */
+.gm-health-gauge-container {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gm-health-gauge {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gm-gauge-bg {
+  fill: none;
+  stroke: var(--pro-slate-2);
+  stroke-width: 7;
+}
+
+[class="my-app-dark"] .gm-gauge-bg {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.gm-gauge-progress {
+  fill: none;
+  stroke: var(--pro-amber);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.8s ease;
+}
+
+.gm-gauge-progress.secure {
+  stroke: var(--pro-green);
+}
+
+.gm-gauge-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gm-gauge-percent {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--pro-text-head);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.gm-gauge-label {
+  font-size: 0.65rem;
   font-weight: 700;
-  color: var(--pro-text-body);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pro-text-muted);
+  margin-top: 0.15rem;
 }
 
-.gm-score-title i {
-  font-size: 0.9rem;
+/* --- DETALLES Y CHECKLIST --- */
+.gm-health-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
 }
 
-.gm-score-header strong {
-  font-size: 0.8rem;
+.gm-health-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gm-health-header h4 {
+  margin: 0;
+  font-size: 1rem;
   font-weight: 800;
   color: var(--pro-text-head);
   letter-spacing: -0.01em;
 }
 
-.gm-progress-track {
-  height: 6px;
-  background: var(--pro-slate-3);
-  border-radius: 99px;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-}
-
-.gm-progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--pro-amber), var(--color-amber));
-  border-radius: 99px;
-  transition: width 0.7s var(--pro-ease);
-}
-
-.gm-progress-bar.secure {
-  background: linear-gradient(90deg, var(--pro-green), var(--color-emerald));
-}
-
-.gm-score-hint {
+.gm-health-header p {
   margin: 0;
-  font-size: 0.75rem;
+  font-size: 0.775rem;
   color: var(--pro-text-muted);
+  line-height: 1.45;
+}
+
+.gm-health-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gm-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--pro-radius);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: background 0.2s;
+}
+
+[class="my-app-dark"] .gm-checklist-item {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.01);
+}
+
+.gm-checklist-item:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+[class="my-app-dark"] .gm-checklist-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.gm-item-status {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  margin-top: 0.15rem;
+}
+
+.gm-item-status i {
+  font-size: 0.95rem;
+}
+
+.gm-checklist-item.secure .gm-item-status i {
+  color: var(--pro-green);
+}
+
+.gm-checklist-item.warning .gm-item-status i {
+  color: var(--pro-amber);
+  animation: pulseIcon 2s infinite var(--pro-ease);
+}
+
+.gm-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-align: left;
+}
+
+.gm-item-title {
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--pro-text-head);
+}
+
+.gm-item-desc {
+  font-size: 0.7rem;
+  color: var(--pro-text-muted);
   line-height: 1.4;
+}
+
+/* --- BOTÓN FORTALECER CUENTA --- */
+.gm-health-actions {
+  display: flex;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .gm-health-actions {
+    justify-content: center;
+  }
+}
+
+.gm-btn-fortify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(135deg, var(--pro-red) 0%, var(--pro-red-dark) 100%);
+  color: var(--color-bg-card);
+  font-size: 0.775rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: var(--pro-radius);
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--pro-red-glow);
+  transition: transform 0.2s var(--pro-ease), box-shadow 0.2s var(--pro-ease);
+}
+
+.gm-btn-fortify:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px var(--pro-red-glow), 0 0 0 2px rgba(192, 17, 26, 0.15);
+}
+
+.gm-btn-fortify:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px var(--pro-red-glow);
+}
+
+/* --- ADICIONES DE ANIMACIÓN --- */
+@keyframes pulseIcon {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
 }
 
 /* -----------------------------------------------------------------------
@@ -610,6 +801,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
+  margin-bottom: 1.5rem;
 }
 
 .gm-info-card {

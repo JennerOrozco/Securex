@@ -3,6 +3,8 @@
   overflow: hidden;
   transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.25s ease;
   user-select: none;
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-border-light);
 }
 
 .summary-card:hover {

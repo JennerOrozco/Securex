@@ -145,27 +145,6 @@
                 <p>Consulta los datos personales de tu cuenta y los detalles de tu organización.</p>
               </div>
               
-              <!-- Barra de Progreso de Seguridad Lineal -->
-              <div class="gm-security-score-bar">
-                <div class="gm-score-header">
-                  <div class="gm-score-title">
-                    <i class="pi" [class.pi-shield]="devices().length > 0" [class.pi-exclamation-triangle]="devices().length === 0" [class.text-success]="devices().length > 0" [class.text-warning]="devices().length === 0"></i>
-                    <span>Nivel de Seguridad de la Cuenta</span>
-                  </div>
-                  <strong>{{ devices().length > 0 ? '100% (Excelente)' : '50% (Intermedio)' }}</strong>
-                </div>
-                <div class="gm-progress-track">
-                  <div class="gm-progress-bar" [class.secure]="devices().length > 0" [style.width]="devices().length > 0 ? '100%' : '50%'"></div>
-                </div>
-                <p class="gm-score-hint">
-                  @if (devices().length > 0) {
-                    <i class="pi pi-check text-success mr-1"></i> Protección biométrica FIDO2 activa. Tu cuenta posee el nivel de resguardo más alto.
-                  } @else {
-                    <i class="pi pi-info-circle text-warning mr-1"></i> Se recomienda registrar una llave biométrica para evitar accesos no autorizados.
-                  }
-                </p>
-              </div>
-
               <!-- Grids de Información en tarjetas limpias -->
               <div class="gm-info-grid">
                 <div class="gm-info-card">
@@ -199,6 +178,81 @@
                       <span class="gm-field-label">Sucursal asignada</span>
                       <strong class="gm-field-value">{{ profileData()?.branch?.name || 'N/A' }}</strong>
                     </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel de Salud de Seguridad (Premium Widget) -->
+              <div class="gm-security-health-panel" [class.secure]="devices().length > 0">
+                <div class="gm-security-health-card">
+                  <!-- Indicador Radial (Gauge Circular) -->
+                  <div class="gm-health-gauge-container">
+                    <svg class="gm-health-gauge" viewBox="0 0 100 100">
+                      <!-- Círculo de Fondo -->
+                      <circle class="gm-gauge-bg" cx="50" cy="50" r="42"></circle>
+                      <!-- Círculo de Progreso Dinámico -->
+                      <circle 
+                        class="gm-gauge-progress" 
+                        [class.secure]="devices().length > 0"
+                        cx="50" 
+                        cy="50" 
+                        r="42" 
+                        stroke-dasharray="264"
+                        [style.strokeDashoffset]="devices().length > 0 ? '0' : '132'" 
+                      ></circle>
+                    </svg>
+                    <!-- Contenido Central del Círculo -->
+                    <div class="gm-gauge-center">
+                      <span class="gm-gauge-percent">{{ devices().length > 0 ? '100%' : '50%' }}</span>
+                      <span class="gm-gauge-label">Salud</span>
+                    </div>
+                  </div>
+
+                  <!-- Detalles y Checklist de Controles -->
+                  <div class="gm-health-details">
+                    <div class="gm-health-header">
+                      <h4>Estado de Seguridad de tu Cuenta</h4>
+                      <p>Monitoreamos el estado de tu cuenta para asegurar que tu información permanezca protegida bajo los estándares más altos.</p>
+                    </div>
+
+                    <!-- Checklist de Controles -->
+                    <div class="gm-health-checklist">
+                      <!-- Control 1: Contraseña -->
+                      <div class="gm-checklist-item secure">
+                        <div class="gm-item-status">
+                          <i class="pi pi-check-circle"></i>
+                        </div>
+                        <div class="gm-item-content">
+                          <span class="gm-item-title">Contraseña de Acceso</span>
+                          <span class="gm-item-desc">Configurada y protegida</span>
+                        </div>
+                      </div>
+
+                      <!-- Control 2: Autenticación Biométrica -->
+                      <div class="gm-checklist-item" [class.secure]="devices().length > 0" [class.warning]="devices().length === 0">
+                        <div class="gm-item-status">
+                          <i class="pi" [class.pi-check-circle]="devices().length > 0" [class.pi-exclamation-circle]="devices().length === 0"></i>
+                        </div>
+                        <div class="gm-item-content">
+                          <span class="gm-item-title">Autenticación Biométrica / FIDO2</span>
+                          <span class="gm-item-desc">
+                            {{ devices().length > 0 
+                              ? 'Activa (Llaves de seguridad FIDO2 de alta resistencia)' 
+                              : 'No configurada (Vulnerable a ataques de ingeniería social)' 
+                            }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Botón de Acción si no está al 100% -->
+                    @if (devices().length === 0) {
+                      <div class="gm-health-actions animate-slide-in">
+                        <button class="gm-btn-fortify" (click)="fortifyAccount()">
+                          <i class="pi pi-shield mr-2"></i> Fortalecer Cuenta
+                        </button>
+                      </div>
+                    }
                   </div>
                 </div>
               </div>

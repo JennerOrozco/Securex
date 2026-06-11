@@ -86,12 +86,12 @@
 }
 
 .app-toast .p-toast-message.p-toast-message-success::before {
-    background: linear-gradient(180deg, #4ade80, #22c55e) !important;
-    box-shadow: 0 0 8px rgba(74, 222, 128, 0.4) !important;
+    background: linear-gradient(180deg, #34d399, #10b981) !important;
+    box-shadow: 0 0 8px rgba(52, 211, 153, 0.4) !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-success .p-toast-message-icon {
-    color: #4ade80 !important;
+    color: #34d399 !important;
 }
 
 .app-toast .p-toast-message.p-toast-message-error {
