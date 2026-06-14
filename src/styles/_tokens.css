@@ -324,7 +324,7 @@
    DARK MODE — single source of truth
    Drop .my-app-dark overrides from individual components.
    ======================================================================= */
-[class="my-app-dark"] {
+.my-app-dark {
   --color-bg-card:        #1e293b;
   --color-border:         #334155;
   --color-text-main:      #f1f5f9;

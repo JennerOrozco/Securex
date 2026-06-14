@@ -39,6 +39,7 @@ export class CompanyService extends BaseApiService {
   createCompanyGql(data: any): Observable<any> {
     return this.gqlMutate<any>('security', SECUREX_MUTATIONS.CREATE_COMPANY, 'createCompany', {
       name: data.name, tax_id: data.tax_id, logo_url: data.logo_url, is_active: !!data.is_active,
+      app_id: data.app_id ? Number(data.app_id) : null,
     });
   }
 

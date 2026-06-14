@@ -261,8 +261,8 @@ export const SECUREX_MUTATIONS = {
     }
   `,
   CREATE_COMPANY: `
-    mutation CreateCompany($name: String!, $tax_id: String, $logo_url: String, $is_active: Boolean) {
-      createCompany(name: $name, tax_id: $tax_id, logo_url: $logo_url, is_active: $is_active) {
+    mutation CreateCompany($name: String!, $tax_id: String, $logo_url: String, $is_active: Boolean, $app_id: Int) {
+      createCompany(name: $name, tax_id: $tax_id, logo_url: $logo_url, is_active: $is_active, app_id: $app_id) {
         uuid name tax_id
       }
     }

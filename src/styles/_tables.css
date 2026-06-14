@@ -41,6 +41,12 @@
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
     background: var(--color-text-light);
     border-radius: var(--radius-xs);
+    transition: background 0.15s ease;
+}
+
+.gm-data-table .p-datatable-wrapper::-webkit-scrollbar-thumb:hover,
+.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-secondary) !important;
 }
 
 .gm-data-table .p-datatable-wrapper::-webkit-scrollbar-track,
@@ -73,7 +79,8 @@
 
 @media (min-width: 769px) {
     .gm-data-table .p-datatable-table {
-        width: 99% !important;
+        width: auto !important;
+        min-width: 100%;
         margin: 0 auto;
     }
 }

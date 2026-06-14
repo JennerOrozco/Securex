@@ -54,6 +54,7 @@ export class FormModalComponent implements OnInit, OnChanges {
   @Output() onConfirm = new EventEmitter<any>();
   @Output() onClose = new EventEmitter<void>();
   @Output() onSelectGridEmptyFilter = new EventEmitter<string>();
+  @Output() onValueChange = new EventEmitter<any>();
 
   form!: FormGroup;
 
@@ -103,6 +104,13 @@ export class FormModalComponent implements OnInit, OnChanges {
       group[field.name] = [{ value, disabled: isDisabled }, validators];
     });
     this.form = this.fb.group(group);
+
+    // Watch for value changes and emit them
+    this.fields.forEach(field => {
+      this.form.get(field.name)?.valueChanges.subscribe(val => {
+        this.onValueChange.emit({ field: field.name, value: val, form: this.form });
+      });
+    });
   }
 
   isFieldPristine(name: string) { return this.form.get(name)?.pristine; }
