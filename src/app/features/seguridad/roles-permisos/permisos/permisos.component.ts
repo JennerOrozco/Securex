@@ -30,10 +30,12 @@ export class SecurityPermissionCrudComponent implements OnInit {
   currentParentId: number | null = null;
 
   cols: TableColumn[] = [
-    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
-    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
-    { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },
-    { field: 'sort_order', header: 'Orden', type: 'text', sortable: true, style: { width: '10%', textAlign: 'center' } },
+    { field: 'name', header: 'Nombre', type: 'tree', sortable: true, style: { width: '35%' } },
+    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '10%' } },
+    { field: 'icon', header: 'Ícono', type: 'text', style: { width: '10%' } },
+    { field: 'route', header: 'Ruta', type: 'text', style: { width: '15%' } },
+    { field: 'sort_order', header: 'Orden', type: 'badge', sortable: true, style: { width: '8%' } },
+    { field: 'is_visible', header: 'Visible', type: 'boolean', style: { width: '10%' } },
     { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
   ];
 

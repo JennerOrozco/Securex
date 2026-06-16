@@ -22,13 +22,13 @@ import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
 import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
+import {
   MessageService,
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import {
   _t,
   l,

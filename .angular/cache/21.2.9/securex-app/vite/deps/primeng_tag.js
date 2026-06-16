@@ -6,12 +6,12 @@ import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
 import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
+import {
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import "./chunk-ZGIVYFBQ.js";
 import {
   CommonModule,

@@ -40,6 +40,7 @@ export class RolePermissionsModalComponent implements OnChanges {
     this.roleService.getRolePermissions(this.roleId).subscribe({
       next: (res) => {
         this.groups = this.processNodes(res);
+        this.selectedIds = new Set(this.selectedIds);
         this.isLoading = false;
       },
       error: () => { this.isLoading = false; }

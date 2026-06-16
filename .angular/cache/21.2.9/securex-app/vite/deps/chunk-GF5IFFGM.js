@@ -9,12 +9,12 @@ import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
 import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
+import {
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import {
   Rt,
   Tt,
@@ -1796,4 +1796,4 @@ export {
   Scroller,
   ScrollerModule
 };
-//# sourceMappingURL=chunk-SI6Y5LJN.js.map
+//# sourceMappingURL=chunk-GF5IFFGM.js.map

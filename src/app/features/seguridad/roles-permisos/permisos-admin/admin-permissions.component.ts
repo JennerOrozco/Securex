@@ -43,10 +43,12 @@ export class AdminPermissionsComponent implements OnInit {
   ];
 
   cols: TableColumn[] = [
-    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '40%' } },
-    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '15%' } },
-    { field: 'route', header: 'Referencia / Ruta', type: 'link', sortable: true, style: { width: '20%' } },
+    { field: 'name', header: 'Nombre / Identificador (Slug)', type: 'tree', sortable: true, style: { width: '30%' } },
+    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '10%' } },
+    { field: 'icon', header: 'Ícono', type: 'text', style: { width: '10%', textAlign: 'center' } },
+    { field: 'route', header: 'Ruta', type: 'text', sortable: true, style: { width: '15%' } },
     { field: 'sort_order', header: 'Orden', type: 'text', sortable: true, style: { width: '10%', textAlign: 'center' } },
+    { field: 'is_visible', header: 'Visible', type: 'boolean', sortable: true, style: { width: '10%', textAlign: 'center' } },
     { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
   ];
 
@@ -62,13 +64,7 @@ export class AdminPermissionsComponent implements OnInit {
 
   load() {
     this.loading = true;
-    this.appService.getAppsWithCompanies().subscribe({
-      next: (res: any) => {
-        this.apps = res || [];
-        this.loadPermissions();
-      },
-      error: () => this.loading = false
-    });
+    this.loadPermissions();
   }
 
   private loadPermissions() {
@@ -83,52 +79,20 @@ export class AdminPermissionsComponent implements OnInit {
   }
 
   private buildTree() {
-    const hasChildren = this.permissions.some((p) => p.children?.length > 0);
-
-    const mapPermissions = (items: any[]): TreeNode[] =>
-      mapToTreeNodes(items, {
-        canAdd: (p) => p.type !== 'ACTION',
-        label: (p) => p.name,
-        icon: (p) =>
-          p.type === 'MENU'      ? 'pi pi-th-large' :
-          p.type === 'SUBMENU'   ? 'pi pi-folder'    :
-          p.type === 'ACTION'    ? 'pi pi-tag'       :
-                                    'pi pi-cog',
-        leaf: (p) => !p.children || p.children.length === 0
-      });
-
-    this.treeNodes = this.apps.map((app) => ({
-      label: app.name,
-      data: {
-        ...app,
-        name: app.name,
-        slug: app.slug || '',
-        type: 'MENU',
-        _canAdd: true,
-        _canEdit: false,
-        _canDelete: false
-      },
-      icon: 'pi pi-th-large',
-      expanded: true,
-      leaf: this.permissions.length === 0,
-      children: this.permissions.length > 0
-        ? (hasChildren
-          ? mapPermissions(this.permissions)
-          : this.permissions.map((p) => {
-              const node = mapToTreeNodes([p], {
-                canAdd: (x) => x.type !== 'ACTION',
-                label: (x) => x.name,
-                icon: (x) =>
-                  x.type === 'MENU'    ? 'pi pi-th-large' :
-                  x.type === 'SUBMENU' ? 'pi pi-folder'    :
-                  x.type === 'ACTION'  ? 'pi pi-tag'       :
-                                          'pi pi-cog',
-                leaf: () => true
-              })[0];
-              return node;
-            }))
-        : undefined
-    }));
+    this.treeNodes = mapToTreeNodes(this.permissions, {
+      canAdd: (p) => p.type !== 'ACTION' && p.type !== 'COMPONENT',
+      canEdit: (p) => p.type !== 'APP',
+      canDelete: (p) => p.type !== 'APP',
+      label: (p) => p.name,
+      icon: (p) =>
+        p.type === 'APP'       ? 'pi pi-box'       :
+        p.type === 'MENU'      ? 'pi pi-th-large'  :
+        p.type === 'SUBMENU'   ? 'pi pi-folder'    :
+        p.type === 'ACTION'    ? 'pi pi-tag'       :
+                                  'pi pi-cog',
+      leaf: (p) => !p.children || p.children.length === 0,
+      expanded: (p) => p.type === 'APP'
+    });
   }
 
   setRootAdd() {

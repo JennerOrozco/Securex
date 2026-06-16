@@ -17,13 +17,13 @@ import {
   BaseStyle
 } from "./chunk-BG5BLPKF.js";
 import {
+  Bind
+} from "./chunk-HIXY6DNM.js";
+import {
   OverlayService,
   PrimeTemplate,
   SharedModule
 } from "./chunk-4MRKV7VW.js";
-import {
-  Bind
-} from "./chunk-HIXY6DNM.js";
 import {
   D,
   I,
@@ -1285,4 +1285,4 @@ var OverlayModule = class _OverlayModule {
 export {
   Overlay
 };
-//# sourceMappingURL=chunk-LV33Z6R5.js.map
+//# sourceMappingURL=chunk-7G4DA36H.js.map
