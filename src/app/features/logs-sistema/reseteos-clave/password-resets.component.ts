@@ -5,6 +5,7 @@ import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { AuditService } from '@core/services/audit.service';
 import { DatePipe } from '@angular/common';
 import { NotificationService } from '@core/services/notification.service';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-password-resets',
@@ -21,6 +22,7 @@ export class PasswordResetsComponent implements OnInit {
   data: any[] = [];
   loading = false;
   isSaving = false;
+  totalRecords = 0;
 
   cols: TableColumn[] = [
     { field: 'email', header: 'Email', type: 'text', sortable: true },
@@ -31,14 +33,19 @@ export class PasswordResetsComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.load();
+    // Lazy load from paginator
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
-    this.auditService.getPasswordResetsGql().subscribe({
-      next: (res: any[]) => {
-        this.data = (res || []).map((item: any) => ({
+
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'created_at');
+
+    this.auditService.getPasswordResetsGql(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const items = res?.data || [];
+        this.totalRecords = res?.total || 0;
+        this.data = items.map((item: any) => ({
           ...item,
           app_name: item.app?.name || item.app_uuid || '-',
           created_at: item.created_at && item.created_at !== '0000-00-00 00:00:00'

@@ -4,6 +4,8 @@
   [columns]="cols"
   [data]="accesses"
   [loading]="loading"
+  [lazy]="true"
+  [totalRecords]="totalRecords"
   [showAdd]="true"
   [showEdit]="true"
   [showDelete]="true"
@@ -18,7 +20,8 @@
   (onSave)="save($event)"
   (onConfirmDelete)="confirmDelete($event)"
   (onReset)="handleResetPassword($event)"
-  (onRefresh)="load()"
+  (onRefresh)="loadAccesses()"
+  (onLazyLoad)="loadAccesses($event)"
   (onSelectGridEmptyFilter)="onSelectGridEmptyFilter()"
 ></app-crud-page>
 

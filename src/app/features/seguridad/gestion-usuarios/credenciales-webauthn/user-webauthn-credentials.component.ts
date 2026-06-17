@@ -4,6 +4,7 @@ import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { UserService } from '@core/services/user.service';
 import { NotificationService } from '@core/services/notification.service';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-user-webauthn-credentials',
@@ -18,6 +19,7 @@ export class UserWebauthnCredentials implements OnInit {
   credentials: any[] = [];
   loading = false;
   isSaving = false;
+  totalRecords = 0;
 
   columns: TableColumn[] = [
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
@@ -30,14 +32,19 @@ export class UserWebauthnCredentials implements OnInit {
   ];
 
   ngOnInit() {
-    this.load();
+    // Lazy load from paginator
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
-    this.userService.getUserWebauthnCredentials().subscribe({
-      next: (data: any) => {
-        this.credentials = Array.isArray(data) ? data : (data?.data || []);
+
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'created_at');
+
+    this.userService.getUserWebauthnCredentials(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const data = res?.data || [];
+        this.totalRecords = res?.total || 0;
+        this.credentials = Array.isArray(data) ? data : [];
         this.loading = false;
       },
       error: () => {

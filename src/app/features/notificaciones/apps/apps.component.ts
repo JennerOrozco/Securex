@@ -4,6 +4,7 @@ import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AuthService } from '@core/services/auth.service';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-notifications-apps',
@@ -16,9 +17,13 @@ import { AuthService } from '@core/services/auth.service';
       [columns]="cols"
       [data]="items"
       [loading]="loading"
+      [lazy]="true"
+      [totalRecords]="totalRecords"
       [showAdd]="false"
       [showEdit]="false"
-      [showDelete]="false">
+      [showDelete]="false"
+      (onLazyLoad)="load($event)"
+      (onRefresh)="load()">
     </app-crud-page>
   `
 })
@@ -28,6 +33,7 @@ export class AppsComponent implements OnInit {
 
   items: any[] = [];
   loading = false;
+  totalRecords = 0;
 
   cols: TableColumn[] = [
     { field: 'id', header: 'ID', type: 'text', sortable: true, style: { width: '10%' } },
@@ -42,15 +48,22 @@ export class AppsComponent implements OnInit {
 
   ngOnInit() {
     if (this.hasPermission) {
-      this.load();
+      // We don't call load() directly because the paginator triggers onLazyLoad on init.
     }
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
-    this.apiService.getAppsGql().subscribe({
+
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'id');
+    if (!event?.sortField && !event?.multiSortMeta) sort.direction = 'ASC';
+
+    this.apiService.getAppsGql(page, limit, filter, sort).subscribe({
       next: (res: any) => {
-        this.items = (res || []).map((app: any) => ({
+        const data = res?.data || [];
+        this.totalRecords = res?.total || 0;
+
+        this.items = data.map((app: any) => ({
           ...app,
           status: app.is_active ? 'Activo' : 'Inactivo'
         }));

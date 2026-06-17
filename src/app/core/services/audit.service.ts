@@ -19,19 +19,19 @@ export class AuditService extends BaseApiService {
   getPasswordResets(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/admin/password-resets`, { params }); }
   deletePasswordReset(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/password-resets/${id}`); }
 
-  getSecurityAuditLogs(): Observable<any[]> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.SECURITY_AUDIT_LOGS, 'securityAuditLogs');
+  getSecurityAuditLogs(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.SECURITY_AUDIT_LOGS, 'securityAuditLogs', { page, limit, filter, sort });
   }
 
-  getLoginAttemptsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.LOGIN_ATTEMPTS, 'loginAttempts');
+  getLoginAttemptsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.LOGIN_ATTEMPTS, 'loginAttempts', { page, limit, filter, sort });
   }
 
-  getPasswordResetsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.PASSWORD_RESETS, 'passwordResets');
+  getPasswordResetsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.PASSWORD_RESETS, 'passwordResets', { page, limit, filter, sort });
   }
 
-  getRefreshTokensGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.REFRESH_TOKENS, 'refreshTokens');
+  getRefreshTokensGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.REFRESH_TOKENS, 'refreshTokens', { page, limit, filter, sort });
   }
 }

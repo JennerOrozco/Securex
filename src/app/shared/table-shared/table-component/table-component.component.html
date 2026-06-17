@@ -5,6 +5,7 @@
       [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true" [loading]="loading || loadingService.isLoading()"
       [stripedRows]="stripedRows" responsiveLayout="scroll"
       [resizableColumns]="true" columnResizeMode="expand"
+      [lazy]="lazy" [totalRecords]="totalRecords" (onLazyLoad)="onLazyLoad.emit($event)"
       currentPageReportTemplate=" {first} - {last} de {totalRecords} registros" [showCurrentPageReport]="true"
       class="gm-data-table" [columns]="selectedColumns" [rowGroupMode]="enableRowGroup ? 'subheader' : undefined"
       [groupRowsBy]="enableRowGroup ? groupRowsBy : ''" [sortField]="enableRowGroup ? groupRowsBy : ''"

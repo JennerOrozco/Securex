@@ -13,6 +13,7 @@ import { MessageService, ConfirmationService } from 'primeng/api';
 import { loadingInterceptor } from './core/interceptors/loading.interceptor';
 import { xsrfInterceptor } from './core/interceptors/xsrf.interceptor';
 import { timeoutInterceptor } from './core/interceptors/timeout.interceptor';
+import { paginatedResponseInterceptor } from './core/interceptors/paginated-response.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     { provide: TitleStrategy, useClass: CustomTitleStrategy },
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor, responseInterceptor, loadingInterceptor, xsrfInterceptor, timeoutInterceptor])),
+    provideHttpClient(withFetch(), withInterceptors([authInterceptor, paginatedResponseInterceptor, responseInterceptor, loadingInterceptor, xsrfInterceptor, timeoutInterceptor])),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
       registrationStrategy: 'registerWhenStable:30000'

@@ -9,6 +9,7 @@ import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { ResetPasswordModalComponent } from '@shared/modals/modal-shell/reset-password-modal/reset-password-modal.component';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 import { of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
@@ -33,10 +34,14 @@ export class SecurityUserCrudComponent implements OnInit {
 
   loading  = false;
   isSaving = false;
+  totalRecords = 0;
 
   resetModalVisible = false;
   resetModalItem: any = null;
   resetModalLoading = false;
+
+  /** Flag to load form reference data only once */
+  private formDataLoaded = false;
 
   /** Datos pre-cargados para el formulario de NUEVO acceso */
   formInitialData: any = {};
@@ -87,18 +92,42 @@ export class SecurityUserCrudComponent implements OnInit {
     status:     item.status
   });
 
-  ngOnInit() { this.load(); }
+  ngOnInit() {
+    this.loadFormData();
+    this.loadAccesses();
+  }
 
-  load() {
-    this.loading = true;
+  /** Load form reference data once */
+  private loadFormData() {
+    if (this.formDataLoaded) return;
+    this.formDataLoaded = true;
+
     this.userService.getUserAccessPageData().subscribe({
       next: (res) => {
-        this.users     = res.users     || [];
-        this.apps      = res.apps      || [];
-        this.companies = res.companies || [];
-        this.branches  = res.branches  || [];
+        this.users     = res.users?.data     ?? [];
+        this.apps      = res.apps?.data      ?? [];
+        this.companies = res.companies?.data ?? [];
+        this.branches  = res.branches?.data  ?? [];
 
-        this.accesses = (res.userAccesses || []).map((a: any) => ({
+        const currentCompany = this.authService.currentCompany();
+        const matchedCompany = this.companies.find(c => c.uuid === currentCompany?.uuid);
+        if (matchedCompany) {
+          this.buildInitialData(matchedCompany);
+        } else {
+          this.refreshFormOptions([]);
+        }
+      }
+    });
+  }
+
+  /** Paginated load of user accesses */
+  loadAccesses(event?: any) {
+    this.loading = true;
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event);
+
+    this.userService.getUserAccessesPaginated(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const { data, total } = extractPaginatedData(res, (a: any) => ({
           ...a,
           user_name:    a.user?.full_name || a.user?.name || '-',
           user_email:   a.user?.email     || '-',
@@ -108,18 +137,9 @@ export class SecurityUserCrudComponent implements OnInit {
           role_name:    a.role?.name      || '-',
           status:       (a.status || 'PENDING').toString().toUpperCase()
         }));
-
-        // Resolver compañía activa del usuario logueado
-        const currentCompany = this.authService.currentCompany();
-        const matchedCompany = this.companies.find(c => c.uuid === currentCompany?.uuid);
-
-        // Establecer datos pre-cargados para el formulario
-        if (matchedCompany) {
-          this.buildInitialData(matchedCompany);
-        } else {
-          this.refreshFormOptions([]);
-          this.loading = false;
-        }
+        this.accesses = data;
+        this.totalRecords = total;
+        this.loading = false;
       },
       error: () => (this.loading = false)
     });
@@ -214,7 +234,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   private handleSuccess(msg: string) {
     this.notificationService.notify('success', msg);
-    this.load();
+    this.loadAccesses();
     this.isSaving = false;
   }
 

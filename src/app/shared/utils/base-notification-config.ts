@@ -28,20 +28,21 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
   isSaving = false;
   items: T[] = [];
   initialData: any = {};
+  totalRecords = 0;
 
   abstract formFields: FormField[];
   abstract get resourceName(): string;
-  abstract loadSettings(): void;
+  abstract loadSettings(event?: any): void;
   abstract saveSetting(data: any, mode: 'add' | 'edit'): Observable<any>;
   abstract deleteSetting(item: any): Observable<any>;
 
-  load() {
+  load(event?: any) {
     this.loading = true;
     this.appService.getAppsWithCompanies().subscribe({
       next: (res: any) => {
         this.apps = res.data || res || [];
         this.updateFormFields();
-        this.loadSettings();
+        this.loadSettings(event);
       },
       error: () => (this.loading = false)
     });

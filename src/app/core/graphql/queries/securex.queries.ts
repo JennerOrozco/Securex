@@ -1,9 +1,15 @@
 export const SECUREX_QUERIES = {
   USERS: `
-    query Users($all: Boolean) {
-      users(all: $all) {
-        uuid full_name email status is_super_admin auth_provider created_at
-        access { uuid status branch_id branch { uuid name } role { id uuid name slug } }
+    query Users($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $all: Boolean) {
+      users(page: $page, limit: $limit, filter: $filter, sort: $sort, all: $all) {
+        data {
+          uuid full_name email status is_super_admin auth_provider created_at
+          access { uuid status branch_id branch { uuid name } role { id uuid name slug } }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
@@ -16,12 +22,18 @@ export const SECUREX_QUERIES = {
     }
   `,
   ROLES: `
-    query Roles($companyUuid: String) {
-      roles(company_uuid: $companyUuid) {
-        id uuid name slug description is_active company_uuid
-        company {
-          name
+    query Roles($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $companyUuid: String) {
+      roles(page: $page, limit: $limit, filter: $filter, sort: $sort, company_uuid: $companyUuid) {
+        data {
+          id uuid name slug description is_active company_uuid
+          company {
+            name
+          }
         }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
@@ -58,21 +70,35 @@ export const SECUREX_QUERIES = {
     }
   `,
   COMPANIES: `
-    query Companies {
-      companies {
-        id uuid app_id tax_id name logo_url is_active
-        branches { id uuid name address phone is_active }
+    query Companies($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      companies(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id uuid app_id tax_id name logo_url is_active
+          branches { id uuid name address phone is_active }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   COMPANIES_PAGE: `
-    query CompaniesPage {
-      apps {
-        id name
+    query CompaniesPage($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      apps(page: 1, limit: 100) {
+        data {
+          id name
+        }
       }
-      companies {
-        id uuid app_id tax_id name logo_url is_active
-        branches { id uuid name address phone is_active }
+      companies(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id uuid app_id tax_id name logo_url is_active
+          branches { id uuid name address phone is_active }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
@@ -85,96 +111,158 @@ export const SECUREX_QUERIES = {
     }
   `,
   BRANCHES: `
-    query Branches {
-      branches {
-        id uuid company_id name address phone is_active
+    query Branches($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      branches(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id uuid company_id name address phone is_active
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   BRANCHES_PAGE: `
-    query BranchesPage {
-      companies {
-        id name
+    query BranchesPage($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      companies(page: 1, limit: 100) {
+        data {
+          id name
+        }
       }
-      branches {
-        id uuid company_id name address phone is_active
+      branches(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id uuid company_id name address phone is_active
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   APPS: `
-    query Apps {
-      apps {
-        id uuid name slug api_key api_secret google_client_id google_client_secret is_active
-        companies { id uuid tax_id name is_active branches { id uuid name } }
+    query Apps($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      apps(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id uuid name slug api_key api_secret google_client_id google_client_secret is_active
+          companies { id uuid tax_id name is_active branches { id uuid name } }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   USER_ACCESSES: `
-    query UserAccesses($all: Boolean) {
-      userAccesses(all: $all) {
-        uuid status user_id app_id company_id branch_id role_id
-        user { uuid full_name email }
-        app { uuid name }
-        company { uuid name }
-        branch { uuid name }
-        role { uuid name }
+    query UserAccesses($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $all: Boolean) {
+      userAccesses(page: $page, limit: $limit, filter: $filter, sort: $sort, all: $all) {
+        data {
+          uuid status user_id app_id company_id branch_id role_id
+          user { uuid full_name email }
+          app { uuid name }
+          company { uuid name }
+          branch { uuid name }
+          role { uuid name }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   SECURITY_AUDIT_LOGS: `
-    query SecurityAuditLogs {
-      securityAuditLogs {
-        uuid user_uuid user_name event_type description ip_address company_uuid
-        app { name }
-        company { name }
+    query SecurityAuditLogs($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      securityAuditLogs(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          uuid user_uuid user_name event_type description ip_address company_uuid
+          app { name }
+          company { name }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   LOGIN_ATTEMPTS: `
-    query LoginAttempts {
-      loginAttempts {
-        id email app_uuid ip_address user_agent successful created_at
-        app { name }
+    query LoginAttempts($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      loginAttempts(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id email app_uuid ip_address user_agent successful created_at
+          app { name }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   USER_WEBAUTHN_CREDENTIALS: `
-    query UserWebauthnCredentials {
-      userWebauthnCredentials {
-        id
-        user_uuid
-        user_name
-        email
-        app_name
-        credential_id
-        device_name
-        sign_count
-        created_at
-        updated_at
+    query UserWebauthnCredentials($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      userWebauthnCredentials(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id
+          user_uuid
+          user_name
+          email
+          app_name
+          credential_id
+          device_name
+          sign_count
+          created_at
+          updated_at
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   PASSWORD_RESETS: `
-    query PasswordResets {
-      passwordResets {
-        id email app_uuid token created_at
-        app { name }
+    query PasswordResets($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      passwordResets(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id email app_uuid token created_at
+          app { name }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   REFRESH_TOKENS: `
-    query RefreshTokens {
-      refreshTokens {
-        id user_id app_id token_hash is_revoked issued_at revoked_at expires_at ip_address user_agent
-        user { uuid full_name }
-        app { name }
+    query RefreshTokens($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      refreshTokens(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data {
+          id user_id app_id token_hash is_revoked issued_at revoked_at expires_at ip_address user_agent
+          user { uuid full_name }
+          app { name }
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
   ADMIN_USERS: `
-    query AdminUsers($page: Int, $per_page: Int, $company_uuid: String, $app_uuid: String) {
-      adminUsers(page: $page, per_page: $per_page, company_uuid: $company_uuid, app_uuid: $app_uuid) {
-        id uuid full_name email status is_super_admin auth_provider created_at
+    query AdminUsers($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $company_uuid: String, $app_uuid: String) {
+      adminUsers(page: $page, limit: $limit, filter: $filter, sort: $sort, company_uuid: $company_uuid, app_uuid: $app_uuid) {
+        data {
+          id uuid full_name email status is_super_admin auth_provider created_at
+        }
+        total
+        currentPage
+        perPage
+        hasMorePages
       }
     }
   `,
@@ -210,17 +298,35 @@ export const SECUREX_QUERIES = {
   USER_ACCESS_PAGE: `
     query UserAccessPage($all: Boolean) {
       userAccesses(all: $all) {
-        uuid status user_id app_id company_id branch_id role_id
-        user { uuid full_name email }
-        app { uuid name }
-        company { uuid name }
-        branch { uuid name }
-        role { id uuid name }
+        data {
+          uuid status user_id app_id company_id branch_id role_id
+          user { uuid full_name email }
+          app { uuid name }
+          company { uuid name }
+          branch { uuid name }
+          role { id uuid name }
+        }
       }
-      users { id uuid full_name email }
-      apps { id uuid name }
-      companies { id uuid name app_id }
-      branches { id uuid name company_id }
+      users(page: 1, limit: 100) {
+        data {
+          id uuid full_name email
+        }
+      }
+      apps(page: 1, limit: 100) {
+        data {
+          id uuid name
+        }
+      }
+      companies(page: 1, limit: 100) {
+        data {
+          id uuid name app_id
+        }
+      }
+      branches(page: 1, limit: 100) {
+        data {
+          id uuid name company_id
+        }
+      }
     }
   `,
 };

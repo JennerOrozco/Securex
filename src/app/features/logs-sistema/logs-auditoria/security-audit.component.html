@@ -8,8 +8,11 @@
   [isSaving]="isSaving"
   [showAdd]="false"
   [showEdit]="false"
+  [lazy]="true"
+  [totalRecords]="totalRecords"
   deleteTitle="Eliminar Log de Auditoría"
   deleteMessage="¿Estás seguro de eliminar este registro de auditoría?"
+  (onLazyLoad)="load($event)"
   (onConfirmDelete)="onConfirmDelete($event)"
   (onRefresh)="load()"
 ></app-crud-page>

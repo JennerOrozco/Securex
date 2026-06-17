@@ -33,8 +33,16 @@ export class UserService extends BaseApiService {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.USERS, 'users', params);
   }
 
+  getUsersPaginatedGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.USERS, 'users', { page, limit, filter, sort });
+  }
+
   getAdminUsersGql(params?: any): Observable<any[]> {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.ADMIN_USERS, 'adminUsers', params);
+  }
+
+  getAdminUsersPaginated(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ADMIN_USERS, 'adminUsers', { page, limit, filter, sort });
   }
 
   getUserWithAccess(uuid: string): Observable<any> {
@@ -45,8 +53,12 @@ export class UserService extends BaseApiService {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.USER_ACCESSES, 'userAccesses', params);
   }
 
-  getUserAccessPageData(params?: any): Observable<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[]; roles: any[] }> {
-    return this.gql.query<{ userAccesses: any[]; users: any[]; apps: any[]; companies: any[]; branches: any[]; roles: any[] }>('security', SECUREX_QUERIES.USER_ACCESS_PAGE, params);
+  getUserAccessesPaginated(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.USER_ACCESSES, 'userAccesses', { page, limit, filter, sort });
+  }
+
+  getUserAccessPageData(params?: any): Observable<{ userAccesses: { data: any[] }; users: { data: any[] }; apps: { data: any[] }; companies: { data: any[] }; branches: { data: any[] } }> {
+    return this.gql.query<{ userAccesses: { data: any[] }; users: { data: any[] }; apps: { data: any[] }; companies: { data: any[] }; branches: { data: any[] } }>('security', SECUREX_QUERIES.USER_ACCESS_PAGE, params);
   }
 
   createUserAccessGql(data: any): Observable<any> {
@@ -61,8 +73,8 @@ export class UserService extends BaseApiService {
     return this.gqlMutate<boolean>('security', SECUREX_MUTATIONS.DELETE_USER_ACCESS, 'deleteUserAccess', { uuid });
   }
 
-  getUserWebauthnCredentials(params?: any): Observable<any> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.USER_WEBAUTHN_CREDENTIALS, 'userWebauthnCredentials', params);
+  getUserWebauthnCredentials(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.USER_WEBAUTHN_CREDENTIALS, 'userWebauthnCredentials', { page, limit, filter, sort });
   }
 
   deleteUserWebauthnCredential(id: number): Observable<any> {

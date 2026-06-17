@@ -87,35 +87,35 @@ export class NotificationSettingsService extends BaseApiService {
     return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id });
   }
 
-  getSendAttemptsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.SEND_ATTEMPTS, 'sendAttempts');
+  getSendAttemptsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.SEND_ATTEMPTS, 'sendAttempts', { page, limit, filter, sort });
   }
 
-  getNotificationsHistoryGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS, 'notifications');
+  getNotificationsHistoryGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS, 'notifications', { page, limit, filter, sort });
   }
 
   deleteNotificationHistoryGql(id: number): Observable<any> {
     return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id });
   }
 
-  getUserDevicesGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.USER_DEVICES, 'userDevices');
+  getUserDevicesGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.USER_DEVICES, 'userDevices', { page, limit, filter, sort });
   }
 
   deleteUserDeviceGql(id: number): Observable<any> {
     return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id });
   }
 
-  getPushSettingsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.PUSH_SETTINGS, 'pushSettings');
+  getPushSettingsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.PUSH_SETTINGS, 'pushSettings', { page, limit, filter, sort });
   }
 
-  getSmtpSettingsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.SMTP_SETTINGS, 'smtpSettings');
+  getSmtpSettingsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.SMTP_SETTINGS, 'smtpSettings', { page, limit, filter, sort });
   }
 
-  getAppsGql(): Observable<any[]> {
-    return this.gqlQueryList<any>('notification', NOTIFICATION_QUERIES.APPS, 'apps');
+  getAppsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
+    return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.APPS, 'apps', { page, limit, filter, sort });
   }
 }

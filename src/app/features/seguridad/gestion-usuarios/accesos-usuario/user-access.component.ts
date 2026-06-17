@@ -69,10 +69,14 @@ export class UserAccessComponent implements OnInit {
     // Paso 1: datos de página (accesos, usuarios, apps, compañías, sucursales)
     this.userService.getUserAccessPageData().subscribe({
       next: (data) => {
-        const { userAccesses, users, apps, companies, branches } = data;
+        const userAccesses = data?.userAccesses?.data ?? [];
+        const users        = data?.users?.data        ?? [];
+        const apps         = data?.apps?.data         ?? [];
+        const companies    = data?.companies?.data    ?? [];
+        const branches     = data?.branches?.data     ?? [];
 
         // Mapear registros de la tabla
-        this.records = (userAccesses || []).map((item: any) => ({
+        this.records = userAccesses.map((item: any) => ({
           ...item,
           user_name:    item.user?.full_name || item.user_id,
           app_name:     item.app?.name       || item.app_id,
@@ -80,9 +84,9 @@ export class UserAccessComponent implements OnInit {
         }));
 
         // Resolver app y compañía activas
-        const currentApp     = (apps     || []).find((a: any) => a.uuid === this.configService.appUuid);
+        const currentApp     = apps.find((a: any) => a.uuid === this.configService.appUuid);
         const currentCompany = this.authService.currentCompany();
-        const matchedCompany = (companies || []).find((c: any) => c.uuid === currentCompany?.uuid);
+        const matchedCompany = companies.find((c: any) => c.uuid === currentCompany?.uuid);
 
         this.currentAppId     = currentApp     ? currentApp.id     : null;
         this.currentCompanyId = matchedCompany ? matchedCompany.id : null;
@@ -94,11 +98,10 @@ export class UserAccessComponent implements OnInit {
         };
 
         // Opciones de usuarios
-        this.cachedUserOpts = (users || [])
-          .map((u: any) => ({ label: u.full_name || u.email, value: u.id }));
+        this.cachedUserOpts = users.map((u: any) => ({ label: u.full_name || u.email, value: u.id }));
 
         // Sucursales filtradas por la compañía pre-cargada
-        this.cachedBranchOpts = (branches || [])
+        this.cachedBranchOpts = branches
           .filter((b: any) => b.company_id === this.currentCompanyId)
           .map((b: any) => ({ label: b.name, value: b.id }));
 

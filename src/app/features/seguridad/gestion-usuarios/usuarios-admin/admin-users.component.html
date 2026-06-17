@@ -5,6 +5,8 @@
   [data]="users"
   [columns]="cols"
   [loading]="loading"
+  [lazy]="true"
+  [totalRecords]="totalRecords"
   [isSaving]="isSaving"
   [formFields]="formFields"
   formAddTitle="Nuevo Usuario"
@@ -13,4 +15,5 @@
   (onSave)="onSave($event)"
   (onConfirmDelete)="onConfirmDelete($event)"
   (onRefresh)="load()"
+  (onLazyLoad)="load($event)"
 ></app-crud-page>

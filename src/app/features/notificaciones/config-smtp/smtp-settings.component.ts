@@ -5,6 +5,7 @@ import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-smtp-settings',
@@ -26,10 +27,16 @@ export class SmtpSettingsComponent extends BaseNotificationConfigComponent {
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
-  loadSettings() {
-    this.apiService.getSmtpSettingsGql().subscribe({
-      next: (data: any) => {
-        this.items = (data || []).map((item: any) => ({
+  loadSettings(event?: any) {
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'id');
+    if (!event?.sortField && !event?.multiSortMeta) sort.direction = 'ASC';
+
+    this.apiService.getSmtpSettingsGql(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const data = res?.data || [];
+        this.totalRecords = res?.total || 0;
+
+        this.items = data.map((item: any) => ({
           ...item,
           app_name: item.app?.name || item.app_uuid
         }));

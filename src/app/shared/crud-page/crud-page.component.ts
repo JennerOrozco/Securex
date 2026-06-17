@@ -41,6 +41,11 @@ export class CrudPageComponent {
   @Input() showView: boolean = false;
   @Input() showReset: boolean = false;
 
+  // ── Paginación Servidor ─────────────────────────────────────
+  @Input() lazy: boolean = false;
+  @Input() totalRecords: number = 0;
+  @Output() onLazyLoad = new EventEmitter<any>();
+
   // ── Tree Table (Optional) ──────────────────────────────────
   @Input() isTreeTable: boolean = false;
   @Input() treeNodes: TreeNode[] = [];

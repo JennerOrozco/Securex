@@ -8,8 +8,11 @@
   [isSaving]="isSaving"
   [showAdd]="false"
   [showEdit]="false"
+  [lazy]="true"
+  [totalRecords]="totalRecords"
   deleteTitle="Revocar/Eliminar Token"
   deleteMessage="¿Estás seguro de eliminar este token? Esto obligará al usuario a iniciar sesión de nuevo."
+  (onLazyLoad)="load($event)"
   (onConfirmDelete)="onConfirmDelete($event)"
   (onRefresh)="load()"
 ></app-crud-page>

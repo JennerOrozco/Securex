@@ -4,6 +4,7 @@ import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { AuditService } from '@core/services/audit.service';
 import { NotificationService } from '@core/services/notification.service';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-security-audit',
@@ -18,6 +19,7 @@ export class SecurityAuditComponent implements OnInit {
   logs: any[] = [];
   loading = false;
   isSaving = false;
+  totalRecords = 0;
 
   cols: TableColumn[] = [
     { field: 'user_name', header: 'Usuario', type: 'text', sortable: true },
@@ -30,23 +32,28 @@ export class SecurityAuditComponent implements OnInit {
   ];
 
   ngOnInit() {
-    this.load();
+    // Lazy load from paginator
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
-    this.auditService.getSecurityAuditLogs().subscribe({
-      next: (data: any[]) => {
-        this.logs = (data || []).map((item: any) => ({
+
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'created_at');
+
+    this.auditService.getSecurityAuditLogs(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const data = res?.data || [];
+        this.totalRecords = res?.total || 0;
+        this.logs = data.map((item: any) => ({
           ...item,
           app_name: item.app?.name || item.app_uuid,
           company_name: item.company?.name || item.company_uuid || '-'
         }));
-        this.loading = false;
 
-        const eventTypes = [...new Set(this.logs.map((l: any) => l.event_type).filter(Boolean))];
+        const eventTypes = [...new Set(data.map((l: any) => l.event_type).filter(Boolean))];
         const col = this.cols.find((c) => c.field === 'event_type');
         if (col) col.filterOptions = eventTypes.map((e: any) => ({ label: e, value: e }));
+        this.loading = false;
       },
       error: () => (this.loading = false)
     });

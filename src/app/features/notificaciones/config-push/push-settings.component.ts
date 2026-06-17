@@ -7,6 +7,7 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
 import { Observable } from 'rxjs';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-push-settings',
@@ -27,10 +28,16 @@ export class PushSettingsComponent extends BaseNotificationConfigComponent {
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
-  loadSettings() {
-    this.apiService.getPushSettingsGql().subscribe({
-      next: (data: any) => {
-        this.items = (data || []).map((item: any) => ({
+  loadSettings(event?: any) {
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'id');
+    if (!event?.sortField && !event?.multiSortMeta) sort.direction = 'ASC';
+
+    this.apiService.getPushSettingsGql(page, limit, filter, sort).subscribe({
+      next: (res: any) => {
+        const data = res?.data || [];
+        this.totalRecords = res?.total || 0;
+
+        this.items = data.map((item: any) => ({
           ...item,
           app_name: item.app?.name || item.app_uuid
         }));

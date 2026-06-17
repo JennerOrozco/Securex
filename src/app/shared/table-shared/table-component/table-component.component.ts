@@ -113,6 +113,10 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   @Input() showAddChild: boolean = false;
   @Input() expandableRowGroups: boolean = false;
 
+  // Paginación en servidor
+  @Input() lazy: boolean = false;
+  @Input() totalRecords: number = 0;
+
   @Output() onAdd = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<any>();
   @Output() onCreate = new EventEmitter<any>();
@@ -125,6 +129,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   @Output() onActivate = new EventEmitter<any>();
   @Output() onSelect = new EventEmitter<any>();
   @Output() onReset = new EventEmitter<any>();
+  @Output() onLazyLoad = new EventEmitter<any>();
 
   @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
 

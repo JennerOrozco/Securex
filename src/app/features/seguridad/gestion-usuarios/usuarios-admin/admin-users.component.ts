@@ -6,6 +6,7 @@ import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { NotificationService } from '@core/services/notification.service';
+import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
 
 @Component({
   selector: 'app-admin-users',
@@ -21,6 +22,7 @@ export class AdminUsersComponent implements OnInit {
   users: any[] = [];
   loading = false;
   isSaving = false;
+  totalRecords = 0;
 
   formFields: FormField[] = [
     { name: 'full_name', label: 'Nombre completo', type: 'text', required: true, icon: 'pi pi-user' },
@@ -47,15 +49,19 @@ export class AdminUsersComponent implements OnInit {
     this.load();
   }
 
-  load() {
+  load(event?: any) {
     this.loading = true;
-    this.userService.getAdminUsersGql({ per_page: 50 }).subscribe({
+    const { page, limit, filter, sort } = parseLazyLoadEvent(event);
+
+    this.userService.getAdminUsersPaginated(page, limit, filter, sort).subscribe({
       next: (res: any) => {
-        this.users = (res || []).map((u: any) => ({
+        const { data, total } = extractPaginatedData(res, (u: any) => ({
           ...u,
           auth_provider: u.auth_provider || 'Local',
           created_at: u.created_at || u.createdAt
         }));
+        this.users = data;
+        this.totalRecords = total;
         this.loading = false;
       },
       error: () => (this.loading = false)

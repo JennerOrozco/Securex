@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.queries';
 
@@ -14,7 +15,9 @@ export class RoleService extends BaseApiService {
   syncRolePermissions(roleId: any, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles/${roleId}/permissions`, { permission_ids: permissionIds }); }
 
   getRolesWithPermissions(companyUuid?: string | null): Observable<any[]> {
-    return this.gqlQueryList<any>('security', SECUREX_QUERIES.ROLES, 'roles', { companyUuid });
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ROLES, 'roles', { companyUuid }).pipe(
+      map(res => res?.data ?? [])
+    );
   }
 
   getRolesByCompany(appId: number, companyUuid?: string | null): Observable<any[]> {
