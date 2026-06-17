@@ -50,7 +50,9 @@ export const SECUREX_QUERIES = {
       permissions {
         id uuid parent_id name slug route type icon sort_order is_visible
         children { id uuid parent_id name slug route type icon sort_order is_visible
-          children { id uuid parent_id name slug route type icon sort_order is_visible }
+          children { id uuid parent_id name slug route type icon sort_order is_visible 
+           children { id uuid parent_id name slug route type icon sort_order is_visible }
+          }
         }
       }
     }
@@ -190,8 +192,17 @@ export const SECUREX_QUERIES = {
     query AdminPermissions {
       adminPermissions {
         id uuid parent_id name slug route type icon sort_order is_visible
-        children { id uuid parent_id name slug route type icon sort_order is_visible
-          children { id uuid parent_id name slug route type icon sort_order is_visible }
+        children { 
+          id uuid parent_id name slug route type icon sort_order is_visible
+          children { 
+            id uuid parent_id name slug route type icon sort_order is_visible 
+            children {
+              id uuid parent_id name slug route type icon sort_order is_visible
+              children {
+                id uuid parent_id name slug route type icon sort_order is_visible
+              }
+            }            
+          }
         }
       }
     }
