@@ -4,9 +4,9 @@
   formEditTitle="Editar Acceso" [isSaving]="isSaving" [formExtraData]="formInitialData"
   deleteMessage="¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal."
   (onAdd)="handleAdd()" (onEdit)="handleEdit($event)" (onSave)="save($event)" (onConfirmDelete)="confirmDelete($event)"
-  (onReset)="handleResetPassword($event)" (onRefresh)="loadAccesses()" (onLazyLoad)="loadAccesses($event)"
+  (onReset)="handleResetPassword($event)" (onRefresh)="load()" (onLazyLoad)="load($event)"
   (onSelectGridEmptyFilter)="onSelectGridEmptyFilter()"></app-crud-page>
 
-<app-reset-password-modal [(visible)]="resetModalVisible" [userEmail]="resetModalItem?.user_email || ''"
-  [userName]="resetModalItem?.user_name || ''" (onClose)="closeResetModal()">
+<app-reset-password-modal [(visible)]="resetModalVisible" [userEmail]="resetModalItem?.user?.email || ''"
+  [userName]="resetModalItem?.user?.full_name || ''" (onClose)="closeResetModal()">
 </app-reset-password-modal>

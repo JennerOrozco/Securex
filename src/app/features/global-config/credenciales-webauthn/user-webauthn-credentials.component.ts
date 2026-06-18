@@ -31,9 +31,7 @@ export class UserWebauthnCredentials implements OnInit {
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
 
-  ngOnInit() {
-    // Lazy load from paginator
-  }
+  ngOnInit() { }
 
   load(event?: any) {
     this.loading = true;

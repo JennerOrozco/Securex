@@ -1,38 +1,34 @@
 import { inject, OnInit, Directive } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AppService } from '@core/services/app.service';
 import { NotificationService } from '@core/services/notification.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 
 /**
  * Base class for the SMTP / Push notification settings pages.
- *
- * Subclasses must implement:
- *   - formFields (the form fields definition)
- *   - loadSettings() (loads the items from the API)
- *   - saveSetting(data, mode)  (returns Observable)
- *   - deleteSetting(item)      (returns Observable)
- *   - resourceName             (used in success toast, e.g. 'Configuración')
  */
 @Directive()
 export abstract class BaseNotificationConfigComponent<T = any> implements OnInit {
-  protected appService = inject(AppService);
   protected notificationService = inject(NotificationService);
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
-  apps: any[] = [];
+  catalogItems: any = {};
   loading = false;
   isSaving = false;
   items: T[] = [];
   initialData: any = {};
   totalRecords = 0;
+  modalVisible = false;
+  modalMode: 'add' | 'edit' | 'delete' = 'add';
+  selectedItem: any = null;
 
   abstract formFields: FormField[];
   abstract get resourceName(): string;
   abstract loadSettings(event?: any): void;
   abstract saveSetting(data: any, mode: 'add' | 'edit'): Observable<any>;
   abstract deleteSetting(item: any): Observable<any>;
+
+  abstract loadCatalog(): Observable<any>;
 
   load(event?: any) {
     this.loading = true;
@@ -41,27 +37,32 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
 
   updateFormFields(): void { /* override */ }
 
-  private ensureApps(callback: () => void): void {
-    if (this.apps.length > 0) {
+  private ensureCatalog(callback: () => void): void {
+    // Verificamos si el objeto ya tiene propiedades para no re-consultar el API
+    if (Object.keys(this.catalogItems).length > 0) {
       callback();
       return;
     }
-    this.appService.getAppsWithCompanies().subscribe({
-      next: (res: any) => {
-        this.apps = res.data || res || [];
+
+    this.loadCatalog().subscribe({
+      next: (data: any) => {
+        this.catalogItems = data || {};
         this.updateFormFields();
+        callback();
+      },
+      error: () => {
         callback();
       }
     });
   }
 
   handleAdd(): void {
-    this.ensureApps(() => { this.modalVisible = true; });
+    this.ensureCatalog(() => { this.modalVisible = true; });
   }
 
   handleEdit(item: any): void {
     this.selectedItem = { ...item };
-    this.ensureApps(() => { this.modalVisible = true; });
+    this.ensureCatalog(() => { this.modalVisible = true; });
   }
 
   handleDelete(item: any): void {
@@ -95,8 +96,4 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
       error: () => (this.isSaving = false)
     });
   }
-
-  modalVisible = false;
-  modalMode: 'add' | 'edit' | 'delete' = 'add';
-  selectedItem: any = null;
 }

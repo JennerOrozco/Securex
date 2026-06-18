@@ -7,7 +7,9 @@ import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
 import { Observable } from 'rxjs';
-import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/pagination-utils';
+import { parseLazyLoadEvent } from '@shared/utils/pagination-utils';
+import { AppService } from '@/core/services';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-push-settings',
@@ -17,16 +19,25 @@ import { parseLazyLoadEvent, extractPaginatedData } from '@shared/utils/paginati
 })
 export class PushSettingsComponent extends BaseNotificationConfigComponent {
   private apiService = inject(NotificationSettingsService);
+  private appService = inject(AppService);
 
   formFields: FormField[] = [];
   get resourceName() { return 'Configuración'; }
 
   cols: TableColumn[] = [
-    { field: 'app_name', header: 'App Asociada', type: 'text', sortable: true },
+    { field: 'app.name', header: 'App Asociada', type: 'text', sortable: true },
     { field: 'vapid_subject', header: 'Subject', type: 'text', sortable: true },
     { field: 'icon', header: 'Icon', type: 'image', style: { width: '80px', 'text-align': 'center' }, fallbackIcon: 'pi pi-send' },
     { field: 'acciones', header: 'Acciones', type: 'actions' }
   ];
+
+  loadCatalog(): Observable<any> {
+    return this.appService.getAppsWithCompanies().pipe(
+      map((res: any) => ({
+        apps: res.data || res || []
+      }))
+    );
+  }
 
   loadSettings(event?: any) {
     const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'id');
@@ -36,11 +47,7 @@ export class PushSettingsComponent extends BaseNotificationConfigComponent {
       next: (res: any) => {
         const data = res?.data || [];
         this.totalRecords = res?.total || 0;
-
-        this.items = data.map((item: any) => ({
-          ...item,
-          app_name: item.app?.name || item.app_uuid
-        }));
+        this.items = data;
         this.loading = false;
       },
       error: () => (this.loading = false)
@@ -49,8 +56,10 @@ export class PushSettingsComponent extends BaseNotificationConfigComponent {
 
   override updateFormFields() {
     this.formFields = [
-      { name: 'app_uuid', label: 'Aplicación Asociada', type: 'select', required: true, icon: 'pi pi-th-large',
-        options: this.apps.map((app) => ({ label: app.name, value: app.uuid })) },
+      {
+        name: 'app_uuid', label: 'Aplicación Asociada', type: 'select', required: true, icon: 'pi pi-th-large',
+        options: (this.catalogItems.apps || []).map((app: any) => ({ label: app.name, value: app.uuid }))
+      },
       { name: 'vapid_public_key', label: 'VAPID Public Key', type: 'text', required: true, icon: 'pi pi-key' },
       { name: 'vapid_private_key', label: 'VAPID Private Key', type: 'text', required: true, icon: 'pi pi-key' },
       { name: 'vapid_subject', label: 'VAPID Subject', type: 'text', required: false, icon: 'pi pi-envelope' },

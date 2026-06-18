@@ -1,27 +1,12 @@
-<app-crud-page
-  permission="securex.notifications.push"
-  title="Configuraciones Push"
-  subtitle="Llaves VAPID y parámetros para notificaciones web"
-  [data]="items"
-  [columns]="cols"
-  [loading]="loading"
-  [lazy]="true"
-  [totalRecords]="totalRecords"
-  [isSaving]="isSaving"
-  [formFields]="formFields"
-  [formExtraData]="initialData"
-  formAddTitle="Nueva Configuración"
-  formEditTitle="Editar Configuración"
-  deleteTitle="Eliminar Configuración"
-  (onLazyLoad)="load($event)"
-  (onSave)="save($event.data, $event.mode)"
-  (onConfirmDelete)="confirmDelete()"
-  (onRefresh)="load()"
-  (onAdd)="handleAdd()"
-  (onEdit)="handleEdit($event)"
-  (onDelete)="handleDelete($event)"
->
+<app-crud-page permission="securex.notifications.push" title="Configuraciones Push"
+  subtitle="Llaves VAPID y parámetros para notificaciones web" [data]="items" [columns]="cols" [loading]="loading"
+  [lazy]="true" [totalRecords]="totalRecords" [isSaving]="isSaving" [formFields]="formFields"
+  [formExtraData]="initialData" formAddTitle="Nueva Configuración" formEditTitle="Editar Configuración"
+  deleteTitle="Eliminar Configuración" (onLazyLoad)="load($event)" (onSave)="save($event.data, $event.mode)"
+  (onConfirmDelete)="confirmDelete()" (onRefresh)="load()" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
+  (onDelete)="handleDelete($event)">
   <div custom-toolbar-actions>
-    <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy" (onClick)="handleGenerateVapid()"></app-button>
+    <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy"
+      (onClick)="handleGenerateVapid()"></app-button>
   </div>
 </app-crud-page>
