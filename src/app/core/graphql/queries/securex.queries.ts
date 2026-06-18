@@ -1,4 +1,31 @@
 export const SECUREX_QUERIES = {
+  ME: `
+    query Me {
+        me {            
+            uuid
+            full_name
+            email
+            status
+            auth_provider
+            profile_picture
+            created_at
+            access {
+                company {
+                    name
+                }
+                branch {
+                    name
+                }
+            }
+            webauthnCredentials {
+                id
+                credential_id
+                device_name
+                created_at
+            }
+        }
+    }
+  `,
   USERS: `
     query Users($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $all: Boolean) {
       users(page: $page, limit: $limit, filter: $filter, sort: $sort, all: $all) {
@@ -299,7 +326,7 @@ export const SECUREX_QUERIES = {
     query UserAccessPage($all: Boolean) {
       userAccesses(all: $all) {
         data {
-          uuid status user_id app_id company_id branch_id role_id
+          uuid status user_id 
           user { uuid full_name email }
           app { uuid name }
           company { uuid name }
@@ -459,15 +486,15 @@ export const SECUREX_MUTATIONS = {
     }
   `,
   CREATE_USER_ACCESS: `
-    mutation CreateUserAccess($user_id: Int!, $app_id: Int!, $company_id: Int, $branch_id: Int, $role_id: Int, $status: String) {
-      createUserAccess(user_id: $user_id, app_id: $app_id, company_id: $company_id, branch_id: $branch_id, role_id: $role_id, status: $status) {
+    mutation CreateUserAccess($user_uuid: String!, $app_uuid: String!, $company_uuid: String, $branch_uuid: String, $role_uuid: String, $status: String) {
+      createUserAccess(user_uuid: $user_uuid, app_uuid: $app_uuid, company_uuid: $company_uuid, branch_uuid: $branch_uuid, role_uuid: $role_uuid, status: $status) {
         uuid status
       }
     }
   `,
   UPDATE_USER_ACCESS: `
-    mutation UpdateUserAccess($uuid: String!, $user_id: Int, $app_id: Int, $company_id: Int, $branch_id: Int, $role_id: Int, $status: String) {
-      updateUserAccess(uuid: $uuid, user_id: $user_id, app_id: $app_id, company_id: $company_id, branch_id: $branch_id, role_id: $role_id, status: $status) {
+    mutation UpdateUserAccess($uuid: String!, $user_uuid: String, $app_uuid: String, $company_uuid: String, $branch_uuid: String, $role_uuid: String, $status: String) {
+      updateUserAccess(uuid: $uuid, user_uuid: $user_uuid, app_uuid: $app_uuid, company_uuid: $company_uuid, branch_uuid: $branch_uuid, role_uuid: $role_uuid, status: $status) {
         uuid status
       }
     }

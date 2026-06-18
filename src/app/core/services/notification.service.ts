@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
 import { StorageService } from './storage.service';
-import { Observable, catchError, firstValueFrom, of, tap, timeout } from 'rxjs';
+import { Observable, firstValueFrom, timeout } from 'rxjs';
 import { MessageService } from 'primeng/api';
 
 export interface AppNotification {
@@ -114,20 +114,6 @@ export class NotificationService {
     };
 
     return this.http.post(`${this.configService.notificationApiUrl}/notifications/send`, payload);
-  }
-
-  /**
-   * Actualiza las preferencias de notificación del usuario (Email/Push).
-   */
-  updatePreferences(emailEnabled: boolean, pushEnabled: boolean, companyUuid: string) {
-    const payload = {
-      app_uuid: this.configService.appUuid,
-      company_uuid: companyUuid,
-      email_enabled: emailEnabled,
-      push_enabled: pushEnabled
-    };
-
-    return this.http.put(`${this.configService.notificationApiUrl}/notifications/preferences`, payload);
   }
 
   getNotifications(): Observable<AppNotification[]> {

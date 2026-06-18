@@ -6,28 +6,6 @@ import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.q
 @Injectable({ providedIn: 'root' })
 export class UserService extends BaseApiService {
   getUsers(): Observable<any> { return this.http.get(`${this.baseUrl}/company/users`); }
-  getUsersPaginated(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/company/users-paginated`, { params }); }
-  createUser(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/users`, data); }
-  updateUserRole(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/users/${uuid}/role`, data); }
-  deleteUser(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/users/${uuid}`); }
-
-  getAdminUsers(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/admin/users`, { params }); }
-  createAdminUser(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/users`, data); }
-  updateAdminUser(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/users/${uuid}`, data); }
-  deleteAdminUser(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/users/${uuid}`); }
-
-  getUserAccess(): Observable<any> { return this.http.get(`${this.baseUrl}/company/user-access`); }
-  createUserAccess(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/user-access`, data); }
-  updateUserAccess(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/user-access/${uuid}`, data); }
-  deleteUserAccess(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/user-access/${uuid}`); }
-
-  getAdminAccess(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/access`); }
-  assignAdminAccess(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/access`, data); }
-  updateAdminAccess(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/access/${uuid}`, data); }
-  removeAdminAccess(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/access/${uuid}`); }
-
-  getWebauthnCredentials(params?: any): Observable<any> { return this.http.get(`${this.baseUrl}/admin/webauthn-credentials`, { params }); }
-  deleteWebauthnCredential(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/webauthn-credentials/${id}`); }
 
   getUsersWithRoles(params?: any): Observable<any[]> {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.USERS, 'users', params);
@@ -41,8 +19,8 @@ export class UserService extends BaseApiService {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.ADMIN_USERS, 'adminUsers', params);
   }
 
-  getAdminUsersPaginated(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
-    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ADMIN_USERS, 'adminUsers', { page, limit, filter, sort });
+  getAdminUsersPaginated(page: number = 1, limit: number = 15, filter?: any, sort?: any, extraVariables?: Record<string, any>): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ADMIN_USERS, 'adminUsers', { page, limit, filter, sort, ...extraVariables });
   }
 
   getUserWithAccess(uuid: string): Observable<any> {

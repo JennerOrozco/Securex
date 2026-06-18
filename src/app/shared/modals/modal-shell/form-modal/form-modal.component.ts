@@ -93,10 +93,23 @@ export class FormModalComponent implements OnInit, OnChanges {
     }
   }
 
+  /**
+   * Reads a value from obj using dot-notation path.
+   * e.g. getNestedValue({ user: { uuid: '123' } }, 'user.uuid') → '123'
+   */
+  private getNestedValue(obj: any, path: string): any {
+    if (!obj || !path) return undefined;
+    return path.split('.').reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
+  }
+
   initForm() {
     const group: any = {};
     this.fields.forEach(field => {
-      let value = this.mode === 'add' ? (this.initialData?.[field.name] ?? '') : (this.data?.[field.name] ?? '');
+      const source = this.mode === 'add' ? this.initialData : this.data;
+      // Use dataPath if defined, otherwise fall back to field.name (flat key)
+      const value = field.dataPath
+        ? (this.getNestedValue(source, field.dataPath) ?? '')
+        : (source?.[field.name] ?? '');
       const validators: any[] = [];
       if (field.required && this.mode !== 'view') validators.push(Validators.required);
       if (field.type === 'email' && this.mode !== 'view') validators.push(Validators.email);
@@ -144,6 +157,10 @@ export class FormModalComponent implements OnInit, OnChanges {
           payload[f.name] = (val && typeof val === 'object' && 'value' in val) ? val.value : val;
         } else {
           payload[f.name] = val;
+        }
+        // Also expose the value under dataPath key for easy access in the component
+        if (f.dataPath) {
+          payload[f.dataPath] = payload[f.name];
         }
       });
       this.onConfirm.emit(payload);

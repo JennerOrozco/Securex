@@ -1,5 +1,5 @@
-import { Injectable, inject, signal, computed } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, of, tap, map, catchError, finalize, ReplaySubject, take, timeout, firstValueFrom } from 'rxjs';
 import { SwPush } from '@angular/service-worker';
@@ -235,24 +235,6 @@ export class AuthService {
         );
     }
 
-    getUserCompanies(): Observable<any> {
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/companies`).pipe(
-            tap(response => {
-                const data = response.data ?? response;
-                if (Array.isArray(data)) this.setUserCompanies(data);
-            })
-        );
-    }
-
-    getUserBranches(): Observable<any> {
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/branches`).pipe(
-            tap(response => {
-                const data = response.data ?? response;
-                if (Array.isArray(data)) this.setUserBranches(data);
-            })
-        );
-    }
-
     register(data: any): Observable<any> {
         return this.http.post<any>(`${this.configService.apiUrl}/auth/register`, { ...data, app_uuid: this.configService.appUuid })
             .pipe(tap(res => res.success = true));
@@ -351,31 +333,6 @@ export class AuthService {
         );
     }
 
-    uploadProfilePicture(file: File): Observable<any> {
-        const formData = new FormData();
-        formData.append('file', file);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/profile-picture`, formData).pipe(
-            tap(response => {
-                const data = response.data || response;
-                if (data && data.url) {
-                    const updatedUser = { ...this.currentUserValue!, profile_picture: data.url };
-                    this.storage.setUser(updatedUser);
-                    this.currentUserSignal.set(updatedUser);
-                }
-            })
-        );
-    }
-
-    deleteProfilePicture(): Observable<any> {
-        return this.http.delete<any>(`${this.configService.apiUrl}/auth/profile-picture`).pipe(
-            tap(() => {
-                const updatedUser = { ...this.currentUserValue!, profile_picture: undefined };
-                this.storage.setUser(updatedUser);
-                this.currentUserSignal.set(updatedUser);
-            })
-        );
-    }
-
     refreshPermissions(): Observable<any> {
         const token = this.storage.getAccessToken();
         if (!token) return of(null);
@@ -409,12 +366,6 @@ export class AuthService {
         return this.http.get<any>(`${this.configService.apiUrl}/auth/components`);
     }
 
-    changePassword(data: any): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/change-password`, data);
-    }
-
     adminResetUserPassword(email: string): Observable<any> {
         return this.http.post<any>(`${this.configService.apiUrl}/auth/forgot-password`, {
             email, app_uuid: this.configService.appUuid
@@ -427,55 +378,6 @@ export class AuthService {
             catchError(err => {
                 const errorMsg = err.error?.message || err.error?.error || 'Error de conexión. Intenta de nuevo.';
                 return of({ success: false, error: errorMsg });
-            })
-        );
-    }
-
-    getWebAuthnRegisterOptions(): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register-options`, {});
-    }
-
-    registerWebAuthn(data: any): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/register`, data);
-    }
-
-    getWebAuthnCredentials(): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/webauthn/credentials`);
-    }
-
-    deleteWebAuthnCredential(id: any): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.delete<any>(`${this.configService.apiUrl}/auth/webauthn/credentials/${id}`);
-    }
-
-    getWebAuthnLoginOptions(email?: string): Observable<any> {
-        const payload: any = { app_uuid: this.configService.appUuid };
-        if (email) payload.email = email;
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/login-options`, payload);
-    }
-
-    loginWithWebAuthn(data: any): Observable<any> {
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/webauthn/login`, {
-            ...data, app_uuid: this.configService.appUuid
-        }).pipe(
-            tap(response => {
-                const resData = response.data ?? response;
-                if (resData?.access_token) this.persistSession(resData);
-            }),
-            tap(response => {
-                const resData = response.data ?? response;
-                response.success = !!resData?.access_token;
-                response.requires_company_select = !!resData?.requires_company_select;
-                response.companies = resData?.companies;
-                response.user = resData?.user;
-                response.company = resData?.company;
             })
         );
     }

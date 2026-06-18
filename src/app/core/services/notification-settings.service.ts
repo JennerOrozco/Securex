@@ -9,14 +9,6 @@ export class NotificationSettingsService extends BaseApiService {
     return this.configService.notificationApiUrl;
   }
 
-  getPushSettings(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/admin/push-settings`);
-  }
-
-  getPushSetting(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/admin/push-settings/${id}`);
-  }
-
   savePushSetting(id: number | null, data: any): Observable<any> {
     if (id) {
       return this.http.put(`${this.baseUrl}/notifications/admin/push-settings/${id}`, data);
@@ -26,14 +18,6 @@ export class NotificationSettingsService extends BaseApiService {
 
   deletePushSetting(id: number): Observable<any> {
     return this.http.delete(`${this.baseUrl}/notifications/admin/push-settings/${id}`);
-  }
-
-  getSmtpSettings(): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/admin/smtp-settings`);
-  }
-
-  getSmtpSetting(id: number): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/admin/smtp-settings/${id}`);
   }
 
   saveSmtpSetting(id: number | null, data: any): Observable<any> {
@@ -47,10 +31,6 @@ export class NotificationSettingsService extends BaseApiService {
     return this.http.delete(`${this.baseUrl}/notifications/admin/smtp-settings/${id}`);
   }
 
-  testNotification(data: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/notifications/send-jwt`, data);
-  }
-
   sendNotificationToAny(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/notifications/send`, data);
   }
@@ -61,26 +41,6 @@ export class NotificationSettingsService extends BaseApiService {
 
   getNotificationsHistory(params?: any): Observable<any> {
     return this.http.get(`${this.baseUrl}/notifications/superadmin/notifications`, { params });
-  }
-
-  deleteNotificationHistory(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/notifications/superadmin/notifications/${id}`);
-  }
-
-  getUserDevices(params?: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/superadmin/user-devices`, { params });
-  }
-
-  deleteUserDevice(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/notifications/superadmin/user-devices/${id}`);
-  }
-
-  getSendAttempts(params?: any): Observable<any> {
-    return this.http.get(`${this.baseUrl}/notifications/superadmin/send-attempts`, { params });
-  }
-
-  deleteSendAttempt(id: number): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/notifications/superadmin/send-attempts/${id}`);
   }
 
   deleteSendAttemptGql(id: number): Observable<any> {

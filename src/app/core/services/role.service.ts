@@ -6,13 +6,9 @@ import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.q
 
 @Injectable({ providedIn: 'root' })
 export class RoleService extends BaseApiService {
-  getRoles(): Observable<any> { return this.http.get(`${this.baseUrl}/company/roles`); }
-  getRole(uuid: string): Observable<any> { return this.http.get(`${this.baseUrl}/company/roles/${uuid}`); }
-  createRole(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles`, data); }
-  updateRole(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/roles/${uuid}`, data); }
-  deleteRole(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/roles/${uuid}`); }
-  getRolePermissions(roleId: any): Observable<any> { return this.http.get(`${this.baseUrl}/company/roles/${roleId}/permissions`); }
-  syncRolePermissions(roleId: any, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/company/roles/${roleId}/permissions`, { permission_ids: permissionIds }); }
+  getRolePermissionsGql(uuid: string): Observable<any> {
+    return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ROLE_PERMISSIONS, 'rolePermissions', { uuid });
+  }
 
   getRolesWithPermissions(companyUuid?: string | null): Observable<any[]> {
     return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.ROLES, 'roles', { companyUuid }).pipe(

@@ -11,6 +11,12 @@ export interface FormField {
   icon?: string;
   accept?: string;
   fallbackIcon?: string;
+  /**
+   * Optional dot-notation path to read/write the value from a nested object
+   * (e.g. `'user.uuid'` reads from `data.user.uuid`).
+   * The `name` property remains the flat FormControl key.
+   */
+  dataPath?: string;
 }
 
 export type ModalMode = 'add' | 'edit' | 'delete' | 'view';

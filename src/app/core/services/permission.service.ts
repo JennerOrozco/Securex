@@ -5,22 +5,12 @@ import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.q
 
 @Injectable({ providedIn: 'root' })
 export class PermissionService extends BaseApiService {
-  getPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/company/permissions`); }
-  createPermission(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/company/permissions`, data); }
-  updatePermission(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/company/permissions/${uuid}`, data); }
-  deletePermission(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/company/permissions/${uuid}`); }
   reorderPermission(uuid: string, parentId: number | null, index: number): Observable<any> { return this.http.put(`${this.baseUrl}/company/permissions/reorder`, { uuid, parent_id: parentId, sort_order: index }); }
 
   getCompanyPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/company-permissions`); }
-  assignCompanyPermission(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/company-permissions`, data); }
-  removeCompanyPermission(id: number): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/company-permissions/${id}`); }
   syncCompanyPermissions(companyId: number, permissionIds: number[]): Observable<any> { return this.http.post(`${this.baseUrl}/admin/companies/${companyId}/permissions`, { permission_ids: permissionIds }); }
 
   getAdminPermissions(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/permissions`); }
-  createAdminPermission(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/permissions`, data); }
-  updateAdminPermission(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/permissions/${uuid}`, data); }
-  deleteAdminPermission(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/permissions/${uuid}`); }
-
   getPermissionsTree(): Observable<any[]> {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.PERMISSIONS, 'permissions');
   }

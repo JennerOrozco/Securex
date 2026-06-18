@@ -6,22 +6,12 @@ import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../graphql/queries/securex.q
 @Injectable({ providedIn: 'root' })
 export class CompanyService extends BaseApiService {
   getCompanies(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/companies`); }
-  createCompany(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/companies`, data); }
-  updateCompany(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/companies/${uuid}`, data); }
-  deleteCompany(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/companies/${uuid}`); }
-
-  getBranches(): Observable<any> { return this.http.get(`${this.baseUrl}/admin/branches`); }
-  getCompanyBranches(): Observable<any> { return this.http.get(`${this.baseUrl}/company/branches`); }
-  createBranch(data: any): Observable<any> { return this.http.post(`${this.baseUrl}/admin/branches`, data); }
-  updateBranch(uuid: string, data: any): Observable<any> { return this.http.put(`${this.baseUrl}/admin/branches/${uuid}`, data); }
-  deleteBranch(uuid: string): Observable<any> { return this.http.delete(`${this.baseUrl}/admin/branches/${uuid}`); }
-
   getCompaniesWithBranches(): Observable<any[]> {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.COMPANIES, 'companies');
   }
 
-  getCompaniesPageData(): Observable<{ apps: any[]; companies: any[] }> {
-    return this.gql.query<{ apps: any[]; companies: any[] }>('security', SECUREX_QUERIES.COMPANIES_PAGE);
+  getCompaniesPageData(): Observable<{ apps: { data: any[] }; companies: { data: any[] } }> {
+    return this.gql.query<{ apps: { data: any[] }; companies: { data: any[] } }>('security', SECUREX_QUERIES.COMPANIES_PAGE);
   }
 
   getCompanyWithBranches(uuid: string): Observable<any> {
@@ -32,8 +22,8 @@ export class CompanyService extends BaseApiService {
     return this.gqlQueryList<any>('security', SECUREX_QUERIES.BRANCHES, 'branches');
   }
 
-  getBranchesPageData(): Observable<{ companies: any[]; branches: any[] }> {
-    return this.gql.query<{ companies: any[]; branches: any[] }>('security', SECUREX_QUERIES.BRANCHES_PAGE);
+  getBranchesPageData(): Observable<{ companies: { data: any[] }; branches: { data: any[] } }> {
+    return this.gql.query<{ companies: { data: any[] }; branches: { data: any[] } }>('security', SECUREX_QUERIES.BRANCHES_PAGE);
   }
 
   createCompanyGql(data: any): Observable<any> {

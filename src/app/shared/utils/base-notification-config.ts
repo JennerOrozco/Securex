@@ -19,9 +19,7 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
   protected appService = inject(AppService);
   protected notificationService = inject(NotificationService);
 
-  ngOnInit(): void {
-    this.load();
-  }
+  ngOnInit(): void {}
 
   apps: any[] = [];
   loading = false;
@@ -38,25 +36,32 @@ export abstract class BaseNotificationConfigComponent<T = any> implements OnInit
 
   load(event?: any) {
     this.loading = true;
-    this.appService.getAppsWithCompanies().subscribe({
-      next: (res: any) => {
-        this.apps = res.data || res || [];
-        this.updateFormFields();
-        this.loadSettings(event);
-      },
-      error: () => (this.loading = false)
-    });
+    this.loadSettings(event);
   }
 
   updateFormFields(): void { /* override */ }
 
+  private ensureApps(callback: () => void): void {
+    if (this.apps.length > 0) {
+      callback();
+      return;
+    }
+    this.appService.getAppsWithCompanies().subscribe({
+      next: (res: any) => {
+        this.apps = res.data || res || [];
+        this.updateFormFields();
+        callback();
+      }
+    });
+  }
+
   handleAdd(): void {
-    this.modalVisible = true;
+    this.ensureApps(() => { this.modalVisible = true; });
   }
 
   handleEdit(item: any): void {
     this.selectedItem = { ...item };
-    this.modalVisible = true;
+    this.ensureApps(() => { this.modalVisible = true; });
   }
 
   handleDelete(item: any): void {

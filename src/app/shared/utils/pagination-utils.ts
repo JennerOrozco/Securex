@@ -1,7 +1,7 @@
 export interface PaginationParams {
   page: number;
   limit: number;
-  filter: Record<string, any>;
+  filter?: Record<string, any>;
   sort: { column: string; direction: 'ASC' | 'DESC' };
 }
 
@@ -13,12 +13,66 @@ export interface PaginatedResponse<T> {
 const DEFAULT_SORT_COLUMN = 'created_at';
 const DEFAULT_PAGE_SIZE = 15;
 
-export function parseLazyLoadEvent(event?: any, defaultSortColumn = DEFAULT_SORT_COLUMN): PaginationParams {
+const MATCH_MODE_MAP: Record<string, string> = {
+  contains: 'CONTAINS',
+  equals: 'EQUALS',
+  startsWith: 'STARTS_WITH',
+  endsWith: 'ENDS_WITH',
+};
+
+export function parseLazyLoadEvent(event?: any, defaultSortColumn = DEFAULT_SORT_COLUMN, columnMap?: Record<string, string | null>): PaginationParams {
   const page = event && event.rows ? Math.floor(event.first / event.rows) + 1 : 1;
   const limit = event && event.rows ? event.rows : DEFAULT_PAGE_SIZE;
 
   const filter: Record<string, any> = {};
-  if (event?.globalFilter) {
+  if (event?.filters) {
+    const columnFilters: any[] = [];
+    for (const [field, f] of Object.entries(event.filters)) {
+      const condition = Array.isArray(f) ? f[0] : f;
+      const val = condition?.value;
+      if (val != null && val !== '') {
+        if (field === 'global') {
+          filter['globalSearch'] = val;
+          continue;
+        }
+        if (columnMap) {
+          if (field in columnMap) {
+            const mapped = columnMap[field];
+            if (mapped === null) {
+              console.warn(`[parseLazyLoadEvent] Field "${field}" is blocked`);
+              continue;
+            }
+            columnFilters.push({
+              field: mapped,
+              operator: {
+                value: val,
+                matchMode: MATCH_MODE_MAP[condition?.matchMode] || 'CONTAINS'
+              }
+            });
+          } else {
+            columnFilters.push({
+              field,
+              operator: {
+                value: val,
+                matchMode: MATCH_MODE_MAP[condition?.matchMode] || 'CONTAINS'
+              }
+            });
+          }
+        } else {
+          columnFilters.push({
+            field,
+            operator: {
+              value: val,
+              matchMode: MATCH_MODE_MAP[condition?.matchMode] || 'CONTAINS'
+            }
+          });
+        }
+      }
+    }
+    if (columnFilters.length > 0) {
+      filter['filters'] = columnFilters;
+    }
+  } else if (event?.globalFilter) {
     filter['globalSearch'] = event.globalFilter;
   }
 
@@ -31,7 +85,8 @@ export function parseLazyLoadEvent(event?: any, defaultSortColumn = DEFAULT_SORT
     sort.direction = event.multiSortMeta[0].order === 1 ? 'ASC' : 'DESC';
   }
 
-  return { page, limit, filter, sort };
+  const hasFilter = Object.keys(filter).length > 0;
+  return { page, limit, ...(hasFilter ? { filter } : {}), sort };
 }
 
 export function extractPaginatedData<T>(response: any, mapper?: (item: any) => T): PaginatedResponse<T> {
