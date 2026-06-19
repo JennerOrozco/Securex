@@ -62,6 +62,7 @@
     "@typescript-eslint/eslint-plugin": "^8.60.0",
     "@typescript-eslint/parser": "^8.60.0",
     "autoprefixer": "^10.4.22",
+    "baseline-browser-mapping": "^2.10.38",
     "eslint": "^10.4.0",
     "jsdom": "^27.1.0",
     "postcss": "^8.5.6",
