@@ -1,0 +1,1 @@
+import{D as i,q as t}from"./chunk-AIOGRGFU.js";var r=class e{sidebarOpen=i(!1);toggleSidebar(){this.sidebarOpen.update(o=>!o)}closeSidebar(){this.sidebarOpen.set(!1)}openSidebar(){this.sidebarOpen.set(!0)}static \u0275fac=function(p){return new(p||e)};static \u0275prov=t({token:e,factory:e.\u0275fac,providedIn:"root"})};export{r as a};

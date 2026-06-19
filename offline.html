@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1120">
+  <title>SECUREX - Sin conexion</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0b1120;
+      color: #e2e8f0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+    }
+    .offline-icon {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 32px;
+      position: relative;
+    }
+    .offline-icon svg {
+      width: 100%;
+      height: 100%;
+    }
+    .wifi-slash {
+      stroke: #ef4444;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+    }
+    .wifi-waves {
+      stroke: #475569;
+      stroke-width: 2;
+      fill: none;
+      stroke-linecap: round;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #f8fafc;
+    }
+    p {
+      font-size: 1rem;
+      color: #94a3b8;
+      max-width: 400px;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+    .retry-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .retry-btn:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+    .retry-btn:active {
+      transform: translateY(0);
+    }
+    .status-info {
+      margin-top: 48px;
+      padding: 16px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .status-info p {
+      font-size: 0.875rem;
+      color: #64748b;
+      margin-bottom: 0;
+    }
+    .pulse {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      background: #ef4444;
+      border-radius: 50%;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-icon">
+    <svg viewBox="0 0 24 24">
+      <path class="wifi-waves" d="M1.42 9a16 16 0 0 1 21.16 0"/>
+      <path class="wifi-waves" d="M5.07 12.5a10 10 0 0 1 13.86 0"/>
+      <path class="wifi-waves" d="M8.72 16a6 6 0 0 1 6.56 0"/>
+      <circle class="wifi-waves" cx="12" cy="20" r="1" fill="#475569"/>
+      <line class="wifi-slash" x1="2" y1="2" x2="22" y2="22"/>
+    </svg>
+  </div>
+
+  <h1>Sin conexion a internet</h1>
+  <p>No se pudo conectar al servidor. Verifica tu conexion a internet y vuelve a intentar.</p>
+
+  <button class="retry-btn" onclick="window.location.reload()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="23 4 23 10 17 10"></polyline>
+      <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+    </svg>
+    Reintentar
+  </button>
+
+  <div class="status-info">
+    <p><span class="pulse"></span>SECUREX funciona offline con datos en cache</p>
+  </div>
+</body>
+</html>
