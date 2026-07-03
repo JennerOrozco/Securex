@@ -1,16 +1,16 @@
 <div class="perm-card">
   <app-toolbar
-    [title]="title"
-    [subtitle]="subtitle"
-    [searchPlaceholder]="searchPlaceholder"
+    [title]="title()"
+    [subtitle]="subtitle()"
+    [searchPlaceholder]="searchPlaceholder()"
     [showSearch]="true"
-    [showAdd]="showAdd"
-    [addLabel]="addLabel"
+    [showAdd]="showAdd()"
+    [addLabel]="addLabel()"
     (onSearch)="onFilter.emit($event)"
     (onAdd)="onAddRoot.emit()">
   </app-toolbar>
 
-  @if (showLegend) {
+  @if (showLegend()) {
     <div class="types-legend-bar">
       <div class="legend-label">Tipos de acción:</div>
       <div class="legend-items">
@@ -36,19 +36,19 @@
 
   <div class="p-0">
     <p-treeTable #tt
-      [value]="nodes"
-      [columns]="columns"
-      [loading]="loading"
+      [value]="nodes()"
+      [columns]="columns()"
+      [loading]="loading()"
       [scrollable]="true"
-      [scrollHeight]="scrollHeight"
+      [scrollHeight]="scrollHeight()"
       [paginator]="true"
-      [rows]="rows"
+      [rows]="rows()"
       [rowsPerPageOptions]="[5, 10, 20, 50]"
       [resizableColumns]="true"
       columnResizeMode="expand"
       [sortField]="sortField"
       [sortOrder]="sortOrder"
-      [reorderableColumns]="reorderableColumns"
+      [reorderableColumns]="reorderableColumns()"
       (onColReorder)="onColReorder.emit($event)"
       class="gm-treetable">
       <ng-template pTemplate="header" let-columns>
@@ -68,7 +68,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowNode let-rowData="rowData">
         <tr [ttRow]="rowNode" (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)"
-          [attr.draggable]="dragdrop && rowData._canReorder !== false ? true : null"
+          [attr.draggable]="dragdrop() && rowData._canReorder !== false ? true : null"
           [class.drag-over]="dragOverNode === rowData"
           [ngClass]="getRowClass(rowData.type) + ' depth-' + (rowNode.level || 0)"
           (dragstart)="onRowDragStart($event, rowData)"

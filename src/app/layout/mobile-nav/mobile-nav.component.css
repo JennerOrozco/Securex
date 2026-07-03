@@ -284,6 +284,7 @@
   position: relative;
   z-index: 2;
   cursor: pointer;
+  pointer-events: auto;
   -webkit-tap-highlight-color: transparent;
   transition: color 0.3s ease;
 }
@@ -303,7 +304,7 @@
 
 .mobile-nav-item.active-item .nav-icon-wrap i {
   color: white;
-  transform: translateY(2.15);
+  transform: translateY(-1.25rem) scale(1.15);
 }
 
 .mobile-nav-item span {

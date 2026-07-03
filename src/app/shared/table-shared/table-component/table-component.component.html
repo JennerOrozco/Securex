@@ -1,20 +1,20 @@
-<div class="page-wrapper" [ngClass]="{'minimal': minimalMode}">
-  <div [ngClass]="minimalMode ? 'minimal-container' : 'table-card'">
+<div class="page-wrapper" [ngClass]="{'minimal': minimalMode()}">
+  <div [ngClass]="minimalMode() ? 'minimal-container' : 'table-card'">
 
-    <p-table #dt [value]="data" [rows]="rows" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
-      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true"
-      [loading]="loading" [stripedRows]="stripedRows" responsiveLayout="scroll"
-      [resizableColumns]="true" columnResizeMode="expand" [lazy]="lazy" [totalRecords]="totalRecords"
+    <p-table #dt [value]="data()" [rows]="rows()" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions()"
+      [globalFilterFields]="globalFilterFields()" [(selection)]="selectedItems" [rowHover]="true"
+      [loading]="loading()" [stripedRows]="stripedRows()" responsiveLayout="scroll"
+      [resizableColumns]="true" columnResizeMode="expand" [lazy]="lazy()" [totalRecords]="totalRecords()"
       (onLazyLoad)="onLazyLoad.emit($event)" currentPageReportTemplate=" {first} - {last} de {totalRecords} registros"
       [showCurrentPageReport]="true" class="gm-data-table" [columns]="selectedColumns"
-      [rowGroupMode]="enableRowGroup ? 'subheader' : undefined" [groupRowsBy]="enableRowGroup ? groupRowsBy : ''"
-      [sortField]="enableRowGroup ? groupRowsBy : ''" [sortMode]="enableRowGroup ? 'single' : 'multiple'"
-      [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'" [reorderableColumns]="reorderableColumns"
+      [rowGroupMode]="enableRowGroup() ? 'subheader' : undefined" [groupRowsBy]="enableRowGroup() ? groupRowsBy() : ''"
+      [sortField]="enableRowGroup() ? groupRowsBy() : ''" [sortMode]="enableRowGroup() ? 'single' : 'multiple'"
+      [dataKey]="enableRowGroup() && expandableRowGroups() ? groupRowsBy() : 'id'" [reorderableColumns]="reorderableColumns()"
       paginatorDropdownAppendTo="body" (onColReorder)="onColReorder.emit($event)">
 
       <ng-template pTemplate="caption">
-        <app-toolbar [title]="title" [subtitle]="subtitle" [searchPlaceholder]="searchPlaceholder" [showSearch]="true"
-          [showAdd]="showAdd" [addLabel]="addLabel" (onSearch)="filterGlobal($event)" (onAdd)="onAdd.emit()">
+        <app-toolbar [title]="title()" [subtitle]="subtitle()" [searchPlaceholder]="searchPlaceholder()" [showSearch]="true"
+          [showAdd]="showAdd()" [addLabel]="addLabel()" (onSearch)="filterGlobal($event)" (onAdd)="onAdd.emit()">
           <div toolbar-actions-start>
             <app-button icon="pi pi-th-large" class="p-button-navy" tooltip="Mostrar/Ocultar Columnas"
               tooltipPosition="top" (onClick)="displayColumnsModal = true">
@@ -73,33 +73,33 @@
               <ng-template [ngTemplateOutlet]="groupToggleBtn"
                 [ngTemplateOutletContext]="{ rowData: rowData }"></ng-template>
               <i class="pi pi-folder mr-2 group-folder-icon"></i>
-              {{ groupHeaderLabel }} {{ rowData[groupRowsBy] }}
+              {{ groupHeaderLabel() }} {{ rowData[groupRowsBy()] }}
             </span>
           </td>
         </tr>
       </ng-template>
 
       <ng-template #groupToggleBtn let-rowData="rowData">
-        @if (expandableRowGroups) {
+        @if (expandableRowGroups()) {
         <button type="button" class="group-toggle-btn"
-          (click)="toggleGroupRow(rowData[groupRowsBy]); $event.stopPropagation()">
-          <i class="pi" [ngClass]="expandedRowKeys[rowData[groupRowsBy]] ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
+          (click)="toggleGroupRow(rowData[groupRowsBy()]); $event.stopPropagation()">
+          <i class="pi" [ngClass]="expandedRowKeys[rowData[groupRowsBy()]] ? 'pi-chevron-down' : 'pi-chevron-right'"></i>
         </button>
         }
       </ng-template>
 
       <ng-template pTemplate="body" let-rowData let-columns="columns">
-        <tr *ngIf="!enableRowGroup || !expandableRowGroups || expandedRowKeys[rowData[groupRowsBy]]"
+        <tr *ngIf="!enableRowGroup() || !expandableRowGroups() || expandedRowKeys[rowData[groupRowsBy()]]"
           (click)="onRowClick($event, rowData)" (contextmenu)="onRowContextMenu($event, rowData)">
           <td *ngFor="let col of visibleColumns; trackBy: trackByField; let i = index" [style]="col.style"
             [ngClass]="{'td-actions': col.type === 'actions'}">
             @if (col.type === 'actions') {
-            @if (actionButtonsTemplate) {
-            <ng-template [ngTemplateOutlet]="actionButtonsTemplate"
+            @if (actionButtonsTemplate()) {
+            <ng-template [ngTemplateOutlet]="actionButtonsTemplate()"
               [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
             }
-            @else if (customActionsTemplate) {
-            <ng-template [ngTemplateOutlet]="customActionsTemplate"
+            @else if (customActionsTemplate()) {
+            <ng-template [ngTemplateOutlet]="customActionsTemplate()"
               [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
             }
             @else {
@@ -149,6 +149,6 @@
   (onClose)="closeMenus()">
 </app-bottom-sheet>
 
-<app-columns-modal [visible]="displayColumnsModal" [columns]="columns" [selected]="selectedColumns"
+<app-columns-modal [visible]="displayColumnsModal" [columns]="columns()" [selected]="selectedColumns"
   (onClose)="displayColumnsModal = false" (onApply)="onApplyColumns($event)">
 </app-columns-modal>

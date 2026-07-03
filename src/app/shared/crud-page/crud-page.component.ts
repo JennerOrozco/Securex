@@ -1,11 +1,14 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
   inject,
-  ContentChild,
-  TemplateRef
+  TemplateRef,
+  input,
+  output,
+  contentChild,
+  viewChild,
+  effect,
+  ChangeDetectionStrategy,
+  Input
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -53,13 +56,13 @@ export class CrudPageComponent {
    * Permite inyectar botones customizados de fila (ej: descargas, correos) desde la vista que invoca al CRUD,
    * delegándolo posteriormente a la tabla hija mediante Data Binding.
    */
-  @ContentChild('rowActionButtons') externalActionButtons!: TemplateRef<any>;
+  externalActionButtons = contentChild<TemplateRef<any>>('rowActionButtons');
 
   // ── 🛡️ CONTROL DE ACCESO / SEGURIDAD (PERMISSION GATE) ─────────────────────
   /** String identificador de la acción/permiso requerida para renderizar el módulo (ej: 'USERS_VIEW') */
-  @Input() permission = '';
+  permission = input<string>('');
   /** Mensaje de advertencia o bloqueo visual si el usuario carece del privilegio necesario */
-  @Input() permissionMessage = 'No tienes permisos para acceder a este módulo.';
+  permissionMessage = input<string>('No tienes permisos para acceder a este módulo.');
 
   private _hasPermission: boolean | null = null;
   /** Permite forzar o sobreescribir explícitamente el estado del permiso desde el componente padre */
@@ -68,68 +71,68 @@ export class CrudPageComponent {
   }
 
   // ── CONFIGURACIONES DE LA TABLA PRINCIPAL (DATA GRID INPUTS) ──────────────
-  @Input() title = '';
-  @Input() subtitle = '';
+  title = input<string>('');
+  subtitle = input<string>('');
   /** Matriz con la colección de datos planos JSON a listar */
-  @Input() data: any[] = [];
+  data = input<any[]>([]);
   /** Configuración estructural y de tipado de las columnas */
-  @Input() columns: TableColumn[] = [];
+  columns = input<TableColumn[]>([]);
   /** Estado visual de carga (Activa Skeletons o Spinners en los componentes hijos) */
-  @Input() loading = false;
-  @Input() addLabel = 'Nuevo';
-  @Input() resourceName = '';
+  loading = input<boolean>(false);
+  addLabel = input<string>('Nuevo');
+  resourceName = input<string>('');
 
   // Flags booleanos de visibilidad de operaciones básicas y extendidas
-  @Input() showAdd = true;
-  @Input() showEdit = true;
-  @Input() showDelete = true;
-  @Input() showPermissions = false;
-  @Input() showView = false;
-  @Input() showReset = false;
-  @Input() showCreate = false;
-  @Input() showDuplicate = false;
-  @Input() showPdf = false;
-  @Input() showSend = false;
-  @Input() createLabel = 'Crear';
-  @Input() createIcon = 'pi-plus';
+  showAdd = input<boolean>(true);
+  showEdit = input<boolean>(true);
+  showDelete = input<boolean>(true);
+  showPermissions = input<boolean>(false);
+  showView = input<boolean>(false);
+  showReset = input<boolean>(false);
+  showCreate = input<boolean>(false);
+  showDuplicate = input<boolean>(false);
+  showPdf = input<boolean>(false);
+  showSend = input<boolean>(false);
+  createLabel = input<string>('Crear');
+  createIcon = input<string>('pi-plus');
 
   // ── CONFIGURACIONES DE PAGINACIÓN DE SERVIDOR (LAZY MODE) ─────────────────
   /** Determina si la tabla resuelve sus operaciones en backend de forma segmentada */
-  @Input() lazy = false;
+  lazy = input<boolean>(false);
   /** Cardinalidad máxima de registros para el cálculo de páginas en el control inferior */
-  @Input() totalRecords = 0;
+  totalRecords = input<number>(0);
   /** Emite los parámetros de ordenamiento, saltos (skip) y límites (take) al backend */
-  @Output() onLazyLoad = new EventEmitter<any>();
+  onLazyLoad = output<any>();
 
   // ── CONFIGURACIONES DE TABLA JERÁRQUICA (TREE TABLE OPTIONAL) ─────────────
   /** Interruptor que define si se dibuja una tabla plana o una vista arbórea */
-  @Input() isTreeTable = false;
+  isTreeTable = input<boolean>(false);
   /** Nodos con tipado estructurado de PrimeNG que representan relaciones Padre-Hijo */
-  @Input() treeNodes: TreeNode[] = [];
+  treeNodes = input<TreeNode[]>([]);
   /** Alterna colores especiales o sangrías en las filas basadas en su profundidad de nivel */
-  @Input() colorRows = false;
-  @Input() showLegend = true;
+  colorRows = input<boolean>(false);
+  showLegend = input<boolean>(true);
   /** Habilita comportamientos de arrastrar y soltar para reestructurar el árbol */
-  @Input() dragdrop = false;
-  @Input() searchPlaceholder = 'Buscar...';
+  dragdrop = input<boolean>(false);
+  searchPlaceholder = input<string>('Buscar...');
 
   // ── FORMULARIO DINÁMICO POR METADATOS (FORM MODAL CONFIG) ─────────────────
   /** Esquema JSON que describe los controles, validaciones y layouts del formulario */
-  @Input() formFields: FormField[] = [];
-  @Input() formAddTitle = '';
-  @Input() formEditTitle = '';
+  formFields = input<FormField[]>([]);
+  formAddTitle = input<string>('');
+  formEditTitle = input<string>('');
   /** Clase CSS para el grid del formulario dinámico (default: single column) */
-  @Input() gridClass = 'flex flex-col gap-3';
+  gridClass = input<string>('flex flex-col gap-3');
   /** Carga útil con diccionarios o catálogos externos necesarios para dropdowns internos del formulario */
-  @Input() formExtraData: any = null;
+  formExtraData = input<any>(null);
   /** Estado de validación inyectado de forma externa para flujos de negocio complejos */
-  @Input() customFormValid: boolean | null = null;
+  customFormValid = input<boolean | null>(null);
   /** Callback interceptor que permite transformar el objeto de la fila antes de ser editado en el formulario */
-  @Input() mapItemForEdit: (item: any) => any = (item) => item;
+  mapItemForEdit = input<(item: any) => any>((item) => item);
 
   private _isSaving = false;
   /** Bloquea los botones del modal si los catálogos o llamadas remotas siguen en tránsito */
-  @Input() catalogLoading = false;
+  catalogLoading = input<boolean>(false);
 
   /**
    * Intercepta el estado de guardado (Efecto de persistencia en Backend).
@@ -148,41 +151,41 @@ export class CrudPageComponent {
   }
 
   // ── MODAL DE CONFIRMACIÓN DE ELIMINACIÓN (DELETE MODAL CONFIG) ────────────
-  @Input() deleteTitle = 'Eliminar Registro';
+  deleteTitle = input<string>('Eliminar Registro');
   /** Soporta un string estático o una función callback que recibe el registro activo para interpolar nombres dinámicos */
-  @Input() deleteMessage: string | ((item: any) => string) = '¿Eliminar este registro?';
-  @Input() minimalMode = false;
-  @Input() reorderableColumns = true;
+  deleteMessage = input<string | ((item: any) => string)>('¿Eliminar este registro?');
+  minimalMode = input<boolean>(false);
+  reorderableColumns = input<boolean>(true);
 
   // ── CONFIGURACIONES DE COMPORTAMIENTO GENERAL (TOGGLES) ────────────────────
   /** Desactiva por completo la evaluación de seguridad perimetral si el módulo es de acceso libre */
-  @Input() hidePermissionGate = false;
+  hidePermissionGate = input<boolean>(false);
 
   // ── FLUJO DE SALIDA DE ACCIONES COMPORTAMENTALES (OUTPUTS EMITTERS) ────────
-  @Output() onAdd = new EventEmitter<void>();
-  @Output() onEdit = new EventEmitter<any>();
-  @Output() onDelete = new EventEmitter<any>();
-  @Output() onPermissions = new EventEmitter<any>();
-  @Output() onView = new EventEmitter<any>();
-  @Output() onReset = new EventEmitter<any>();
-  @Output() onPdf = new EventEmitter<any>();
-  @Output() onSend = new EventEmitter<any>();
-  @Output() onCreate = new EventEmitter<any>();
-  @Output() onDuplicate = new EventEmitter<any>();
+  onAdd = output<void>();
+  onEdit = output<any>();
+  onDelete = output<any>();
+  onPermissions = output<any>();
+  onView = output<any>();
+  onReset = output<any>();
+  onPdf = output<any>();
+  onSend = output<any>();
+  onCreate = output<any>();
+  onDuplicate = output<any>();
   /** Notifica al padre la confirmación del formulario enviando el modo operacional junto con el Payload del JSON editado */
-  @Output() onSave = new EventEmitter<{ mode: 'add' | 'edit'; data: any }>();
-  @Output() onConfirmDelete = new EventEmitter<any>();
-  @Output() onRefresh = new EventEmitter<void>();
-  @Output() onColReorder = new EventEmitter<any>();
-  @Output() onCloseModal = new EventEmitter<void>();
-  @Output() onSelectGridEmptyFilter = new EventEmitter<string>();
+  onSave = output<{ mode: 'add' | 'edit'; data: any }>();
+  onConfirmDelete = output<any>();
+  onRefresh = output<void>();
+  onColReorder = output<any>();
+  onCloseModal = output<void>();
+  onSelectGridEmptyFilter = output<string>();
 
   // ── EVENTOS EXCLUSIVOS PARA ESTRUCTURAS JERÁRQUICAS (TREE TABLE OUTPUTS) ──
-  @Output() onAddRoot = new EventEmitter<void>();
-  @Output() onAddChild = new EventEmitter<number>();
-  @Output() onFilter = new EventEmitter<string>();
-  @Output() onFilterType = new EventEmitter<string>();
-  @Output() onNodeReorder = new EventEmitter<any>();
+  onAddRoot = output<void>();
+  onAddChild = output<number>();
+  onFilter = output<string>();
+  onFilterType = output<string>();
+  onNodeReorder = output<any>();
 
   // ── 📑 MÁQUINA DE ESTADOS INTERNOS (INTERNAL CONTEXT STATE) ────────────────
   /** Flag unificado que controla la apertura o cierre de los modales en pantalla */
@@ -196,31 +199,32 @@ export class CrudPageComponent {
   /** Evalúa si el usuario cuenta con accesos. Prioriza overrides manuales, de lo contrario consulta al AuthService */
   get hasPermission(): boolean {
     if (this._hasPermission !== null) return this._hasPermission;
-    if (!this.permission) return true;
-    return this.authService.checkPermission(this.permission);
+    if (!this.permission()) return true;
+    return this.authService.checkPermission(this.permission());
   }
 
   /** Ejecuta la función de mensaje dinámico de borrado o retorna el string plano configurado */
   get resolvedDeleteMessage(): string {
-    if (typeof this.deleteMessage === 'function') {
-      return this.deleteMessage(this.selectedItem);
+    if (typeof this.deleteMessage() === 'function') {
+      const msg = this.deleteMessage();
+      return typeof msg === 'function' ? msg(this.selectedItem) : msg;
     }
-    if (this.resourceName) {
-      return `¿Está seguro de eliminar este(a) ${this.resourceName.toLowerCase()}? Esta acción es <strong>permanente</strong> y no puede deshacerse.`;
+    if (this.resourceName()) {
+      return `¿Está seguro de eliminar este(a) ${this.resourceName().toLowerCase()}? Esta acción es <strong>permanente</strong> y no puede deshacerse.`;
     }
-    return this.deleteMessage as string;
+    return this.deleteMessage() as string;
   }
 
   get resolvedDeleteTitle(): string {
-    return this.resourceName ? `Eliminar ${this.resourceName}` : this.deleteTitle;
+    return this.resourceName() ? `Eliminar ${this.resourceName()}` : this.deleteTitle();
   }
 
   get resolvedFormAddTitle(): string {
-    return this.resourceName ? `Nuevo ${this.resourceName}` : this.formAddTitle;
+    return this.resourceName() ? `Nuevo ${this.resourceName()}` : this.formAddTitle();
   }
 
   get resolvedFormEditTitle(): string {
-    return this.resourceName ? `Editar ${this.resourceName}` : this.formEditTitle;
+    return this.resourceName() ? `Editar ${this.resourceName()}` : this.formEditTitle();
   }
 
   get resolvedFormTitle(): string {
@@ -261,7 +265,7 @@ export class CrudPageComponent {
   /** Abre el formulario en modalidad de edición aplicando previamente la función de mapeo (si existe) */
   handleEdit(item: any): void {
     this.modalMode = 'edit';
-    this.selectedItem = this.mapItemForEdit(item);
+    this.selectedItem = this.mapItemForEdit()(item);
     this.modalVisible = true;
     this.onEdit.emit(item);
   }

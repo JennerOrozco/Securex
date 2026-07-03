@@ -1,16 +1,17 @@
 import {
   Component,
   OnInit,
-  OnChanges,
-  SimpleChanges,
-  Input,
-  Output,
-  EventEmitter,
-  ContentChild,
   TemplateRef,
-  ViewChild,
   ChangeDetectionStrategy,
-  inject
+  inject,
+  input,
+  output,
+  contentChild,
+  viewChild,
+  effect,
+  SimpleChanges,
+  OutputEmitterRef,
+  EventEmitter
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -102,7 +103,27 @@ export type { TableColumn };
   `],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TableComponent extends BaseTableDirective implements OnInit, OnChanges {
+export class TableComponent extends BaseTableDirective implements OnInit {
+  constructor() {
+    super();
+    effect(() => {
+      const cols = this.columns();
+      this.selectedColumns = [...cols];
+    }, { allowSignalWrites: true });
+
+    effect(() => {
+      const d = this.data();
+      if (this.enableRowGroup() && this.expandableRowGroups() && this.groupRowsBy() && d?.length) {
+        const keys: Record<string, boolean> = {};
+        d.forEach(row => {
+          const val = row[this.groupRowsBy()];
+          if (val != null) keys[String(val)] = true;
+        });
+        this.expandedRowKeys = keys;
+      }
+    }, { allowSignalWrites: true });
+  }
+
   // ── SERVICIOS INYECTADOS (ANGULAR FUNCTIONAL INJECTION) ────────────────────
   /** Servicio global de PrimeNG para registro dinámico de algoritmos de filtrado custom */
   private readonly filterService = inject(FilterService);
@@ -111,82 +132,82 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
 
   // ── INPUTS ESENCIALES DE CONTROL DE DATOS Y ESTRUCTURA ─────────────────────
   /** Fuente de datos principal de la tabla (Colección de objetos planos JSON) */
-  @Input() data: any[] = [];
+  data = input<any[] >([]);
   /** Configuración de metadatos de las columnas (Tipos, alineaciones, visibilidad, etc.) */
-  @Input() columns: TableColumn[] = [];
+  columns = input<TableColumn[] >([]);
   /** Campos del objeto de datos permitidos para la evaluación del filtro de búsqueda global */
-  @Input() globalFilterFields: string[] = ['name'];
+  globalFilterFields = input<string[] >(['name']);
   /** Opciones del selector del paginador para cambiar el límite de registros por página */
-  @Input() rowsPerPageOptions: number[] = [5, 10, 20, 50];
+  rowsPerPageOptions = input<number[] >([5, 10, 20, 50]);
   /** Activa el coloreado alternado (cebreado) en las filas de la tabla */
-  @Input() stripedRows = true;
+  stripedRows = input<boolean>(true);
   /** Modo minimalista: Compacta márgenes y paddings para layouts embebidos o dashboards estrechos */
-  @Input() minimalMode = false;
+  minimalMode = input<boolean>(false);
 
   /** * PUENTE INTER-COMPONENTE ESENCIAL:
    * Recibe una referencia de plantilla (`TemplateRef`) inyectada jerárquicamente por el CRUD-Page padre.
    * Si este Input viene poblado, el HTML anulará los botones por defecto y pintará esta estructura.
    */
-  @Input() actionButtonsTemplate: TemplateRef<any> | null = null;
+  actionButtonsTemplate = input<TemplateRef<any> | null >(null);
 
   // ── PERMISOS Y VISIBILIDAD DE ACCIONES BASE ───────────────────────────────
-  @Input() showAdd = true;
-  @Input() showEdit = true;
-  @Input() showDelete = true;
+  showAdd = input<boolean>(true);
+  showEdit = input<boolean>(true);
+  showDelete = input<boolean>(true);
 
   // ── PAGINACIÓN EN SERVIDOR (LAZY LOADING) ──────────────────────────────────
   /** Define si la ordenación, filtrado y paginación se resuelven en Backend (true) o en memoria (false) */
-  @Input() lazy = false;
+  lazy = input<boolean>(false);
   /** Totalizador de registros en base de datos. Mandatorio cuando 'lazy' es true para pintar el paginador */
-  @Input() totalRecords = 0;
+  totalRecords = input<number>(0);
 
   // ── COMPORTAMIENTOS SECUNDARIOS Y ENTORNOS MÓVILES (ACCIONES ADICIONALES) ──
-  @Input() showCreate = false;
-  @Input() createLabel = 'Crear';
-  @Input() createIcon = 'pi-plus';
-  @Input() showView = false;
-  @Input() viewLabel = 'Visualizar';
-  @Input() viewIcon = 'pi-eye';
-  @Input() showPdf = false;
-  @Input() showSend = false;
-  @Input() showDuplicate = false;
-  @Input() showPermissions = false;
-  @Input() showActivate = false;
-  @Input() showSelect = false;
-  @Input() showReset = false;
+  showCreate = input<boolean>(false);
+  createLabel = input<string>('Crear');
+  createIcon = input<string>('pi-plus');
+  showView = input<boolean>(false);
+  viewLabel = input<string>('Visualizar');
+  viewIcon = input<string>('pi-eye');
+  showPdf = input<boolean>(false);
+  showSend = input<boolean>(false);
+  showDuplicate = input<boolean>(false);
+  showPermissions = input<boolean>(false);
+  showActivate = input<boolean>(false);
+  showSelect = input<boolean>(false);
+  showReset = input<boolean>(false);
 
   // ── LOGICA DE AGRUPACIÓN NATIVA DE FILAS (ROW GROUPING) ────────────────────
   /** Activa la visualización por sub-cabeceras agrupadas */
-  @Input() enableRowGroup = false;
+  enableRowGroup = input<boolean>(false);
   /** Nombre del campo/propiedad de la fila por el cual se agruparán los elementos visuales */
-  @Input() groupRowsBy = '';
+  groupRowsBy = input<string>('');
   /** Prefijo textual que se antepondrá al valor agrupado en la sub-cabecera */
-  @Input() groupHeaderLabel = '';
+  groupHeaderLabel = input<string>('');
   /** Habilita la visualización de un botón secundario para agregar hijos dentro del grupo */
-  @Input() showAddChild = false;
+  showAddChild = input<boolean>(false);
   /** Determina si las filas de los grupos pueden colapsarse/expandirse interactivamente */
-  @Input() expandableRowGroups = false;
+  expandableRowGroups = input<boolean>(false);
 
   // ── SISTEMA DE EVENTOS DE SALIDA (OUTPUT EMITTERS) ────────────────────────
-  @Output() onAdd = new EventEmitter<void>();
-  @Output() onAddChild = new EventEmitter<any>();
-  @Output() onCreate = new EventEmitter<any>();
-  @Output() onAction = new EventEmitter<{ type: string; data: any }>();
-  @Output() onView = new EventEmitter<any>();
-  @Output() onPdf = new EventEmitter<any>();
-  @Output() onSend = new EventEmitter<any>();
-  @Output() onDuplicate = new EventEmitter<any>();
-  @Output() onPermissions = new EventEmitter<any>();
-  @Output() onActivate = new EventEmitter<any>();
-  @Output() onSelect = new EventEmitter<any>();
-  @Output() onReset = new EventEmitter<any>();
-  @Output() onLazyLoad = new EventEmitter<any>();
+  onAdd = output<void>();
+  onAddChild = output<any>();
+  onCreate = output<any>();
+  onAction = output<{ type: string; data: any }>();
+  onView = output<any>();
+  onPdf = output<any>();
+  onSend = output<any>();
+  onDuplicate = output<any>();
+  onPermissions = output<any>();
+  onActivate = output<any>();
+  onSelect = output<any>();
+  onReset = output<any>();
+  onLazyLoad = output<any>();
 
   // ── SELECTORES INTERNOS DE DOM (QUERIES DE PLANTILLAS Y CONTENIDOS) ────────
   /** Captura fragmentos HTML/Botones inyectados de manera directa mediante ng-content local */
-  @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
+  customActionsTemplate = contentChild<TemplateRef<any>>('customActions');
   /** Referencia nativa al componente p-table de PrimeNG para invocar su API de filtrado y ordenación */
-  @ViewChild('dt') dataTable!: Table;
+  dataTable = viewChild<Table>('dt');
 
   // ── VARIABLES DE ESTADO LOCAL INTERNO ──────────────────────────────────────
   /** Almacena colecciones de elementos seleccionados mediante Checkbox multimodo */
@@ -219,43 +240,43 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
    */
   get contextMenuItems(): ActionItem[] {
     return [
-      { action: 'select', label: 'Seleccionar', icon: 'pi pi-check-circle', iconClass: 'select', visible: this.showSelect },
-      { action: 'create', label: this.createLabel, icon: this.createIcon, iconClass: 'create', visible: this.showCreate },
-      { action: 'view', label: this.viewLabel, icon: this.viewIcon, iconClass: 'view', visible: this.showView },
-      { action: 'edit', label: 'Editar', icon: 'pi pi-pencil', iconClass: 'edit', visible: this.showEdit },
-      { action: 'pdf', label: 'Descargar PDF', icon: 'pi pi-file-pdf', iconClass: 'pdf', visible: this.showPdf },
-      { action: 'send', label: 'Enviar Correo', icon: 'pi pi-send', iconClass: 'send', visible: this.showSend },
-      { action: 'duplicate', label: 'Duplicar', icon: 'pi pi-copy', iconClass: 'duplicate', visible: this.showDuplicate },
-      { action: 'permissions', label: 'Permisos', icon: 'pi pi-shield', iconClass: 'perm', visible: this.showPermissions },
-      { action: 'reset', label: 'Restablecer contraseña', icon: 'pi pi-key', iconClass: 'reset', visible: this.showReset },
-      { action: 'delete', label: 'Eliminar', icon: 'pi pi-trash', iconClass: 'del', danger: true, visible: this.showDelete },
+      { action: 'select', label: 'Seleccionar', icon: 'pi pi-check-circle', iconClass: 'select', visible: this.showSelect() },
+      { action: 'create', label: this.createLabel(), icon: this.createIcon(), iconClass: 'create', visible: this.showCreate() },
+      { action: 'view', label: this.viewLabel(), icon: this.viewIcon(), iconClass: 'view', visible: this.showView() },
+      { action: 'edit', label: 'Editar', icon: 'pi pi-pencil', iconClass: 'edit', visible: this.showEdit() },
+      { action: 'pdf', label: 'Descargar PDF', icon: 'pi pi-file-pdf', iconClass: 'pdf', visible: this.showPdf() },
+      { action: 'send', label: 'Enviar Correo', icon: 'pi pi-send', iconClass: 'send', visible: this.showSend() },
+      { action: 'duplicate', label: 'Duplicar', icon: 'pi pi-copy', iconClass: 'duplicate', visible: this.showDuplicate() },
+      { action: 'permissions', label: 'Permisos', icon: 'pi pi-shield', iconClass: 'perm', visible: this.showPermissions() },
+      { action: 'reset', label: 'Restablecer contraseña', icon: 'pi pi-key', iconClass: 'reset', visible: this.showReset() },
+      { action: 'delete', label: 'Eliminar', icon: 'pi pi-trash', iconClass: 'del', danger: true, visible: this.showDelete() },
     ];
   }
 
   /** Simplifica el paso de configuraciones Boolean de permisos masivos hacia el componente interno de renderizado de botones */
   get tableActionsConfig(): TableActionsConfig {
     return {
-      select: this.showSelect,
-      addChild: this.showAddChild,
-      create: this.showCreate,
-      createLabel: this.createLabel,
-      createIcon: this.createIcon,
-      view: this.showView,
-      edit: this.showEdit,
-      pdf: this.showPdf,
-      send: this.showSend,
-      duplicate: this.showDuplicate,
-      permissions: this.showPermissions,
-      activate: this.showActivate,
-      delete: this.showDelete,
-      reset: this.showReset,
+      select: this.showSelect(),
+      addChild: this.showAddChild(),
+      create: this.showCreate(),
+      createLabel: this.createLabel(),
+      createIcon: this.createIcon(),
+      view: this.showView(),
+      edit: this.showEdit(),
+      pdf: this.showPdf(),
+      send: this.showSend(),
+      duplicate: this.showDuplicate(),
+      permissions: this.showPermissions(),
+      activate: this.showActivate(),
+      delete: this.showDelete(),
+      reset: this.showReset(),
     };
   }
 
   // ── CICLOS DE VIDA DEL COMPONENTE (LIFECYCLE HOOKS) ────────────────────────
   ngOnInit(): void {
     // Inicializa la configuración de columnas haciendo una copia por valor del input original
-    this.selectedColumns = [...this.columns];
+    this.selectedColumns = [...this.columns()];
     // Evalúa si hay agrupaciones pre-definidas que requieran nacer expandidas
     this._initExpandedGroups();
     // Parsea e inyecta filtros avanzados para mitigar crashes por formatos de fecha ISO string
@@ -269,14 +290,14 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
     }
     // Si las columnas entran de forma asíncrona (ej: Promise/Lazy Loading), actualizar selectedColumns
     if (changes['columns']) {
-      this.selectedColumns = [...this.columns];
+      this.selectedColumns = [...this.columns()];
     }
   }
 
   // ── MÉTODOS PÚBLICOS / MANEJADORES DE ACCIÓN E INTERFACES ──────────────────
   /** Dispara el filtro global unificado en la instancia nativa del PrimeNG DataTable */
   filterGlobal(searchValue: string): void {
-    this.dataTable.filterGlobal(searchValue, 'contains');
+    this.dataTable()?.filterGlobal(searchValue, 'contains');
   }
 
   /** Callback ejecutado por el modal selector de columnas para guardar la nueva visibilidad de la grilla */
@@ -309,7 +330,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
 
     if (!target) return;
 
-    const actionsMap: Record<string, EventEmitter<any>> = {
+    const actionsMap: Record<string, any> = {
       create: this.onCreate,
       view: this.onView,
       pdf: this.onPdf,
@@ -347,10 +368,10 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   // ── FUNCIONES INTERNAS PRIVADAS DE CONFIGURACIÓN Y PARSEO ──────────────────
   /** Escanea la colección de filas inicial e inicializa el mapa de llaves para expandir visualmente los grupos */
   private _initExpandedGroups(): void {
-    if (this.enableRowGroup && this.expandableRowGroups && this.groupRowsBy && this.data?.length) {
+    if (this.enableRowGroup() && this.expandableRowGroups() && this.groupRowsBy() && this.data()?.length) {
       const keys: Record<string, boolean> = {};
-      this.data.forEach(row => {
-        const val = row[this.groupRowsBy];
+      this.data().forEach(row => {
+        const val = row[this.groupRowsBy()];
         if (val != null) keys[String(val)] = true;
       });
       this.expandedRowKeys = keys;

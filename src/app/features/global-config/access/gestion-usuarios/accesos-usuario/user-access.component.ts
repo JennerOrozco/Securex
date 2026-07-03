@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
@@ -16,6 +16,7 @@ import { catchError } from 'rxjs/operators';
   standalone: true,
   imports: [CommonModule, CrudPageComponent],
   templateUrl: './user-access.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserAccessComponent implements OnInit {
   private userService         = inject(UserService);
@@ -24,13 +25,13 @@ export class UserAccessComponent implements OnInit {
   private authService         = inject(AuthService);
   private notificationService = inject(NotificationService);
 
-  records: any[]            = [];
-  loading                   = false;
-  isSaving                  = false;
-  currentAppId:     number | null = null;
-  currentCompanyId: number | null = null;
-  formInitialData: any      = {};
-  formFields: FormField[]   = [];
+  records = signal<any[]>([]);
+  loading = signal(false);
+  isSaving = signal(false);
+  currentAppId = signal<number | null>(null);
+  currentCompanyId = signal<number | null>(null);
+  formInitialData = signal<any>({});
+  formFields = signal<FormField[]>([]);
 
   private cachedUserOpts:   { label: string; value: any }[] = [];
   private cachedBranchOpts: { label: string; value: any }[] = [];
@@ -53,18 +54,18 @@ export class UserAccessComponent implements OnInit {
   ngOnInit() { this.load(); }
 
   private buildFormFields() {
-    this.formFields = [
+    this.formFields.set([
       { name: 'app_name',     label: 'Aplicación', type: 'text',   required: true,  disabled: true },
       { name: 'company_name', label: 'Compañía',   type: 'text',   required: true,  disabled: true },
       { name: 'user_id',      label: 'Usuario',    type: 'select', required: true,  options: this.cachedUserOpts   },
       { name: 'branch_id',    label: 'Sucursal',   type: 'select', required: false, options: this.cachedBranchOpts },
       { name: 'role_id',      label: 'Rol',        type: 'select', required: true,  options: this.cachedRoleOpts   },
-      { name: 'status',       label: 'Estado',     type: 'select', required: true,  options: this.statusOptions    }
-    ];
+      { name: 'status',       label: 'Estado',     type: 'select', required: true,  options: this.statusOptions
+    }]);
   }
 
   load() {
-    this.loading = true;
+    this.loading.set(true);
 
     // Paso 1: datos de página (accesos, usuarios, apps, compañías, sucursales)
     this.userService.getUserAccessPageData().subscribe({
@@ -76,26 +77,26 @@ export class UserAccessComponent implements OnInit {
         const branches     = data?.branches?.data     ?? [];
 
         // Mapear registros de la tabla
-        this.records = userAccesses.map((item: any) => ({
+        this.records.set(userAccesses.map((item: any) => ({
           ...item,
           user_name:    item.user?.full_name || item.user_id,
           app_name:     item.app?.name       || item.app_id,
           company_name: item.company?.name   || item.company_id
-        }));
+        })));
 
         // Resolver app y compañía activas
         const currentApp     = apps.find((a: any) => a.uuid === this.configService.appUuid);
         const currentCompany = this.authService.currentCompany();
         const matchedCompany = companies.find((c: any) => c.uuid === currentCompany?.uuid);
 
-        this.currentAppId     = currentApp     ? currentApp.id     : null;
-        this.currentCompanyId = matchedCompany ? matchedCompany.id : null;
+        this.currentAppId.set(currentApp ? currentApp.id : null);
+        this.currentCompanyId.set(matchedCompany ? matchedCompany.id : null);
 
         // Datos pre-cargados en el formulario (app y compañía fijas/bloqueadas)
-        this.formInitialData = {
+        this.formInitialData.set({
           app_name:     currentApp?.name     || '',
           company_name: matchedCompany?.name || ''
-        };
+        });
 
         // Opciones de usuarios
         this.cachedUserOpts = users.map((u: any) => ({ label: u.full_name || u.email, value: u.id }));
@@ -108,8 +109,8 @@ export class UserAccessComponent implements OnInit {
         // Paso 2: roles de la compañía pre-cargada via query dedicada
         // getRolesByCompany obtiene TODOS los roles asignados a esta compañía
         // sin depender del contexto del servidor que puede scopear USER_ACCESS_PAGE.roles
-        const rolesObs = (this.currentAppId && currentCompany?.uuid)
-          ? this.roleService.getRolesByCompany(this.currentAppId, currentCompany.uuid)
+        const rolesObs = (this.currentAppId() && currentCompany?.uuid)
+          ? this.roleService.getRolesByCompany(this.currentAppId()!, currentCompany.uuid)
               .pipe(catchError(() => of([])))
           : of([]);
 
@@ -118,23 +119,23 @@ export class UserAccessComponent implements OnInit {
             this.cachedRoleOpts = (roles || [])
               .map((r: any) => ({ label: r.name, value: r.id }));
             this.buildFormFields();
-            this.loading = false;
+            this.loading.set(false);
           },
           error: () => {
             this.buildFormFields();
-            this.loading = false;
+            this.loading.set(false);
           }
         });
       },
-      error: () => (this.loading = false)
+      error: () => (this.loading.set(false))
     });
   }
 
   save(e: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
+    this.isSaving.set(true);
     if (e.mode === 'add') {
-      e.data.app_id     = this.currentAppId;
-      e.data.company_id = this.currentCompanyId;
+      e.data.app_id = this.currentAppId();
+      e.data.company_id = this.currentCompanyId();
     }
     delete e.data.app_name;
     delete e.data.company_name;
@@ -147,21 +148,21 @@ export class UserAccessComponent implements OnInit {
       next: () => {
         this.notificationService.success(`Acceso ${e.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
         this.load();
-        this.isSaving = false;
+        this.isSaving.set(false);
       },
-      error: () => (this.isSaving = false)
+      error: () => (this.isSaving.set(false))
     });
   }
 
   confirmDelete(item: any) {
-    this.isSaving = true;
+    this.isSaving.set(true);
     this.userService.deleteUserAccessGql(item.uuid).subscribe({
       next: () => {
         this.notificationService.success('Acceso eliminado');
         this.load();
-        this.isSaving = false;
+        this.isSaving.set(false);
       },
-      error: () => (this.isSaving = false)
+      error: () => (this.isSaving.set(false))
     });
   }
 }

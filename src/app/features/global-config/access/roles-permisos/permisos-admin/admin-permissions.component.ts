@@ -2,12 +2,10 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { TableColumn } from '@shared/table-shared/shared/table.types';
-import { AppService } from '@core/services/app.service';
 import { PermissionService } from '@core/services/permission.service';
 import { AuthService } from '@core/services/auth.service';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
-import { NotificationService } from '@core/services/notification.service';
-import { TreeNode } from 'primeng/api';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { mapToTreeNodes } from '@shared/utils/tree-utils';
 
 @Component({
@@ -15,21 +13,12 @@ import { mapToTreeNodes } from '@shared/utils/tree-utils';
   standalone: true,
   imports: [CommonModule, CrudPageComponent],
   templateUrl: './admin-permissions.component.html',
-
+  providers: [UnifiedCrudService]
 })
 export class AdminPermissionsComponent implements OnInit {
-  private appService = inject(AppService);
   private permissionService = inject(PermissionService);
   private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
-
-  apps: any[] = [];
-  permissions: any[] = [];
-  treeNodes: TreeNode[] = [];
-  loading = false;
-  isSaving = false;
-
-  currentAppId: number | null = null;
+  crud = inject(UnifiedCrudService);
 
   formFields: FormField[] = [
     { name: 'name', label: 'Nombre', type: 'text', required: true, icon: 'pi pi-tag' },
@@ -58,79 +47,31 @@ export class AdminPermissionsComponent implements OnInit {
 
   ngOnInit() {
     if (this.hasPermission) {
-      this.load();
+      this.crud.initialize({
+        resourceName: 'Permiso',
+        isTreeMode: true,
+        fnFetchTree: () => this.permissionService.getAdminPermissionsGql(),
+        fnCreate: (data: any) => this.permissionService.createPermissionGql(data),
+        fnUpdate: (id: string, data: any) => this.permissionService.updatePermissionGql(id, data),
+        fnDelete: (id: string) => this.permissionService.deletePermissionGql(id),
+        mapTreeFn: (items: any[]) => {
+          return mapToTreeNodes(items, {
+            canAdd: (p: any) => p.type !== 'ACTION' && p.type !== 'COMPONENT',
+            canEdit: (p: any) => p.type !== 'APP',
+            canDelete: (p: any) => p.type !== 'APP',
+            label: (p: any) => p.name,
+            icon: (p: any) =>
+              p.type === 'APP'       ? 'pi pi-box'       :
+              p.type === 'MENU'      ? 'pi pi-th-large'  :
+              p.type === 'SUBMENU'   ? 'pi pi-folder'    :
+              p.type === 'ACTION'    ? 'pi pi-tag'       :
+                                        'pi pi-cog',
+            leaf: (p: any) => !p.children || p.children.length === 0,
+            expanded: (p: any) => p.type === 'APP'
+          });
+        }
+      });
+      this.crud.load();
     }
-  }
-
-  load() {
-    this.loading = true;
-    this.loadPermissions();
-  }
-
-  private loadPermissions() {
-    this.permissionService.getAdminPermissionsGql().subscribe({
-      next: (res: any) => {
-        this.permissions = res || [];
-        this.buildTree();
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
-  }
-
-  private buildTree() {
-    this.treeNodes = mapToTreeNodes(this.permissions, {
-      canAdd: (p) => p.type !== 'ACTION' && p.type !== 'COMPONENT',
-      canEdit: (p) => p.type !== 'APP',
-      canDelete: (p) => p.type !== 'APP',
-      label: (p) => p.name,
-      icon: (p) =>
-        p.type === 'APP'       ? 'pi pi-box'       :
-        p.type === 'MENU'      ? 'pi pi-th-large'  :
-        p.type === 'SUBMENU'   ? 'pi pi-folder'    :
-        p.type === 'ACTION'    ? 'pi pi-tag'       :
-                                  'pi pi-cog',
-      leaf: (p) => !p.children || p.children.length === 0,
-      expanded: (p) => p.type === 'APP'
-    });
-  }
-
-  setRootAdd() {
-    this.currentAppId = null;
-  }
-
-  setChildAdd(parentId: number) {
-    this.currentAppId = parentId;
-  }
-
-  handleSave(event: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
-    if (event.mode === 'add') {
-      event.data.parent_id = this.currentAppId;
-    }
-    const obs = event.mode === 'add'
-      ? this.permissionService.createPermissionGql(event.data)
-      : this.permissionService.updatePermissionGql(event.data.uuid, event.data);
-
-    obs.subscribe({
-      next: () => {
-        this.notificationService.success(`Permiso ${event.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
-  }
-
-  handleDelete(item: any) {
-    this.isSaving = true;
-    this.permissionService.deletePermissionGql(item.uuid).subscribe({
-      next: () => {
-        this.notificationService.success('Permiso eliminado');
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
   }
 }

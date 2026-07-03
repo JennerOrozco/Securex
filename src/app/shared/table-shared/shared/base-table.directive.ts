@@ -1,4 +1,14 @@
-import { Directive, Input, Output, EventEmitter, HostListener, inject, Renderer2 } from '@angular/core';
+import {
+  Directive,
+  HostListener,
+  inject,
+  Renderer2,
+  input,
+  output,
+  contentChild,
+  viewChild,
+  effect
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { TableColumn } from './table.types';
 import { ActionItem } from '../../components/action-menu.types';
@@ -20,19 +30,19 @@ export abstract class BaseTableDirective {
   protected document = inject(DOCUMENT);
 
   // --- Propiedades de Configuración (Inputs) ---
-  @Input() title: string = '';
-  @Input() subtitle: string = '';
-  @Input() loading: boolean = false;
-  @Input() scrollHeight: string = 'calc(100vh - 300px)';
-  @Input() rows: number = 10;
-  @Input() addLabel: string = 'Añadir';
-  @Input() searchPlaceholder: string = 'Buscar...';
-  @Input() reorderableColumns: boolean = true;
+  title = input<string >('');
+  subtitle = input<string >('');
+  loading = input<boolean >(false);
+  scrollHeight = input<string >('calc(100vh - 300px)');
+  rows = input<number >(10);
+  addLabel = input<string >('Añadir');
+  searchPlaceholder = input<string >('Buscar...');
+  reorderableColumns = input<boolean >(true);
 
   // --- Eventos (Outputs) ---
-  @Output() onEdit = new EventEmitter<any>();
-  @Output() onDelete = new EventEmitter<any>();
-  @Output() onColReorder = new EventEmitter<any>();
+  onEdit = output<any>();
+  onDelete = output<any>();
+  onColReorder = output<any>();
 
   // --- Estado Interno de Menús ---
   contextMenuVisible = false;

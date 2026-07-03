@@ -69,9 +69,16 @@ export class MobileNavComponent implements OnInit {
   activeIndex = computed(() => {
     const url = this.currentUrl();
     const items = this.visibleMenuItems();
+    if (!url || !items) return -1;
+    
+    // Exact match primero
+    let idx = items.findIndex(item => item.path && url === item.path);
+    if (idx !== -1) return idx;
+
+    // Start match secundario
     return items.findIndex(item => {
-      if (!item.path) return false;
-      return url === item.path || (item.path !== '/' && url.startsWith(item.path + '/'));
+      if (!item.path || item.path === '/') return false;
+      return url.startsWith(item.path + '/');
     });
   });
 

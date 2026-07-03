@@ -5,7 +5,6 @@ import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { CompanyService } from '@core/services/company.service';
-import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { map, tap } from 'rxjs/operators';
 
 export const globalConfigRoutes: Routes = [
@@ -42,12 +41,10 @@ export const globalConfigRoutes: Routes = [
       addLabel: 'Nueva Compañía',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`,
       fnFetch: () => {
-        const crud = inject(UnifiedCrudService);
         return inject(CompanyService).getCompaniesPageData().pipe(
           map((data: any) => {
             const apps = data?.apps?.data ?? [];
             const companies = data?.companies?.data ?? [];
-            crud.catalogItems.update(c => ({ ...c, apps }));
             return apps.map((app: any) => ({
               data: { ...app, name: app.name, type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false, icon: 'pi pi-th-large' },
               expanded: true,
@@ -57,6 +54,10 @@ export const globalConfigRoutes: Routes = [
             }));
           })
         );
+      },
+      fnCatalogs: () => {
+        const appService = inject(AppService);
+        return { apps: () => appService.getAppsWithCompanies() };
       },
       fnCreate: (data: any) => inject(CompanyService).createCompanyGql(data),
       fnUpdate: (id: string, data: any) => inject(CompanyService).updateCompanyGql(id, data),
@@ -93,12 +94,10 @@ export const globalConfigRoutes: Routes = [
       addLabel: 'Nueva Sucursal',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`,
       fnFetch: () => {
-        const crud = inject(UnifiedCrudService);
         return inject(CompanyService).getBranchesPageData().pipe(
           map((data: any) => {
             const companies = data?.companies?.data ?? [];
             const branches = data?.branches?.data ?? [];
-            crud.catalogItems.update(c => ({ ...c, companies }));
             return companies.map((company: any) => ({
               data: { ...company, name: company.name, type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false, icon: 'pi pi-building' },
               expanded: true,
@@ -108,6 +107,10 @@ export const globalConfigRoutes: Routes = [
             }));
           })
         );
+      },
+      fnCatalogs: () => {
+        const companyService = inject(CompanyService);
+        return { companies: () => companyService.getCompanies() };
       },
       fnCreate: (data: any) => inject(CompanyService).createBranchGql(data),
       fnUpdate: (id: string, data: any) => inject(CompanyService).updateBranchGql(id, data),

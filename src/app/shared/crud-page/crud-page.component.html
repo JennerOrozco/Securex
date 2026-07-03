@@ -1,18 +1,18 @@
 <div class="gm-crud-page-container">
   <div class="content-card">
-    <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
+    <div *ngIf="!hidePermissionGate() && !hasPermission" class="access-denied">
       <i class="pi pi-lock"></i>
       <h2>Acceso restringido</h2>
-      <p>{{ permissionMessage }}</p>
+      <p>{{ permissionMessage() }}</p>
     </div>
 
-    <ng-container *ngIf="hidePermissionGate || hasPermission">
-      <app-table-component *ngIf="!isTreeTable" [title]="title" [subtitle]="subtitle" [data]="data" [columns]="columns"
-        [loading]="loading" [showAdd]="showAdd" [showEdit]="showEdit" [showDelete]="showDelete"
-        [showPermissions]="showPermissions" [showView]="showView" [showReset]="showReset" [showCreate]="showCreate"
-        [showDuplicate]="showDuplicate" [showPdf]="showPdf" [showSend]="showSend" [createLabel]="createLabel" [createIcon]="createIcon"
-        [minimalMode]="minimalMode" [reorderableColumns]="reorderableColumns" [addLabel]="addLabel" [lazy]="lazy"
-        [totalRecords]="totalRecords" [actionButtonsTemplate]="externalActionButtons"
+    <ng-container *ngIf="hidePermissionGate() || hasPermission">
+      <app-table-component *ngIf="!isTreeTable()" [title]="title()" [subtitle]="subtitle()" [data]="data()" [columns]="columns()"
+        [loading]="loading()" [showAdd]="showAdd()" [showEdit]="showEdit()" [showDelete]="showDelete()"
+        [showPermissions]="showPermissions()" [showView]="showView()" [showReset]="showReset()" [showCreate]="showCreate()"
+        [showDuplicate]="showDuplicate()" [showPdf]="showPdf()" [showSend]="showSend()" [createLabel]="createLabel()" [createIcon]="createIcon()"
+        [minimalMode]="minimalMode()" [reorderableColumns]="reorderableColumns()" [addLabel]="addLabel()" [lazy]="lazy()"
+        [totalRecords]="totalRecords()" [actionButtonsTemplate]="externalActionButtons() || null"
         (onLazyLoad)="onLazyLoad.emit($event)" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
         (onDelete)="handleDelete($event)" (onPermissions)="onPermissions.emit($event)" (onView)="onView.emit($event)"
         (onReset)="onReset.emit($event)" (onCreate)="onCreate.emit($event)" (onDuplicate)="onDuplicate.emit($event)"
@@ -21,10 +21,10 @@
         <ng-content select="[custom-toolbar-actions]"></ng-content>
       </app-table-component>
 
-      <app-tree-table-component *ngIf="isTreeTable" [title]="title" [subtitle]="subtitle" [nodes]="treeNodes"
-        [columns]="columns" [loading]="loading" [showAdd]="showAdd" [addLabel]="addLabel" [showLegend]="showLegend"
-        [colorRows]="colorRows" [reorderableColumns]="reorderableColumns" [dragdrop]="dragdrop"
-        [searchPlaceholder]="searchPlaceholder" (onAddRoot)="handleTreeAddRoot()"
+      <app-tree-table-component *ngIf="isTreeTable()" [title]="title()" [subtitle]="subtitle()" [nodes]="treeNodes()"
+        [columns]="columns()" [loading]="loading()" [showAdd]="showAdd()" [addLabel]="addLabel()" [showLegend]="showLegend()"
+        [colorRows]="colorRows()" [reorderableColumns]="reorderableColumns()" [dragdrop]="dragdrop()"
+        [searchPlaceholder]="searchPlaceholder()" (onAddRoot)="handleTreeAddRoot()"
         (onAddChild)="handleTreeAddChild($event)" (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)"
         (onReset)="handleReset($event)" (onFilter)="onFilter.emit($event)" (onFilterType)="onFilterType.emit($event)"
         (onNodeReorder)="onNodeReorder.emit($event)" (onColReorder)="onColReorder.emit($event)">
@@ -32,10 +32,10 @@
       </app-tree-table-component>
     </ng-container>
 
-    <app-form-modal *ngIf="formFields && formFields.length" [visible]="modalVisible && modalMode !== 'delete'"
-      [mode]="modalMode === 'add' ? 'add' : 'edit'" [title]="resolvedFormTitle" [fields]="formFields"
-      [data]="resolvedFormData" [initialData]="formExtraData" [loading]="catalogLoading || isSaving"
-      [customFormValid]="customFormValid" [gridClass]="gridClass" (onConfirm)="handleSave($event)" (onClose)="handleCloseModal()"
+    <app-form-modal *ngIf="formFields() && formFields().length" [visible]="modalVisible && modalMode !== 'delete'"
+      [mode]="modalMode === 'add' ? 'add' : 'edit'" [title]="resolvedFormTitle" [fields]="formFields()"
+      [data]="resolvedFormData" [initialData]="formExtraData()" [loading]="catalogLoading() || isSaving"
+      [customFormValid]="customFormValid()" [gridClass]="gridClass()" (onConfirm)="handleSave($event)" (onClose)="handleCloseModal()"
       (onSelectGridEmptyFilter)="onSelectGridEmptyFilter.emit($event)">
       <ng-content select="[custom-form-content]"></ng-content>
     </app-form-modal>

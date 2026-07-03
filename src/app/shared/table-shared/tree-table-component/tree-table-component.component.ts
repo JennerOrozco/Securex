@@ -1,4 +1,13 @@
-import { Component, Input, Output, EventEmitter, OnInit, HostListener, ViewChild } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  input,
+  output,
+  contentChild,
+  viewChild,
+  effect
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TreeTableModule, TreeTable } from 'primeng/treetable';
@@ -47,33 +56,33 @@ import { BaseTableDirective } from '../shared/base-table.directive';
 export class TreeTableComponent extends BaseTableDirective implements OnInit {
   // --- Entradas de Datos (Inputs) ---
   /** @property Nodos jerárquicos de la tabla provistos por PrimeNG. */
-  @Input() nodes: TreeNode[] = [];
+  nodes = input<TreeNode[] >([]);
   /** @property Definición estructural de las columnas de la tabla. */
-  @Input() columns: TableColumn[] = [];
+  columns = input<TableColumn[] >([]);
   /** @property Muestra u oculta la leyenda visual explicativa. */
-  @Input() showLegend: boolean = true;
+  showLegend = input<boolean >(true);
   /** @property Habilita o deshabilita la funcionalidad de arrastrar y soltar para reorganizar nodos. */
-  @Input() dragdrop: boolean = false;
+  dragdrop = input<boolean >(false);
   /** @property Muestra el botón global de agregar elemento raíz. */
-  @Input() showAdd: boolean = true;
+  showAdd = input<boolean >(true);
   /** @property Si es true, aplica colores de fondo a la fila entera basados en su tipo (ej. Menú, Submenú). */
-  @Input() colorRows: boolean = false;
+  colorRows = input<boolean >(false);
 
   // --- Salidas de Eventos (Outputs) ---
-  @Output() onAddRoot = new EventEmitter<void>();
-  @Output() onAddChild = new EventEmitter<number>();
-  @Output() onFilter = new EventEmitter<string>();
-  @Output() onFilterType = new EventEmitter<string>();
+  onAddRoot = output<void>();
+  onAddChild = output<number>();
+  onFilter = output<string>();
+  onFilterType = output<string>();
   /** @emits Objeto indicando el nodo arrastrado y su nuevo nodo destino (o null si va a la raíz). */
-  @Output() onNodeReorder = new EventEmitter<any>();
-  @Output() onReset = new EventEmitter<any>();
+  onNodeReorder = output<any>();
+  onReset = output<any>();
 
   // --- Estado de Ordenamiento (Sorting) ---
   sortField: string = '';
   sortOrder: number = 1; // 1 = Ascendente, -1 = Descendente
 
   // Referencia nativa al componente TreeTable de PrimeNG
-  @ViewChild('tt') treeTable!: TreeTable;
+  treeTable = viewChild<TreeTable>('tt');
 
   /**
    * @description
@@ -81,7 +90,7 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
    * configuradas explícitamente para ser visibles en la UI.
    */
   get visibleColumns(): TableColumn[] {
-    return this.columns.filter(c => c.visible !== false);
+    return this.columns().filter(c => c.visible !== false);
   }
 
   constructor() {
