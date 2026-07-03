@@ -5,9 +5,9 @@ import { LayoutService } from '@core/services/layout.service';
 import { AuthService } from '@core/services/auth.service';
 import { StorageService } from '@core/services/storage.service';
 import { NotificationPanelService } from '@shared/services/notification-panel.service';
-import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { NotificationPanelComponent } from '../notification-panel/notification-panel.component';
 
 interface MenuItem {
   icon: string;
@@ -32,7 +32,7 @@ const ICON_MAP: Record<string, string> = {
 @Component({
   selector: 'app-mobile-nav',
   standalone: true,
-  imports: [CommonModule, RouterLink, TimeAgoPipe],
+  imports: [CommonModule, RouterLink, NotificationPanelComponent],
   templateUrl: './mobile-nav.component.html',
   styleUrl: './mobile-nav.component.css',
   encapsulation: ViewEncapsulation.None
@@ -49,12 +49,6 @@ export class MobileNavComponent implements OnInit {
   sidebarOpen = this.layoutService.sidebarOpen;
   mobileComponents = signal<any[]>([]);
   currentUrl = signal<string>(this.router.url);
-
-  // Touch properties for swipe to delete
-  activeSwipeId = signal<number | null>(null);
-  currentDeltaX = signal<number>(0);
-  private touchStartX = 0;
-  private hasVibrated = false;
 
   visibleMenuItems = computed(() => {
     const components = this.mobileComponents();
@@ -126,49 +120,8 @@ export class MobileNavComponent implements OnInit {
     this.layoutService.closeSidebar();
   }
 
-  onTouchStart(event: TouchEvent, id: number) {
-    this.touchStartX = event.touches[0].clientX;
-    this.activeSwipeId.set(id);
-    this.currentDeltaX.set(0);
-    this.hasVibrated = false;
-  }
-
-  onTouchMove(event: TouchEvent, id: number) {
-    if (this.activeSwipeId() !== id) return;
-    const currentX = event.touches[0].clientX;
-    const delta = currentX - this.touchStartX;
-    if (delta > 0) {
-      this.currentDeltaX.set(delta);
-      
-      if (delta > 120 && !this.hasVibrated) {
-        if ('vibrate' in navigator) {
-          navigator.vibrate(50);
-        }
-        this.hasVibrated = true;
-      } else if (delta <= 120) {
-        this.hasVibrated = false;
-      }
-    }
-  }
-
-  onTouchEnd(event: TouchEvent, id: number) {
-    if (this.activeSwipeId() !== id) return;
-    
-    if (this.currentDeltaX() > 120) {
-      this.notifPanel.deleteNotification(id);
-    }
-    
-    this.activeSwipeId.set(null);
-    this.currentDeltaX.set(0);
-  }
-
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
     this.closeSidebar();
   }
 }
-
-
-
-
-

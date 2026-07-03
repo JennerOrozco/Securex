@@ -31,12 +31,7 @@ export const responseInterceptor: HttpInterceptorFn = (req, next) => {
         if (body.status === 'success') {
           // Solo se muestra toast si se solicita explícitamente vía contexto
           if (req.context.get(SHOW_TOAST)) {
-            let message = req.context.get(TOAST_MESSAGE) || body.message || 'Operación exitosa';
-            
-            if (message === 'Permissions synchronized') {
-              message = 'Permisos sincronizados';
-            }
-            
+            const message = req.context.get(TOAST_MESSAGE) || body.message || 'Operación exitosa';
             notificationService.success(message);
           }
           

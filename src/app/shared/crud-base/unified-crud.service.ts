@@ -7,8 +7,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable, of, forkJoin } from 'rxjs';
-import { map, finalize, switchMap } from 'rxjs/operators';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { map, finalize } from 'rxjs/operators';
 import { TreeNode } from 'primeng/api';
 
 import { LoggerService } from '@core/services/logger.service';
@@ -16,15 +15,12 @@ import { NotificationService } from '@core/services/notification.service';
 import { FormMapperService, MappingConfig } from '@core/services/form-mapper.service';
 import { CatalogCacheService } from '@shared/services/catalog-cache.service';
 
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import {
   parseLazyLoadEvent,
   extractPaginatedData
 } from '@shared/utils/pagination-utils';
-import { filterTreeByQuery } from '@shared/utils/tree-utils';
 import { normalizeBoolean } from '@shared/utils/form-utils';
 import { extractApiArray } from '@shared/utils/api-payload.utils';
-import { TreeNode as TreeData } from 'primeng/api';
 
 export type CrudMode = 'add' | 'edit' | 'delete' | 'view';
 
@@ -105,13 +101,12 @@ export interface CrudConfig<T = any> {
  *   this.crud.load();
  * }
  */
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class UnifiedCrudService<T = any> {
   private logger = inject(LoggerService);
   private notification = inject(NotificationService);
   public formMapper = inject(FormMapperService);
   private catalogCache = inject(CatalogCacheService);
-  private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
 
   // =========================================================================

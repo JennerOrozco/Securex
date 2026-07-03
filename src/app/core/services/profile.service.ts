@@ -4,7 +4,8 @@ import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { ConfigService } from './config.service';
 import { StorageService } from './storage.service';
-import { AuthService, User } from './auth.service';
+import { AuthService } from './auth.service';
+import { User } from '@shared/types';
 
 @Injectable({ providedIn: 'root' })
 export class ProfileService {

@@ -44,7 +44,6 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
     );
 };
 
-let sessionExpiredToastShown = false;
 
 const handle401Error = (
     req: HttpRequest<unknown>,
@@ -57,7 +56,7 @@ const handle401Error = (
             if (!newToken) {
                 return throwError(() => new Error('Session expired'));
             }
-            sessionExpiredToastShown = false;
+            authService.sessionExpiredToastShown = false;
             return next(req.clone({
                 setHeaders: {
                     Authorization: `Bearer ${newToken}`
@@ -65,8 +64,8 @@ const handle401Error = (
             }));
         }),
         catchError(err => {
-            if (!sessionExpiredToastShown) {
-                sessionExpiredToastShown = true;
+            if (!authService.sessionExpiredToastShown) {
+                authService.sessionExpiredToastShown = true;
                 notificationService.error('Sesión expirada. Inicia sesión nuevamente.');
                 authService.logout();
             }

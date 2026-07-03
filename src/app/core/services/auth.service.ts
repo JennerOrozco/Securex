@@ -8,33 +8,8 @@ import { NotificationService } from './notification.service';
 import { StorageService } from './storage.service';
 import { GraphqlService } from '../graphql/graphql.service';
 import { SECUREX_QUERIES } from '../graphql/queries/securex.queries';
+import { User, Company, Branch } from '@shared/types';
 
-export interface User {
-    uuid: string;
-    id: string | number;
-    full_name: string;
-    name: string;
-    email: string;
-    role: 'admin' | 'user';
-    profile_picture?: string;
-    phone?: string;
-    date_of_birth?: string;
-    gender?: string;
-    is_super_admin?: boolean;
-    role_id?: number;
-    role_name?: string;
-}
-
-export interface Company {
-    uuid: string;
-    name: string;
-    branch_name?: string;
-}
-
-export interface Branch {
-    uuid: string;
-    name: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -126,18 +101,7 @@ export class AuthService {
         if (credentials.branch_uuid) payload.branch_uuid = credentials.branch_uuid;
 
         return this.http.post<any>(`${this.configService.apiUrl}/auth/login`, payload).pipe(
-            tap(response => {
-                const data = response.data ?? response;
-                if (data?.access_token) this.persistSession(data);
-            }),
-            tap(response => {
-                const data = response.data ?? response;
-                response.success = !!data?.access_token;
-                response.requires_company_select = !!data?.requires_company_select;
-                response.companies = data?.companies;
-                response.user = data?.user;
-                response.company = data?.company;
-            })
+            this.handleLoginResponse()
         );
     }
 
@@ -147,6 +111,13 @@ export class AuthService {
         if (branchUuid) payload.branch_uuid = branchUuid;
 
         return this.http.post<any>(`${this.configService.apiUrl}/auth/google-login`, payload).pipe(
+            this.handleLoginResponse()
+        );
+    }
+
+    /** Shared login response processing for login() and loginWithGoogle() */
+    private handleLoginResponse() {
+        return (source: Observable<any>) => source.pipe(
             tap(response => {
                 const data = response.data ?? response;
                 if (data?.access_token) this.persistSession(data);
@@ -205,26 +176,17 @@ export class AuthService {
     }
 
     switchCompany(companyUuid: string): Observable<any> {
-        this.switchCompanyLoadingSignal.set(true);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/switch-company`, {
-            company_uuid: companyUuid
-        }).pipe(
-            tap(response => {
-                const data = response.data ?? response;
-                if (data?.access_token) {
-                    this.persistSession({ ...data, companies: this.userCompaniesSignal() });
-                    this.refreshPermissions().subscribe();
-                    this.getUserProfile().subscribe();
-                }
-            }),
-            finalize(() => this.switchCompanyLoadingSignal.set(false))
-        );
+        return this.switchContext('switch-company', 'company_uuid', companyUuid);
     }
 
     switchBranch(branchUuid: string): Observable<any> {
+        return this.switchContext('switch-branch', 'branch_uuid', branchUuid);
+    }
+
+    private switchContext(endpoint: string, paramKey: string, uuid: string): Observable<any> {
         this.switchCompanyLoadingSignal.set(true);
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/switch-branch`, {
-            branch_uuid: branchUuid
+        return this.http.post<any>(`${this.configService.apiUrl}/auth/${endpoint}`, {
+            [paramKey]: uuid
         }).pipe(
             tap(response => {
                 const data = response.data ?? response;
@@ -369,20 +331,9 @@ export class AuthService {
         );
     }
 
+    /** Delegates to requestPasswordReset — same endpoint, kept for semantic clarity */
     adminResetUserPassword(email: string): Observable<any> {
-        return this.http.post<any>(`${this.configService.apiUrl}/auth/forgot-password`, {
-            email, app_uuid: this.configService.appUuid
-        }).pipe(
-            map(res => ({
-                success: res.status === 'success',
-                message: res.message,
-                error: res.status !== 'success' ? (res.message || 'Error al enviar el código.') : undefined
-            })),
-            catchError(err => {
-                const errorMsg = err.error?.message || err.error?.error || 'Error de conexión. Intenta de nuevo.';
-                return of({ success: false, error: errorMsg });
-            })
-        );
+        return this.requestPasswordReset(email);
     }
 
     private extractSlugs(items: any[]): string[] {
@@ -436,7 +387,10 @@ export class AuthService {
         return null;
     }
 
+    public sessionExpiredToastShown = false;
+
     async logout() {
+        this.sessionExpiredToastShown = false;
         const refreshToken = this.storage.getRefreshToken();
         const accessToken = this.storage.getAccessToken();
 

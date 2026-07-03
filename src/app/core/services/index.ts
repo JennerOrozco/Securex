@@ -1,4 +1,5 @@
-export { AuthService, type User, type Company, type Branch } from './auth.service';
+export { AuthService } from './auth.service';
+export type { User, Company, Branch } from '@shared/types';
 export { ConfigService } from './config.service';
 export { LayoutService } from './layout.service';
 export { LoadingService } from './loading.service';

@@ -1,7 +1,8 @@
 import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { AuthService, User } from '@core/services/auth.service';
+import { AuthService } from '@core/services/auth.service';
+import { User } from '@shared/types';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationPanelService } from '@shared/services/notification-panel.service';
 import { LayoutService } from '@core/services/layout.service';

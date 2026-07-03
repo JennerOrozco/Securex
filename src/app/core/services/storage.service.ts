@@ -1,31 +1,13 @@
 import { Injectable } from '@angular/core';
+import { User, Company, Branch } from '@shared/types';
 
-export interface StoredUser {
-  uuid: string;
-  id?: string | number;
-  full_name: string;
-  name?: string;
-  email: string;
-  role?: string;
-  profile_picture?: string;
-  phone?: string;
-  date_of_birth?: string;
-  gender?: string;
-  is_super_admin?: boolean;
-  role_id?: number;
-  role_name?: string;
-}
+/** @deprecated Use `User` from '@shared/types' */
+export type StoredUser = User;
+/** @deprecated Use `Company` from '@shared/types' */
+export type StoredCompany = Company;
+/** @deprecated Use `Branch` from '@shared/types' */
+export type StoredBranch = Branch;
 
-export interface StoredCompany {
-  uuid: string;
-  name: string;
-  branch_name?: string;
-}
-
-export interface StoredBranch {
-  uuid: string;
-  name: string;
-}
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
@@ -36,9 +18,9 @@ export class StorageService {
   }
 
   // ── Access Token ──────────────────────────────────────────
-  getAccessToken(): string | null { return localStorage.getItem('accessToken'); }
-  setAccessToken(token: string): void { localStorage.setItem('accessToken', token); }
-  removeAccessToken(): void { localStorage.removeItem('accessToken'); }
+  getAccessToken(): string | null { return sessionStorage.getItem('accessToken'); }
+  setAccessToken(token: string): void { sessionStorage.setItem('accessToken', token); }
+  removeAccessToken(): void { sessionStorage.removeItem('accessToken'); }
 
   // ── Refresh Token ─────────────────────────────────────────
   getRefreshToken(): string | null { return sessionStorage.getItem('refreshToken'); }
@@ -95,6 +77,7 @@ export class StorageService {
   // ── Bulk ──────────────────────────────────────────────────
   clearSession(): void {
     this.removeAccessToken();
+    localStorage.removeItem('accessToken'); // Limpiar token legacy por si acaso
     this.removeRefreshToken();
     this.removeUser();
     this.removeCompany();

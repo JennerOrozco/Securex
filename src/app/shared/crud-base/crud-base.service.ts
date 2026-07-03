@@ -7,7 +7,7 @@ import { normalizeBoolean } from '@shared/utils/form-utils';
 import { Entity } from '@shared/types';
 import { extractApiData, buildApiErrorMessage } from '@shared/utils/api-payload.utils';
 
-@Injectable({ providedIn: 'root' })
+@Injectable()
 export class CrudBaseService<T extends Entity> {
   private destroyRef = inject(DestroyRef);
   private notification = inject(NotificationService);

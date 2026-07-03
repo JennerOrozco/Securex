@@ -63,7 +63,18 @@ export function handleApiState<T>(options: ApiOperatorOptions): MonoTypeOperator
 }
 
 /**
- * Nueva función: Wrapper que simplifica la inyección de dependencias
+ * Interface for components compatible with trackApi/trackSignal helpers.
+ * Uses `Record` intersection to support components where these properties are private.
+ */
+export type TrackableComponent = {
+  destroyRef: DestroyRef;
+  cdr?: ChangeDetectorRef;
+  notificationService?: NotificationProvider;
+};
+
+/**
+ * Nueva función: Wrapper que simplifica la inyección de dependencias.
+ * Accepts `any` to support components with private destroyRef/cdr/notificationService fields.
  */
 export function trackApi<T>(
   component: any,
@@ -80,7 +91,8 @@ export function trackApi<T>(
 }
 
 /**
- * Nueva función: Wrapper para Signals (Ideal para migración de componentes)
+ * Nueva función: Wrapper para Signals (Ideal para migración de componentes).
+ * Accepts `any` to support components with private destroyRef/cdr/notificationService fields.
  */
 export function trackSignal<T>(
   component: any,

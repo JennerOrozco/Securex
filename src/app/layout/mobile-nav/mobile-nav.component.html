@@ -32,44 +32,9 @@
 </header>
 
 <!-- Mobile Notifications Dropdown -->
-@if (notifPanel.showPanel()) {
-<div class="mobile-notif-overlay" (click)="notifPanel.closePanel()"></div>
-<div class="mobile-notif-dropdown">
-  <div class="mobile-notif-header">
-    <h3 class="text-sm font-bold text-white">Notificaciones</h3>
-    <button (click)="notifPanel.markAllAsRead()"
-      class="text-xs text-padel-orange hover:underline bg-transparent border-none cursor-pointer">Marcar todas</button>
-  </div>
-  <div class="mobile-notif-list">
-    @for (notif of notifPanel.notifications(); track notif.id) {
-    <div class="swipe-container">
-      <div class="swipe-background" [class.swipe-ready]="currentDeltaX() > 120 && activeSwipeId() === notif.id">
-        <svg class="w-5 h-5 text-white transition-transform"
-          [style.transform]="currentDeltaX() > 120 && activeSwipeId() === notif.id ? 'scale(1.25)' : 'none'" fill="none"
-          stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-        </svg>
-      </div>
-      <div (click)="notifPanel.markAsRead(notif.id)" (touchstart)="onTouchStart($event, notif.id)"
-        (touchmove)="onTouchMove($event, notif.id)" (touchend)="onTouchEnd($event, notif.id)" class="mobile-notif-item"
-        [style.transform]="activeSwipeId() === notif.id ? 'translateX(' + currentDeltaX() + 'px)' : 'none'"
-        [style.transition]="activeSwipeId() === notif.id ? 'none' : 'transform 0.3s ease'"
-        [class.notif-unread]="!notif.is_read">
-        <div class="flex justify-between items-start">
-          <p class="text-sm font-semibold" [class.text-white]="notif.is_read"
-            [class.text-padel-orange]="!notif.is_read">{{ notif.title }}</p>
-          <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">{{ notif.created_at | timeAgo }}</span>
-        </div>
-        <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
-      </div>
-    </div>
-    } @empty {
-    <div class="mobile-notif-empty">No tienes notificaciones</div>
-    }
-  </div>
+<div class="md:hidden">
+  <app-notification-panel mode="mobile" />
 </div>
-}
 
 <!-- Overlay -->
 @if (sidebarOpen()) {

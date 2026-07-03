@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, isDevMode } from '@angular/core';
 
 export interface LogEntry {
   timestamp: Date;
@@ -152,15 +152,13 @@ export class LoggerService {
    * Verifica si está en desarrollo
    */
   private isDevelopment(): boolean {
-    return !this.isProduction();
+    return isDevMode();
   }
 
   /**
    * Verifica si está en producción
    */
   private isProduction(): boolean {
-    return typeof document !== 'undefined' &&
-      document.location.hostname !== 'localhost' &&
-      !document.location.hostname.startsWith('127');
+    return !isDevMode();
   }
 }

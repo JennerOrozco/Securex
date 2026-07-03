@@ -1,4 +1,10 @@
-export type { ApiResponse, PaginatedResponse, SelectOption, Entity } from './api.types';
+export type {
+  ApiResponse, PaginatedResponse, PaginationParams,
+  SelectOption, Entity,
+  User, Company, Branch, MenuItem,
+  WebAuthnRegisterOptions, WebAuthnLoginOptions, DeviceCredential
+} from './api.types';
+
 export type {
   LeadSource, LossReason, TaskType, Stage, Pipeline,
   Contact, ContactB2b, Account, AccountBranch,
