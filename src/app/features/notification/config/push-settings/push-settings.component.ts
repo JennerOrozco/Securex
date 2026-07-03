@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed } from '@angular/core';
+import { Component, inject, OnInit, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
@@ -15,7 +15,8 @@ import { NotificationService } from '@core/services/notification.service';
   standalone: true,
   imports: [CommonModule, CrudPageComponent, ButtonComponent],
   templateUrl: './push-settings.component.html',
-  providers: [UnifiedCrudService]
+  providers: [UnifiedCrudService],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PushSettingsComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);

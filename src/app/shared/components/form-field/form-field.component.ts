@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -9,10 +9,11 @@ import { CommonModule } from '@angular/common';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FormFieldComponent {
-  @Input() id!: string;
-  @Input() label: string = '';
-  @Input() icon: string = '';
-  @Input() required: boolean = false;
-  @Input() control?: any; // Accept AbstractControl or any FormControl
-  @Input() errorMsg: string = '';
+  id = input.required<string>();
+  label = input<string>('');
+  icon = input<string>('');
+  required = input<boolean>(false);
+  control = input<any>(); // Accept AbstractControl or any FormControl
+  errorMsg = input<string>('');
 }
+

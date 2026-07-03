@@ -357,19 +357,19 @@ app-select-grid .p-select {
 .sg-item {
   display: flex;
   flex-direction: column;
-  gap: 2px;
-  padding: 4px 0;
+  gap: 1px;
+  padding: 2px 0;
 }
 
 .sg-item-main {
-  font-size: 0.85rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--color-text-main);
 }
 
 .sg-item-details {
   display: flex;
-  gap: 12px;
+  gap: 6px;
   flex-wrap: wrap;
 }
 
@@ -377,14 +377,31 @@ app-select-grid .p-select {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 0.72rem;
+  font-size: 0.58rem;
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
+.sg-item-col i,
+.sg-item-col .pi,
 .sg-item-col-icon {
-  font-size: 0.65rem;
-  color: var(--color-text-light);
+  font-size: 0.55rem !important;
+  color: var(--color-primary, #f97316); /* Naranja de SECUREX (orange-500) */
+}
+
+.p-select-panel .p-select-option {
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 4px;
+  margin: 1px 4px;
+}
+
+.p-select-panel .p-select-option:hover {
+  background: var(--color-hover-bg, rgba(0,0,0,0.04)) !important;
+}
+
+.p-select-panel .p-select-option.p-select-option-selected {
+  background: var(--color-selected-bg, rgba(249, 115, 22, 0.08)) !important;
+  box-shadow: inset 2px 0 0 0 var(--color-primary, #f97316);
 }
 
 .sg-empty {
@@ -413,3 +430,44 @@ app-select-grid .p-select {
   background: var(--color-info-bg);
   border-color: var(--color-info-border);
 }
+
+/* Mobile responsive styles for select-grid and p-select */
+@media (max-width: 768px) {
+  .p-select {
+    height: 28px !important;
+    font-size: 0.78rem !important;
+  }
+  
+  .p-select-label {
+    padding: 0.1rem 2.2rem 0.1rem 0.5rem !important;
+    font-size: 0.78rem !important;
+  }
+
+  .p-select-panel .p-select-item,
+  .p-select-panel .p-select-option {
+    padding: 0.2rem 0.4rem !important;
+  }
+
+  .sg-item {
+    padding: 2px 0 !important;
+    gap: 1px !important;
+  }
+
+  .sg-item-main {
+    font-size: 0.72rem !important;
+  }
+
+  .sg-item-details {
+    gap: 6px !important;
+  }
+
+  .sg-item-col {
+    font-size: 0.58rem !important;
+    gap: 2px !important;
+  }
+
+  .sg-item-col-icon {
+    font-size: 0.50rem !important;
+  }
+}
+

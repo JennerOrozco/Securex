@@ -1,17 +1,17 @@
-<div class="gm-crud-page-container animate-fade-in" *ngIf="hasPermission; else noPermission">
+<div class="gm-crud-page-container animate-fade-in" *ngIf="hasPermission(); else noPermission">
   <div class="content-card space-y-6">
     <app-toolbar title="Probar Notificaciones" subtitle="Asistente para enviar notificaciones de prueba a usuarios específicos" [showAdd]="false"></app-toolbar>
 
     <!-- Stepper -->
     <div class="stepper !mt-0">
       <div class="stepper-track">
-        <div class="stepper-progress" [style.width.%]="((step - 1) / 3) * 100"></div>
+        <div class="stepper-progress" [style.width.%]="((step() - 1) / 3) * 100"></div>
       </div>
       <div class="stepper-steps">
         @for (s of steps; track s.num) {
-          <div class="stepper-step" [class.active]="step >= s.num" [class.current]="step === s.num">
-            <div class="stepper-dot" [class.done]="step > s.num">
-              @if (step > s.num) {
+          <div class="stepper-step" [class.active]="step() >= s.num" [class.current]="step() === s.num">
+            <div class="stepper-dot" [class.done]="step() > s.num">
+              @if (step() > s.num) {
                 <i class="pi pi-check"></i>
               } @else {
                 <i [class]="s.icon"></i>
@@ -24,7 +24,7 @@
     </div>
 
     <!-- Step 1: Select App -->
-    @if (step === 1) {
+    @if (step() === 1) {
       <div class="step-content">
         <app-table-component title="1. Selecciona la Aplicación" subtitle="Elige a través de qué aplicación se enviará la notificación."
           [columns]="appCols" [data]="appTable.data()" [loading]="appTable.loading()" [showAdd]="false" [showEdit]="false" [showDelete]="false"
@@ -35,20 +35,20 @@
     }
 
     <!-- Step 2: Select Company -->
-    @if (step === 2) {
+    @if (step() === 2) {
       <div class="step-content">
         <div class="mb-3">
           <app-button icon="pi pi-arrow-left" label="Volver" class="p-button-text" (onClick)="goBack()"></app-button>
         </div>
         <app-table-component title="2. Selecciona la Compañía" subtitle="Elige la compañía del usuario destinatario."
-          [columns]="companyCols" [data]="companies" [showAdd]="false" [showEdit]="false" [showDelete]="false"
+          [columns]="companyCols" [data]="companies()" [showAdd]="false" [showEdit]="false" [showDelete]="false"
           [showSelect]="true" (onSelect)="selectCompany($event)">
         </app-table-component>
       </div>
     }
 
     <!-- Step 3: Select User -->
-    @if (step === 3) {
+    @if (step() === 3) {
       <div class="step-content">
         <div class="mb-3">
           <app-button icon="pi pi-arrow-left" label="Volver" class="p-button-text" (onClick)="goBack()"></app-button>
@@ -62,7 +62,7 @@
     }
 
     <!-- Step 4: Message Form -->
-    @if (step === 4) {
+    @if (step() === 4) {
       <div class="step-content">
         <div class="mb-3">
           <app-button icon="pi pi-arrow-left" label="Volver" class="p-button-text" (onClick)="goBack()"></app-button>
@@ -79,19 +79,19 @@
               <div class="summary-body">
                 <div class="summary-row">
                   <span class="summary-label">App</span>
-                  <span class="summary-value">{{ selectedApp?.name }}</span>
+                  <span class="summary-value">{{ selectedApp()?.name }}</span>
                 </div>
                 <div class="summary-row">
                   <span class="summary-label">Empresa</span>
-                  <span class="summary-value">{{ selectedCompany?.name }}</span>
+                  <span class="summary-value">{{ selectedCompany()?.name }}</span>
                 </div>
                 <div class="summary-row">
                   <span class="summary-label">Usuario</span>
-                  <span class="summary-value">{{ selectedUser?.full_name }}</span>
+                  <span class="summary-value">{{ selectedUser()?.full_name }}</span>
                 </div>
                 <div class="summary-row">
                   <span class="summary-label">Email</span>
-                  <span class="summary-value summary-email">{{ selectedUser?.email }}</span>
+                  <span class="summary-value summary-email">{{ selectedUser()?.email }}</span>
                 </div>
               </div>
             </div>
@@ -121,7 +121,7 @@
                 </div>
 
                 <div class="form-actions">
-                  <app-button icon="pi pi-send" label="Enviar Notificación" class="p-button-success" [loading]="isSending" [disabled]="testForm.invalid" (onClick)="sendTest()"></app-button>
+                  <app-button icon="pi pi-send" label="Enviar Notificación" class="p-button-success" [loading]="isSending()" [disabled]="testForm.invalid" (onClick)="sendTest()"></app-button>
                 </div>
               </form>
             </div>

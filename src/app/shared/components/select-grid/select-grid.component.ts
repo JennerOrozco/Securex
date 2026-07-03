@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -11,27 +11,28 @@ import { SelectGridColumn } from './select-grid.types';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, SelectModule, ButtonModule, FormFieldComponent],
   templateUrl: './select-grid.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SelectGridComponent {
-  @Input() id: string = 'sg-' + Math.random().toString(36).substr(2, 9);
-  @Input() label: string = '';
-  @Input() placeholder: string = 'Seleccione...';
-  @Input() icon: string = '';
-  @Input() required: boolean = false;
-  @Input() control!: AbstractControl;
-  @Input() options: any[] = [];
-  @Input() optionLabel: string = 'label';
-  @Input() optionValue: string = 'value';
-  @Input() columns: SelectGridColumn[] = [];
-  @Input() filterBy: string = '';
-  @Input() showClear: boolean = true;
-  @Input() emptyFilterLabel: string = 'Nuevo';
-  @Input() emptyFilterIcon: string = 'pi pi-plus';
-  @Input() allowAdd: boolean = true;
-  @Input() showAvatar: boolean = false;
+  id = input<string>('sg-' + Math.random().toString(36).substring(2, 11));
+  label = input<string>('');
+  placeholder = input<string>('Seleccione...');
+  icon = input<string>('');
+  required = input<boolean>(false);
+  control = input.required<AbstractControl>();
+  options = input<any[]>([]);
+  optionLabel = input<string>('label');
+  optionValue = input<string>('value');
+  columns = input<SelectGridColumn[]>([]);
+  filterBy = input<string>('');
+  showClear = input<boolean>(true);
+  emptyFilterLabel = input<string>('Nuevo');
+  emptyFilterIcon = input<string>('pi pi-plus');
+  allowAdd = input<boolean>(true);
+  showAvatar = input<boolean>(false);
 
-  @Output() onEmptyFilterAction = new EventEmitter<void>();
-  @Output() onChange = new EventEmitter<any>();
+  onEmptyFilterAction = output<void>();
+  onChange = output<any>();
 
   getNestedValue(item: any, path: string): any {
     if (!item || !path) return '';
@@ -65,8 +66,10 @@ export class SelectGridComponent {
   }
 
   getSelectedOption(): any {
-    const val = this.control?.value;
-    if (!val || !this.options) return null;
-    return this.options.find(o => o[this.optionValue] === val) || null;
+    const val = this.control()?.value;
+    const opts = this.options();
+    if (!val || !opts) return null;
+    return opts.find(o => o[this.optionValue()] === val) || null;
   }
 }
+

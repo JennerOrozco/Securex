@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TreeNode } from 'primeng/api';
 import { forkJoin, of } from 'rxjs';
@@ -8,10 +8,9 @@ import { AppService } from '@core/services/app.service';
 import { CompanyService } from '@core/services/company.service';
 import { RoleService } from '@core/services/role.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { NotificationService } from '@core/services/notification.service';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
+import { ADMIN_ACCESS_COLS, createAdminAccessForm } from './admin-access.config';
 
 interface AccessNodeData {
   id?: string | number;
@@ -42,7 +41,8 @@ interface AccessNodeData {
     CommonModule,
     CrudPageComponent
   ],
-  templateUrl: './admin-access.component.html'
+  templateUrl: './admin-access.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminAccessComponent implements OnInit {
   private userService = inject(UserService);
@@ -52,15 +52,24 @@ export class AdminAccessComponent implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
-  rawAccesses: any[] = [];
-  accessNodes: TreeNode<AccessNodeData>[] = [];
-  loading = false;
-  isSaving = false;
-  catalogLoading = false;
-  formExtraData: any = null;
+  rawAccesses = signal<any[]>([]);
+  accessNodes = signal<TreeNode<AccessNodeData>[]>([]);
+  loading = signal(false);
+  isSaving = signal(false);
+  catalogLoading = signal(false);
+  formExtraData = signal<any>(null);
+
+  catalogs = signal<any>({});
+  currentCompanyIdForBranch = signal<number | undefined>(undefined);
+
+  cols = ADMIN_ACCESS_COLS;
+  
+  formFields = computed(() => {
+    return createAdminAccessForm(this.catalogs(), this.currentCompanyIdForBranch());
+  });
 
   mapItemForEdit = (item: any) => {
-    const r = this.rawAccesses.find(a => a.uuid === item.uuid);
+    const r = this.rawAccesses().find(a => a.uuid === item.uuid);
     if (!r) return item;
     return {
       user_id:    r.user_id,
@@ -73,44 +82,19 @@ export class AdminAccessComponent implements OnInit {
     };
   };
 
-  cols: TableColumn[] = [
-    { field: 'name',   header: 'Acceso',    type: 'tree',    sortable: true, style: { width: '45%' } },
-    { field: 'role',   header: 'Rol',       type: 'text',    sortable: true, style: { width: '25%' } },
-    { field: 'status', header: 'Estado',    type: 'badge',   sortable: true, style: { width: '15%' } },
-    { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
-  ];
-
-  formFields: FormField[] = [
-    { name: 'user_id',    label: 'Usuario',     type: 'select-grid', required: true,  options: [], columns: [],
-      icon: 'pi pi-user', placeholder: 'Buscar usuario por nombre o correo...' },
-    { name: 'app_id',     label: 'Aplicación',  type: 'select', required: true,  options: [], disabled: true },
-    { name: 'company_id', label: 'Compañía',    type: 'select', required: true,  options: [], disabled: true },
-    { name: 'branch_id',  label: 'Sucursal',    type: 'select', options: [], disabled: true },
-    { name: 'role_id',    label: 'Rol',         type: 'select', required: true,  options: [] },
-    { name: 'status',     label: 'Estado',      type: 'select', required: true,
-      options: [
-        { label: 'Pendiente',  value: 'PENDING' },
-        { label: 'Aprobado',   value: 'APPROVED' },
-        { label: 'Rechazado',  value: 'REJECTED' }
-      ]
-    }
-  ];
-
-  get hasPermission(): boolean {
-    return this.authService.checkPermission('securex.security.users');
-  }
+  hasPermission = computed(() => this.authService.checkPermission('securex.security.users'));
 
   ngOnInit() {
-    if (this.hasPermission) {
+    if (this.hasPermission()) {
       this.load();
     }
   }
 
   load() {
-    this.loading = true;
+    this.loading.set(true);
     this.userService.getUserAccessesWithRoles({ all: true }).subscribe({
       next: (raw: any) => {
-        this.rawAccesses = (raw?.data ?? []).map((r: any) => ({
+        const processed = (raw?.data ?? []).map((r: any) => ({
           ...r,
           user_name:    r.user?.full_name  || r.user?.name || '-',
           app_name:     r.app?.name        || '-',
@@ -119,10 +103,11 @@ export class AdminAccessComponent implements OnInit {
           role_name:    r.role?.name       || '-',
           status:       (r.status || 'PENDING').toString().toUpperCase()
         }));
-        this.accessNodes = this.mapToTreeNodes(this.rawAccesses);
-        this.loading = false;
+        this.rawAccesses.set(processed);
+        this.accessNodes.set(this.mapToTreeNodes(processed));
+        this.loading.set(false);
       },
-      error: () => (this.loading = false)
+      error: () => this.loading.set(false)
     });
   }
 
@@ -216,7 +201,7 @@ export class AdminAccessComponent implements OnInit {
   filterTree(query: string) {
     const q = (query || '').toLowerCase();
     if (!q) {
-      this.accessNodes = this.mapToTreeNodes(this.rawAccesses);
+      this.accessNodes.set(this.mapToTreeNodes(this.rawAccesses()));
       return;
     }
     const filterNodes = (nodes: any[]): any[] =>
@@ -228,23 +213,24 @@ export class AdminAccessComponent implements OnInit {
         }
         return acc;
       }, []);
-    this.accessNodes = this.mapToTreeNodes(filterNodes(this.rawAccesses.map(r => ({
+    
+    this.accessNodes.set(this.mapToTreeNodes(filterNodes(this.rawAccesses().map(r => ({
       ...r,
       name: r.user_name,
       slug: r.role_name,
       children: []
-    }))));
+    })))));
   }
 
   handleAddUnderBranch(branchId: string | number) {
-    const branch = this.findBranchById(this.accessNodes, branchId);
+    const branch = this.findBranchById(this.accessNodes(), branchId);
     if (!branch) return;
-    this.formExtraData = {
+    this.formExtraData.set({
       app_id:     branch.app_id,
       company_id: branch.company_id,
       branch_id:  branch.branch_id,
       status:     'APPROVED'
-    };
+    });
     this.loadModalCatalogs({
       appId:      branch.app_id!,
       companyId:  branch.company_id!,
@@ -253,7 +239,7 @@ export class AdminAccessComponent implements OnInit {
   }
 
   handleEdit(item: any) {
-    const r = this.rawAccesses.find(a => a.uuid === item.uuid);
+    const r = this.rawAccesses().find(a => a.uuid === item.uuid);
     if (r) {
       this.loadModalCatalogs({
         appId:      r.app_id,
@@ -264,7 +250,9 @@ export class AdminAccessComponent implements OnInit {
   }
 
   private loadModalCatalogs(ctx: { appId: number; companyId: number; companyUuid?: string }) {
-    this.catalogLoading = true;
+    this.catalogLoading.set(true);
+    this.currentCompanyIdForBranch.set(ctx.companyId);
+
     const safe = <T>(obs$: any) => obs$.pipe(catchError(() => of<T[]>([])));
 
     forkJoin({
@@ -274,38 +262,18 @@ export class AdminAccessComponent implements OnInit {
       users:    safe(this.userService.getAdminUsersGql({ per_page: 500 })),
       roles:    safe(this.roleService.getRolesByCompany(ctx.appId, ctx.companyUuid))
     }).subscribe({
-      next: ({ apps, companies, branches, users, roles }: any) => {
-        const appField = this.formFields.find(f => f.name === 'app_id')!;
-        appField.options = (apps || []).map((a: any) => ({ label: a.name, value: a.id }));
+      next: (results: any) => {
+        this.catalogs.set({
+          apps: results.apps || [],
+          companies: results.companies || [],
+          branches: results.branches || [],
+          users: results.users || [],
+          roles: results.roles || []
+        });
 
-        const companyField = this.formFields.find(f => f.name === 'company_id')!;
-        companyField.options = (companies || []).map((c: any) => ({ label: c.name, value: c.id }));
+        this.catalogLoading.set(false);
 
-        const branchField = this.formFields.find(f => f.name === 'branch_id')!;
-        const companyBranches = (branches || []).filter((b: any) => b.company_id === ctx.companyId);
-        branchField.options = [
-          { label: 'Todas las sucursales', value: null },
-          ...companyBranches.map((b: any) => ({ label: b.name, value: b.id }))
-        ];
-        
-        branchField.disabled = false;
-
-        const userField = this.formFields.find(f => f.name === 'user_id')!;
-        userField.columns = [
-          { field: 'email', header: 'Correo', width: '220px' }
-        ];
-        userField.options = (users || []).map((u: any) => ({
-          label: u.full_name,
-          value: u.id,
-          email: u.email
-        }));
-
-        const roleField = this.formFields.find(f => f.name === 'role_id')!;
-        roleField.options = (roles || []).map((r: any) => ({ label: r.name, value: r.id }));
-
-        this.catalogLoading = false;
-
-        const loadedCount = [apps, companies, branches, users, roles].filter(a => Array.isArray(a) && a.length > 0).length;
+        const loadedCount = Object.values(results).filter(a => Array.isArray(a) && a.length > 0).length;
         if (loadedCount < 5) {
           this.notificationService.notify(
             'warn',
@@ -314,7 +282,7 @@ export class AdminAccessComponent implements OnInit {
         }
       },
       error: () => {
-        this.catalogLoading = false;
+        this.catalogLoading.set(false);
         this.notificationService.notify('error', 'No se pudieron cargar los catálogos del formulario');
       }
     });
@@ -332,7 +300,7 @@ export class AdminAccessComponent implements OnInit {
   }
 
   handleSave(event: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
+    this.isSaving.set(true);
     const obs = event.mode === 'add'
       ? this.userService.createUserAccessGql(event.data)
       : this.userService.updateUserAccessGql(event.data.uuid, event.data);
@@ -344,14 +312,14 @@ export class AdminAccessComponent implements OnInit {
           this.sendInvitationForNewAccess(event.data);
         }
         this.load();
-        this.isSaving = false;
+        this.isSaving.set(false);
       },
-      error: () => (this.isSaving = false)
+      error: () => this.isSaving.set(false)
     });
   }
 
   private sendInvitationForNewAccess(data: any) {
-    const userOption: any = this.formFields
+    const userOption: any = this.formFields()
       .find(f => f.name === 'user_id')?.options
       ?.find((o: any) => o.value === data.user_id);
     const email = userOption?.email;
@@ -374,14 +342,14 @@ export class AdminAccessComponent implements OnInit {
   }
 
   handleDelete(item: any) {
-    this.isSaving = true;
+    this.isSaving.set(true);
     this.userService.deleteUserAccessGql(item.uuid).subscribe({
       next: () => {
         this.notificationService.success('Acceso eliminado');
         this.load();
-        this.isSaving = false;
+        this.isSaving.set(false);
       },
-      error: () => (this.isSaving = false)
+      error: () => this.isSaving.set(false)
     });
   }
 

@@ -1,6 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AppService } from '@core/services/app.service';
 import { UserService } from '@core/services/user.service';
@@ -25,7 +25,8 @@ import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
     TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent
   ],
   templateUrl: './notification-test.component.html',
-  styleUrls: ['./notification-test.component.css']
+  styleUrls: ['./notification-test.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationTestComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
@@ -33,19 +34,25 @@ export class NotificationTestComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
-  private fb = inject(FormBuilder);
 
-  testForm: FormGroup;
-  isSending = false;
+  isSending = signal(false);
+  step = signal(1);
+  companies = signal<any[]>([]);
 
-  step = 1;
+  selectedApp = signal<any>(null);
+  selectedCompany = signal<any>(null);
+  selectedUser = signal<any>(null);
 
-
-  companies: any[] = [];
-
-  selectedApp: any = null;
-  selectedCompany: any = null;
-  selectedUser: any = null;
+  testForm = new FormGroup({
+    title: new FormControl<string>('Test Notificación', { nonNullable: true, validators: [Validators.required] }),
+    message: new FormControl<string>('Este es un mensaje de prueba desde el wizard.', { nonNullable: true, validators: [Validators.required] }),
+    type: new FormControl<string>('INFO', { nonNullable: true }),
+    channels: new FormControl<string>('PUSH,EMAIL', { nonNullable: true }),
+    app_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
+    company_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
+    user_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
+    user_email: new FormControl<string | null>(null, { validators: [Validators.required] })
+  });
 
   appTable = new TableDataLoader(
     (p, l, f, s) => this.appService.getAppsWithCompaniesPaginated(p, l, f, s),
@@ -55,8 +62,8 @@ export class NotificationTestComponent implements OnInit {
 
   userTable = new TableDataLoader(
     (p, l, f, s) => this.userService.getAdminUsersPaginated(p, l, f, s, {
-      company_uuid: this.selectedCompany?.uuid,
-      app_uuid: this.selectedApp?.uuid
+      company_uuid: this.selectedCompany()?.uuid,
+      app_uuid: this.selectedApp()?.uuid
     }),
     this.notificationService,
     'Error al cargar usuarios'
@@ -86,85 +93,65 @@ export class NotificationTestComponent implements OnInit {
     { num: 4, label: 'Mensaje', icon: 'pi pi-send' },
   ];
 
-  constructor() {
-    this.testForm = this.fb.group({
-      title: ['Test Notificación', Validators.required],
-      message: ['Este es un mensaje de prueba desde el wizard.', Validators.required],
-      type: ['INFO'],
-      channels: ['PUSH,EMAIL'],
-      app_uuid: [null, Validators.required],
-      company_uuid: [null, Validators.required],
-      user_uuid: [null, Validators.required],
-      user_email: [null, Validators.required]
-    });
-  }
-
-  get hasPermission(): boolean {
-    return this.authService.checkPermission('securex.notifications.test');
-  }
+  hasPermission = computed(() => this.authService.checkPermission('securex.notifications.test'));
 
   ngOnInit() {
-    if (this.hasPermission) {
+    if (this.hasPermission()) {
       this.appTable.load();
     }
   }
 
-  loadCompanies() {
-    // Las compañías ya vienen precargadas dentro de la app seleccionada
-    this.companies = this.selectedApp?.companies || [];
-  }
-
   selectApp(app: any) {
-    this.selectedApp = app;
+    this.selectedApp.set(app);
     this.testForm.patchValue({ app_uuid: app.uuid });
-    this.step = 2;
-    this.companies = app.companies || [];
+    this.step.set(2);
+    this.companies.set(app.companies || []);
   }
 
   selectCompany(company: any) {
-    this.selectedCompany = company;
+    this.selectedCompany.set(company);
     this.testForm.patchValue({ company_uuid: company.uuid });
-    this.step = 3;
+    this.step.set(3);
   }
 
   selectUser(user: any) {
-    this.selectedUser = user;
+    this.selectedUser.set(user);
     this.testForm.patchValue({
       user_uuid: user.uuid,
       user_email: user.email
     });
-    this.step = 4;
+    this.step.set(4);
   }
 
   goBack() {
-    if (this.step > 1) {
-      this.step--;
+    if (this.step() > 1) {
+      this.step.update(s => s - 1);
     }
   }
 
   sendTest() {
     if (this.testForm.invalid) return;
 
-    this.isSending = true;
+    this.isSending.set(true);
 
-    this.apiService.sendNotificationToAny(this.testForm.value).subscribe({
+    this.apiService.sendNotificationToAny(this.testForm.getRawValue()).subscribe({
       next: () => {
         this.notificationService.success('Notificación enviada correctamente al usuario.');
-        this.isSending = false;
+        this.isSending.set(false);
         this.resetWizard();
       },
       error: (err) => {
         this.notificationService.error('Error al enviar notificación: ' + (err.error?.message || err.message));
-        this.isSending = false;
+        this.isSending.set(false);
       }
     });
   }
 
   private resetWizard() {
-    this.step = 1;
-    this.selectedApp = null;
-    this.selectedCompany = null;
-    this.selectedUser = null;
+    this.step.set(1);
+    this.selectedApp.set(null);
+    this.selectedCompany.set(null);
+    this.selectedUser.set(null);
     this.testForm.reset({
       title: 'Test Notificación',
       message: 'Este es un mensaje de prueba desde el wizard.',
