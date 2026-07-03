@@ -1,15 +1,18 @@
-import { Component, signal, computed, inject } from '@angular/core';
+import { Component, signal, computed, inject, ApplicationRef, DestroyRef } from '@angular/core';
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
 import { InstallPromptComponent } from './features/access-login/install-prompt.component';
 import { NotificationPromptComponent } from './features/access-login/notification-prompt.component';
+import { UpdatePromptComponent } from '@shared/components/update-prompt';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { LoaderComponent } from '@shared/components/loader/loader.component';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { filter, map, first } from 'rxjs/operators';
+import { merge, interval, fromEvent } from 'rxjs';
+import { LoggerService } from '@core/services/logger.service';
 
 @Component({
   selector: 'app-root',
@@ -20,6 +23,7 @@ import { filter, map } from 'rxjs';
     RouterOutlet,
     InstallPromptComponent,
     NotificationPromptComponent,
+    UpdatePromptComponent,
     ToastModule,
     ConfirmDialogModule,
     LoaderComponent
@@ -32,6 +36,9 @@ export class App {
   private router = inject(Router);
   private swPush = inject(SwPush);
   private swUpdate = inject(SwUpdate);
+  private appRef = inject(ApplicationRef);
+  private destroyRef = inject(DestroyRef);
+  private logger = inject(LoggerService);
 
   private currentUrl = toSignal(
     this.router.events.pipe(
@@ -46,20 +53,35 @@ export class App {
   });
 
   constructor() {
-    this.checkForUpdates();
+    this.startUpdatePolling();
     this.listenToNotificationClicks();
   }
 
-  private checkForUpdates() {
+  private startUpdatePolling() {
     if (!this.swUpdate.isEnabled) return;
 
-    this.swUpdate.versionUpdates.subscribe(evt => {
-      if (evt.type === 'VERSION_READY') {
-        if (confirm('Hay una nueva version de SECUREX. Deseas actualizar ahora?')) {
-          this.swUpdate.activateUpdate().then(() => window.location.reload());
+    const doCheck = () => {
+      this.swUpdate.checkForUpdate().then(hasUpdate => {
+        if (hasUpdate) {
+          this.logger.log('Nueva versión disponible — descargándose...', undefined, 'AppComponent');
         }
-      }
-    });
+      }).catch(err => {
+        this.logger.warn('Error al verificar actualizaciones', err, 'AppComponent');
+      });
+    };
+
+    const appIsStable$ = this.appRef.isStable.pipe(first(isStable => isStable));
+    const everyMinute$ = interval(60 * 1000);
+    const onNavigation$ = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    );
+    const onVisibility$ = fromEvent(document, 'visibilitychange').pipe(
+      filter(() => document.visibilityState === 'visible')
+    );
+
+    merge(appIsStable$, everyMinute$, onNavigation$, onVisibility$)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => doCheck());
   }
 
   private listenToNotificationClicks() {
@@ -71,14 +93,11 @@ export class App {
           const origin = window.location.origin;
 
           if (url.startsWith(origin)) {
-            // Es el mismo dominio! Extraemos la ruta y navegamos sin recargar
             const path = url.substring(origin.length);
             this.router.navigate([path]);
           } else if (url.startsWith('http')) {
-            // Es un dominio externo, abrimos pestaña nueva
             window.open(url, '_blank');
           } else {
-            // Es una ruta relativa
             const targetUrl = url.startsWith('/') ? url : '/' + url;
             this.router.navigate([targetUrl]);
           }

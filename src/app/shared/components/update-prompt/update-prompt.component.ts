@@ -11,10 +11,10 @@ import { SwUpdate } from '@angular/service-worker';
     <div *ngIf="showUpdate"
       class="fixed bottom-4 left-3 right-3 md:left-auto md:right-6 md:w-[380px] z-[100]"
       style="animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);">
-      <div class="bg-[#0f1a2e]/95 backdrop-blur-2xl border border-blue-500/20 rounded-2xl shadow-2xl shadow-blue-500/10 p-4">
+      <div class="bg-[#1e1e1e]/95 backdrop-blur-2xl border border-orange-500/20 rounded-2xl shadow-2xl shadow-orange-500/10 p-4">
         <div class="flex items-start gap-3">
-          <div class="w-10 h-10 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-10 h-10 bg-orange-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
             </svg>
@@ -22,7 +22,7 @@ import { SwUpdate } from '@angular/service-worker';
           <div class="flex-1 min-w-0">
             <h4 class="text-white font-semibold text-sm mb-1">Actualización disponible</h4>
             <p class="text-white/50 text-xs leading-relaxed">
-              Hay una nueva versión de GGTS. Actualiza para obtener las últimas mejoras.
+              Hay una nueva versión de SECUREX. Actualiza para obtener las últimas mejoras y correcciones.
             </p>
           </div>
           <button (click)="dismiss()"
@@ -34,12 +34,12 @@ import { SwUpdate } from '@angular/service-worker';
         </div>
         <div class="flex gap-2 mt-3">
           <button (click)="updateNow()"
-            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-sm shadow-lg shadow-blue-500/20">
+            class="flex-1 bg-padel-orange hover:bg-orange-500 text-white font-semibold py-2 px-4 rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] text-sm shadow-lg shadow-orange-500/20">
             Actualizar ahora
           </button>
           <button (click)="dismiss()"
             class="px-4 py-2 text-white/40 hover:text-white font-medium transition-colors text-sm">
-            Despues
+            Después
           </button>
         </div>
       </div>
