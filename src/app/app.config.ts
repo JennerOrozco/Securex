@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideZoneChangeDetection, isDevMode, APP_INITIALIZER } from '@angular/core';
-import { provideRouter, TitleStrategy } from '@angular/router';
+import { provideRouter, TitleStrategy, withComponentInputBinding } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { provideServiceWorker } from '@angular/service-worker';
 import { providePrimeNG } from 'primeng/config';
@@ -20,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ConfirmationService,
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(routes, withComponentInputBinding()),
     { provide: TitleStrategy, useClass: CustomTitleStrategy },
     provideHttpClient(withFetch(), withInterceptors([authInterceptor, paginatedResponseInterceptor, responseInterceptor, loadingInterceptor, xsrfInterceptor, timeoutInterceptor])),
     provideServiceWorker('ngsw-worker.js', {

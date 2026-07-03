@@ -69,7 +69,10 @@ export class MobileNavComponent implements OnInit {
   activeIndex = computed(() => {
     const url = this.currentUrl();
     const items = this.visibleMenuItems();
-    return items.findIndex(item => item.path && url.startsWith(item.path));
+    return items.findIndex(item => {
+      if (!item.path) return false;
+      return url === item.path || (item.path !== '/' && url.startsWith(item.path + '/'));
+    });
   });
 
   indicatorLeft = computed(() => {
@@ -98,9 +101,16 @@ export class MobileNavComponent implements OnInit {
       .subscribe({
         next: (res) => {
           const data = res.data || res;
-          this.mobileComponents.set(Array.isArray(data) ? data : []);
+          let components = Array.isArray(data) ? data : [];
+          
+          if (components.length === 0) {
+            components = this.getFallbackMenu();
+          }
+          this.mobileComponents.set(components);
         },
-        error: () => {}
+        error: () => {
+          this.mobileComponents.set(this.getFallbackMenu());
+        }
       });
 
     if (this.authService.userMenu().length === 0) {
@@ -123,5 +133,15 @@ export class MobileNavComponent implements OnInit {
   @HostListener('document:keydown.escape')
   onEscapeKey(): void {
     this.closeSidebar();
+  }
+
+  private getFallbackMenu(): any[] {
+    const menu = this.authService.userMenu();
+    return menu.slice(0, 5).map(m => ({
+       icon: m.icon || 'pi-circle',
+       name: m.name,
+       route: m.route || (m.children && m.children.length > 0 ? m.children[0].route : undefined),
+       slug: m.slug
+    })).filter(c => !!c.route);
   }
 }

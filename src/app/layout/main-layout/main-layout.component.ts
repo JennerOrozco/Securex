@@ -1,45 +1,36 @@
-import { Component, OnInit, signal, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, signal, DestroyRef, inject, input, effect, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet, Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { MobileNavComponent } from '../mobile-nav/mobile-nav.component';
 import { HeaderComponent } from '../header.component';
-import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AuthService } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [CommonModule, RouterOutlet, SidebarComponent, MobileNavComponent, HeaderComponent],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrl: './main-layout.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainLayoutComponent implements OnInit {
-  isFullLayout = signal(false);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private authService = inject(AuthService);
   private destroyRef = inject(DestroyRef);
 
-  ngOnInit() {
-    this.checkLayout();
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(() => {
-      this.checkLayout();
+  layout = input<string | undefined>();
+  isFullLayout = signal(false);
+
+  constructor() {
+    effect(() => {
+      this.isFullLayout.set(this.layout() === 'full');
     });
   }
 
-  private checkLayout() {
-    let route = this.route;
-    while (route.firstChild) {
-      route = route.firstChild;
+  ngOnInit(): void {
+    if (this.authService.userMenu().length === 0) {
+      this.authService.refreshPermissions().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     }
-    const isFull = route.snapshot.data['layout'] === 'full';
-    this.isFullLayout.set(isFull);
   }
 }
-
-
-
-

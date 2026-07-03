@@ -36,11 +36,11 @@
 
                 <button (click)="toggleFullscreen()"
                     class="text-gray-300 hover:text-white p-2 rounded-full hover:bg-white/10 transition-all duration-200">
-                    <svg *ngIf="!isFullscreen" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg *ngIf="!isFullscreen()" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4" />
                     </svg>
-                    <svg *ngIf="isFullscreen" class="w-5 h-5 text-padel-orange" fill="none" stroke="currentColor"
+                    <svg *ngIf="isFullscreen()" class="w-5 h-5 text-padel-orange" fill="none" stroke="currentColor"
                         viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M4 14h6m0 0v6m0-6l-7 7m17-7h-6m0 0v6m0-6l7 7M10 4v6m0 0H4m6 0L3 3m11 1v6m0 0h6m-6 0l7-7" />
@@ -80,19 +80,19 @@
 
                 <div class="h-8 w-[1px] bg-white/10 mx-2"></div>
 
-                <div *ngIf="currentUser" class="flex items-center space-x-4">
+                <div *ngIf="currentUser() as user" class="flex items-center space-x-4">
                     <div class="text-right hidden lg:block cursor-pointer group" [routerLink]="['/perfil']">
                         <p
                             class="text-white font-bold text-sm group-hover:text-padel-orange transition-colors leading-none">
-                            {{ currentUser.full_name }}
+                            {{ user.full_name }}
                         </p>
                         <div class="flex items-center justify-end gap-1.5 mt-1">
                             <span class="text-[10px] text-gray-400 font-medium">
-                                {{ currentCompany?.name }}
+                                {{ currentCompany()?.name }}
                             </span>
                             <span class="w-1 h-1 rounded-full bg-gray-600"></span>
                             <span class="text-[10px] text-padel-orange font-bold uppercase tracking-tighter">
-                                {{ currentBranch?.name }}
+                                {{ currentBranch()?.name }}
                             </span>
                         </div>
                     </div>

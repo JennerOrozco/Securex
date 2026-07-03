@@ -1,8 +1,7 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectionStrategy, signal, computed } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
-import { User } from '@shared/types';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationPanelService } from '@shared/services/notification-panel.service';
 import { LayoutService } from '@core/services/layout.service';
@@ -13,7 +12,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     selector: 'app-header',
     templateUrl: './header.component.html',
     standalone: true,
-    imports: [CommonModule, RouterModule, NotificationPanelComponent]
+    imports: [CommonModule, RouterModule, NotificationPanelComponent],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {
 
@@ -28,33 +28,26 @@ export class HeaderComponent implements OnInit {
     private destroyRef = inject(DestroyRef);
 
     private document = inject(DOCUMENT);
-    isFullscreen = false;
+    isFullscreen = signal(false);
 
-    get currentUser(): User | null {
-        return this.authService.currentUser();
-    }
-
-    get currentCompany(): any {
-        return this.authService.currentCompany();
-    }
-    get currentBranch(): any {
-        return this.authService.currentBranch();
-    }
-    isMenuOpen = false;
+    currentUser = computed(() => this.authService.currentUser());
+    currentCompany = computed(() => this.authService.currentCompany());
+    currentBranch = computed(() => this.authService.currentBranch());
+    isMenuOpen = signal(false);
 
     toggleFullscreen(): void {
-        if (!this.isFullscreen) {
+        if (!this.isFullscreen()) {
             const elem = this.document.documentElement;
             if (elem.requestFullscreen) elem.requestFullscreen();
         } else {
             if (this.document.exitFullscreen) this.document.exitFullscreen();
         }
-        this.isFullscreen = !this.isFullscreen;
+        this.isFullscreen.update(v => !v);
     }
 
     navigateTo(route: string): void {
         this.router.navigate([route]);
-        this.isMenuOpen = false;
+        this.isMenuOpen.set(false);
         this.notifPanel.closePanel();
     }
 

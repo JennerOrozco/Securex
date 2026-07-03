@@ -1,4 +1,4 @@
-import { Component, inject, signal, OnInit, computed, DestroyRef } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
@@ -31,7 +31,8 @@ interface ContextItem {
   standalone: true,
   imports: [CommonModule, RouterLink, RouterLinkActive],
   templateUrl: './sidebar.component.html',
-  styleUrl: './sidebar.component.css'
+  styleUrl: './sidebar.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
