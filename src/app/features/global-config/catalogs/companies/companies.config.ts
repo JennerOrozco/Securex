@@ -8,10 +8,13 @@ export const COMPANIES_COLS: TableColumn[] = [
   { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '25%', 'text-align': 'center' } }
 ];
 
-export const createCompaniesForm = (apps: any[]): FormField[] => [
-  { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true },
-  { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true },
-  { name: 'app_id', label: 'Aplicación Asociada', type: 'select', required: false, options: apps.map(app => ({ label: app.name, value: app.id })) },
-  { name: 'logo_url', label: 'Logo de la Compañía', type: 'file', required: false, accept: 'image/*' },
-  { name: 'is_active', label: '¿Está Activa?', type: 'select', required: true, options: [{ label: 'Activo', value: true }, { label: 'Inactivo', value: false }] }
-];
+export const createCompaniesForm = (catalogs: any): FormField[] => {
+  const apps = catalogs?.apps || [];
+  return [
+    { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true },
+    { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true },
+    { name: 'app_id', label: 'Aplicación Asociada', type: 'select', required: false, options: apps.map((app: any) => ({ label: app.name, value: app.id })) },
+    { name: 'logo_url', label: 'Logo de la Compañía', type: 'file', required: false, accept: 'image/*' },
+    { name: 'is_active', label: '¿Está Activa?', type: 'select', required: true, options: [{ label: 'Activo', value: true }, { label: 'Inactivo', value: false }] }
+  ];
+};

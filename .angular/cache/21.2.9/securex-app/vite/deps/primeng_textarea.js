@@ -1,19 +1,19 @@
 import {
-  Fluid
-} from "./chunk-LUDT4NMN.js";
-import {
   BaseModelHolder
 } from "./chunk-R5IOAG2E.js";
+import {
+  Fluid
+} from "./chunk-LUDT4NMN.js";
 import {
   PARENT_INSTANCE
 } from "./chunk-C46CXQ5C.js";
 import {
   BaseStyle
 } from "./chunk-F432P5EP.js";
-import "./chunk-CD2TGPKN.js";
 import {
   Bind
 } from "./chunk-HIXY6DNM.js";
+import "./chunk-CD2TGPKN.js";
 import "./chunk-ZGIVYFBQ.js";
 import {
   NgControl
@@ -48,8 +48,8 @@ import {
   ɵɵdefineInjectable,
   ɵɵdefineInjector
 } from "./chunk-ETPHLA5P.js";
-import "./chunk-JRFR6BLO.js";
 import "./chunk-HWYXSU2G.js";
+import "./chunk-JRFR6BLO.js";
 import "./chunk-MARUHEWW.js";
 import {
   __spreadProps,

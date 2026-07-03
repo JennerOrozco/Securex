@@ -9,10 +9,13 @@ export const BRANCHES_COLS: TableColumn[] = [
   { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '15%', 'text-align': 'center' } }
 ];
 
-export const createBranchesForm = (companies: any[]): FormField[] => [
-  { name: 'name', label: 'Nombre de Sucursal', type: 'text', required: true, icon: 'pi pi-sitemap' },
-  { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: companies.map((c: any) => ({ label: c.name, value: c.id })) },
-  { name: 'address', label: 'Dirección', type: 'text', icon: 'pi pi-map-marker' },
-  { name: 'phone', label: 'Teléfono', type: 'phone', icon: 'pi pi-phone' },
-  { name: 'is_active', label: '¿Activa?', type: 'select', required: true, options: [{ label: 'Sí', value: true }, { label: 'No', value: false }] }
-];
+export const createBranchesForm = (catalogs: any): FormField[] => {
+  const companies = catalogs?.companies || [];
+  return [
+    { name: 'name', label: 'Nombre de Sucursal', type: 'text', required: true, icon: 'pi pi-sitemap' },
+    { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: companies.map((c: any) => ({ label: c.name, value: c.id })) },
+    { name: 'address', label: 'Dirección', type: 'text', icon: 'pi pi-map-marker' },
+    { name: 'phone', label: 'Teléfono', type: 'phone', icon: 'pi pi-phone' },
+    { name: 'is_active', label: '¿Activa?', type: 'select', required: true, options: [{ label: 'Sí', value: true }, { label: 'No', value: false }] }
+  ];
+};

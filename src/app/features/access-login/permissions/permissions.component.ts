@@ -1,56 +1,61 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
-import { TreeNode } from 'primeng/api';
 import { PermissionService } from '@core/services/permission.service';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
-import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
 import { mapToTreeNodes, filterTreeByQuery } from '@shared/utils/tree-utils';
 import { PERMISSION_TABLE_COLUMNS, PERMISSION_FORM_FIELDS, SystemPermission } from './permissions.config';
 import { trackApi } from '@shared/utils/rxjs-utils';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
+import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-security-permission-crud',
   standalone: true,
   imports: [CommonModule, CrudPageComponent],
   templateUrl: './permissions.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [UnifiedCrudService]
 })
-export class SecurityPermissionCrudComponent extends BaseNotificationConfigComponent<SystemPermission> {
+export class SecurityPermissionCrudComponent implements OnInit {
   private permissionService = inject(PermissionService);
-
-  get resourceName(): string { return 'Permiso'; }
+  private notificationService = inject(NotificationService);
+  crud = inject(UnifiedCrudService);
 
   formFields = PERMISSION_FORM_FIELDS;
   cols = PERMISSION_TABLE_COLUMNS;
 
-  override isTreeTable = true;
-  protected override autoLoadOnInit = true;
+  private rawItems: SystemPermission[] = [];
 
-  override loadTreeData(): Observable<any[]> {
-    return this.permissionService.getPermissionsTree();
-  }
-  
-  override mapToTreeNodes(items: any[]): TreeNode[] {
-    return mapToTreeNodes(items, {
-      canAdd: (p) => p.type !== 'ACTION',
-      expanded: () => false
+  ngOnInit() {
+    this.crud.initialize({
+      resourceName: 'Permiso',
+      isTreeMode: true,
+      fnFetchTree: () => this.permissionService.getPermissionsTree(),
+      fnCreate: (data) => this.permissionService.createPermissionGql(data),
+      fnUpdate: (id, data) => this.permissionService.updatePermissionGql(id, data),
+      fnDelete: (id) => this.permissionService.deletePermissionGql(id),
+      mapTreeFn: (items: any[]) => {
+        this.rawItems = items;
+        return mapToTreeNodes(items, {
+          canAdd: (p: any) => p.type !== 'ACTION',
+          expanded: () => false
+        });
+      }
     });
+
+    this.crud.load();
   }
-  
-  override fnCreate = this.permissionService.createPermissionGql.bind(this.permissionService);
-  override fnUpdate = this.permissionService.updatePermissionGql.bind(this.permissionService);
-  override fnDelete = this.permissionService.deletePermissionGql.bind(this.permissionService);
 
   filterByType(type: string): void {
-    const all = this.rawItems as SystemPermission[];
+    const all = this.rawItems;
     if (!type) {
-      this.treeData = this.mapToTreeNodes(all);
+      const nodes = mapToTreeNodes(all, { canAdd: (p: any) => p.type !== 'ACTION', expanded: () => false });
+      this.crud.items.set(nodes);
     } else {
       const filtered = filterTreeByQuery(all, type).filter((p: any) => p.type === type);
-      this.treeData = this.mapToTreeNodes(filtered);
+      const nodes = mapToTreeNodes(filtered, { canAdd: (p: any) => p.type !== 'ACTION', expanded: () => false });
+      this.crud.items.set(nodes);
     }
-    this.cdr.markForCheck();
   }
 
   handleNodeReorder(event: any): void {
@@ -60,10 +65,12 @@ export class SecurityPermissionCrudComponent extends BaseNotificationConfigCompo
 
     if (!node || !node.uuid) return;
 
+    this.crud.isSaving.set(true);
     this.permissionService.reorderPermission(node.uuid, parentId, 0)
-      .pipe(trackApi(this, (s: boolean) => this.isSaving = s, 'Estructura reordenada correctamente'))
+      .pipe(trackApi(this.crud, (s: boolean) => this.crud.isSaving.set(s), 'Estructura reordenada correctamente'))
       .subscribe({
-        next: () => this.load()
+        next: () => this.crud.load(),
+        error: () => this.crud.isSaving.set(false)
       });
   }
 }

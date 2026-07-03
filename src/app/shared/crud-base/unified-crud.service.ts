@@ -74,6 +74,12 @@ export interface CrudConfig<T = any> {
   columnMap?: Record<string, string>;
   /** Hooks del ciclo de vida (eventos) */
   hooks?: CrudHooks<T>;
+  /** Si es true, el servicio usará loadTree() en lugar de loadPaginated() */
+  isTreeMode?: boolean;
+  /** Función para cargar el árbol completo (retorna array de items backend) */
+  fnFetchTree?: () => Observable<any[]>;
+  /** Transformador de items backend a TreeNodes de PrimeNG */
+  mapTreeFn?: (items: any[]) => any[];
 }
 
 /**
@@ -177,7 +183,10 @@ export class UnifiedCrudService<T = any> {
       columnMap: {},
       ...config
     };
+    
+    this.isTreeMode.set(config.isTreeMode ?? false);
   }
+
 
   /**
    * Cargar catálogos pre-configurados
@@ -256,9 +265,36 @@ export class UnifiedCrudService<T = any> {
   }
 
   private loadTree(): void {
+    if (!this.config?.fnFetchTree) {
+      this.logger.error('No se ha configurado fnFetchTree para el modo árbol', {}, 'UnifiedCrudService');
+      return;
+    }
+
     this.loading.set(true);
-    // Implementación de tree loading si se requiere
-    this.loading.set(false);
+    
+    this.config.fnFetchTree()
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map(res => {
+          const rawItems = extractApiArray(res);
+          if (this.config?.mapTreeFn) {
+            return this.config.mapTreeFn(rawItems);
+          }
+          return rawItems;
+        }),
+        finalize(() => this.loading.set(false))
+      )
+      .subscribe({
+        next: (nodes) => {
+          this.items.set(nodes);
+          // Opcional: totalRecords
+          this.totalRecords.set(nodes.length);
+        },
+        error: (err: any) => {
+          this.logger.error(`Error al cargar el árbol de ${this.config!.resourceName}`, err, 'UnifiedCrudService');
+          this.notification.error(`Error al cargar ${this.config!.resourceName}`);
+        }
+      });
   }
 
   // =========================================================================
@@ -271,6 +307,24 @@ export class UnifiedCrudService<T = any> {
   async handleAdd(): Promise<void> {
     this.modalMode.set('add');
     this.selectedItem.set(null);
+    this.currentParentId.set(null);
+    
+    if (this.config?.hooks?.onBeforeModalOpen) {
+      await this.config.hooks.onBeforeModalOpen('add');
+    }
+
+    this.ensureCatalogs(() => {
+      this.modalVisible.set(true);
+    });
+  }
+
+  /**
+   * Abrir modal para agregar un nuevo registro hijo (Tree)
+   */
+  async handleAddChild(parentId: number | string): Promise<void> {
+    this.modalMode.set('add');
+    this.selectedItem.set(null);
+    this.currentParentId.set(parentId as number);
     
     if (this.config?.hooks?.onBeforeModalOpen) {
       await this.config.hooks.onBeforeModalOpen('add');
@@ -365,6 +419,10 @@ export class UnifiedCrudService<T = any> {
 
     const mode = eventData?.mode ?? this.modalMode() as 'add' | 'edit';
     let dataToSave = eventData?.data ?? eventData;
+
+    if (this.isTreeMode() && mode === 'add' && this.currentParentId() !== null) {
+      dataToSave = { ...dataToSave, parent_id: this.currentParentId() };
+    }
 
     // Ejecutar hook de pre-guardado
     if (this.config.hooks?.onBeforeSave) {

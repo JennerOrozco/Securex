@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, effect } from '@angular/core';
+import { Component, inject, OnInit, effect, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -11,7 +11,7 @@ import { ResetPasswordModalComponent } from '@shared/modals/modal-shell/reset-pa
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { USER_ACCESS_COLS, getUserAccessFormFields, updateUserFormOptions } from './user.config';
+import { USER_ACCESS_COLS, createUserAccessForm } from './user.config';
 
 @Component({
   selector: 'app-security-user-crud',
@@ -33,12 +33,24 @@ export class SecurityUserCrudComponent implements OnInit {
   formInitialData: any = null;
 
   cols = USER_ACCESS_COLS;
-  formFields = getUserAccessFormFields();
+  
+  formFields = computed(() => {
+    const rawCatalogs = this.crud.catalogItems();
+    let pd: any = rawCatalogs['pageData'] || {};
+    if (Array.isArray(pd)) pd = pd[0] || {};
+    const catalogs: any = { ...rawCatalogs, ...pd };
+
+    const currentCompany = this.authService.currentCompany();
+    const matchedCompany = catalogs['companies']?.find((c: any) => c.uuid === currentCompany?.uuid);
+
+    return createUserAccessForm(catalogs, matchedCompany);
+  });
 
   constructor() {
     effect(() => {
       const rawCatalogs = this.crud.catalogItems();
-      const pd: any = rawCatalogs['pageData'] || {};
+      let pd: any = rawCatalogs['pageData'] || {};
+      if (Array.isArray(pd)) pd = pd[0] || {};
       const catalogs: any = { ...rawCatalogs, ...pd };
 
       const currentCompany = this.authService.currentCompany();
@@ -51,9 +63,6 @@ export class SecurityUserCrudComponent implements OnInit {
           status: 'APPROVED'
         };
       }
-
-      // Mutates the form fields directly without destroying references
-      updateUserFormOptions(this.formFields, catalogs, matchedCompany);
     });
   }
 
@@ -91,8 +100,6 @@ export class SecurityUserCrudComponent implements OnInit {
         )
       }
     });
-
-    this.crud.load();
   }
 
   saveSetting(id: any, data: any, mode: 'add' | 'edit'): Observable<any> {
@@ -115,8 +122,8 @@ export class SecurityUserCrudComponent implements OnInit {
   }
 
   private sendInvitationForNewAccess(data: any) {
-    const userOption: any = this.formFields
-      .find(f => f.name === 'user_uuid')?.options
+    const userOption: any = this.formFields()
+      .find((f: any) => f.name === 'user_uuid')?.options
       ?.find((o: any) => o.value === data.user_uuid);
 
     const email = userOption?.email;

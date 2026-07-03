@@ -6,11 +6,11 @@ import {
   BaseStyle
 } from "./chunk-F432P5EP.js";
 import {
-  SharedModule
-} from "./chunk-CD2TGPKN.js";
-import {
   Bind
 } from "./chunk-HIXY6DNM.js";
+import {
+  SharedModule
+} from "./chunk-CD2TGPKN.js";
 import "./chunk-ZGIVYFBQ.js";
 import {
   CommonModule
@@ -40,8 +40,8 @@ import {
   ɵɵdefineInjectable,
   ɵɵdefineInjector
 } from "./chunk-ETPHLA5P.js";
-import "./chunk-JRFR6BLO.js";
 import "./chunk-HWYXSU2G.js";
+import "./chunk-JRFR6BLO.js";
 import "./chunk-MARUHEWW.js";
 import {
   __spreadProps,

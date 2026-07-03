@@ -6,15 +6,15 @@ import {
   BaseStyle
 } from "./chunk-F432P5EP.js";
 import {
+  Bind,
+  BindModule
+} from "./chunk-HIXY6DNM.js";
+import {
   Footer,
   Header,
   PrimeTemplate,
   SharedModule
 } from "./chunk-CD2TGPKN.js";
-import {
-  Bind,
-  BindModule
-} from "./chunk-HIXY6DNM.js";
 import {
   k2 as k
 } from "./chunk-ZGIVYFBQ.js";
@@ -66,8 +66,8 @@ import {
   ɵɵdefineInjectable,
   ɵɵdefineInjector
 } from "./chunk-ETPHLA5P.js";
-import "./chunk-JRFR6BLO.js";
 import "./chunk-HWYXSU2G.js";
+import "./chunk-JRFR6BLO.js";
 import "./chunk-MARUHEWW.js";
 import "./chunk-WDMUDEB6.js";
 

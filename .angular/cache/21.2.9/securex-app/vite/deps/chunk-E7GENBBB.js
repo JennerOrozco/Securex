@@ -12,13 +12,13 @@ import {
   BaseStyle
 } from "./chunk-F432P5EP.js";
 import {
-  PrimeTemplate,
-  SharedModule
-} from "./chunk-CD2TGPKN.js";
-import {
   Bind,
   BindModule
 } from "./chunk-HIXY6DNM.js";
+import {
+  PrimeTemplate,
+  SharedModule
+} from "./chunk-CD2TGPKN.js";
 import {
   k2 as k,
   q
@@ -768,4 +768,4 @@ export {
   Checkbox,
   CheckboxModule
 };
-//# sourceMappingURL=chunk-YACUEZXN.js.map
+//# sourceMappingURL=chunk-E7GENBBB.js.map

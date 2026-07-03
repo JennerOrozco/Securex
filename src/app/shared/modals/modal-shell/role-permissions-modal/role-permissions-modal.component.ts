@@ -27,6 +27,9 @@ export class RolePermissionsModalComponent implements OnChanges {
   @Output() onSave = new EventEmitter<number[]>();
   @Output() onClose = new EventEmitter<void>();
 
+  @Input() onSaveCallback?: (ids: number[]) => void;
+  @Input() onCloseCallback?: () => void;
+
   private roleService = inject(RoleService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
@@ -92,9 +95,11 @@ export class RolePermissionsModalComponent implements OnChanges {
   handleHide() {
     this.visibleChange.emit(false);
     this.onClose.emit();
+    if (this.onCloseCallback) this.onCloseCallback();
   }
 
   handleSave() {
     this.onSave.emit(Array.from(this.selectedIds));
+    if (this.onSaveCallback) this.onSaveCallback(Array.from(this.selectedIds));
   }
 }

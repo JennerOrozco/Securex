@@ -4,6 +4,8 @@ import { AppService } from '@core/services/app.service';
 import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
+import { CompanyService } from '@core/services/company.service';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { map, tap } from 'rxjs/operators';
 
 export const globalConfigRoutes: Routes = [
@@ -31,12 +33,90 @@ export const globalConfigRoutes: Routes = [
   {
     path: 'catalog/companies',
     title: 'Compañías',
-    loadComponent: () => import('./catalogs/companies/companies.component').then(m => m.CompaniesComponent)
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: {
+      isTreeTable: true,
+      title: 'Compañías',
+      subtitle: 'Organizadas por aplicación',
+      resourceName: 'Compañía',
+      addLabel: 'Nueva Compañía',
+      deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`,
+      fnFetch: () => {
+        const crud = inject(UnifiedCrudService);
+        return inject(CompanyService).getCompaniesPageData().pipe(
+          map((data: any) => {
+            const apps = data?.apps?.data ?? [];
+            const companies = data?.companies?.data ?? [];
+            crud.catalogItems.update(c => ({ ...c, apps }));
+            return apps.map((app: any) => ({
+              data: { ...app, name: app.name, type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false, icon: 'pi pi-th-large' },
+              expanded: true,
+              children: companies.filter((c: any) => c.app_id === app.id).map((company: any) => ({
+                data: { ...company, type: 'SUBMENU', icon: 'pi pi-building', _canAdd: false, _canEdit: true, _canDelete: true }
+              }))
+            }));
+          })
+        );
+      },
+      fnCreate: (data: any) => inject(CompanyService).createCompanyGql(data),
+      fnUpdate: (id: string, data: any) => inject(CompanyService).updateCompanyGql(id, data),
+      fnDelete: (id: string) => inject(CompanyService).deleteCompanyGql(id),
+      cols: () => import('./catalogs/companies/companies.config').then(m => m.COMPANIES_COLS),
+      formFieldsFn: () => import('./catalogs/companies/companies.config').then(m => m.createCompaniesForm),
+      onAddRootFn: (shell: any) => { shell.formExtraData = null; },
+      onAddChildFn: (parentId: any, shell: any) => { shell.formExtraData = { app_id: parentId, is_active: true }; },
+      hooks: {
+        onBeforeSave: (data: any, mode: string) => {
+          return new Promise((resolve, reject) => {
+            if (data.logo_url instanceof File) {
+              const reader = new FileReader();
+              reader.onload = () => { data.logo_url = reader.result as string; resolve(data); };
+              reader.onerror = () => reject(new Error('Error al procesar la imagen del logo'));
+              reader.readAsDataURL(data.logo_url);
+            } else {
+              resolve(data);
+            }
+          });
+        }
+      }
+    }
   },
   {
     path: 'catalog/branches',
     title: 'Sucursales',
-    loadComponent: () => import('./catalogs/branches/branches.component').then(m => m.BranchesComponent)
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: {
+      isTreeTable: true,
+      title: 'Sucursales',
+      subtitle: 'Organizadas por Compañía',
+      resourceName: 'Sucursal',
+      addLabel: 'Nueva Sucursal',
+      deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`,
+      fnFetch: () => {
+        const crud = inject(UnifiedCrudService);
+        return inject(CompanyService).getBranchesPageData().pipe(
+          map((data: any) => {
+            const companies = data?.companies?.data ?? [];
+            const branches = data?.branches?.data ?? [];
+            crud.catalogItems.update(c => ({ ...c, companies }));
+            return companies.map((company: any) => ({
+              data: { ...company, name: company.name, type: 'MENU', _canAdd: true, _canEdit: false, _canDelete: false, icon: 'pi pi-building' },
+              expanded: true,
+              children: branches.filter((b: any) => b.company_id === company.id).map((branch: any) => ({
+                data: { ...branch, type: 'SUBMENU', icon: 'pi pi-sitemap', _canAdd: false, _canEdit: true, _canDelete: true }
+              }))
+            }));
+          })
+        );
+      },
+      fnCreate: (data: any) => inject(CompanyService).createBranchGql(data),
+      fnUpdate: (id: string, data: any) => inject(CompanyService).updateBranchGql(id, data),
+      fnDelete: (id: string) => inject(CompanyService).deleteBranchGql(id),
+      cols: () => import('./catalogs/branches/branches.config').then(m => m.BRANCHES_COLS),
+      formFieldsFn: () => import('./catalogs/branches/branches.config').then(m => m.createBranchesForm),
+      onAddRootFn: (shell: any) => { shell.formExtraData = null; },
+      onAddChildFn: (parentId: any, shell: any) => { shell.formExtraData = { company_id: parentId, is_active: true }; }
+    }
   },
 
   // Acceso global — administración de usuarios y roles

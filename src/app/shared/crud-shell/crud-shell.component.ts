@@ -1,8 +1,9 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EnvironmentInjector, InjectionToken, computed } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EnvironmentInjector, InjectionToken, computed, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
+import { NotificationService } from '@core/services/notification.service';
 
 export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
 
@@ -35,28 +36,39 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
     @if (initialized) {
       <app-crud-page 
         [title]="title"
-      [subtitle]="subtitle" 
-      [columns]="cols"
-      [data]="crud.items()" 
-      [loading]="crud.loading()" 
-      [formFields]="resolvedFormFields()" 
-      [resourceName]="resourceName" 
-      [addLabel]="addLabel"
-      [isSaving]="crud.isSaving()"
-      [lazy]="lazy" 
-      [totalRecords]="crud.totalRecords()"
-      [showAdd]="showAdd"
-      [showEdit]="showEdit"
-      [showDelete]="showDelete"
-      [permission]="permission"
-      [hidePermissionGate]="hidePermissionGate"
-      [deleteTitle]="deleteTitle"
-      [deleteMessage]="deleteMessage"
-      (onLazyLoad)="crud.load($event)" 
-      (onSave)="crud.save($event)"
-      (onConfirmDelete)="crud.confirmDelete($event)"
-        (onRefresh)="crud.load()">
+        [subtitle]="subtitle" 
+        [columns]="cols"
+        [data]="crud.items()" 
+        [loading]="crud.loading()" 
+        [formFields]="resolvedFormFields()" 
+        [resourceName]="resourceName" 
+        [addLabel]="addLabel"
+        [isSaving]="crud.isSaving()"
+        [lazy]="lazy" 
+        [totalRecords]="crud.totalRecords()"
+        [showAdd]="showAdd"
+        [showEdit]="showEdit"
+        [showDelete]="showDelete"
+        [showPermissions]="showPermissions"
+        [permission]="permission"
+        [hidePermissionGate]="hidePermissionGate"
+        [deleteTitle]="deleteTitle"
+        [deleteMessage]="deleteMessage"
+        [isTreeTable]="isTreeTable"
+        [treeNodes]="crud.items()"
+        [formExtraData]="formExtraData"
+        (onLazyLoad)="crud.load($event)" 
+        (onSave)="crud.save($event)"
+        (onConfirmDelete)="crud.confirmDelete($event)"
+        (onRefresh)="crud.load()"
+        (onPermissions)="handlePermissions($event)"
+        (onAddRoot)="handleAddRoot()"
+        (onAddChild)="handleAddChild($event)">
       </app-crud-page>
+
+      @if (customModalComponent) {
+        <ng-container *ngComponentOutlet="customModalComponent; inputs: customModalInputs"></ng-container>
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -69,6 +81,8 @@ export class CrudShellComponent implements OnInit {
   private service = inject(CRUD_SERVICE_TOKEN, { optional: true });
   crud = inject(UnifiedCrudService);
   private environmentInjector = inject(EnvironmentInjector);
+  destroyRef = inject(DestroyRef);
+  notificationService = inject(NotificationService);
 
   initialized = false;
   title = '';
@@ -78,11 +92,18 @@ export class CrudShellComponent implements OnInit {
   showAdd = true;
   showEdit = true;
   showDelete = true;
+  showPermissions = false;
   lazy = false;
+  isTreeTable = false;
   permission = '';
   hidePermissionGate = false;
   deleteTitle: string = '';
   deleteMessage: string | ((item: any) => string) = '';
+  formExtraData: any = null;
+  routeData: any = null;
+  customModalComponent: any = null;
+  customModalInputs: Record<string, any> = {};
+  
   cols: any[] = [];
   formFields: any[] = [];
   formFieldsBuilder: any = null;
@@ -96,6 +117,7 @@ export class CrudShellComponent implements OnInit {
 
   async ngOnInit() {
     const data = this.route.snapshot.data;
+    this.routeData = data;
     
     this.title = data['title'] || 'Catálogo';
     this.subtitle = data['subtitle'] || '';
@@ -104,7 +126,9 @@ export class CrudShellComponent implements OnInit {
     this.showAdd = data['showAdd'] !== undefined ? data['showAdd'] : true;
     this.showEdit = data['showEdit'] !== undefined ? data['showEdit'] : true;
     this.showDelete = data['showDelete'] !== undefined ? data['showDelete'] : true;
+    this.showPermissions = data['showPermissions'] || false;
     this.lazy = data['lazy'] || false;
+    this.isTreeTable = data['isTreeTable'] || false;
     this.permission = data['permission'] || '';
     this.hidePermissionGate = data['hidePermissionGate'] || false;
     this.deleteTitle = data['deleteTitle'] || 'Eliminar';
@@ -158,7 +182,8 @@ export class CrudShellComponent implements OnInit {
       defaultSortKey: data['defaultSortKey'] || 'id',
       primaryKey: data['primaryKey'],
       columnMap: data['columnMap'],
-      fnCatalogs
+      fnCatalogs,
+      hooks: data['hooks']
     });
     
     this.initialized = true;
@@ -174,6 +199,30 @@ export class CrudShellComponent implements OnInit {
       this.environmentInjector.runInContext(() => {
         data['onInitFn'](this.crud, this.cols);
       });
+    }
+  }
+
+  handlePermissions(item: any) {
+    if (this.routeData['onPermissionsFn']) {
+      this.environmentInjector.runInContext(() => {
+        this.routeData['onPermissionsFn'](item, this);
+      });
+    }
+  }
+
+  handleAddRoot() {
+    if (this.routeData['onAddRootFn']) {
+      this.routeData['onAddRootFn'](this);
+    } else {
+      this.formExtraData = null;
+    }
+  }
+
+  handleAddChild(parentId: any) {
+    if (this.routeData['onAddChildFn']) {
+      this.routeData['onAddChildFn'](parentId, this);
+    } else {
+      this.formExtraData = { parent_id: parentId };
     }
   }
 }
