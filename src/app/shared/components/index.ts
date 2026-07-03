@@ -1,0 +1,26 @@
+export * from './select/select.component';
+export * from './input/input.component';
+export * from './phone-input/phone-input.component';
+export * from './nit-input/nit-input.component';
+export * from './file-input/file-input.component';
+export * from './input-image/input-image.component';
+export * from './password/password.component';
+export * from './input-number/input-number.component';
+export * from './datepicker/datepicker.component';
+export * from './textarea/textarea.component';
+export * from './select-grid/select-grid.component';
+// Añadidos para dar soporte al perfil mediante el mismo punto de entrada:
+export * from './button/button.component';
+export * from './image-cropper/image-cropper.component';
+export * from './spinner/spinner.component';
+export * from './autocomplete/autocomplete.component';
+export * from './bottom-sheet/bottom-sheet.component';
+export * from './context-menu/context-menu.component';
+
+export * from './form-field/form-field.component';
+export * from './loader/loader.component';
+export * from './toolbar/toolbar.component';
+export * from './update-prompt/update-prompt.component';
+export * from './dynamic-form/dynamic-form.component';
+export * from './input-color/input-color.component';
+export * from './avatar-upload/avatar-upload.component';

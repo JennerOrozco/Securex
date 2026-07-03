@@ -2,17 +2,15 @@
   <div [ngClass]="minimalMode ? 'minimal-container' : 'table-card'">
 
     <p-table #dt [value]="data" [rows]="rows" [paginator]="true" [rowsPerPageOptions]="rowsPerPageOptions"
-      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true" [loading]="loading || loadingService.isLoading()"
-      [stripedRows]="stripedRows" responsiveLayout="scroll"
-      [resizableColumns]="true" columnResizeMode="expand"
-      [lazy]="lazy" [totalRecords]="totalRecords" (onLazyLoad)="onLazyLoad.emit($event)"
-      currentPageReportTemplate=" {first} - {last} de {totalRecords} registros" [showCurrentPageReport]="true"
-      class="gm-data-table" [columns]="selectedColumns" [rowGroupMode]="enableRowGroup ? 'subheader' : undefined"
-      [groupRowsBy]="enableRowGroup ? groupRowsBy : ''" [sortField]="enableRowGroup ? groupRowsBy : ''"
-      [sortMode]="enableRowGroup ? 'single' : 'multiple'"
+      [globalFilterFields]="globalFilterFields" [(selection)]="selectedItems" [rowHover]="true"
+      [loading]="loading" [stripedRows]="stripedRows" responsiveLayout="scroll"
+      [resizableColumns]="true" columnResizeMode="expand" [lazy]="lazy" [totalRecords]="totalRecords"
+      (onLazyLoad)="onLazyLoad.emit($event)" currentPageReportTemplate=" {first} - {last} de {totalRecords} registros"
+      [showCurrentPageReport]="true" class="gm-data-table" [columns]="selectedColumns"
+      [rowGroupMode]="enableRowGroup ? 'subheader' : undefined" [groupRowsBy]="enableRowGroup ? groupRowsBy : ''"
+      [sortField]="enableRowGroup ? groupRowsBy : ''" [sortMode]="enableRowGroup ? 'single' : 'multiple'"
       [dataKey]="enableRowGroup && expandableRowGroups ? groupRowsBy : 'id'" [reorderableColumns]="reorderableColumns"
-      paginatorDropdownAppendTo="body"
-      (onColReorder)="onColReorder.emit($event)">
+      paginatorDropdownAppendTo="body" (onColReorder)="onColReorder.emit($event)">
 
       <ng-template pTemplate="caption">
         <app-toolbar [title]="title" [subtitle]="subtitle" [searchPlaceholder]="searchPlaceholder" [showSearch]="true"
@@ -36,7 +34,7 @@
             <div class="th-content">
               <span>{{ col.header }}</span>
               <p-sortIcon *ngIf="col.sortable" [field]="col.field"></p-sortIcon>
-              @if (col.field !== 'actions' && col.type !== 'actions') {
+              @if (col.field !== 'actions' && col.type !== 'actions' && col.filterable !== false) {
               @if (col.filterOptions && col.filterOptions.length > 0) {
               <p-columnFilter [field]="col.field" [matchMode]="col.filterMulti ? 'in' : 'equals'" display="menu"
                 [showMatchModes]="false" [showOperator]="false" [showAddButton]="false" class="ml-auto">
@@ -45,14 +43,12 @@
                   <p-multiselect [ngModel]="value" [options]="col.filterOptions"
                     (onChange)="filterCallback($event.value)" placeholder="Todos"
                     [optionLabel]="col.filterOptionLabel || 'label'" [optionValue]="col.filterOptionValue || 'value'"
-                    [showClear]="true" [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom"
-                    appendTo="body">
+                    [showClear]="true" [maxSelectedLabels]="2" styleClass="p-multiselect-filter-custom" appendTo="body">
                   </p-multiselect>
                   } @else {
                   <p-select [ngModel]="value" [options]="col.filterOptions" (onChange)="filterCallback($event.value)"
                     placeholder="Todos" [optionLabel]="col.filterOptionLabel || 'label'"
-                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true"
-                    appendTo="body">
+                    [optionValue]="col.filterOptionValue || 'value'" [showClear]="true" appendTo="body">
                   </p-select>
                   }
                 </ng-template>
@@ -98,15 +94,21 @@
           <td *ngFor="let col of visibleColumns; trackBy: trackByField; let i = index" [style]="col.style"
             [ngClass]="{'td-actions': col.type === 'actions'}">
             @if (col.type === 'actions') {
-            @if (customActionsTemplate) {
+            @if (actionButtonsTemplate) {
+            <ng-template [ngTemplateOutlet]="actionButtonsTemplate"
+              [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
+            }
+            @else if (customActionsTemplate) {
             <ng-template [ngTemplateOutlet]="customActionsTemplate"
               [ngTemplateOutletContext]="{ $implicit: rowData }"></ng-template>
-            } @else {
+            }
+            @else {
             <app-table-actions [rowData]="rowData" [config]="tableActionsConfig" (onSelect)="onSelect.emit($event)"
               (onAddChild)="onAddChild.emit($event)" (onCreate)="onCreate.emit($event)" (onView)="onView.emit($event)"
               (onEdit)="onEdit.emit($event)" (onPdf)="onPdf.emit($event)" (onSend)="onSend.emit($event)"
               (onDuplicate)="onDuplicate.emit($event)" (onPermissions)="onPermissions.emit($event)"
-              (onDelete)="onDelete.emit($event)" (onActivate)="onActivate.emit($event)" (onReset)="onReset.emit($event)">
+              (onDelete)="onDelete.emit($event)" (onActivate)="onActivate.emit($event)"
+              (onReset)="onReset.emit($event)">
             </app-table-actions>
             }
             } @else {

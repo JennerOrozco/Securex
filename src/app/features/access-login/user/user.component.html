@@ -1,10 +1,10 @@
 <app-crud-page title="Accesos de Usuarios" subtitle="Sucursales y roles filtrados por tu compañía activa"
-  [columns]="cols" [data]="accesses" [loading]="loading" [lazy]="true" [totalRecords]="totalRecords" [showAdd]="true"
-  [showEdit]="true" [showDelete]="true" [showReset]="true" [formFields]="formFields" formAddTitle="Nuevo Acceso"
-  formEditTitle="Editar Acceso" [isSaving]="isSaving" [formExtraData]="formInitialData"
+  [resourceName]="'Acceso de Usuario'" [columns]="cols" [data]="crud.items()" [loading]="crud.loading()" 
+  [lazy]="true" [totalRecords]="crud.totalRecords()" [showAdd]="true" [showEdit]="true" [showDelete]="true" 
+  [showReset]="true" [formFields]="formFields" [isSaving]="crud.isSaving()" [formExtraData]="formInitialData"
   deleteMessage="¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal."
-  (onAdd)="handleAdd()" (onEdit)="handleEdit($event)" (onSave)="save($event)" (onConfirmDelete)="confirmDelete($event)"
-  (onReset)="handleResetPassword($event)" (onRefresh)="load()" (onLazyLoad)="load($event)"
+  (onLazyLoad)="crud.load($event)" (onSave)="crud.save($event)" (onConfirmDelete)="crud.confirmDelete($event)"
+  (onRefresh)="crud.load()" (onReset)="handleResetPassword($event)" 
   (onSelectGridEmptyFilter)="onSelectGridEmptyFilter()"></app-crud-page>
 
 <app-reset-password-modal [(visible)]="resetModalVisible" [userEmail]="resetModalItem?.user?.email || ''"

@@ -12,16 +12,27 @@ export class NotificationPanelService {
   private destroyRef = inject(DestroyRef);
 
   notifications = signal<AppNotification[]>([]);
+  notificationsLoading = signal<boolean>(false);
+  notificationsError = signal<string | null>(null);
   showPanel = signal(false);
 
   unreadCount = computed(() => this.notifications().filter(n => !n.is_read).length);
 
   loadNotifications(): void {
+    this.notificationsLoading.set(true);
+    this.notificationsError.set(null);
     this.notificationService.getNotifications()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (res) => this.notifications.set(res ?? []),
-        error: () => this.notifications.set([])
+        next: (res) => {
+          this.notifications.set(res ?? []);
+          this.notificationsLoading.set(false);
+        },
+        error: () => {
+          this.notifications.set([]);
+          this.notificationsError.set('Error al cargar notificaciones');
+          this.notificationsLoading.set(false);
+        }
       });
   }
 

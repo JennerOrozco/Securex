@@ -11,30 +11,31 @@ interface Country {
   cca2: string;
   prefix: string;
   flag: string;
+  placeholder?: string;
 }
 
 const COUNTRIES_LIST: Country[] = [
-  { name: 'Guatemala', cca2: 'GT', prefix: '+502', flag: 'https://flagsapi.com/GT/flat/64.png' },
-  { name: 'El Salvador', cca2: 'SV', prefix: '+503', flag: 'https://flagsapi.com/SV/flat/64.png' },
-  { name: 'Honduras', cca2: 'HN', prefix: '+504', flag: 'https://flagsapi.com/HN/flat/64.png' },
-  { name: 'Nicaragua', cca2: 'NI', prefix: '+505', flag: 'https://flagsapi.com/NI/flat/64.png' },
-  { name: 'Costa Rica', cca2: 'CR', prefix: '+506', flag: 'https://flagsapi.com/CR/flat/64.png' },
-  { name: 'Panamá', cca2: 'PA', prefix: '+507', flag: 'https://flagsapi.com/PA/flat/64.png' },
-  { name: 'México', cca2: 'MX', prefix: '+52', flag: 'https://flagsapi.com/MX/flat/64.png' },
-  { name: 'Estados Unidos', cca2: 'US', prefix: '+1', flag: 'https://flagsapi.com/US/flat/64.png' },
-  { name: 'España', cca2: 'ES', prefix: '+34', flag: 'https://flagsapi.com/ES/flat/64.png' },
-  { name: 'Colombia', cca2: 'CO', prefix: '+57', flag: 'https://flagsapi.com/CO/flat/64.png' },
-  { name: 'Venezuela', cca2: 'VE', prefix: '+58', flag: 'https://flagsapi.com/VE/flat/64.png' },
-  { name: 'Ecuador', cca2: 'EC', prefix: '+593', flag: 'https://flagsapi.com/EC/flat/64.png' },
-  { name: 'Perú', cca2: 'PE', prefix: '+51', flag: 'https://flagsapi.com/PE/flat/64.png' },
-  { name: 'Bolivia', cca2: 'BO', prefix: '+591', flag: 'https://flagsapi.com/BO/flat/64.png' },
-  { name: 'Chile', cca2: 'CL', prefix: '+56', flag: 'https://flagsapi.com/CL/flat/64.png' },
-  { name: 'Argentina', cca2: 'AR', prefix: '+54', flag: 'https://flagsapi.com/AR/flat/64.png' },
-  { name: 'Uruguay', cca2: 'UY', prefix: '+598', flag: 'https://flagsapi.com/UY/flat/64.png' },
-  { name: 'Paraguay', cca2: 'PY', prefix: '+595', flag: 'https://flagsapi.com/PY/flat/64.png' },
-  { name: 'Brasil', cca2: 'BR', prefix: '+55', flag: 'https://flagsapi.com/BR/flat/64.png' },
-  { name: 'República Dominicana', cca2: 'DO', prefix: '+1', flag: 'https://flagsapi.com/DO/flat/64.png' },
-  { name: 'Puerto Rico', cca2: 'PR', prefix: '+1', flag: 'https://flagsapi.com/PR/flat/64.png' }
+  { name: 'Guatemala', cca2: 'GT', prefix: '+502', flag: 'https://flagsapi.com/GT/flat/64.png', placeholder: '____ ____' },
+  { name: 'El Salvador', cca2: 'SV', prefix: '+503', flag: 'https://flagsapi.com/SV/flat/64.png', placeholder: '____ ____' },
+  { name: 'Honduras', cca2: 'HN', prefix: '+504', flag: 'https://flagsapi.com/HN/flat/64.png', placeholder: '____ ____' },
+  { name: 'Nicaragua', cca2: 'NI', prefix: '+505', flag: 'https://flagsapi.com/NI/flat/64.png', placeholder: '____ ____' },
+  { name: 'Costa Rica', cca2: 'CR', prefix: '+506', flag: 'https://flagsapi.com/CR/flat/64.png', placeholder: '____ ____' },
+  { name: 'Panamá', cca2: 'PA', prefix: '+507', flag: 'https://flagsapi.com/PA/flat/64.png', placeholder: '____-____' },
+  { name: 'México', cca2: 'MX', prefix: '+52', flag: 'https://flagsapi.com/MX/flat/64.png', placeholder: '__ ____ ____' },
+  { name: 'Estados Unidos', cca2: 'US', prefix: '+1', flag: 'https://flagsapi.com/US/flat/64.png', placeholder: '(___) ___-____' },
+  { name: 'España', cca2: 'ES', prefix: '+34', flag: 'https://flagsapi.com/ES/flat/64.png', placeholder: '___ ___ ___' },
+  { name: 'Colombia', cca2: 'CO', prefix: '+57', flag: 'https://flagsapi.com/CO/flat/64.png', placeholder: '___ _______' },
+  { name: 'Venezuela', cca2: 'VE', prefix: '+58', flag: 'https://flagsapi.com/VE/flat/64.png', placeholder: '___-_______' },
+  { name: 'Ecuador', cca2: 'EC', prefix: '+593', flag: 'https://flagsapi.com/EC/flat/64.png', placeholder: '__ _______' },
+  { name: 'Perú', cca2: 'PE', prefix: '+51', flag: 'https://flagsapi.com/PE/flat/64.png', placeholder: '___ ___ ___' },
+  { name: 'Bolivia', cca2: 'BO', prefix: '+591', flag: 'https://flagsapi.com/BO/flat/64.png', placeholder: '____ ____' },
+  { name: 'Chile', cca2: 'CL', prefix: '+56', flag: 'https://flagsapi.com/CL/flat/64.png', placeholder: '_ ____ ____' },
+  { name: 'Argentina', cca2: 'AR', prefix: '+54', flag: 'https://flagsapi.com/AR/flat/64.png', placeholder: '___ _______' },
+  { name: 'Uruguay', cca2: 'UY', prefix: '+598', flag: 'https://flagsapi.com/UY/flat/64.png', placeholder: '____ ____' },
+  { name: 'Paraguay', cca2: 'PY', prefix: '+595', flag: 'https://flagsapi.com/PY/flat/64.png', placeholder: '___ ______' },
+  { name: 'Brasil', cca2: 'BR', prefix: '+55', flag: 'https://flagsapi.com/BR/flat/64.png', placeholder: '(__) _____-____' },
+  { name: 'República Dominicana', cca2: 'DO', prefix: '+1', flag: 'https://flagsapi.com/DO/flat/64.png', placeholder: '(___) ___-____' },
+  { name: 'Puerto Rico', cca2: 'PR', prefix: '+1', flag: 'https://flagsapi.com/PR/flat/64.png', placeholder: '(___) ___-____' }
 ];
 
 @Component({
@@ -58,6 +59,13 @@ export class PhoneInputComponent extends BaseFormControl {
   countries: Country[] = COUNTRIES_LIST;
   selectedCountryCode = 'GT';
   localNumber = '';
+
+  get currentPlaceholder(): string {
+    if (this.placeholder && this.placeholder !== '1234 5678') {
+      return this.placeholder;
+    }
+    return this.getCountryByCode(this.selectedCountryCode)?.placeholder || '1234 5678';
+  }
 
   override onControlInit() {
     this.parseValue(this.control.value);

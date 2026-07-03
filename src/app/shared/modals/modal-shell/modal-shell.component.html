@@ -3,9 +3,10 @@
   [modal]="true"
   [breakpoints]="breakpoints"
   [style]="{ width: width }"
+  [appendTo]="appendTo"
   (onHide)="visibleChange.emit(false); onClose.emit()"
   [draggable]="draggable"
-  [resizable]="false"
+  [resizable]="resizable"
   [styleClass]="'gm-dialog gm-dialog--' + iconType + ' ' + styleClass"
   [class]="'gm-dialog gm-dialog--' + iconType + ' ' + styleClass">
 
@@ -41,7 +42,8 @@
         [label]="confirmLabel" 
         [icon]="confirmIcon" 
         [severity]="confirmSeverity" 
-        [loading]="loading" 
+        [loading]="loading"
+        [disabled]="confirmDisabled"
         styleClass="gm-btn gm-btn--confirm" 
         (onClick)="onConfirm.emit()">
       </p-button>

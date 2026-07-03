@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, OnChanges, SimpleChanges, OnDestroy, ViewEncapsulation, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalShellComponent } from '../../modals/modal-shell/modal-shell.component';
+import { formatFileSize } from '@shared/utils/file-utils';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
 
@@ -17,6 +18,13 @@ type HandleId = 'nw' | 'n' | 'ne' | 'w' | 'e' | 'sw' | 's' | 'se';
 export class ImageCropperComponent implements OnChanges, OnDestroy {
   private cdr = inject(ChangeDetectorRef);
 
+  get aspectRatioLabel(): string {
+    if (this.aspectRatio === 1) return '1:1';
+    if (this.aspectRatio === 4/3) return '4:3';
+    if (this.aspectRatio === 16/9) return '16:9';
+    return 'Libre';
+  }
+
   @Input() visible = false;
   @Input() aspectRatio: number | null = null;
   @Input() maxWidth = 800;
@@ -24,6 +32,14 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   @Input() quality = 0.85;
   @Input() outputFormat: string = 'image/jpeg';
   @Input() existingImageUrl: string | null = null;
+  @Input() set fileToCrop(file: File | null) {
+    if (file) {
+      this.internalFile = file;
+      this.fileName = file.name;
+      this.fileSize = formatFileSize(file.size);
+      this.loadImage(file);
+    }
+  }
 
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() onCrop = new EventEmitter<File>();
@@ -57,7 +73,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
 
   cropX = 10;
   cropY = 10;
-  cropSize = 80;
+  cropW = 80;
+  cropH = 80;
   currentAspectRatio: number | null = 1;
 
   handleCoords: { x: number; y: number }[] = [];
@@ -65,6 +82,10 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   readonly handles: HandleId[] = ['nw', 'n', 'ne', 'w', 'e', 'sw', 's', 'se'];
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['aspectRatio']) {
+      this.currentAspectRatio = this.aspectRatio;
+      this.renderImage();
+    }
     if (changes['visible'] && !this.visible) {
       this.cleanup();
     }
@@ -83,7 +104,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
     this.fileSize = null;
     this.cropX = 10;
     this.cropY = 10;
-    this.cropSize = 80;
+    this.cropW = 80;
+    this.cropH = 80;
   }
 
   onVisibleChange(vis: boolean) {
@@ -103,16 +125,11 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
     if (!file.type.startsWith('image/')) return;
     this.internalFile = file;
     this.fileName = file.name;
-    this.fileSize = this.formatSize(file.size);
+    this.fileSize = formatFileSize(file.size);
     this.loadImage(file);
     input.value = '';
   }
 
-  private formatSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / 1048576).toFixed(1) + ' MB';
-  }
 
   private loadImage(file: File) {
     this.cropperLoading = true;
@@ -135,8 +152,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   }
 
   private getBoxPx(cw: number, ch: number) {
-    let bw = (this.cropSize / 100) * cw;
-    let bh = (this.cropSize / 100) * ch;
+    let bw = (this.cropW / 100) * cw;
+    let bh = (this.cropH / 100) * ch;
     if (this.currentAspectRatio) {
       const ar = this.currentAspectRatio;
       if (bw / bh > ar) bh = bw / ar;
@@ -158,7 +175,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
     canvas.height = ch;
     this.cropX = 10;
     this.cropY = 10;
-    this.cropSize = 80;
+    this.cropW = 80;
+    this.cropH = 80;
     this.drawScene(canvas, cw, ch, img);
   }
 
@@ -303,11 +321,41 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   }
 
   onMouseMove(event: MouseEvent) {
-    if (!this.isDragging || !this.imgCanvasRef) return;
+    if (!this.imgCanvasRef) return;
     const canvas = this.imgCanvasRef.nativeElement;
     const cw = canvas.width;
     const ch = canvas.height;
     const rect = canvas.getBoundingClientRect();
+    const mx = event.clientX - rect.left;
+    const my = event.clientY - rect.top;
+
+    if (!this.isDragging) {
+      const handle = this.getHandleAt(mx, my);
+      if (handle) {
+        if (handle === 'nw' || handle === 'se') canvas.style.cursor = 'nwse-resize';
+        else if (handle === 'ne' || handle === 'sw') canvas.style.cursor = 'nesw-resize';
+        else if (handle === 'n' || handle === 's') canvas.style.cursor = 'ns-resize';
+        else if (handle === 'e' || handle === 'w') canvas.style.cursor = 'ew-resize';
+      } else {
+        const { bx, by, bw, bh } = this.getBoxPx(cw, ch);
+        if (mx >= bx && mx <= bx + bw && my >= by && my <= by + bh) {
+          canvas.style.cursor = 'grab';
+        } else {
+          canvas.style.cursor = 'default';
+        }
+      }
+      return;
+    }
+
+    if (this.dragHandle) {
+      if (this.dragHandle === 'nw' || this.dragHandle === 'se') canvas.style.cursor = 'nwse-resize';
+      else if (this.dragHandle === 'ne' || this.dragHandle === 'sw') canvas.style.cursor = 'nesw-resize';
+      else if (this.dragHandle === 'n' || this.dragHandle === 's') canvas.style.cursor = 'ns-resize';
+      else if (this.dragHandle === 'e' || this.dragHandle === 'w') canvas.style.cursor = 'ew-resize';
+    } else {
+      canvas.style.cursor = 'grabbing';
+    }
+
     const dxpx = event.clientX - this.dragStartX;
     const dypx = event.clientY - this.dragStartY;
 
@@ -318,8 +366,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       const dy = (dypx / rect.height) * 100;
       let newX = this.cropStartX + dx;
       let newY = this.cropStartY + dy;
-      let bw = this.cropSize;
-      let bh = this.cropSize;
+      let bw = this.cropW;
+      let bh = this.cropH;
       if (this.currentAspectRatio) {
         const ar = this.currentAspectRatio;
         if (bw / bh > ar) bh = bw / ar;
@@ -378,12 +426,16 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
 
     this.cropX = Math.round((left / cw) * 1000) / 10;
     this.cropY = Math.round((top / ch) * 1000) / 10;
-    this.cropSize = Math.round(((finalW / cw) * 100) * 10) / 10;
+    this.cropW = Math.round(((finalW / cw) * 100) * 10) / 10;
+    this.cropH = Math.round(((finalH / ch) * 100) * 10) / 10;
   }
 
   onMouseUp() {
     this.isDragging = false;
     this.dragHandle = null;
+    if (this.imgCanvasRef) {
+      this.imgCanvasRef.nativeElement.style.cursor = 'default';
+    }
   }
 
   onTouchStart(event: TouchEvent) {
@@ -394,7 +446,7 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       this.isPinching = true;
       this.isDragging = false;
       this.pinchStartDist = this.getTouchDist(event.touches);
-      this.pinchStartSize = this.cropSize;
+      this.pinchStartSize = this.cropW;
       return;
     }
 
@@ -459,9 +511,10 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       let newSize = Math.round(this.pinchStartSize / scale);
       newSize = Math.max(5, Math.min(100, newSize));
       if (this.cropX + newSize > 100 || this.cropY + newSize > 100) {
-        newSize = Math.max(5, this.cropSize);
+        newSize = Math.max(5, this.cropW);
       }
-      this.cropSize = newSize;
+      this.cropW = newSize;
+      this.cropH = newSize;
       this.redraw();
       return;
     }
@@ -483,8 +536,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       const dy = (dypx / rect.height) * 100;
       let newX = this.cropStartX + dx;
       let newY = this.cropStartY + dy;
-      let bw = this.cropSize;
-      let bh = this.cropSize;
+      let bw = this.cropW;
+      let bh = this.cropH;
       if (this.currentAspectRatio) {
         const ar = this.currentAspectRatio;
         if (bw / bh > ar) bh = bw / ar;
@@ -516,7 +569,8 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   onWheel(event: WheelEvent) {
     event.preventDefault();
     const delta = event.deltaY > 0 ? -3 : 3;
-    let newSize = this.cropSize + delta;
+    let newSize = this.cropW + delta;
+    let ratio = this.cropH / this.cropW;
 
     if (this.currentAspectRatio) {
       const ar = this.currentAspectRatio;
@@ -526,10 +580,11 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       else bw = bh * ar;
       if (this.cropX + bw > 100 || this.cropY + bh > 100) return;
     } else {
-      if (this.cropX + newSize > 100 || this.cropY + newSize > 100) return;
+      if (this.cropX + newSize > 100 || this.cropY + (newSize * ratio) > 100) return;
     }
 
-    this.cropSize = Math.max(10, Math.min(100, newSize));
+    this.cropW = Math.max(10, Math.min(100, newSize));
+    this.cropH = this.cropW * ratio;
     this.redraw();
   }
 
@@ -541,13 +596,14 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
   }
 
   zoomIn() {
-    const newSize = Math.max(10, this.cropSize - 5);
-    this.cropSize = newSize;
+    const newSize = Math.max(10, this.cropW - 5);
+    this.cropW = newSize;
+      this.cropH = newSize;
     this.redraw();
   }
 
   zoomOut() {
-    const newSize = Math.min(100, this.cropSize + 5);
+    const newSize = Math.min(100, this.cropW + 5);
     if (this.currentAspectRatio) {
       const ar = this.currentAspectRatio;
       let bw = newSize;
@@ -556,14 +612,16 @@ export class ImageCropperComponent implements OnChanges, OnDestroy {
       else bw = bh * ar;
       if (this.cropX + bw > 100 || this.cropY + bh > 100) return;
     }
-    this.cropSize = newSize;
+    this.cropW = newSize;
+      this.cropH = newSize;
     this.redraw();
   }
 
   reset() {
     this.cropX = 10;
     this.cropY = 10;
-    this.cropSize = 80;
+    this.cropW = 80;
+    this.cropH = 80;
     this.redraw();
   }
 

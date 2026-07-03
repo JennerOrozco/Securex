@@ -30,7 +30,7 @@ export const SECUREX_QUERIES = {
     query Users($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput, $all: Boolean) {
       users(page: $page, limit: $limit, filter: $filter, sort: $sort, all: $all) {
         data {
-          uuid full_name email status is_super_admin auth_provider created_at
+          uuid full_name email status is_super_admin auth_provider created_at profile_picture
           access { uuid status branch_id branch { uuid name } role { id uuid name slug } }
         }
         total
@@ -81,6 +81,13 @@ export const SECUREX_QUERIES = {
             children { id uuid name slug route type icon sort_order is_visible assigned }
           }
         }
+      }
+    }
+  `,
+  COMPONENTS: `
+    query Components {
+      components {
+        id uuid name slug type icon sort_order
       }
     }
   `,
@@ -187,7 +194,7 @@ export const SECUREX_QUERIES = {
       userAccesses(page: $page, limit: $limit, filter: $filter, sort: $sort, all: $all) {
         data {
           uuid status user_id app_id company_id branch_id role_id
-          user { uuid full_name email }
+          user { uuid full_name email profile_picture }
           app { uuid name }
           company { uuid name }
           branch { uuid name }
@@ -205,6 +212,7 @@ export const SECUREX_QUERIES = {
       securityAuditLogs(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data {
           uuid user_uuid user_name event_type description ip_address company_uuid
+          user { uuid full_name email profile_picture }
           app { name }
           company { name }
         }
@@ -270,7 +278,7 @@ export const SECUREX_QUERIES = {
       refreshTokens(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data {
           id user_id app_id token_hash is_revoked issued_at revoked_at expires_at ip_address user_agent
-          user { uuid full_name }
+          user { uuid full_name email profile_picture }
           app { name }
         }
         total
@@ -327,7 +335,7 @@ export const SECUREX_QUERIES = {
       userAccesses(all: $all) {
         data {
           uuid status user_id 
-          user { uuid full_name email }
+          user { uuid full_name email profile_picture }
           app { uuid name }
           company { uuid name }
           branch { uuid name }

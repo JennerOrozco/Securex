@@ -36,10 +36,10 @@ interface ContextItem {
 export class SidebarComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private layoutService = inject(LayoutService);
+  layoutService = inject(LayoutService);
   private destroyRef = inject(DestroyRef);
-
   sidebarOpen = this.layoutService.sidebarOpen;
+  sidebarCollapsed = this.layoutService.sidebarCollapsed;
 
   user = computed(() => this.authService.currentUser());
   company = computed(() => this.authService.currentCompany());
@@ -107,7 +107,7 @@ export class SidebarComponent implements OnInit {
     return items.map(item => ({
       label: item.name,
       icon: item.icon || 'pi pi-circle',
-      path: item.route,
+      path: item.route ? (item.route.startsWith('/') ? item.route : '/' + item.route) : undefined,
       module: item.slug,
       children: item.children ? this.mapMenuToItems(item.children) : undefined
     }));

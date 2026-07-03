@@ -1,0 +1,139 @@
+.gm-avatar-container {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  flex-shrink: 0;
+}
+
+.gm-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  background: linear-gradient(145deg, #0b1930 0%, #1e3a8a 100%);
+  border: 3px solid var(--color-bg-card);
+  box-shadow: 0 0 0 2px var(--app-main-indigo), var(--shadow-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.gm-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: avatarCrossfade 0.3s both;
+}
+
+@keyframes avatarCrossfade {
+  from {
+    opacity: 0.6;
+    transform: scale(1.05);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.gm-avatar-initials {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.gm-avatar-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.gm-avatar:hover {
+  box-shadow: 0 0 0 3px var(--app-main-indigo), 0 0 24px var(--color-indigo-15), var(--shadow-medium);
+  transform: scale(1.04);
+}
+
+.gm-avatar:hover .gm-avatar-overlay {
+  opacity: 1;
+}
+
+.gm-avatar-dragover {
+  box-shadow: 0 0 0 3px var(--app-main-accent), 0 0 32px rgba(13, 148, 136, 0.3) !important;
+  transform: scale(1.06);
+}
+
+.gm-avatar-dragover .gm-avatar-overlay {
+  opacity: 1;
+  background: rgba(13, 148, 136, 0.25);
+}
+
+.gm-avatar-overlay i {
+  color: #ffffff;
+  font-size: 1.1rem;
+}
+
+.gm-avatar-loading {
+  cursor: not-allowed !important;
+  opacity: 0.85;
+  transform: none !important;
+  box-shadow: 0 0 0 2px var(--color-border) !important;
+}
+
+.gm-avatar-loading-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  color: #ffffff;
+  z-index: 5;
+  font-size: 1.5rem;
+}
+
+.gm-avatar-delete-btn {
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #dc2626;
+  color: #ffffff;
+  border: 2.5px solid var(--color-bg-card);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.35);
+  transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  z-index: 10;
+  padding: 0;
+}
+
+.gm-avatar-delete-btn:hover {
+  background: #b91c1c;
+  transform: scale(1.12);
+  box-shadow: 0 3px 14px rgba(220, 38, 38, 0.5);
+}
+
+.gm-avatar-delete-btn:active {
+  transform: scale(0.95);
+}
+
+.gm-avatar-delete-btn i {
+  font-size: 0.9rem;
+}

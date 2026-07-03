@@ -1,0 +1,13 @@
+/* (labels, icons, inputs, errors now globalized in styles.css) */
+
+.gm-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: field-in 0.25s ease both;
+}
+
+@keyframes field-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

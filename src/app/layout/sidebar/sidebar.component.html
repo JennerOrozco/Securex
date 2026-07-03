@@ -1,6 +1,6 @@
 <div class="sidebar-overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
 
-<aside class="sidebar" [class.mobile-open]="sidebarOpen()">
+<aside class="sidebar" [class.mobile-open]="sidebarOpen()" [class.collapsed]="sidebarCollapsed()">
   <div class="sidebar-header">
     <a routerLink="/" class="logo-wrapper">
       <img src="/assets/image.png" alt="Logo" class="logo-img">
@@ -14,7 +14,8 @@
       <li class="nav-item">
         @if (item.children) {
         <button class="nav-parent" [class.nav-parent-expanded]="isExpanded(item.label)"
-          (click)="toggleSubmenu(item.label)">
+          (click)="sidebarCollapsed() ? layoutService.toggleSidebarCollapse() : toggleSubmenu(item.label)"
+          [attr.title]="sidebarCollapsed() ? item.label : null">
           <div class="nav-group">
             <span class="icon-slot">
               @switch (item.icon) {
@@ -48,7 +49,7 @@
           @if (child.children && child.children.length > 0) {
           <button class="submenu-item submenu-parent"
             [class.submenu-parent-expanded]="isExpanded(item.label + '/' + child.label)"
-            (click)="toggleSubmenu(item.label + '/' + child.label)">
+            (click)="sidebarCollapsed() ? layoutService.toggleSidebarCollapse() : toggleSubmenu(item.label + '/' + child.label)">
             <div class="submenu-group">
               <span class="submenu-dot"></span>
               <span>{{ child.label }}</span>
@@ -80,7 +81,8 @@
         }
         } @else {
         <a [routerLink]="item.path" routerLinkActive="active-gradient"
-          [routerLinkActiveOptions]="{ exact: item.path === '/home' }" class="nav-link" (click)="closeSidebar()">
+          [routerLinkActiveOptions]="{ exact: item.path === '/home' }" class="nav-link" (click)="closeSidebar()"
+          [attr.title]="sidebarCollapsed() ? item.label : null">
           <div class="nav-group">
             <span class="icon-slot">
               @switch (item.icon) {

@@ -22,6 +22,9 @@ export class InputNumberComponent extends BaseFormControl {
   @Input() override control!: any;
   @Input() minFractionDigits: number = 2;
   @Input() maxFractionDigits: number = 2;
+  @Input() mode: 'decimal' | 'currency' = 'decimal';
+  @Input() currency: string | undefined = undefined;
+  @Input() locale: string | undefined = undefined;
 
   @Output() onInput = new EventEmitter<any>();
 }

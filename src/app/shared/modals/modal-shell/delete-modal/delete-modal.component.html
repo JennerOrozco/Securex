@@ -1,10 +1,11 @@
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
+  [appendTo]="'body'"
   [breakpoints]="{ '960px': '80vw', '768px': '92vw', '480px': '96vw' }"
   (onHide)="onClose.emit()"
-  [draggable]="true"
-  [resizable]="false"
+  [draggable]="draggable"
+  [resizable]="resizable"
   styleClass="gm-dialog gm-dialog--delete"
   class="gm-dialog gm-dialog--delete">
 

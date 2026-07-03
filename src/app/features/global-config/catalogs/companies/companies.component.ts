@@ -1,63 +1,89 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { CompanyService } from '@core/services/company.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
-import { NotificationService } from '@core/services/notification.service';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { TreeNode } from 'primeng/api';
+import { map } from 'rxjs/operators';
+import { COMPANIES_COLS, createCompaniesForm } from './companies.config';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-security-companies',
   standalone: true,
   imports: [CommonModule, CrudPageComponent],
-  templateUrl: './companies.component.html',
+  template: `
+    <app-crud-page
+      [isTreeTable]="true"
+      title="Compañías"
+      subtitle="Organizadas por aplicación"
+      [resourceName]="'Compañía'"
+      addLabel="Nueva Compañía"
+      [treeNodes]="crud.items()"
+      [columns]="cols"
+      [loading]="crud.loading()"
+      [isSaving]="crud.isSaving()"
+      [formFields]="formFields"
+      [formExtraData]="{ app_id: currentAppId, is_active: true }"
+      [deleteMessage]="deleteMessageFn"
+      [hasPermission]="hasPermission"
+      permissionMessage="Solo los administradores del sistema pueden gestionar compañías."
+      [hidePermissionGate]="false"
+      [colorRows]="true"
+      [showLegend]="false"
+      (onAddRoot)="handleAddRoot()"
+      (onAddChild)="handleAddChild($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)"
+      (onSave)="onSave($event)"
+      (onConfirmDelete)="crud.confirmDelete($event)"
+      (onRefresh)="crud.load()">
+    </app-crud-page>
+  `,
+  providers: [UnifiedCrudService]
 })
 export class CompaniesComponent implements OnInit {
   private companyService = inject(CompanyService);
   private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
+  crud = inject(UnifiedCrudService);
 
-  treeNodes: TreeNode[] = [];
-  apps: any[] = [];
-  loading = false;
-  isSaving = false;
-
-  selectedItem: any = null;
-  currentAppId: number | null = null;
-
-  formFields: FormField[] = [];
-  cols: TableColumn[] = [
-    { field: 'name', header: 'Nombre', type: 'tree', sortable: true, style: { width: '40%' } },
-    { field: 'tax_id', header: 'NIT', type: 'text', sortable: true, style: { width: '20%' } },
-    { field: 'status', header: 'Activo', type: 'badge', style: { width: '15%', textAlign: 'center' } },
-    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '25%', 'text-align': 'center' } }
-  ];
-
+  cols = COMPANIES_COLS;
+  formFields = createCompaniesForm([]);
   hasPermission = false;
+  currentAppId: number | null = null;
+  selectedItem: any = null;
 
-  deleteMessageFn = (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`;
+  constructor() {
+    effect(() => {
+      const catalogs = this.crud.catalogItems();
+      const apps = catalogs['apps'] || [];
+      this.formFields = createCompaniesForm(apps);
+    });
+  }
 
   ngOnInit() {
     const auth: any = this.authService;
     this.hasPermission = typeof auth.hasRole === 'function' ? auth.hasRole('admin') : true;
-    if (this.hasPermission) { this.load(); }
-  }
 
-  load() {
-    this.loading = true;
-    this.companyService.getCompaniesPageData().subscribe({
-      next: (data) => {
-        const apps = data?.apps?.data ?? [];
-        const companies = data?.companies?.data ?? [];
-        this.apps = apps;
-        this.treeNodes = this.buildTree(apps, companies);
-        this.updateFormFields();
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+    if (this.hasPermission) {
+      this.crud.initialize({
+        resourceName: 'Compañía',
+        defaultSortKey: 'id',
+        fnFetch: () => this.companyService.getCompaniesPageData().pipe(
+          map((data: any) => {
+            const apps = data?.apps?.data ?? [];
+            const companies = data?.companies?.data ?? [];
+            this.crud.catalogItems.update(c => ({ ...c, apps }));
+            return this.buildTree(apps, companies);
+          })
+        ),
+        fnCreate: (data) => this.saveWithLogo(data, 'add'),
+        fnUpdate: (id, data) => this.saveWithLogo(data, 'edit'),
+        fnDelete: this.companyService.deleteCompanyGql.bind(this.companyService)
+      });
+      this.crud.load();
+    }
   }
 
   private buildTree(apps: any[], companies: any[]): TreeNode[] {
@@ -70,7 +96,6 @@ export class CompaniesComponent implements OnInit {
           data: {
             ...company,
             type: 'SUBMENU',
-            status: company.is_active ? 'ACTIVO' : 'INACTIVO',
             icon: 'pi pi-building',
             _canAdd: false,
             _canEdit: true,
@@ -78,16 +103,6 @@ export class CompaniesComponent implements OnInit {
           }
         }))
     }));
-  }
-
-  private updateFormFields() {
-    this.formFields = [
-      { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true },
-      { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true },
-      { name: 'app_id', label: 'Aplicación Asociada', type: 'select', required: false, options: this.apps.map(app => ({ label: app.name, value: app.id })) },
-      { name: 'logo_url', label: 'Logo de la Compañía', type: 'file', required: false, accept: 'image/*' },
-      { name: 'is_active', label: '¿Está Activa?', type: 'select', required: true, options: [{ label: 'Activo', value: 1 }, { label: 'Inactivo', value: 0 }] }
-    ];
   }
 
   handleAddRoot() {
@@ -108,44 +123,37 @@ export class CompaniesComponent implements OnInit {
     this.selectedItem = data;
   }
 
-  save(e: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
+  onSave(e: { mode: 'add' | 'edit'; data: any }) {
     const finalData = { ...e.data };
     if (e.mode === 'add' && this.currentAppId) {
       finalData.app_id = this.currentAppId;
     }
-    const proceedWithSave = (processedData: any) => {
-      const obs = e.mode === 'add'
-        ? this.companyService.createCompanyGql(processedData)
-        : this.companyService.updateCompanyGql(this.selectedItem.uuid, processedData);
-      obs.subscribe({
-        next: () => {
-          this.notificationService.success(`Compañía ${e.mode === 'add' ? 'creada' : 'actualizada'} correctamente`);
-          this.load();
-          this.isSaving = false;
-        },
-        error: () => { this.isSaving = false; }
-      });
-    };
-    if (finalData.logo_url instanceof File) {
-      const reader = new FileReader();
-      reader.onload = () => { finalData.logo_url = reader.result as string; proceedWithSave(finalData); };
-      reader.onerror = () => { this.notificationService.error('Error al procesar la imagen del logo'); this.isSaving = false; };
-      reader.readAsDataURL(finalData.logo_url);
-    } else {
-      proceedWithSave(finalData);
-    }
+    // We pass it to crud.save, but we must override the event data since we added currentAppId
+    this.crud.save({ mode: e.mode, data: finalData });
   }
 
-  confirmDelete(item: any) {
-    this.isSaving = true;
-    this.companyService.deleteCompanyGql(item.uuid).subscribe({
-      next: () => {
-        this.notificationService.success('Compañía eliminada correctamente');
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => { this.isSaving = false; }
+  private saveWithLogo(data: any, mode: 'add' | 'edit'): Observable<any> {
+    return new Observable(observer => {
+      const proceedWithSave = (processedData: any) => {
+        const req$ = mode === 'add'
+          ? this.companyService.createCompanyGql(processedData)
+          : this.companyService.updateCompanyGql(this.selectedItem?.uuid || data.uuid, processedData);
+        req$.subscribe({
+          next: res => { observer.next(res); observer.complete(); },
+          error: err => observer.error(err)
+        });
+      };
+
+      if (data.logo_url instanceof File) {
+        const reader = new FileReader();
+        reader.onload = () => { data.logo_url = reader.result as string; proceedWithSave(data); };
+        reader.onerror = () => observer.error(new Error('Error al procesar la imagen del logo'));
+        reader.readAsDataURL(data.logo_url);
+      } else {
+        proceedWithSave(data);
+      }
     });
   }
+
+  deleteMessageFn = (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`;
 }

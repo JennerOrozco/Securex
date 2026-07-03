@@ -25,31 +25,16 @@
     <div class="gm-profile-banner-hero">
       <div class="gm-profile-banner-overlay"></div>
       <div class="gm-profile-hero-content">
-        <div class="gm-avatar-container">
-          <div class="gm-avatar" [class.gm-avatar-loading]="avatarLoading()"
-            [class.gm-avatar-dragover]="avatarDragOver()" (click)="!avatarLoading() && openCropModal()"
-            (dragover)="onAvatarDragOver($event)" (dragleave)="onAvatarDragLeave()" (drop)="onAvatarDrop($event)"
-            title="Cambiar foto de perfil">
-            @if (avatarLoading()) {
-            <div class="gm-avatar-loading-spinner">
-              <i class="pi pi-spin pi-spinner"></i>
-            </div>
-            } @else if (profileData()?.profile_picture) {
-            <img [src]="profileData()?.profile_picture" alt="Avatar" class="gm-avatar-img"
-              [style.view-transition-name]="'avatar'" />
-            } @else {
-            <span class="gm-avatar-initials">{{ getUserInitials() }}</span>
-            }
-            <div class="gm-avatar-overlay">
-              <i class="pi pi-camera"></i>
-            </div>
-          </div>
-          @if (profileData()?.profile_picture && !avatarLoading()) {
-          <button class="gm-avatar-delete-btn" (click)="deleteProfilePicture($event)" title="Eliminar foto de perfil">
-            <i class="pi pi-trash"></i>
-          </button>
-          }
-        </div>
+        
+        <app-avatar-upload
+          [imageUrl]="profileData()?.profile_picture"
+          [initials]="getUserInitials()"
+          [loading]="avatarLoading()"
+          [title]="'Cambiar foto de perfil'"
+          (onImageCropped)="handleCrop($event)"
+          (onDelete)="deleteProfilePicture($event)">
+        </app-avatar-upload>
+
         <div class="gm-user-meta">
           <h2>{{ profileData()?.full_name || 'Usuario' }}</h2>
           <div class="gm-meta-sub">
@@ -259,7 +244,7 @@
               }
 
               @if (passwordSuccess()) {
-              <div class="gm-form-feedback success animate-bounceIn">
+              <div class="gm-form-feedback success animate-bounce-in">
                 <i class="pi pi-check-circle"></i>
                 <span>Contraseña actualizada exitosamente.</span>
               </div>
@@ -302,7 +287,7 @@
             </div>
 
             @if (biometricsSuccess()) {
-            <div class="gm-form-feedback success mb-3 animate-bounceIn">
+            <div class="gm-form-feedback success mb-3 animate-bounce-in">
               <i class="pi pi-check-circle"></i>
               <span>Huella registrada exitosamente.</span>
             </div>
@@ -361,13 +346,8 @@
 </div>
 
 <app-delete-modal [visible]="deleteModalVisible()"
-  [title]="itemToDelete?.type === 'picture' ? 'Eliminar Foto de Perfil' : 'Eliminar Dispositivo'"
-  [bodyMessage]="itemToDelete?.type === 'picture' 
+  [title]="itemToDelete()?.type === 'picture' ? 'Eliminar Foto de Perfil' : 'Eliminar Dispositivo'"
+  [bodyMessage]="itemToDelete()?.type === 'picture' 
     ? '¿Está seguro de que desea eliminar su foto de perfil? Esta acción no puede deshacerse.' 
-    : '¿Eliminar el dispositivo <strong>' + (itemToDelete?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'" (onConfirm)="handleConfirmDelete()"
+    : '¿Eliminar el dispositivo <strong>' + (itemToDelete()?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'" (onConfirm)="handleConfirmDelete()"
   (onClose)="deleteModalVisible.set(false)"></app-delete-modal>
-
-<app-image-cropper [visible]="cropVisible()" [aspectRatio]="1" [maxWidth]="400" [maxHeight]="400" [quality]="0.85"
-  [outputFormat]="'image/jpeg'" [existingImageUrl]="profileData()?.profile_picture || null"
-  (visibleChange)="cropVisible.set($event)" (onCrop)="handleCrop($event)"
-  (onClose)="handleCropClose()"></app-image-cropper>

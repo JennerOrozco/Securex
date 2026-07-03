@@ -5,7 +5,7 @@ export const NOTIFICATION_QUERIES = {
         data {
           id user_uuid app_uuid ip_address created_at
           app { name }
-          user { full_name }
+          user { full_name email profile_picture }
         }
         total
         currentPage
@@ -22,7 +22,7 @@ export const NOTIFICATION_QUERIES = {
           title message channels is_read email_sent
           type created_at
           app { name }
-          user { full_name }
+          user { full_name email profile_picture }
         }
         total
         currentPage
@@ -37,7 +37,7 @@ export const NOTIFICATION_QUERIES = {
         data {
           id user_uuid app_uuid device_token device_type
           app { name }
-          user { full_name }
+          user { full_name email profile_picture }
         }
         total
         currentPage
@@ -93,6 +93,20 @@ export const NOTIFICATION_MUTATIONS = {
   DELETE_NOTIFICATION: `
     mutation DeleteNotification($id: Int!) {
       deleteNotification(id: $id)
+    }
+  `,
+  MARK_READ: `
+    mutation MarkNotificationRead($id: Int!) {
+      markNotificationRead(id: $id) {
+        id is_read
+      }
+    }
+  `,
+  REGISTER_DEVICE: `
+    mutation RegisterDevice($user_uuid: String!, $app_uuid: String!, $device_token: String!, $device_type: String) {
+      registerDevice(user_uuid: $user_uuid, app_uuid: $app_uuid, device_token: $device_token, device_type: $device_type) {
+        id device_token device_type
+      }
     }
   `,
   DELETE_DEVICE: `

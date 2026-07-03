@@ -413,6 +413,7 @@
 .type-activo,
 .type-approved,
 .type-active,
+.type-success,
 .type-true {
     background: var(--color-success-bg) !important;
     color: var(--color-success-text) !important;
@@ -428,6 +429,7 @@
 .type-inactivo,
 .type-rejected,
 .type-inactive,
+.type-danger,
 .type-false {
     background: var(--color-danger-bg) !important;
     color: var(--color-danger-text) !important;
@@ -438,6 +440,7 @@
 .estado-badge.pendiente_aprobacion,
 .estado-badge.pending,
 .estado-badge.en_revision,
+.type-warning,
 .type-pending {
     background: var(--color-warning-bg) !important;
     color: var(--color-warning-text) !important;
@@ -446,6 +449,7 @@
 
 .badge-info,
 .estado-badge.borrador,
+.type-info,
 .type-google {
     background: var(--color-info-bg) !important;
     color: var(--color-info-text) !important;
@@ -474,6 +478,10 @@
 .type-rejected::before,
 .type-inactive::before,
 .type-pending::before,
+.type-success::before,
+.type-danger::before,
+.type-warning::before,
+.type-info::before,
 .type-true::before,
 .type-false::before,
 .type-default::before,
@@ -490,16 +498,20 @@
 .type-activo::before,
 .type-approved::before,
 .type-active::before,
+.type-success::before,
 .type-true::before { background: var(--color-success-text) !important; }
 
 .badge-danger::before,
 .type-rejected::before,
+.type-danger::before,
 .type-inactive::before { background: var(--color-red) !important; }
 
 .badge-warning::before,
+.type-warning::before,
 .type-pending::before { background: var(--color-amber) !important; }
 
 .badge-info::before,
+.type-info::before,
 .type-google::before { background: var(--color-info-text) !important; }
 
 .badge-default::before,

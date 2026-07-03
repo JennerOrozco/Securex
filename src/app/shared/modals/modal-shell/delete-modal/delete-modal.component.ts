@@ -30,6 +30,8 @@ export class DeleteModalComponent {
   @Input() bodyMessage = 'Esta acción es <strong>permanente</strong> y no puede deshacerse. El registro desaparecerá de inmediato.';
   @Input() confirmLabel = 'Sí, eliminar';
   @Input() confirmSeverity: 'success' | 'info' | 'warn' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = 'danger';
+  @Input() draggable = true;
+  @Input() resizable = true;
 
   @Output() onConfirm = new EventEmitter<void>();
   @Output() onClose = new EventEmitter<void>();

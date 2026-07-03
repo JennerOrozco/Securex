@@ -2,7 +2,9 @@
   [(visible)]="visible"
   [modal]="true"
   [style]="{ width: '820px', maxHeight: '90vh' }"
-  (onHide)="onClose.emit()"
+  [draggable]="draggable"
+  [resizable]="resizable"
+  (onHide)="handleHide()"
   styleClass="gm-dialog gm-dialog--view"
   class="gm-dialog gm-dialog--view">
 
@@ -33,12 +35,13 @@
 
   <ng-template pTemplate="footer">
     <div class="gm-footer py-2 px-4">
-      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" styleClass="p-button-sm" (onClick)="onClose.emit()"></p-button>
+      <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" styleClass="p-button-sm" (onClick)="handleHide()"></p-button>
       <p-button
         label="Guardar"
         icon="pi pi-save"
         severity="info"
         [loading]="loading"
+        [disabled]="isLoading || loading"
         styleClass="p-button-sm"
         (onClick)="handleSave()">
       </p-button>

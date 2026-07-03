@@ -1,0 +1,177 @@
+<div [ngClass]="gridClass()">
+  @for (field of fields(); track $index; let i = $index) {
+    <!-- Standard & Shared Fields -->
+    <div [style.animation-delay]="i * 40 + 'ms'" [ngClass]="field.colSpan || ''">
+      <ng-container [ngSwitch]="field.type">
+        <app-file-input
+          *ngSwitchCase="'file'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="$any(form.get(field.name))"
+          [accept]="field.accept || '*'"
+          [fallbackIcon]="field.fallbackIcon || (field.name === 'icon' ? 'pi-image' : 'pi-building')"
+          [mode]="$any(mode())"
+        ></app-file-input>
+
+        <ng-container *ngSwitchCase="'text'">
+          <app-input-image
+            *ngIf="field.name === 'logo_url'"
+            [id]="field.name"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [icon]="field.icon || ''"
+            [required]="field.required || false"
+            [control]="$any(form.get(field.name))"
+          ></app-input-image>
+
+          <app-input
+            *ngIf="field.name !== 'logo_url'"
+            [id]="field.name"
+            [label]="field.label"
+            [placeholder]="field.placeholder || ''"
+            [icon]="field.icon || ''"
+            [required]="field.required || false"
+            [control]="form.get(field.name)"
+          ></app-input>
+        </ng-container>
+
+        <app-input
+          *ngSwitchCase="'email'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || 'correo@ejemplo.com'"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          type="email"
+        ></app-input>
+
+        <app-password
+          *ngSwitchCase="'password'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          [feedback]="false"
+          [toggleMask]="true"
+        ></app-password>
+
+        <app-input-number
+          *ngSwitchCase="'number'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          [minFractionDigits]="0"
+          [maxFractionDigits]="2"
+        ></app-input-number>
+
+        <app-input-number
+          *ngSwitchCase="'currency'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          mode="currency"
+          [currency]="field.currencyCode || 'GTQ'"
+          [locale]="field.locale || 'es-GT'"
+          [minFractionDigits]="2"
+          [maxFractionDigits]="2"
+        ></app-input-number>
+
+        <app-textarea
+          *ngSwitchCase="'textarea'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || ''"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="$any(form.get(field.name))"
+          [rows]="3"
+          [autoResize]="true"
+        ></app-textarea>
+
+        <app-select
+          *ngSwitchCase="'select'"
+          [id]="field.name"
+          [label]="field.label"
+          [options]="field.options || []"
+          [optionLabel]="'label'"
+          [optionValue]="'value'"
+          [placeholder]="field.placeholder || 'Seleccione'"
+          [control]="form.get(field.name)"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+        ></app-select>
+
+        <app-select-grid
+          *ngSwitchCase="'select-grid'"
+          [id]="field.name"
+          [label]="field.label"
+          [options]="field.options || []"
+          [optionLabel]="'label'"
+          [optionValue]="'value'"
+          [placeholder]="field.placeholder || 'Seleccione'"
+          [control]="$any(form.get(field.name))"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [columns]="field.columns || []"
+          [allowAdd]="field.allowAdd !== false"
+          [filterBy]="field.columns?.length ? 'label,' + field.columns!.map(c => c.field).join(',') : 'label'"
+          (onEmptyFilterAction)="onSelectGridEmptyFilter.emit(field.name)"
+        ></app-select-grid>
+
+        <app-phone-input
+          *ngSwitchCase="'phone'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || '1234 5678'"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="$any(form.get(field.name))"
+          [disabled]="mode() === 'view' || !!field.disabled"
+        ></app-phone-input>
+
+        <app-datepicker
+          *ngSwitchCase="'date'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || 'YYYY-MM-DD'"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+        ></app-datepicker>
+
+        <app-nit-input
+          *ngSwitchCase="'nit'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || 'C/F o número de NIT'"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+          [disabled]="mode() === 'view' || !!field.disabled"
+        ></app-nit-input>
+
+        <app-input-color
+          *ngSwitchCase="'color'"
+          [id]="field.name"
+          [label]="field.label"
+          [placeholder]="field.placeholder || '#000000'"
+          [icon]="field.icon || 'pi pi-palette'"
+          [required]="field.required || false"
+          [control]="form.get(field.name)"
+        ></app-input-color>
+      </ng-container>
+    </div>
+  }
+</div>
+
+

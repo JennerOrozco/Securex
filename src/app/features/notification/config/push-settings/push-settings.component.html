@@ -1,11 +1,24 @@
 <app-crud-page permission="securex.notifications.push" title="Configuraciones Push"
-  subtitle="Llaves VAPID y parámetros para notificaciones web" [data]="items" [columns]="cols" [loading]="loading"
-  [lazy]="true" [totalRecords]="totalRecords" [isSaving]="isSaving" [formFields]="formFields"
-  [formExtraData]="initialData" formAddTitle="Nueva Configuración" formEditTitle="Editar Configuración"
-  deleteTitle="Eliminar Configuración" (onLazyLoad)="load($event)" (onSave)="save($event.data, $event.mode)"
-  (onConfirmDelete)="confirmDelete()" (onRefresh)="load()" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
-  (onDelete)="handleDelete($event)">
-  <div custom-toolbar-actions>
+  subtitle="Llaves VAPID y parámetros para notificaciones web" 
+  [data]="crud.items()" 
+  [columns]="cols" 
+  [loading]="crud.loading()"
+  [lazy]="true" 
+  [totalRecords]="crud.totalRecords()" 
+  [isSaving]="crud.isSaving()" 
+  [formFields]="formFields()"
+  [resourceName]="'Configuración Push'"
+  (onLazyLoad)="crud.load($event)" 
+  (onAdd)="crud.handleAdd()"
+  (onEdit)="crud.handleEdit($event)"
+  (onSave)="crud.save($event)"
+  (onConfirmDelete)="crud.confirmDelete($event)" 
+  (onRefresh)="crud.load()">
+  <div custom-form-content class="w-full mt-4 p-4 rounded-xl border border-blue-100 bg-blue-50/50 flex items-center justify-between">
+    <div class="flex flex-col">
+      <span class="text-sm font-semibold text-blue-900">¿No tienes llaves VAPID?</span>
+      <span class="text-xs text-blue-700">Genera un par de llaves criptográficas automáticamente.</span>
+    </div>
     <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy"
       (onClick)="handleGenerateVapid()"></app-button>
   </div>

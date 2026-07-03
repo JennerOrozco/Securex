@@ -1,101 +1,49 @@
 <div class="gm-crud-page-container">
   <div class="content-card">
-  <!-- Permission gate (optional) -->
-  <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
-    <i class="pi pi-lock"></i>
-    <h2>Acceso restringido</h2>
-    <p>{{ permissionMessage }}</p>
-  </div>
+    <div *ngIf="!hidePermissionGate && !hasPermission" class="access-denied">
+      <i class="pi pi-lock"></i>
+      <h2>Acceso restringido</h2>
+      <p>{{ permissionMessage }}</p>
+    </div>
 
-  <ng-container *ngIf="hidePermissionGate || hasPermission">
-    <!-- Flat Table Component -->
-    <app-table-component *ngIf="!isTreeTable"
-      [title]="title"
-      [subtitle]="subtitle"
-      [data]="data"
-      [columns]="columns"
-      [loading]="loading"
-      [showAdd]="showAdd"
-      [showEdit]="showEdit"
-      [showDelete]="showDelete"
-      [showPermissions]="showPermissions"
-      [showView]="showView"
-      [showReset]="showReset"
-      [minimalMode]="minimalMode"
-      [reorderableColumns]="reorderableColumns"
-      [addLabel]="addLabel"
-      [lazy]="lazy"
-      [totalRecords]="totalRecords"
-      (onLazyLoad)="onLazyLoad.emit($event)"
-      (onAdd)="handleAdd()"
-      (onEdit)="handleEdit($event)"
-      (onDelete)="handleDelete($event)"
-      (onPermissions)="onPermissions.emit($event)"
-      (onView)="onView.emit($event)"
-      (onReset)="onReset.emit($event)"
-      (onColReorder)="onColReorder.emit($event)"
-      (onRefresh)="onRefresh.emit()"
-    >
-      <!-- Extra toolbar actions can be projected here -->
-      <ng-content select="[custom-toolbar-actions]"></ng-content>
-    </app-table-component>
+    <ng-container *ngIf="hidePermissionGate || hasPermission">
+      <app-table-component *ngIf="!isTreeTable" [title]="title" [subtitle]="subtitle" [data]="data" [columns]="columns"
+        [loading]="loading" [showAdd]="showAdd" [showEdit]="showEdit" [showDelete]="showDelete"
+        [showPermissions]="showPermissions" [showView]="showView" [showReset]="showReset" [showCreate]="showCreate"
+        [showDuplicate]="showDuplicate" [showPdf]="showPdf" [showSend]="showSend" [createLabel]="createLabel" [createIcon]="createIcon"
+        [minimalMode]="minimalMode" [reorderableColumns]="reorderableColumns" [addLabel]="addLabel" [lazy]="lazy"
+        [totalRecords]="totalRecords" [actionButtonsTemplate]="externalActionButtons"
+        (onLazyLoad)="onLazyLoad.emit($event)" (onAdd)="handleAdd()" (onEdit)="handleEdit($event)"
+        (onDelete)="handleDelete($event)" (onPermissions)="onPermissions.emit($event)" (onView)="onView.emit($event)"
+        (onReset)="onReset.emit($event)" (onCreate)="onCreate.emit($event)" (onDuplicate)="onDuplicate.emit($event)"
+        (onPdf)="onPdf.emit($event)" (onSend)="onSend.emit($event)"
+        (onColReorder)="onColReorder.emit($event)" (onRefresh)="onRefresh.emit()">
+        <ng-content select="[custom-toolbar-actions]"></ng-content>
+      </app-table-component>
 
-    <!-- Tree Table Component -->
-    <app-tree-table-component *ngIf="isTreeTable"
-      [title]="title"
-      [subtitle]="subtitle"
-      [nodes]="treeNodes"
-      [columns]="columns"
-      [loading]="loading"
-      [showAdd]="showAdd"
-      [addLabel]="addLabel"
-      [showLegend]="showLegend"
-      [colorRows]="colorRows"
-      [reorderableColumns]="reorderableColumns"
-      [dragdrop]="dragdrop"
-      [searchPlaceholder]="searchPlaceholder"
-      (onAddRoot)="handleTreeAddRoot()"
-      (onAddChild)="handleTreeAddChild($event)"
-      (onEdit)="handleEdit($event)"
-      (onDelete)="handleDelete($event)"
-      (onReset)="handleReset($event)"
-      (onFilter)="onFilter.emit($event)"
-      (onFilterType)="onFilterType.emit($event)"
-      (onNodeReorder)="onNodeReorder.emit($event)"
-      (onColReorder)="onColReorder.emit($event)"
-    >
-      <!-- Extra toolbar actions can be projected here -->
-      <ng-content select="[custom-toolbar-actions]"></ng-content>
-    </app-tree-table-component>
-  </ng-container>
+      <app-tree-table-component *ngIf="isTreeTable" [title]="title" [subtitle]="subtitle" [nodes]="treeNodes"
+        [columns]="columns" [loading]="loading" [showAdd]="showAdd" [addLabel]="addLabel" [showLegend]="showLegend"
+        [colorRows]="colorRows" [reorderableColumns]="reorderableColumns" [dragdrop]="dragdrop"
+        [searchPlaceholder]="searchPlaceholder" (onAddRoot)="handleTreeAddRoot()"
+        (onAddChild)="handleTreeAddChild($event)" (onEdit)="handleEdit($event)" (onDelete)="handleDelete($event)"
+        (onReset)="handleReset($event)" (onFilter)="onFilter.emit($event)" (onFilterType)="onFilterType.emit($event)"
+        (onNodeReorder)="onNodeReorder.emit($event)" (onColReorder)="onColReorder.emit($event)">
+        <ng-content select="[custom-toolbar-actions]"></ng-content>
+      </app-tree-table-component>
+    </ng-container>
 
-  <!-- Form modal (add / edit) -->
-  <app-form-modal
-    *ngIf="formFields && formFields.length"
-    [visible]="modalVisible && modalMode !== 'delete'"
-    [mode]="modalMode === 'add' ? 'add' : 'edit'"
-    [title]="resolvedFormTitle"
-    [fields]="formFields"
-    [data]="resolvedFormData"
-    [initialData]="formExtraData"
-    [loading]="catalogLoading || isSaving"
-    [customFormValid]="customFormValid"
-    (onConfirm)="handleSave($event)"
-    (onClose)="handleCloseModal()"
-    (onSelectGridEmptyFilter)="onSelectGridEmptyFilter.emit($event)"
-  ></app-form-modal>
+    <app-form-modal *ngIf="formFields && formFields.length" [visible]="modalVisible && modalMode !== 'delete'"
+      [mode]="modalMode === 'add' ? 'add' : 'edit'" [title]="resolvedFormTitle" [fields]="formFields"
+      [data]="resolvedFormData" [initialData]="formExtraData" [loading]="catalogLoading || isSaving"
+      [customFormValid]="customFormValid" [gridClass]="gridClass" (onConfirm)="handleSave($event)" (onClose)="handleCloseModal()"
+      (onSelectGridEmptyFilter)="onSelectGridEmptyFilter.emit($event)">
+      <ng-content select="[custom-form-content]"></ng-content>
+    </app-form-modal>
 
-  <!-- Delete modal -->
-  <app-delete-modal
-    [visible]="modalVisible && modalMode === 'delete'"
-    [title]="deleteTitle"
-    [bodyMessage]="resolvedDeleteMessage"
-    [loading]="isSaving"
-    (onConfirm)="handleConfirmDelete()"
-    (onClose)="handleCloseModal()"
-  ></app-delete-modal>
+    <app-delete-modal [visible]="modalVisible && modalMode === 'delete'" [title]="resolvedDeleteTitle"
+      [bodyMessage]="resolvedDeleteMessage" [loading]="isSaving" (onConfirm)="handleConfirmDelete()"
+      (onClose)="handleCloseModal()"></app-delete-modal>
 
-  <!-- Extra modals (e.g. role-permissions) can be projected here -->
-  <ng-content select="[extra-modals]"></ng-content>
+    <ng-content select="[extra-modals]"></ng-content>
   </div>
 </div>

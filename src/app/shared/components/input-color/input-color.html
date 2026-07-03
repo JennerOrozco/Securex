@@ -1,0 +1,41 @@
+<app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
+    <div class="color-picker-flex-wrap">
+        <input pInputText type="text" [id]="id" class="gm-input" [class.has-icon]="icon" [value]="hexDraft" [placeholder]="placeholder"
+            spellcheck="false" autocomplete="off" (input)="onHexInput($any($event.target).value)"
+            (blur)="commitHexDraft()" (keydown.enter)="commitHexDraft()" />
+
+        <button type="button" class="color-picker-swatch-btn" [style.background]="hexValue" [attr.aria-expanded]="isOpen"
+            [attr.aria-label]="'Elegir color, valor actual ' + hexValue" (click)="togglePanel()"></button>
+
+        @if (isOpen) {
+        <div class="color-panel" role="dialog" aria-label="Selector de color">
+            <div #satBox class="color-panel__sat" [style.background]="'hsl(' + hsv.h + ', 100%, 50%)'"
+                (pointerdown)="startSatDrag($event)">
+                <div class="color-panel__sat-white"></div>
+                <div class="color-panel__sat-black"></div>
+                <div class="color-panel__sat-handle" [style.left.%]="hsv.s" [style.top.%]="100 - hsv.v"
+                    [style.background]="hexValue"></div>
+            </div>
+
+            <div #hueBar class="color-panel__hue" (pointerdown)="startHueDrag($event)">
+                <div class="color-panel__hue-handle" [style.left.%]="(hsv.h / 360) * 100"
+                    [style.background]="hueBackground"></div>
+            </div>
+
+            <div class="color-panel__footer">
+                <span class="color-panel__preview" [style.background]="hexValue"></span>
+                <input type="text" class="color-panel__hex" [value]="hexDraft" spellcheck="false" autocomplete="off"
+                    (input)="onHexInput($any($event.target).value)" (blur)="commitHexDraft()"
+                    (keydown.enter)="commitHexDraft()" />
+            </div>
+
+            <div class="color-panel__presets">
+                @for (preset of presets; track preset) {
+                <button type="button" class="color-panel__preset" [style.background]="preset"
+                    [attr.aria-label]="'Usar color ' + preset" (click)="selectPreset(preset)"></button>
+                }
+            </div>
+        </div>
+        }
+    </div>
+</app-form-field>

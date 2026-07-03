@@ -32,7 +32,7 @@ export class NitInputComponent extends BaseFormControl {
       this.control.setValidators(
         currentValidators ? [currentValidators, nitValidator] : [nitValidator]
       );
-      this.control.updateValueAndValidity({ emitEvent: false });
+      this.control.updateValueAndValidity();
 
       if (this.control.value) {
         this.formatValue(this.control.value);

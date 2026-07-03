@@ -1,161 +1,69 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Observable } from 'rxjs';
 import { TreeNode } from 'primeng/api';
 import { PermissionService } from '@core/services/permission.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
-import { NotificationService } from '@core/services/notification.service';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
+import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
 import { mapToTreeNodes, filterTreeByQuery } from '@shared/utils/tree-utils';
+import { PERMISSION_TABLE_COLUMNS, PERMISSION_FORM_FIELDS, SystemPermission } from './permissions.config';
+import { trackApi } from '@shared/utils/rxjs-utils';
 
 @Component({
   selector: 'app-security-permission-crud',
   standalone: true,
-  imports: [
-    CommonModule,
-    CrudPageComponent
-  ],
+  imports: [CommonModule, CrudPageComponent],
   templateUrl: './permissions.component.html',
-
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SecurityPermissionCrudComponent implements OnInit {
+export class SecurityPermissionCrudComponent extends BaseNotificationConfigComponent<SystemPermission> {
   private permissionService = inject(PermissionService);
-  private notificationService = inject(NotificationService);
 
-  rawPermissions: any[] = [];
-  permissionNodes: TreeNode[] = [];
-  loading = false;
-  isSaving = false;
+  get resourceName(): string { return 'Permiso'; }
 
-  currentParentId: number | null = null;
+  formFields = PERMISSION_FORM_FIELDS;
+  cols = PERMISSION_TABLE_COLUMNS;
 
-  cols: TableColumn[] = [
-    { field: 'name', header: 'Nombre', type: 'tree', sortable: true, style: { width: '35%' } },
-    { field: 'type', header: 'Tipo', type: 'badge', sortable: true, style: { width: '10%' } },
-    { field: 'icon', header: 'Ícono', type: 'text', style: { width: '10%' } },
-    { field: 'route', header: 'Ruta', type: 'text', style: { width: '15%' } },
-    { field: 'sort_order', header: 'Orden', type: 'badge', sortable: true, style: { width: '8%' } },
-    { field: 'is_visible', header: 'Visible', type: 'boolean', style: { width: '10%' } },
-    { field: 'acciones', header: 'Acciones', type: 'actions', style: { width: '15%', textAlign: 'center' } }
-  ];
+  override isTreeTable = true;
+  protected override autoLoadOnInit = true;
 
-  formFields: FormField[] = [
-    { name: 'name', label: 'Nombre Visible del Permiso', type: 'text', required: true, icon: 'pi pi-eye', placeholder: 'Ej. Usuarios, Crear Factura' },
-    { name: 'slug', label: 'Slug / Identificador', type: 'text', required: true, icon: 'pi pi-code', placeholder: 'modulo.action.nombre' },
-    {
-      name: 'type',
-      label: 'Categoría',
-      type: 'select',
-      required: true,
-      options: [
-        { label: 'MENÚ (Acceso Sidebar)', value: 'MENU' },
-        { label: 'SUBMENÚ (Interior)', value: 'SUBMENU' },
-        { label: 'ACCIÓN (Operativo)', value: 'ACTION' },
-        { label: 'COMPONENTE (Visual)', value: 'COMPONENT' }
-      ]
-    },
-    { name: 'route', label: 'Ruta de Aplicación', type: 'text', icon: 'pi pi-link', placeholder: '/app/modulo/ruta' },
-    { name: 'icon', label: 'Clase del Icono', type: 'text', icon: 'pi pi-image', placeholder: 'pi pi-tag o fas fa-user' },
-    { name: 'sort_order', label: 'Orden de Visualización', type: 'number', icon: 'pi pi-sort-numeric-down', placeholder: '0' },
-    {
-      name: 'is_visible',
-      label: 'Estado de Visibilidad',
-      type: 'select',
-      options: [
-        { label: 'Público en Menú', value: 1 },
-        { label: 'Oculto / Privado', value: 0 }
-      ]
-    }
-  ];
-
-  ngOnInit() { this.load(); }
-
-  load() {
-    this.loading = true;
-    this.permissionService.getPermissionsTree().subscribe({
-      next: (res) => {
-        this.rawPermissions = res;
-        this.permissionNodes = this.buildTree(res);
-        this.loading = false;
-      },
-      error: () => this.loading = false
-    });
+  override loadTreeData(): Observable<any[]> {
+    return this.permissionService.getPermissionsTree();
   }
-
-  private buildTree(items: any[]): TreeNode[] {
+  
+  override mapToTreeNodes(items: any[]): TreeNode[] {
     return mapToTreeNodes(items, {
       canAdd: (p) => p.type !== 'ACTION',
       expanded: () => false
     });
   }
+  
+  override fnCreate = this.permissionService.createPermissionGql.bind(this.permissionService);
+  override fnUpdate = this.permissionService.updatePermissionGql.bind(this.permissionService);
+  override fnDelete = this.permissionService.deletePermissionGql.bind(this.permissionService);
 
-  filterTree(query: string) {
-    const filtered = filterTreeByQuery(this.rawPermissions, query);
-    this.permissionNodes = this.buildTree(filtered);
-  }
-
-  filterByType(type: string) {
+  filterByType(type: string): void {
+    const all = this.rawItems as SystemPermission[];
     if (!type) {
-      this.permissionNodes = this.buildTree(this.rawPermissions);
-      return;
+      this.treeData = this.mapToTreeNodes(all);
+    } else {
+      const filtered = filterTreeByQuery(all, type).filter((p: any) => p.type === type);
+      this.treeData = this.mapToTreeNodes(filtered);
     }
-    const filtered = filterTreeByQuery(
-      this.rawPermissions,
-      type
-    ).filter((p: any) => p.type === type);
-    this.permissionNodes = this.buildTree(filtered);
+    this.cdr.markForCheck();
   }
 
-  setRootAdd() {
-    this.currentParentId = null;
-  }
-
-  setChildAdd(parentId: number) {
-    this.currentParentId = parentId;
-  }
-
-  handleSave(event: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
-    if (event.mode === 'add') {
-      event.data.parent_id = this.currentParentId;
-    }
-
-    const obs = event.mode === 'add'
-      ? this.permissionService.createPermissionGql(event.data)
-      : this.permissionService.updatePermissionGql(event.data.uuid, event.data);
-
-    obs.subscribe({
-      next: () => {
-        this.notificationService.notify('success', `Permiso ${event.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
-  }
-
-  handleDelete(item: any) {
-    this.isSaving = true;
-    this.permissionService.deletePermissionGql(item.uuid).subscribe({
-      next: () => {
-        this.notificationService.notify('success', 'Permiso eliminado de forma permanente');
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
-  }
-
-  handleNodeReorder(event: any) {
+  handleNodeReorder(event: any): void {
     const node = event.dragNode;
     const parent = event.dropNode;
     const parentId = parent?.id || null;
-    this.permissionService.reorderPermission(node.uuid, parentId, 0).subscribe({
-      next: () => {
-        this.load();
-        this.notificationService.notify('success', 'Permiso reordenado correctamente');
-      },
-      error: () => { }
-    });
+
+    if (!node || !node.uuid) return;
+
+    this.permissionService.reorderPermission(node.uuid, parentId, 0)
+      .pipe(trackApi(this, (s: boolean) => this.isSaving = s, 'Estructura reordenada correctamente'))
+      .subscribe({
+        next: () => this.load()
+      });
   }
 }

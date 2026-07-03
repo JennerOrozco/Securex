@@ -1,0 +1,108 @@
+<!-- ── Desktop Notification Dropdown ── -->
+@if (mode === 'desktop' && showPanel()) {
+  <div class="notif-desktop absolute right-0 mt-3 w-[28rem] max-w-[calc(100vw-2rem)] max-h-[75vh] bg-gray-900 border border-gray-700/50 rounded-xl shadow-2xl shadow-black/50 overflow-hidden z-50 animate-fade-in origin-top-right"
+       (appClickOutside)="closePanel()">
+    <!-- Encabezado fijo del panel -->
+    <div class="px-4 py-3 border-b border-white/[0.06] flex justify-between items-center bg-white/[0.03]">
+      <h3 class="text-sm font-bold text-white tracking-tight">Notificaciones</h3>
+      <button (click)="markAllAsRead()" class="text-xs text-padel-orange/80 hover:text-padel-orange transition-colors bg-transparent border-none cursor-pointer">Marcar todas</button>
+    </div>
+    <!-- Cuerpo scrolleable del panel -->
+    <div class="overflow-y-auto notif-desktop-scroll max-h-[calc(75vh-3rem)]">
+      @if (notificationsLoading()) {
+        <div class="px-4 py-10 text-center text-gray-500 text-sm">Cargando notificaciones...</div>
+      } @else if (notificationsError(); as errorMsg) {
+        <div class="px-4 py-10 text-center flex flex-col items-center gap-3">
+          <svg class="w-8 h-8 text-red-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z" />
+          </svg>
+          <span class="text-red-400 text-sm">{{ errorMsg }}</span>
+          <button (click)="retry()" class="text-xs text-padel-orange hover:underline bg-transparent border-none cursor-pointer">Reintentar</button>
+        </div>
+      } @else {
+        @for (group of notificationsByDate(); track group.label) {
+          <!-- Separador de grupo de fecha (sticky dentro del scroll) -->
+          <div class="sticky top-0 z-10 px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-600 bg-gray-900 border-b border-white/[0.04]">{{ group.label }}</div>
+          @for (notif of group.items; track notif.id) {
+            <div (click)="markAsRead(notif.id)"
+                 class="group/item flex items-start gap-3 px-4 py-3 hover:bg-white/[0.07] transition-colors duration-200 cursor-pointer border-b border-white/[0.02] last:border-0"
+                 [class.bg-blue-500/[0.04]]="!notif.is_read">
+              <!-- Indicador de no leído (bolita naranja) -->
+              @if (!notif.is_read) {
+                <div class="w-2 h-2 mt-1.5 rounded-full bg-padel-orange shrink-0"></div>
+              } @else {
+                <div class="w-2 h-2 mt-1.5 shrink-0 invisible"></div>
+              }
+              <!-- Cuerpo de la notificación -->
+              <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start gap-2">
+                  <p class="text-sm font-medium truncate"
+                     [class.text-white]="!notif.is_read"
+                     [class.text-gray-400]="notif.is_read">{{ notif.title }}</p>
+                  <span class="text-[10px] text-gray-600 whitespace-nowrap shrink-0 mt-0.5">{{ notif.created_at | timeAgo }}</span>
+                </div>
+                <p class="text-xs text-gray-500 mt-0.5 line-clamp-2 leading-relaxed">{{ notif.message }}</p>
+              </div>
+              <!-- Botón eliminar (visible solo en hover del item) -->
+              <button (click)="deleteNotification(notif.id, $event)"
+                      class="opacity-0 group-hover/item:opacity-100 transition-opacity duration-200 p-1.5 rounded-lg text-gray-600 hover:text-red-400 hover:bg-white/10 bg-transparent border-none cursor-pointer shrink-0 self-start mt-0.5"
+                      title="Eliminar notificación">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          }
+        } @empty {
+          <div class="px-4 py-10 text-center text-gray-500 text-sm">No tienes notificaciones</div>
+        }
+      }
+    </div>
+  </div>
+}
+
+<!-- ── Mobile Notifications Overlay ── -->
+@if (mode === 'mobile' && showPanel()) {
+  <div class="notif-mobile-overlay" (click)="closePanel()"></div>
+  <div class="notif-mobile-dropdown">
+    <div class="notif-mobile-header">
+      <h3 class="text-sm font-bold text-white">Notificaciones</h3>
+      <button (click)="markAllAsRead()" class="text-xs text-padel-orange hover:underline bg-transparent border-none cursor-pointer">Marcar todas</button>
+    </div>
+    <div class="notif-mobile-list">
+      @if (notificationsLoading()) {
+        <div class="notif-mobile-empty">Cargando...</div>
+      } @else if (notificationsError(); as errorMsg) {
+        <div class="notif-mobile-empty text-red-400">{{ errorMsg }}</div>
+      } @else {
+        @for (group of notificationsByDate(); track group.label) {
+          <div class="px-4 pt-3 pb-1 text-[10px] font-semibold uppercase tracking-widest text-gray-500 bg-black/10">{{ group.label }}</div>
+          @for (notif of group.items; track notif.id) {
+            <div class="notif-swipe-container">
+              <div class="notif-swipe-background" [class.notif-swipe-ready]="isSwipingReady(notif.id)">
+                <svg class="w-5 h-5 text-white transition-transform" [style.transform]="isSwipingReady(notif.id) ? 'scale(1.25)' : 'none'" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </div>
+              <div (click)="markAsRead(notif.id)"
+                   appSwipeToDelete
+                   [appSwipeToDeleteThreshold]="120"
+                   (appSwipeToDelete)="deleteNotification(notif.id)"
+                   (appSwipeProgress)="onSwipeProgress(notif.id, $event)"
+                   class="notif-mobile-item transition-colors duration-300"
+                   [class.notif-unread]="!notif.is_read">
+                <div class="flex justify-between items-start">
+                  <p class="text-sm font-semibold" [class.text-white]="notif.is_read" [class.text-padel-orange]="!notif.is_read">{{ notif.title }}</p>
+                  <span class="text-[10px] text-gray-500 whitespace-nowrap ml-2">{{ notif.created_at | timeAgo }}</span>
+                </div>
+                <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
+              </div>
+            </div>
+          }
+        } @empty {
+          <div class="notif-mobile-empty">No tienes notificaciones</div>
+        }
+      }
+    </div>
+  </div>
+}

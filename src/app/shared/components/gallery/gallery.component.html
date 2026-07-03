@@ -1,0 +1,72 @@
+<div class="gallery-root w-full sm:h-[320px] select-none flex flex-col-reverse sm:flex-row gap-4">
+
+    @if (formattedImages().length > 1) {
+    <div class="thumb-rail flex flex-row sm:flex-col items-center gap-2 overflow-x-auto sm:overflow-y-auto py-1 px-1 custom-scrollbar scroll-smooth w-full sm:w-24 h-20 sm:h-full flex-shrink-0">
+        @for (imgObj of formattedImages(); track imgObj.url; let i = $index) {
+        <button type="button" (click)="selectImage(i)" [class.active-thumb]="selectedIndex() === i"
+            class="thumb-btn relative flex-shrink-0 overflow-hidden h-full sm:h-auto sm:w-full flex items-center justify-center">
+            <img [src]="imgObj.url" alt="Miniatura" class="thumb-img w-full h-full sm:h-auto object-cover sm:object-contain rounded-md" />
+            @if (imgObj.is_new) {
+                <div class="absolute inset-0 border-2 border-indigo-500 rounded-lg pointer-events-none"></div>
+            }
+        </button>
+        }
+    </div>
+    }
+
+    <div #stageEl class="stage relative flex-grow overflow-hidden rounded-2xl bg-stage group"
+        (mousedown)="onDragStart($event)" (touchstart)="onDragStart($event)" (touchmove)="onDragMove($event)"
+        (touchend)="onDragEnd()" (mousemove)="onDragMove($event)" (mouseup)="onDragEnd()" (mouseleave)="onDragEnd()">
+
+        <div class="stage-track h-full flex" [style.transform]="trackTransform()" [class.is-dragging]="isDragging()">
+            @for (imgObj of formattedImages(); track imgObj.url; let i = $index) {
+            <div class="stage-slide flex-shrink-0 w-full h-full flex items-center justify-center relative">
+                <img [src]="imgObj.url" alt="Foto de carrusel" draggable="false"
+                    class="stage-img max-w-full max-h-full object-contain" />
+                @if (imgObj.is_new) {
+                <div class="absolute top-4 left-4 z-20">
+                    <span class="bg-indigo-500 text-white text-xs font-bold px-2 py-1 rounded shadow">NUEVO</span>
+                </div>
+                }
+            </div>
+            }
+
+            @if (formattedImages().length === 0) {
+            <div
+                class="stage-slide flex-shrink-0 w-full h-full flex flex-col items-center justify-center text-stage-empty gap-1.5">
+                <i class="pi pi-image text-2xl opacity-40"></i>
+                <p class="text-xs font-medium tracking-wide">Sin previsualización</p>
+            </div>
+            }
+        </div>
+
+        @if (formattedImages().length > 1) {
+        <button type="button" (click)="prev(); $event.stopPropagation()" title="Anterior" aria-label="Anterior"
+            class="nav-btn nav-btn--left">
+            <i class="pi pi-chevron-left text-xs font-bold"></i>
+        </button>
+
+        <button type="button" (click)="next(); $event.stopPropagation()" title="Siguiente" aria-label="Siguiente"
+            class="nav-btn nav-btn--right">
+            <i class="pi pi-chevron-right text-xs font-bold"></i>
+        </button>
+
+        <div
+            class="counter-wrap absolute bottom-3 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 pointer-events-none">
+            <span class="counter-pill">{{ selectedIndex() + 1 }} / {{ formattedImages().length }}</span>
+            <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="progressPercent()"></div>
+            </div>
+        </div>
+        }
+
+        @if (mode() !== 'view' && currentImage()) {
+        <div class="delete-wrap absolute top-3 right-3">
+            <button type="button" (click)="onDelete(); $event.stopPropagation()" title="Eliminar esta foto"
+                aria-label="Eliminar esta foto" class="delete-btn">
+                <i class="pi pi-trash"></i>
+            </button>
+        </div>
+        }
+    </div>
+</div>

@@ -40,4 +40,17 @@ export class GraphqlService {
       catchError(err => throwError(() => err))
     );
   }
+
+  mutate<T>(domain: GraphqlDomain, mutation: string, variables?: Record<string, any>): Observable<T> {
+    return this.http.post<{ data?: T; errors?: GraphqlError[] }>(this.getUrl(domain), { query: mutation, variables }).pipe(
+      map(res => {
+        if (res.errors && res.errors.length > 0) {
+          const msg = res.errors.map(e => e.message).join(' | ');
+          throw new Error(`[GraphQL ${domain}] ${msg}`);
+        }
+        return res.data as T;
+      }),
+      catchError(err => throwError(() => err))
+    );
+  }
 }

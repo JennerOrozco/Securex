@@ -1,0 +1,10 @@
+<div class="segment-container">
+  @for (opt of options; track opt.value) {
+    <button type="button"
+      [class]="badgeClass(opt.value)"
+      [class.active]="selectedValue === opt.value"
+      (click)="selectOption(opt.value)">
+      {{ opt.label }}
+    </button>
+  }
+</div>

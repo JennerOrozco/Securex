@@ -1,191 +1,52 @@
 <p-dialog
   [(visible)]="visible"
   [modal]="true"
+  [appendTo]="'body'"
   [breakpoints]="{ '960px': '80vw', '768px': '92vw', '480px': '96vw' }"
-  [style]="{ width: mode === 'view' ? '520px' : (mode === 'add' ? '550px' : '700px') }"
+  [style]="{ width: width() || (mode() === 'view' ? '520px' : (mode() === 'add' ? '550px' : '700px')) }"
   (onHide)="onClose.emit()"
-  [draggable]="false"
-  [resizable]="false"
-  [styleClass]="'gm-dialog gm-dialog--' + dialogClass"
-  [class]="'gm-dialog gm-dialog--' + dialogClass">
+  [draggable]="draggable()"
+  [resizable]="resizable()"
+  [styleClass]="'gm-dialog gm-dialog--' + dialogClass()"
+  [class]="'gm-dialog gm-dialog--' + dialogClass()">
 
   <ng-template pTemplate="header">
     <div class="gm-header">
-      <div class="gm-header-icon" [ngClass]="iconClass">
-        <i [class]="icon"></i>
+      <div class="gm-header-icon" [ngClass]="iconClass()">
+        <i [class]="icon()"></i>
       </div>
       <div class="gm-header-text">
-        <h2 class="gm-title">{{ title }}</h2>
+        <h2 class="gm-title">{{ title() }}</h2>
       </div>
     </div>
   </ng-template>
 
-  <div class="gm-body" [class.gm-body--no-padding]="noPadding">
-    <form *ngIf="fields && fields.length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
-      @for (field of fields; track $index; let i = $index) {
-        <!-- Standard & Shared Fields -->
-        <div [style.animation-delay]="i * 40 + 'ms'">
-          <ng-container [ngSwitch]="field.type">
-            <app-file-input
-              *ngSwitchCase="'file'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || ''"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="$any(form.get(field.name))"
-              [accept]="field.accept || '*'"
-              [fallbackIcon]="field.fallbackIcon || (field.name === 'icon' ? 'pi-image' : 'pi-building')"
-              [mode]="mode"
-            ></app-file-input>
-
-            <ng-container *ngSwitchCase="'text'">
-              <app-input-image
-                *ngIf="field.name === 'logo_url'"
-                [id]="field.name"
-                [label]="field.label"
-                [placeholder]="field.placeholder || ''"
-                [icon]="field.icon || ''"
-                [required]="field.required || false"
-                [control]="$any(form.get(field.name))"
-              ></app-input-image>
-
-              <app-input
-                *ngIf="field.name !== 'logo_url'"
-                [id]="field.name"
-                [label]="field.label"
-                [placeholder]="field.placeholder || ''"
-                [icon]="field.icon || ''"
-                [required]="field.required || false"
-                [control]="form.get(field.name)"
-              ></app-input>
-            </ng-container>
-
-            <app-input
-              *ngSwitchCase="'email'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || 'correo@ejemplo.com'"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="form.get(field.name)"
-              type="email"
-            ></app-input>
-
-            <app-password
-              *ngSwitchCase="'password'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || ''"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="form.get(field.name)"
-              [feedback]="false"
-              [toggleMask]="true"
-            ></app-password>
-
-            <app-input-number
-              *ngSwitchCase="'number'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || ''"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="form.get(field.name)"
-              [minFractionDigits]="0"
-              [maxFractionDigits]="2"
-            ></app-input-number>
-
-            <app-textarea
-              *ngSwitchCase="'textarea'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || ''"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="$any(form.get(field.name))"
-              [rows]="3"
-              [autoResize]="true"
-            ></app-textarea>
-
-            <app-select
-              *ngSwitchCase="'select'"
-              [id]="field.name"
-              [label]="field.label"
-              [options]="field.options || []"
-              [optionLabel]="'label'"
-              [optionValue]="'value'"
-              [placeholder]="field.placeholder || 'Seleccione'"
-              [control]="form.get(field.name)"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-            ></app-select>
-
-            <app-select-grid
-              *ngSwitchCase="'select-grid'"
-              [id]="field.name"
-              [label]="field.label"
-              [options]="field.options || []"
-              [optionLabel]="'label'"
-              [optionValue]="'value'"
-              [placeholder]="field.placeholder || 'Seleccione'"
-              [control]="$any(form.get(field.name))"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [columns]="field.columns || []"
-              [filterBy]="field.columns?.length ? 'label,' + field.columns!.map(c => c.field).join(',') : 'label'"
-              (onEmptyFilterAction)="onSelectGridEmptyFilter.emit(field.name)"
-            ></app-select-grid>
-
-            <app-phone-input
-              *ngSwitchCase="'phone'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || '1234 5678'"
-              [icon]="field.icon || ''"
-              [required]="field.required || false"
-              [control]="$any(form.get(field.name))"
-              [disabled]="mode === 'view' || !!field.disabled"
-            ></app-phone-input>
-
-            <app-datepicker
-              *ngSwitchCase="'date'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || 'YYYY-MM-DD'"
-              [required]="field.required || false"
-              [control]="form.get(field.name)"
-            ></app-datepicker>
-
-            <app-nit-input
-              *ngSwitchCase="'nit'"
-              [id]="field.name"
-              [label]="field.label"
-              [placeholder]="field.placeholder || 'C/F o número de NIT'"
-              [required]="field.required || false"
-              [control]="form.get(field.name)"
-              [disabled]="mode === 'view' || !!field.disabled"
-            ></app-nit-input>
-          </ng-container>
-        </div>
-      }
+  <div class="gm-body gm-body--form" [class.gm-body--no-padding]="noPadding()">
+    <form *ngIf="fields() && fields().length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
+      <app-dynamic-form
+        [fields]="fields()"
+        [parentForm]="form"
+        [mode]="mode()"
+        [gridClass]="gridClass()"
+        (onSelectGridEmptyFilter)="onSelectGridEmptyFilter.emit($event)"
+      ></app-dynamic-form>
     </form>
     <ng-content></ng-content>
   </div>
 
   <ng-template pTemplate="footer">
-    <div class="gm-footer">
+    <div class="gm-footer" *ngIf="showFooter()">
       <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" styleClass="gm-btn gm-btn--cancel" (onClick)="onClose.emit()"></p-button>
-      <p-button *ngIf="mode !== 'view'"
-        [label]="confirmLabel"
-        [icon]="confirmIcon"
-        [severity]="confirmSeverity"
-        [disabled]="customFormValid !== null ? !customFormValid : form.invalid"
-        [loading]="loading"
+      <p-button *ngIf="mode() !== 'view'"
+        [label]="confirmLabel()"
+        [icon]="confirmIcon()"
+        [severity]="confirmSeverity()"
+        [disabled]="customFormValid() !== null ? !customFormValid() : form.invalid"
+        [loading]="loading()"
         styleClass="gm-btn gm-btn--confirm"
         (onClick)="handleConfirm()">
       </p-button>
-      <p-button *ngIf="mode === 'view'"
+      <p-button *ngIf="mode() === 'view'"
         label="Cerrar"
         icon="pi pi-times"
         severity="secondary"

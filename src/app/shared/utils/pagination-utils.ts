@@ -15,7 +15,9 @@ const DEFAULT_PAGE_SIZE = 15;
 
 const MATCH_MODE_MAP: Record<string, string> = {
   contains: 'CONTAINS',
+  notContains: 'NOT_CONTAINS',
   equals: 'EQUALS',
+  notEquals: 'NOT_EQUALS',
   startsWith: 'STARTS_WITH',
   endsWith: 'ENDS_WITH',
 };
@@ -78,10 +80,13 @@ export function parseLazyLoadEvent(event?: any, defaultSortColumn = DEFAULT_SORT
 
   const sort: any = { column: defaultSortColumn, direction: 'DESC' };
   if (event?.sortField) {
-    sort.column = event.sortField;
+    const colName = columnMap && event.sortField in columnMap ? columnMap[event.sortField] : event.sortField;
+    sort.column = colName;
     sort.direction = event.sortOrder === 1 ? 'ASC' : 'DESC';
   } else if (event?.multiSortMeta && event.multiSortMeta.length > 0) {
-    sort.column = event.multiSortMeta[0].field;
+    const fieldName = event.multiSortMeta[0].field;
+    const colName = columnMap && fieldName in columnMap ? columnMap[fieldName] : fieldName;
+    sort.column = colName;
     sort.direction = event.multiSortMeta[0].order === 1 ? 'ASC' : 'DESC';
   }
 
@@ -90,9 +95,20 @@ export function parseLazyLoadEvent(event?: any, defaultSortColumn = DEFAULT_SORT
 }
 
 export function extractPaginatedData<T>(response: any, mapper?: (item: any) => T): PaginatedResponse<T> {
-  const raw = response?.data ?? [];
+  const payload = response?.data ?? response;
+  const rawItems = Array.isArray(payload)
+    ? payload
+    : payload?.items ?? payload?.data ?? [];
+
+  const normalizedItems = Array.isArray(rawItems) ? rawItems : [];
+  const total = response?.total
+    ?? response?.pagination?.total
+    ?? payload?.total
+    ?? payload?.pagination?.total
+    ?? (Array.isArray(rawItems) ? rawItems.length : 0);
+
   return {
-    data: mapper ? raw.map(mapper) : raw,
-    total: response?.total ?? 0,
+    data: mapper ? normalizedItems.map(mapper) : normalizedItems,
+    total,
   };
 }

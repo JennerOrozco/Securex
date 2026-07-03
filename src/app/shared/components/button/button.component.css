@@ -1,6 +1,3 @@
-﻿/* =====================================================
-   SHARED BUTTON — Base Styles
-   ===================================================== */
 :host {
   --navy:        var(--app-main-primary);
   --navy-light:  var(--app-main-primary-light);
@@ -14,7 +11,7 @@
 
 :host ::ng-deep .gm-btn.p-button,
 :host ::ng-deep .p-button.gm-btn {
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 0.8rem;
   font-weight: 600;
   min-height: 34px;
@@ -26,35 +23,29 @@
   white-space: nowrap;
 }
 
-/* =====================================================
-   VARIANTE NAVY — Réplica del botón "btn-new" original
-   ===================================================== */
 :host ::ng-deep .gm-btn.p-button-navy,
 :host ::ng-deep .p-button.gm-btn.p-button-navy {
-  background: var(--navy-light) !important;
-  border-color: var(--navy-light) !important;
+  background: var(--navy) !important;
+  border-color: var(--navy) !important;
   color: var(--color-bg-card) !important;
   height: 36px;
   padding: 0 1rem;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-size: 13px;
 }
 
 :host ::ng-deep .gm-btn.p-button-navy:hover,
 :host ::ng-deep .p-button.gm-btn.p-button-navy:hover {
-  background: var(--navy) !important;
-  border-color: var(--navy) !important;
+  background: var(--navy-light) !important;
+  border-color: var(--navy-light) !important;
 }
 
-/* =====================================================
-   MOBILE — Half the size
-   ===================================================== */
 @media (max-width: 640px) {
   :host ::ng-deep .gm-btn.p-button,
   :host ::ng-deep .p-button.gm-btn {
     font-size: 0.62rem;
     min-height: 26px;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     gap: 0.2rem;
   }
 
@@ -65,14 +56,11 @@
   }
 }
 
-/* =====================================================
-   VARIANTE GHOST INDIGO — Para botones de acciones en bloque, etc.
-   ===================================================== */
 :host ::ng-deep .gm-btn.btn--ghost-indigo,
 :host ::ng-deep .p-button.gm-btn.btn--ghost-indigo {
   background: var(--color-bg-card) !important;
   color: var(--app-main-indigo) !important;
-  border: 1px solid var(--border) !important;
+  border: 1px solid var(--color-border) !important;
   box-shadow: none !important;
 }
 
@@ -83,16 +71,12 @@
   color: var(--app-main-indigo) !important;
 }
 
-/* =====================================================
-   TAMAÑO PEQUEÑO (sm)
-   ===================================================== */
 :host ::ng-deep .gm-btn.btn-sm,
 :host ::ng-deep .p-button.gm-btn.btn-sm {
   min-height: 28px !important;
   height: 28px !important;
   padding: 0 0.65rem !important;
   font-size: 0.72rem !important;
-  border-radius: 6px !important;
+  border-radius: var(--radius-sm) !important;
   gap: 0.3rem !important;
 }
-

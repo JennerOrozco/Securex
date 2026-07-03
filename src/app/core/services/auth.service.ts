@@ -6,6 +6,8 @@ import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
 import { NotificationService } from './notification.service';
 import { StorageService } from './storage.service';
+import { GraphqlService } from '../graphql/graphql.service';
+import { SECUREX_QUERIES } from '../graphql/queries/securex.queries';
 
 export interface User {
     uuid: string;
@@ -81,6 +83,7 @@ export class AuthService {
     private configService = inject(ConfigService);
     private notificationService = inject(NotificationService);
     private storage = inject(StorageService);
+    private gql = inject(GraphqlService);
 
     constructor() {
         const user = this.storage.getUser();
@@ -361,9 +364,9 @@ export class AuthService {
     }
 
     getMobileComponents(): Observable<any> {
-        const token = this.storage.getAccessToken();
-        if (!token) return of(null);
-        return this.http.get<any>(`${this.configService.apiUrl}/auth/components`);
+        return this.gql.query<{ components: any[] }>('security', SECUREX_QUERIES.COMPONENTS).pipe(
+            map(d => d.components)
+        );
     }
 
     adminResetUserPassword(email: string): Observable<any> {

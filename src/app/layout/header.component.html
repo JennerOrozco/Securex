@@ -2,6 +2,22 @@
     <nav class=" w-full px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-14">
 
+            <div class="flex items-center gap-2">
+                <button (click)="layoutService.toggleSidebarCollapse()"
+                        class="text-gray-300 hover:text-white p-2 rounded-full hover:bg-white/10 transition-all duration-200"
+                        [attr.aria-label]="layoutService.sidebarCollapsed() ? 'Expandir menú' : 'Colapsar menú'">
+                    @if (layoutService.sidebarCollapsed()) {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    } @else {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                        </svg>
+                    }
+                </button>
+            </div>
+
             <div class="flex items-center space-x-2 cursor-pointer group" (click)="navigateTo('/')">
             </div>
 
@@ -43,40 +59,7 @@
                             class="absolute top-1 right-1 block h-2.5 w-2.5 rounded-full bg-red-500 ring-2 ring-gray-900 animate-pulse"></span>
                     </button>
 
-                    <div *ngIf="notifPanel.showPanel()"
-                        class="absolute right-0 mt-3 w-[28rem] bg-gray-900 border border-gray-700 rounded-xl shadow-2xl py-2 overflow-hidden z-50 animate-fade-in origin-top-right">
-                        <div class="px-4 py-2 border-b border-gray-800 flex justify-between items-center bg-black/20">
-                            <h3 class="text-sm font-bold text-white">Notificaciones</h3>
-                            <span (click)="notifPanel.markAllAsRead()"
-                                class="text-xs text-padel-orange cursor-pointer hover:underline">Marcar todas</span>
-                        </div>
-                        <div class="max-h-96 overflow-y-auto">
-                            @for (notif of notifPanel.notifications(); track notif.id) {
-<div (click)="notifPanel.markAsRead(notif.id)"
-                                class="px-4 py-3 hover:bg-white/5 transition cursor-pointer border-b border-gray-800 last:border-0"
-                                [class.bg-blue-500/5]="!notif.is_read">
-                                <div class="flex justify-between items-start">
-                                    <p class="text-sm font-semibold" [class.text-white]="notif.is_read"
-                                        [class.text-padel-orange]="!notif.is_read">{{ notif.title }}</p>
-                                    <div class="flex items-center space-x-2">
-                                        <span class="text-[10px] text-gray-500">{{ notif.created_at | timeAgo }}</span>
-                                        <button (click)="notifPanel.deleteNotification(notif.id); $event.stopPropagation()"
-                                            class="text-gray-500 hover:text-red-500 transition-colors" title="Eliminar">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
-                                <p class="text-xs text-gray-400 mt-0.5 line-clamp-2">{{ notif.message }}</p>
-                            </div>
-                            }
-                            <div *ngIf="notifPanel.notifications().length === 0" class="px-4 py-6 text-center text-gray-500 text-sm">
-                                No tienes notificaciones
-                            </div>
-                        </div>
-                    </div>
+                    <app-notification-panel mode="desktop" />
                 </div>
 
                 <button

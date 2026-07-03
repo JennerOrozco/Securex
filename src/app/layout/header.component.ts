@@ -4,14 +4,15 @@ import { CommonModule, DOCUMENT } from '@angular/common';
 import { AuthService, User } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { NotificationPanelService } from '@shared/services/notification-panel.service';
-import { TimeAgoPipe } from '@shared/pipes/time-ago.pipe';
+import { LayoutService } from '@core/services/layout.service';
+import { NotificationPanelComponent } from './notification-panel/notification-panel.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     standalone: true,
-    imports: [CommonModule, RouterModule, TimeAgoPipe]
+    imports: [CommonModule, RouterModule, NotificationPanelComponent]
 })
 export class HeaderComponent implements OnInit {
 
@@ -20,6 +21,7 @@ export class HeaderComponent implements OnInit {
     }
     public authService = inject(AuthService);
     notifPanel = inject(NotificationPanelService);
+    layoutService = inject(LayoutService);
     private notificationService = inject(NotificationService);
     private router = inject(Router);
     private destroyRef = inject(DestroyRef);

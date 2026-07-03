@@ -11,28 +11,56 @@
     [showClear]="showClear && !!control.value"
     appendTo="body"
     (onChange)="onChange.emit($event)">
-    <ng-template pTemplate="selectedItem" let-selected>
-      <span class="text-sm font-medium truncate">{{ selected[optionLabel] }}</span>
+    <ng-template pTemplate="selectedItem">
+      @if (getSelectedOption(); as selectedOpt) {
+        <div class="flex items-center gap-1.5 sm:gap-2 py-0.5">
+          @if (showAvatar) {
+            <div class="flex-shrink-0 w-4 h-4 sm:w-5 sm:h-5 rounded-sm border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+              @if (getItemImage(selectedOpt)) {
+                <img [src]="getItemImage(selectedOpt)" class="w-full h-full object-cover" />
+              } @else {
+                <i [class]="getItemIcon(selectedOpt) + ' text-slate-400 text-[9px] sm:text-[10px]'"></i>
+              }
+            </div>
+          }
+          <span class="text-xs sm:text-sm font-medium truncate">{{ selectedOpt[optionLabel] }}</span>
+        </div>
+      } @else {
+        <span class="text-xs sm:text-sm text-slate-400 truncate">{{ placeholder }}</span>
+      }
     </ng-template>
     <ng-template pTemplate="item" let-item>
-      <div class="sg-item">
-        <span class="sg-item-main">{{ item[optionLabel] }}</span>
-        <div class="sg-item-details">
-          @for (col of columns; track col.field) {
-            <span class="sg-item-col" [style.width]="col.width || 'auto'">
-              @if (col.icon) { <i [class]="col.icon + ' sg-item-col-icon'"></i> }
-              <span [class.sg-item-col-muted]="col.field !== optionLabel">{{ item[col.field] || '—' }}</span>
-            </span>
-          }
+      <div class="flex items-center gap-1.5 sm:gap-2 py-0.5 sm:py-1 w-full">
+        @if (showAvatar) {
+          <div class="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 rounded border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden">
+            @if (getItemImage(item)) {
+              <img [src]="getItemImage(item)" class="w-full h-full object-cover" />
+            } @else {
+              <i [class]="getItemIcon(item) + ' text-slate-400 text-[9px] sm:text-xs'"></i>
+            }
+          </div>
+        }
+        <div class="sg-item flex-grow">
+          <span class="sg-item-main">{{ item[optionLabel] }}</span>
+          <div class="sg-item-details">
+            @for (col of columns; track col.field) {
+              <span class="sg-item-col" [style.width]="col.width || 'auto'">
+                @if (col.icon) { <i [class]="col.icon + ' sg-item-col-icon'"></i> }
+                <span [class.sg-item-col-muted]="col.field !== optionLabel">{{ getNestedValue(item, col.field) || '—' }}</span>
+              </span>
+            }
+          </div>
         </div>
       </div>
     </ng-template>
     <ng-template pTemplate="emptyfilter">
       <div class="sg-empty">
         <span>No se encontraron resultados</span>
-        <button type="button" (click)="onEmptyFilterAction.emit(); $event.stopPropagation()">
-          <i [class]="emptyFilterIcon + ' mr-1'"></i> {{ emptyFilterLabel }}
-        </button>
+        @if (allowAdd) {
+          <button type="button" (click)="onEmptyFilterAction.emit(); $event.stopPropagation()">
+            <i [class]="emptyFilterIcon + ' mr-1'"></i> {{ emptyFilterLabel }}
+          </button>
+        }
       </div>
     </ng-template>
   </p-select>

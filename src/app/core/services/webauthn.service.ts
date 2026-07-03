@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+import { tap, map, switchMap } from 'rxjs/operators';
+import { base64ToBuffer, bufferToBase64, extractBase64 } from '../../shared/utils/webauthn-utils';
 import { ConfigService } from './config.service';
 import { StorageService } from './storage.service';
 import { AuthService } from './auth.service';
@@ -59,6 +60,57 @@ export class WebAuthnService {
         response.user = resData?.user;
         response.company = resData?.company;
       })
+    );
+  }
+
+  registerDevice(): Observable<any> {
+    return this.getRegisterOptions().pipe(
+      switchMap((response: any) => {
+        const data = response?.data ?? response;
+        const options = data?.options;
+        const pubKeyOptions = options?.publicKey || options;
+
+        if (!pubKeyOptions || !pubKeyOptions.challenge) {
+          throw new Error('El backend no incluyó el challenge en las opciones.');
+        }
+
+        if (!pubKeyOptions.rp?.id) {
+          pubKeyOptions.rp = pubKeyOptions.rp || {};
+          pubKeyOptions.rp.id = window.location.hostname;
+        }
+
+        const base64Challenge = extractBase64(pubKeyOptions.challenge);
+        pubKeyOptions.challenge = base64ToBuffer(base64Challenge);
+
+        if (pubKeyOptions.user && typeof pubKeyOptions.user.id === 'string') {
+          pubKeyOptions.user.id = base64ToBuffer(extractBase64(pubKeyOptions.user.id));
+        }
+
+        if (pubKeyOptions.excludeCredentials) {
+          pubKeyOptions.excludeCredentials = pubKeyOptions.excludeCredentials.map((cred: any) => {
+            cred.id = base64ToBuffer(extractBase64(cred.id));
+            return cred;
+          });
+        }
+
+        return from(navigator.credentials.create({ publicKey: pubKeyOptions })).pipe(
+          map((credential: Credential | null) => {
+            if (!credential) {
+              throw new Error('No se pudo crear la credencial.');
+            }
+            const pubKeyCred = credential as PublicKeyCredential;
+            const responseObj = pubKeyCred.response as AuthenticatorAttestationResponse;
+
+            return {
+              clientDataJSON: bufferToBase64(responseObj.clientDataJSON),
+              attestationObject: bufferToBase64(responseObj.attestationObject),
+              challenge: base64Challenge,
+              device_name: navigator.userAgent
+            };
+          })
+        );
+      }),
+      switchMap(registrationData => this.register(registrationData))
     );
   }
 }

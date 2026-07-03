@@ -1,0 +1,205 @@
+:host {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+:host(.is-open) {
+    z-index: 99999;
+}
+
+.color-picker-flex-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.color-picker-flex-wrap .gm-input {
+    flex: 1;
+    min-width: 0;
+    text-transform: lowercase;
+}
+
+.color-picker-swatch-btn {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    border: 1px solid rgba(26, 35, 51, 0.14);
+    box-shadow: 0 1px 2px rgba(26, 35, 51, 0.08), inset 0 0 0 2px #fff;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.color-picker-swatch-btn:hover {
+    transform: scale(1.06);
+}
+
+.color-picker-swatch-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(156, 43, 58, 0.16), inset 0 0 0 2px #fff;
+}
+
+/* Hide the validation check/times icon to prevent overlapping with our custom swatch */
+:host ::ng-deep .gm-status-icon {
+    display: none !important;
+}
+
+/* --- Floating panel --- */
+.color-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 50;
+    width: 232px;
+    padding: 0.875rem;
+    background: #fff;
+    border: 1px solid rgba(26, 35, 51, 0.14);
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(26, 35, 51, 0.16), 0 2px 6px rgba(26, 35, 51, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    animation: panel-in 0.14s ease-out;
+}
+
+@keyframes panel-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Saturation / value box --- */
+.color-panel__sat {
+    position: relative;
+    width: 100%;
+    height: 140px;
+    border-radius: 8px;
+    cursor: crosshair;
+    touch-action: none;
+    overflow: hidden;
+}
+
+.color-panel__sat-white {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0));
+}
+
+.color-panel__sat-black {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, #000, rgba(0, 0, 0, 0));
+}
+
+.color-panel__sat-handle {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(26, 35, 51, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* --- Hue slider --- */
+.color-panel__hue {
+    position: relative;
+    width: 100%;
+    height: 12px;
+    border-radius: 999px;
+    cursor: pointer;
+    touch-action: none;
+    background: linear-gradient(to right,
+            #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+}
+
+.color-panel__hue-handle {
+    position: absolute;
+    top: 50%;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(26, 35, 51, 0.35), 0 1px 3px rgba(0, 0, 0, 0.3);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+/* --- Footer: preview + hex --- */
+.color-panel__footer {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.color-panel__preview {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: 0 0 auto;
+    border-radius: var(--cf-radius-sm);
+    border: 1px solid var(--cf-border);
+    box-shadow: inset 0 0 0 2px #fff;
+}
+
+.color-panel__hex {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--cf-border);
+    border-radius: var(--cf-radius-sm);
+    padding: 0.35rem 0.5rem;
+    font: 600 0.8125rem/1.2 'JetBrains Mono', 'SFMono-Regular', ui-monospace, monospace;
+    letter-spacing: 0.02em;
+    color: var(--cf-ink);
+    text-transform: lowercase;
+    background: var(--cf-paper);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.color-panel__hex:focus {
+    outline: none;
+    border-color: var(--cf-crimson);
+    box-shadow: 0 0 0 3px var(--cf-crimson-soft);
+}
+
+/* --- Preset swatches --- */
+.color-panel__presets {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 0.375rem;
+}
+
+.color-panel__preset {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 1px solid var(--cf-border);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.color-panel__preset:hover {
+    transform: scale(1.12);
+    box-shadow: 0 2px 6px rgba(26, 35, 51, 0.18);
+}
+
+.color-panel__preset:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--cf-crimson-soft);
+}
+
+@media (max-width: 480px) {
+    .color-panel {
+        width: 200px;
+    }
+}

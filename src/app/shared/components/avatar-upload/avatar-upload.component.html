@@ -1,0 +1,34 @@
+<div class="gm-avatar-container">
+  <div class="gm-avatar" [class.gm-avatar-loading]="loading"
+    [class.gm-avatar-dragover]="avatarDragOver()" (click)="!loading && openCropModal()"
+    (dragover)="onAvatarDragOver($event)" (dragleave)="onAvatarDragLeave()" (drop)="onAvatarDrop($event)"
+    [title]="title">
+    
+    @if (loading) {
+      <div class="gm-avatar-loading-spinner">
+        <i class="pi pi-spin pi-spinner"></i>
+      </div>
+    } @else if (imageUrl) {
+      <img [src]="imageUrl" alt="Avatar" class="gm-avatar-img"
+        [style.view-transition-name]="'avatar'" />
+    } @else {
+      <span class="gm-avatar-initials">{{ initials }}</span>
+    }
+    
+    <div class="gm-avatar-overlay">
+      <i class="pi pi-camera"></i>
+    </div>
+  </div>
+  
+  @if (imageUrl && !loading && showDelete) {
+    <button class="gm-avatar-delete-btn" (click)="deleteProfilePicture($event)" title="Eliminar imagen">
+      <i class="pi pi-trash"></i>
+    </button>
+  }
+</div>
+
+<app-image-cropper [visible]="cropVisible()" [fileToCrop]="droppedFile()" [aspectRatio]="1" [maxWidth]="400"
+  [maxHeight]="400" [quality]="0.85" [outputFormat]="'image/jpeg'"
+  [existingImageUrl]="imageUrl || null" (visibleChange)="cropVisible.set($event)"
+  (onCrop)="handleCrop($event)" (onClose)="handleCropClose()">
+</app-image-cropper>

@@ -1,0 +1,12 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.gm-has-icon ::ng-deep .p-select-label {
+  padding-left: 1.9rem !important;
+}
+
+:host ::ng-deep .gm-control-wrap:has(.p-select) .gm-status-icon {
+  display: none !important;
+}

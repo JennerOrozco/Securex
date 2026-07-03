@@ -3,8 +3,10 @@ import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
 import { StorageService } from './storage.service';
-import { Observable, firstValueFrom, timeout } from 'rxjs';
+import { Observable, firstValueFrom, map, timeout } from 'rxjs';
 import { MessageService } from 'primeng/api';
+import { GraphqlService } from '../graphql/graphql.service';
+import { NOTIFICATION_QUERIES, NOTIFICATION_MUTATIONS } from '../graphql/queries/notification.queries';
 
 export interface AppNotification {
   id: number;
@@ -25,6 +27,7 @@ export class NotificationService {
   private swPush = inject(SwPush);
   private configService = inject(ConfigService);
   private storage = inject(StorageService);
+  private gql = inject(GraphqlService);
   private messageService = inject(MessageService);
 
   constructor() { }
@@ -81,16 +84,13 @@ export class NotificationService {
   }
 
   private sendSubscriptionToApi(sub: PushSubscription) {
-    const payload: any = {
+    const user = this.storage.getUser();
+    return this.gql.mutate('notification', NOTIFICATION_MUTATIONS.REGISTER_DEVICE, {
+      user_uuid: user?.uuid ?? '',
+      app_uuid: this.configService.appUuid,
       device_token: JSON.stringify(sub),
       device_type: this.getDeviceType()
-    };
-    const companyUuid = this.getCompanyUuid();
-    if (companyUuid) {
-      payload.company_uuid = companyUuid;
-    }
-
-    return this.http.post(`${this.configService.notificationApiUrl}/notifications/devices`, payload);
+    });
   }
 
   private getDeviceType(): string {
@@ -116,22 +116,18 @@ export class NotificationService {
     return this.http.post(`${this.configService.notificationApiUrl}/notifications/send`, payload);
   }
 
-  getNotifications(): Observable<AppNotification[]> {
-    return this.http.get<AppNotification[]>(
-      `${this.configService.notificationApiUrl}/notifications`
+  getNotifications(page = 1, limit = 50): Observable<AppNotification[]> {
+    return this.gql.query<{ notifications: { data: AppNotification[]; total: number } }>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS, { page, limit }).pipe(
+      map(d => d.notifications.data)
     );
   }
 
-  markAsRead(id: number): Observable<{ status: string; data: null; message: string }> {
-    return this.http.put<{ status: string; data: null; message: string }>(
-      `${this.configService.notificationApiUrl}/notifications/${id}/read`, null
-    );
+  markAsRead(id: number): Observable<any> {
+    return this.gql.mutate('notification', NOTIFICATION_MUTATIONS.MARK_READ, { id });
   }
 
-  deleteNotification(id: number): Observable<{ status: string; data: null; message: string }> {
-    return this.http.delete<{ status: string; data: null; message: string }>(
-      `${this.configService.notificationApiUrl}/notifications/${id}`
-    );
+  deleteNotification(id: number): Observable<any> {
+    return this.gql.mutate('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, { id });
   }
 
   private toastConfig: Record<string, { severity: string; summary: string; life: number; icon: string }> = {
@@ -149,4 +145,8 @@ export class NotificationService {
   success(message: string) { this.notify('success', message); }
 
   error(message: string) { this.notify('error', message); }
+
+  info(message: string) { this.notify('info', message); }
+
+  warn(message: string) { this.notify('warn', message); }
 }

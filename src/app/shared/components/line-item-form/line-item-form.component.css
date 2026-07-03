@@ -1,0 +1,131 @@
+.line-item-form {
+  padding: 0.85rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: crmInlineFormFadeIn 0.25s ease-out;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  margin-bottom: 0px;
+}
+
+.form-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+}
+
+.cancel-btn {
+  width: 24px; height: 24px;
+  border: none; background: transparent;
+  border-radius: 6px; cursor: pointer;
+  color: #94a3b8; display: flex;
+  align-items: center; justify-content: center;
+  transition: all .15s;
+}
+.cancel-btn:hover { background: #fee2e2; color: #ef4444; }
+
+/* Grid layout with 12 columns */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+  align-items: end;
+}
+
+/* Default spans (full-width on mobile) */
+.product-col,
+.parent-col,
+.footer-row-col {
+  grid-column: span 12;
+}
+
+/* 2 inputs per row on mobile for numeric fields */
+.quantity-col,
+.price-col,
+.cost-col,
+.margin-col,
+.discount-col {
+  grid-column: span 6;
+}
+
+/* Responsive grid layout for tablets and desktops */
+@media (min-width: 768px) {
+  /* Gasto layout split for selectors */
+  .form-grid.form-type-gasto .product-col {
+    grid-column: span 6;
+  }
+  .form-grid.form-type-gasto .parent-col {
+    grid-column: span 6;
+  }
+
+  /* Repuesto numeric row */
+  .form-grid.form-type-repuesto .quantity-col {
+    grid-column: span 2;
+  }
+  .form-grid.form-type-repuesto .price-col {
+    grid-column: span 3;
+  }
+  .form-grid.form-type-repuesto .cost-col {
+    grid-column: span 3;
+  }
+  .form-grid.form-type-repuesto .margin-col {
+    grid-column: span 2;
+  }
+  .form-grid.form-type-repuesto .discount-col {
+    grid-column: span 2;
+  }
+
+  /* Servicio numeric row (only quantity shown) */
+  .form-grid.form-type-servicio .quantity-col {
+    grid-column: span 12;
+  }
+
+  /* Gasto numeric row (same as repuesto) */
+  .form-grid.form-type-gasto .quantity-col {
+    grid-column: span 2;
+  }
+  .form-grid.form-type-gasto .price-col {
+    grid-column: span 3;
+  }
+  .form-grid.form-type-gasto .cost-col {
+    grid-column: span 3;
+  }
+  .form-grid.form-type-gasto .margin-col {
+    grid-column: span 2;
+  }
+  .form-grid.form-type-gasto .discount-col {
+    grid-column: span 2;
+  }
+}
+
+.total-display {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+}
+.total-label { font-size: 0.62rem; color: #94a3b8; }
+.total-value { font-size: 0.9rem; font-weight: 700; color: #1e293b; }
+
+/* Slim button overrides for line-item-form */
+::ng-deep .line-item-form .p-button.p-button-sm {
+  height: 28px !important;
+  padding: 0.18rem 0.65rem !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+}
+
+@keyframes crmInlineFormFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+

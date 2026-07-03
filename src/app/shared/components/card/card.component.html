@@ -1,0 +1,14 @@
+<div class="prop-card" [class.collapsed]="collapsed">
+  <div class="card-header" [style.backgroundColor]="headerBg" (click)="toggle()">
+    @if (icon) {
+      <i [class]="icon"></i>
+    }
+    <span>{{ label }}</span>
+    @if (collapsible) {
+      <i class="pi pi-chevron-down chevron"></i>
+    }
+  </div>
+  <div class="card-body">
+    <ng-content></ng-content>
+  </div>
+</div>

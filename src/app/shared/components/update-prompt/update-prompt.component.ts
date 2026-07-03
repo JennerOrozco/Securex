@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectorRef, DestroyRef } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { SwUpdate } from '@angular/service-worker';
 
@@ -19,9 +20,9 @@ import { SwUpdate } from '@angular/service-worker';
             </svg>
           </div>
           <div class="flex-1 min-w-0">
-            <h4 class="text-white font-semibold text-sm mb-1">Actualizacion disponible</h4>
+            <h4 class="text-white font-semibold text-sm mb-1">Actualización disponible</h4>
             <p class="text-white/50 text-xs leading-relaxed">
-              Hay una nueva version de SECUREX. Actualiza para obtener las ultimas mejoras.
+              Hay una nueva versión de GGTS. Actualiza para obtener las últimas mejoras.
             </p>
           </div>
           <button (click)="dismiss()"
@@ -54,13 +55,14 @@ import { SwUpdate } from '@angular/service-worker';
 export class UpdatePromptComponent implements OnInit {
   showUpdate = false;
 
+  private destroyRef = inject(DestroyRef);
   private swUpdate = inject(SwUpdate);
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit() {
     if (!this.swUpdate.isEnabled) return;
 
-    this.swUpdate.versionUpdates.subscribe(evt => {
+    this.swUpdate.versionUpdates.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(evt => {
       if (evt.type === 'VERSION_READY') {
         this.showUpdate = true;
         this.cdr.detectChanges();

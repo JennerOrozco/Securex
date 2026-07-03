@@ -1,0 +1,36 @@
+<div class="p-3 border border-slate-200/60 rounded-xl bg-white flex gap-3 shadow-sm relative group hover:border-emerald-300 transition-all duration-300" [ngClass]="opacityClass">
+  
+  <div class="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-xs shadow-inner flex-shrink-0" [ngClass]="colorClasses">
+    <i *ngIf="avatarIcon" class="pi text-sm" [ngClass]="avatarIcon"></i>
+    <span *ngIf="avatarText">{{ avatarText | uppercase }}</span>
+  </div>
+
+  <div class="flex-1 min-w-0">
+    <!-- Title -->
+    <span class="block text-xs font-bold text-slate-800 truncate">{{ title }}</span>
+    
+    <!-- Subtitle -->
+    <span *ngIf="subtitle" class="block text-[10px] text-slate-500 truncate mt-0.5">
+      <i *ngIf="subtitleIcon" class="pi mr-1 text-[9px] text-red-500" [ngClass]="subtitleIcon"></i>{{ subtitle }}
+    </span>
+
+    <!-- Metadata -->
+    <div class="flex flex-wrap gap-x-3 gap-y-1 mt-1.5 text-[10px] text-slate-400">
+      <span *ngFor="let meta of metadata" class="flex items-center gap-1 hover:text-slate-600">
+        <i *ngIf="meta.icon" class="pi text-[9px]" [ngClass]="meta.icon"></i>
+        {{ meta.text }}
+      </span>
+
+      <span *ngIf="statusBadge" class="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-full ml-auto" [ngClass]="statusClasses">
+        <i class="pi text-[9px]" [ngClass]="statusIcon"></i>
+        {{ statusBadge.text }}
+      </span>
+    </div>
+  </div>
+
+  <!-- Actions Outlet -->
+  <div class="absolute right-2 top-2 flex gap-1 bg-white pl-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+    <ng-content select="[actions]"></ng-content>
+  </div>
+
+</div>

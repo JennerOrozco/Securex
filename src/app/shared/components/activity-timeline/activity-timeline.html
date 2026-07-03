@@ -1,0 +1,122 @@
+<div class="tl-wrapper" [class.compact]="compact">
+@if (filterable) {
+  <div class="tl-filter-bar mb-4">
+    <div class="relative">
+      <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm" aria-hidden="true"></i>
+      <input type="text" [placeholder]="filterPlaceholder" (input)="onSearch($event)" 
+             class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all shadow-sm" 
+             aria-label="Buscar en actividades" />
+    </div>
+  </div>
+}
+
+@if (loading) {
+  <div class="tl-empty" aria-live="polite">
+    <i class="pi pi-spin pi-spinner tl-spinner" aria-hidden="true"></i>
+    <p class="tl-empty-title">Cargando actividades...</p>
+  </div>
+} @else if (activities().length === 0) {
+  <div class="tl-empty" aria-live="polite">
+    <div class="tl-empty-icon" aria-hidden="true"><i class="pi pi-history"></i></div>
+    <p class="tl-empty-title">{{ emptyMessageTitle }}</p>
+    <p class="tl-empty-sub">{{ emptyMessageSub }}</p>
+  </div>
+} @else if (filterText() && filteredActivities().length === 0) {
+  <div class="tl-empty tl-empty-search" aria-live="polite">
+    <div class="tl-empty-icon" aria-hidden="true"><i class="pi pi-search"></i></div>
+    <p class="tl-empty-title">No hay resultados</p>
+    <p class="tl-empty-sub">No se encontraron actividades que coincidan con "{{ filterText() }}".</p>
+  </div>
+} @else {
+  <div class="tl" role="list">
+    @for (group of groupedActivities(); track group.key) {
+      <div class="tl-group" role="listitem">
+        <div class="tl-group-header">{{ group.key }}</div>
+        <div class="tl-group-body">
+          @for (act of group.items; track act.id || $index; let idx = $index) {
+            <div class="tl-item" [style.animation-delay]="idx * 40 + 'ms'">
+              <div class="tl-dot {{ getNodeClass(act.action_type) }}" aria-hidden="true">
+                <i class="pi {{ getActionIcon(act.action_type) }}"></i>
+              </div>
+              <div class="tl-card">
+                <div class="tl-card-head">
+                  <div class="tl-user-info">
+                    <span class="tl-avatar" [style.--av-color]="getUserColor(act.user_name)" aria-hidden="true">
+                      @if (act.profile_picture) {
+                        <img [src]="act.profile_picture" alt="" class="w-full h-full object-cover rounded-[inherit]">
+                      } @else {
+                        {{ getUserInitials(act.user_name) }}
+                      }
+                    </span>
+                    <div class="tl-user-meta">
+                      <span class="tl-user-name">{{ act.user_name || 'Sistema' }}</span>
+                      <span class="tl-user-action">{{ getActionLabel(act.action_type) | lowercase }}</span>
+                    </div>
+                  </div>
+                  <span class="tl-time"><i class="pi pi-clock" aria-hidden="true"></i>{{ act.created_at | date:'HH:mm' }}</span>
+                </div>
+
+                <p class="tl-desc">{{ act.description }}</p>
+
+                @if (act.entity_type) {
+                  <div class="tl-entity-row flex justify-between items-center mt-2">
+                    <div class="flex gap-2 items-center">
+                      <span class="tl-entity-badge"><i class="pi pi-tag" aria-hidden="true"></i>{{ getEntityLabel(act.entity_type) }}</span>
+                      @if (act.opportunity?.title) {
+                        <span class="tl-entity-ref"><i class="pi pi-arrow-right" aria-hidden="true"></i>{{ act.opportunity?.title }}</span>
+                      }
+                    </div>
+                    @if (act.old_values || act.new_values) {
+                      <button (click)="onViewChanges.emit(act)" class="tl-btn-changes" aria-label="Ver cambios de esta actividad">
+                        <i class="pi pi-eye text-[9px]" aria-hidden="true"></i> Cambios
+                      </button>
+                    }
+                  </div>
+                } @else if (act.old_values || act.new_values) {
+                  <div class="tl-entity-row flex justify-end mt-2">
+                    <button (click)="onViewChanges.emit(act)" class="tl-btn-changes" aria-label="Ver cambios de esta actividad">
+                      <i class="pi pi-eye text-[9px]" aria-hidden="true"></i> Cambios
+                    </button>
+                  </div>
+                }
+
+                @if (act.opportunity && shouldShowOppChip(act)) {
+                  <div class="tl-opp-metrics mt-3 pt-3 border-t border-slate-100 flex flex-wrap gap-2">
+                    @if (act.opportunity.total_venta) {
+                      <div class="tl-metric" aria-label="Total de venta">
+                        <span class="tl-metric-label">Venta</span>
+                        <span class="tl-metric-value">Q{{ act.opportunity.total_venta | number }}</span>
+                      </div>
+                    }
+                    @if (act.opportunity.total_costo_estimado) {
+                      <div class="tl-metric" aria-label="Costo estimado">
+                        <span class="tl-metric-label">Costo</span>
+                        <span class="tl-metric-value">Q{{ act.opportunity.total_costo_estimado | number }}</span>
+                      </div>
+                    }
+                    @if (act.opportunity.ganancia_proyectada) {
+                      <div class="tl-metric tl-metric--profit" aria-label="Ganancia proyectada">
+                        <span class="tl-metric-label">Ganancia</span>
+                        <span class="tl-metric-value">Q{{ act.opportunity.ganancia_proyectada | number }}</span>
+                      </div>
+                    }
+                    @if (act.opportunity.probability) {
+                      <div class="tl-metric tl-metric--prob" aria-label="Probabilidad">
+                        <span class="tl-metric-label">Prob.</span>
+                        <span class="tl-metric-value">{{ act.opportunity.probability }}%</span>
+                      </div>
+                    }
+                    @if (act.opportunity.status) {
+                      <span class="tl-status-badge" aria-label="Estado de oportunidad">{{ translateStatus(act.opportunity.status) }}</span>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}
+</div>

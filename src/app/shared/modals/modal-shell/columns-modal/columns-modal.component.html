@@ -1,56 +1,31 @@
 <app-modal-shell
   [(visible)]="visible"
-  title="Mostrar / Ocultar Columnas"
-  icon="pi pi-th-large"
-  iconType="view"
-  width="400px"
-  [noPadding]="true"
-  confirmLabel="Aplicar"
+  title="Personalizar Columnas"
+  icon="pi pi-sliders-h"
+  iconType="info"
+  width="420px"
+  confirmLabel="Aplicar Cambios"
   confirmIcon="pi pi-check"
   confirmSeverity="info"
+  [noPadding]="true"
   (onConfirm)="apply()"
   (onClose)="onClose.emit()">
 
-  <div class="column-table-wrapper" *ngIf="displayableColumns.length > 0">
-    <table class="column-table">
-      <thead>
-        <tr>
-          <th class="col-check"></th>
-          <th class="col-header">Columna</th>
-          <th class="col-field">Campo</th>
-          <th class="col-type">Tipo</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (col of displayableColumns; track $index) {
-        <tr class="column-row" [class.active]="isSelected(col)" (click)="toggle(col)">
-          <td class="col-check">
-            <div class="column-check" [class.checked]="isSelected(col)">
-              <i class="pi pi-check" *ngIf="isSelected(col)"></i>
-            </div>
-          </td>
-          <td class="col-header">
-            <span class="column-name">{{ col.header }}</span>
-          </td>
-          <td class="col-field">
-            <span class="column-field">{{ col.field }}</span>
-          </td>
-          <td class="col-type">
-            <span class="type-badge" *ngIf="col.type" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
-          </td>
-        </tr>
-        }
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colspan="4">
-            <div class="column-footer">
-              <span class="column-footer-count">{{ displayableColumns.length }} columnas disponibles</span>
-            </div>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
+  <div class="column-list" *ngIf="displayableColumns.length > 0">
+    @for (col of displayableColumns; track $index) {
+      <div class="column-item" [class.active]="isSelected(col)" (click)="toggle(col)">
+        <div class="column-check" [class.checked]="isSelected(col)">
+          <i class="pi pi-check" *ngIf="isSelected(col)"></i>
+        </div>
+        <div class="column-info">
+          <span class="column-name">{{ col.header }}</span>
+          <span class="column-field">{{ col.field }}</span>
+        </div>
+        <div class="column-type-badge">
+          <span class="type-badge" *ngIf="col.type" [ngClass]="'badge-' + col.type">{{ col.type }}</span>
+        </div>
+      </div>
+    }
   </div>
 
   <div class="empty-columns" *ngIf="displayableColumns.length === 0">

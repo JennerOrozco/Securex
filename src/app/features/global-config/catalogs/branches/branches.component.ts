@@ -1,65 +1,86 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { CompanyService } from '@core/services/company.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
-import { NotificationService } from '@core/services/notification.service';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { TreeNode } from 'primeng/api';
+import { map } from 'rxjs/operators';
+import { BRANCHES_COLS, createBranchesForm } from './branches.config';
 
 @Component({
   selector: 'app-security-branches',
   standalone: true,
   imports: [CommonModule, CrudPageComponent],
-  templateUrl: './branches.component.html',
+  template: `
+    <app-crud-page
+      [isTreeTable]="true"
+      title="Sucursales"
+      subtitle="Organizadas por compañía"
+      [resourceName]="'Sucursal'"
+      addLabel="Nueva Sucursal"
+      [treeNodes]="crud.items()"
+      [columns]="cols"
+      [loading]="crud.loading()"
+      [isSaving]="crud.isSaving()"
+      [formFields]="formFields"
+      [formExtraData]="{ company_id: currentCompanyId, is_active: true }"
+      [deleteMessage]="deleteMessageFn"
+      permission="securex.security.branches"
+      [colorRows]="true"
+      [showLegend]="false"
+      (onAddRoot)="handleAddRoot()"
+      (onAddChild)="handleAddChild($event)"
+      (onEdit)="handleEdit($event)"
+      (onDelete)="handleDelete($event)"
+      (onSave)="onSave($event)"
+      (onConfirmDelete)="crud.confirmDelete($event)"
+      (onRefresh)="crud.load()">
+    </app-crud-page>
+  `,
+  providers: [UnifiedCrudService]
 })
 export class BranchesComponent implements OnInit {
   private companyService = inject(CompanyService);
   private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
+  crud = inject(UnifiedCrudService);
 
-  treeNodes: TreeNode[] = [];
-  companies: any[] = [];
-  loading = false;
-  isSaving = false;
-
-  selectedItem: any = null;
+  cols = BRANCHES_COLS;
+  formFields = createBranchesForm([]);
   currentCompanyId: number | null = null;
+  selectedItem: any = null;
 
-  formFields: FormField[] = [];
-
-  cols: TableColumn[] = [
-    { field: 'name', header: 'Nombre', type: 'tree', sortable: true, style: { width: '30%' } },
-    { field: 'address', header: 'Dirección', type: 'text', sortable: true, style: { width: '25%' } },
-    { field: 'phone', header: 'Teléfono', type: 'text', sortable: true, style: { width: '20%' } },
-    { field: 'status', header: 'Estado', type: 'badge', style: { width: '10%', textAlign: 'center' } },
-    { field: 'actions', header: 'Acciones', type: 'actions', style: { width: '15%', 'text-align': 'center' } }
-  ];
+  constructor() {
+    effect(() => {
+      const catalogs = this.crud.catalogItems();
+      const companies = catalogs['companies'] || [];
+      this.formFields = createBranchesForm(companies);
+    });
+  }
 
   get hasPermission(): boolean {
     return this.authService.checkPermission('securex.security.branches');
   }
 
-  deleteMessageFn = (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`;
-
   ngOnInit() {
-    if (this.hasPermission) { this.load(); }
-  }
-
-  load() {
-    this.loading = true;
-    this.companyService.getBranchesPageData().subscribe({
-      next: (data) => {
-        const companies = data?.companies?.data ?? [];
-        const branches = data?.branches?.data ?? [];
-        this.companies = companies;
-        this.treeNodes = this.buildTree(companies, branches);
-        this.updateFormFields();
-        this.loading = false;
-      },
-      error: () => (this.loading = false)
-    });
+    if (this.hasPermission) {
+      this.crud.initialize({
+        resourceName: 'Sucursal',
+        defaultSortKey: 'id',
+        fnFetch: () => this.companyService.getBranchesPageData().pipe(
+          map((data: any) => {
+            const companies = data?.companies?.data ?? [];
+            const branches = data?.branches?.data ?? [];
+            this.crud.catalogItems.update(c => ({ ...c, companies }));
+            return this.buildTree(companies, branches);
+          })
+        ),
+        fnCreate: (data) => this.companyService.createBranchGql(data),
+        fnUpdate: (id, data) => this.companyService.updateBranchGql(this.selectedItem?.uuid || id, data),
+        fnDelete: this.companyService.deleteBranchGql.bind(this.companyService)
+      });
+      this.crud.load();
+    }
   }
 
   private buildTree(companies: any[], branches: any[]): TreeNode[] {
@@ -72,7 +93,6 @@ export class BranchesComponent implements OnInit {
           data: {
             ...branch,
             type: 'SUBMENU',
-            status: branch.is_active ? 'ACTIVO' : 'INACTIVO',
             icon: 'pi pi-sitemap',
             _canAdd: false,
             _canEdit: true,
@@ -80,16 +100,6 @@ export class BranchesComponent implements OnInit {
           }
         }))
     }));
-  }
-
-  private updateFormFields() {
-    this.formFields = [
-      { name: 'name', label: 'Nombre de Sucursal', type: 'text', required: true, icon: 'pi pi-sitemap' },
-      { name: 'company_id', label: 'Compañía', type: 'select', required: true, options: this.companies.map((c: any) => ({ label: c.name, value: c.id })) },
-      { name: 'address', label: 'Dirección', type: 'text', icon: 'pi pi-map-marker' },
-      { name: 'phone', label: 'Teléfono', type: 'phone', icon: 'pi pi-phone' },
-      { name: 'is_active', label: '¿Activa?', type: 'select', required: true, options: [{ label: 'Sí', value: 1 }, { label: 'No', value: 0 }] }
-    ];
   }
 
   handleAddRoot() {
@@ -104,45 +114,20 @@ export class BranchesComponent implements OnInit {
 
   handleEdit(data: any) {
     const id = data.company_id != null ? Number(data.company_id) : null;
-    let isActive = 0;
-    if (data.is_active != null) {
-      isActive = data.is_active ? 1 : 0;
-    }
-    this.selectedItem = { ...data, company_id: isNaN(id as any) ? null : id, is_active: isActive };
+    this.selectedItem = { ...data, company_id: isNaN(id as any) ? null : id };
   }
 
   handleDelete(data: any) {
     this.selectedItem = data;
   }
 
-  save(e: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
+  onSave(e: { mode: 'add' | 'edit'; data: any }) {
     const finalData = { ...e.data };
     if (e.mode === 'add' && this.currentCompanyId) {
       finalData.company_id = this.currentCompanyId;
     }
-    const obs = e.mode === 'add'
-      ? this.companyService.createBranchGql(finalData)
-      : this.companyService.updateBranchGql(this.selectedItem.uuid, finalData);
-    obs.subscribe({
-      next: () => {
-        this.notificationService.success(`Sucursal ${e.mode === 'add' ? 'creada' : 'actualizada'} correctamente`);
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => (this.isSaving = false)
-    });
+    this.crud.save({ mode: e.mode, data: finalData });
   }
 
-  confirmDelete(item: any) {
-    this.isSaving = true;
-    this.companyService.deleteBranchGql(item.uuid).subscribe({
-      next: () => {
-        this.notificationService.success('Sucursal eliminada');
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => (this.isSaving = false)
-    });
-  }
+  deleteMessageFn = (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`;
 }

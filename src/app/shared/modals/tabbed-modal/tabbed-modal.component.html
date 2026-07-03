@@ -1,0 +1,39 @@
+<app-modal-shell
+  [(visible)]="visible"
+  [title]="title"
+  [icon]="headerIcon"
+  [iconType]="mode === 'view' ? 'view' : (mode === 'add' ? 'add' : 'edit')"
+  [width]="width"
+  [noPadding]="true"
+  [loading]="loading"
+  [showFooter]="mode !== 'view'"
+  [confirmLabel]="confirmLabelText"
+  [confirmIcon]="confirmIconText"
+  [cancelLabel]="cancelLabel"
+  [confirmSeverity]="'info'"
+  [confirmDisabled]="!formValid"
+  (onConfirm)="onSave.emit()"
+  (onClose)="onCancel.emit()"
+  (visibleChange)="visibleChange.emit($event)">
+
+  <p-tabs [value]="activeTab" (valueChange)="onTabChange($event)" [scrollable]="true">
+    <p-tablist>
+      @for (tab of tabs; track tab.value) {
+        <p-tab [value]="tab.value">
+          @if (tab.icon) {
+            <i [class]="tab.icon"></i>
+          }
+          <span>{{ tab.label }}</span>
+        </p-tab>
+      }
+    </p-tablist>
+    <p-tabpanels>
+      @for (tab of tabs; track tab.value) {
+        <p-tabpanel [value]="tab.value">
+          <ng-container *ngTemplateOutlet="getPanelTemplate(tab.value)"></ng-container>
+        </p-tabpanel>
+      }
+    </p-tabpanels>
+  </p-tabs>
+
+</app-modal-shell>

@@ -32,7 +32,7 @@
     --gm-dialog-footer-border: var(--color-border);
 }
 
-.gm-dialog .p-dialog {
+.gm-dialog.p-dialog {
     border-radius: 20px;
     overflow: hidden;
     background: var(--color-white-70);
@@ -126,7 +126,7 @@
 
 /* Mobile sizing */
 @media (max-width: 480px) {
-    .gm-dialog .p-dialog {
+    .gm-dialog.p-dialog {
         width: 95vw !important;
         margin: 0 auto !important;
         max-height: 90vh !important;
@@ -362,7 +362,11 @@
    BODY & DELETE ZONE
    ───────────────────────────────────────────────────────────── */
 .gm-body {
-    padding: 1.5rem 1.5rem 1.5rem;
+    padding: 1.5rem;
+}
+
+.gm-body--form {
+    padding: 1rem 1.25rem 0.5rem;
 }
 
 .gm-body--no-padding {

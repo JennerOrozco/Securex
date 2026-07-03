@@ -43,8 +43,8 @@ export class NotificationSettingsService extends BaseApiService {
     return this.http.get(`${this.baseUrl}/notifications/superadmin/notifications`, { params });
   }
 
-  deleteSendAttemptGql(id: number): Observable<any> {
-    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id });
+  deleteSendAttemptGql(id: number | string): Observable<any> {
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_SEND_ATTEMPT, 'deleteSendAttempt', { id: Number(id) });
   }
 
   getSendAttemptsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
@@ -55,16 +55,16 @@ export class NotificationSettingsService extends BaseApiService {
     return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.NOTIFICATIONS, 'notifications', { page, limit, filter, sort });
   }
 
-  deleteNotificationHistoryGql(id: number): Observable<any> {
-    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id });
+  deleteNotificationHistoryGql(id: number | string): Observable<any> {
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_NOTIFICATION, 'deleteNotification', { id: Number(id) });
   }
 
   getUserDevicesGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {
     return this.gqlQuerySingle<any>('notification', NOTIFICATION_QUERIES.USER_DEVICES, 'userDevices', { page, limit, filter, sort });
   }
 
-  deleteUserDeviceGql(id: number): Observable<any> {
-    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id });
+  deleteUserDeviceGql(id: number | string): Observable<any> {
+    return this.gqlMutate<boolean>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, 'deleteDevice', { id: Number(id) });
   }
 
   getPushSettingsGql(page: number = 1, limit: number = 15, filter?: any, sort?: any): Observable<any> {

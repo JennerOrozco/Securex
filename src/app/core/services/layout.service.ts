@@ -5,9 +5,14 @@ import { Injectable, signal } from '@angular/core';
 })
 export class LayoutService {
   sidebarOpen = signal<boolean>(false);
+  sidebarCollapsed = signal<boolean>(false);
 
   toggleSidebar() {
     this.sidebarOpen.update(open => !open);
+  }
+
+  toggleSidebarCollapse() {
+    this.sidebarCollapsed.update(v => !v);
   }
 
   closeSidebar() {

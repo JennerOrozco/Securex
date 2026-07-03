@@ -6,15 +6,15 @@ import { AppService } from '@core/services/app.service';
 import { UserService } from '@core/services/user.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
-import { parseLazyLoadEvent } from '@shared/utils/pagination-utils';
+import { TableDataLoader } from '@shared/utils/table-data-loader';
 import { CardModule } from 'primeng/card';
 import { TextareaModule } from 'primeng/textarea';
 import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
 import { InputComponent } from '@shared/components/input/input.component';
 import { SelectComponent } from '@shared/components/select/select.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
 
 @Component({
   selector: 'app-notification-test',
@@ -40,37 +40,31 @@ export class NotificationTestComponent implements OnInit {
 
   step = 1;
 
-  apps: any[] = [];
+
   companies: any[] = [];
-  users: any[] = [];
 
   selectedApp: any = null;
   selectedCompany: any = null;
   selectedUser: any = null;
 
-  loadingApps = false;
-  loadingCompanies = false;
-  loadingUsers = false;
+  appTable = new TableDataLoader(
+    (p, l, f, s) => this.appService.getAppsWithCompaniesPaginated(p, l, f, s),
+    this.notificationService,
+    'Error al cargar aplicaciones'
+  );
 
-  totalApps = 0;
-  totalUsers = 0;
+  userTable = new TableDataLoader(
+    (p, l, f, s) => this.userService.getAdminUsersPaginated(p, l, f, s, {
+      company_uuid: this.selectedCompany?.uuid,
+      app_uuid: this.selectedApp?.uuid
+    }),
+    this.notificationService,
+    'Error al cargar usuarios'
+  );
 
-  appCols: TableColumn[] = [
-    { field: 'name', header: 'Nombre', type: 'text', sortable: true },
-    { field: 'acciones', header: 'Acciones', type: 'actions' }
-  ];
-
-  companyCols: TableColumn[] = [
-    { field: 'name', header: 'Nombre', type: 'text', sortable: true },
-    { field: 'tax_id', header: 'Tax ID', type: 'text' },
-    { field: 'acciones', header: 'Acciones', type: 'actions' }
-  ];
-
-  userCols: TableColumn[] = [
-    { field: 'full_name', header: 'Nombre', type: 'text', sortable: true },
-    { field: 'email', header: 'Email', type: 'text', sortable: true },
-    { field: 'acciones', header: 'Acciones', type: 'actions' }
-  ];
+  appCols = APP_COLS;
+  companyCols = COMPANY_COLS;
+  userCols = USER_COLS;
 
   channelOptions = [
     { label: 'Push y Email', value: 'PUSH,EMAIL' },
@@ -97,7 +91,11 @@ export class NotificationTestComponent implements OnInit {
       title: ['Test Notificación', Validators.required],
       message: ['Este es un mensaje de prueba desde el wizard.', Validators.required],
       type: ['INFO'],
-      channels: ['PUSH,EMAIL']
+      channels: ['PUSH,EMAIL'],
+      app_uuid: [null, Validators.required],
+      company_uuid: [null, Validators.required],
+      user_uuid: [null, Validators.required],
+      user_email: [null, Validators.required]
     });
   }
 
@@ -107,24 +105,8 @@ export class NotificationTestComponent implements OnInit {
 
   ngOnInit() {
     if (this.hasPermission) {
-      this.loadApps();
+      this.appTable.load();
     }
-  }
-
-  loadApps(event?: any) {
-    this.loadingApps = true;
-    const { page, limit, filter, sort } = parseLazyLoadEvent(event);
-    this.appService.getAppsWithCompaniesPaginated(page, limit, filter, sort).subscribe({
-      next: (res: any) => {
-        this.apps = res?.data || [];
-        this.totalApps = res?.total || 0;
-        this.loadingApps = false;
-      },
-      error: () => {
-        this.loadingApps = false;
-        this.notificationService.error('Error al cargar aplicaciones');
-      }
-    });
   }
 
   loadCompanies() {
@@ -132,38 +114,25 @@ export class NotificationTestComponent implements OnInit {
     this.companies = this.selectedApp?.companies || [];
   }
 
-  loadUsers(event?: any) {
-    this.loadingUsers = true;
-    const { page, limit, filter, sort } = parseLazyLoadEvent(event);
-    this.userService.getAdminUsersPaginated(page, limit, filter, sort, {
-      company_uuid: this.selectedCompany?.uuid,
-      app_uuid: this.selectedApp?.uuid
-    }).subscribe({
-      next: (res: any) => {
-        this.users = res?.data || [];
-        this.totalUsers = res?.total || 0;
-        this.loadingUsers = false;
-      },
-      error: () => {
-        this.loadingUsers = false;
-        this.notificationService.error('Error al cargar usuarios');
-      }
-    });
-  }
-
   selectApp(app: any) {
     this.selectedApp = app;
+    this.testForm.patchValue({ app_uuid: app.uuid });
     this.step = 2;
     this.companies = app.companies || [];
   }
 
   selectCompany(company: any) {
     this.selectedCompany = company;
+    this.testForm.patchValue({ company_uuid: company.uuid });
     this.step = 3;
   }
 
   selectUser(user: any) {
     this.selectedUser = user;
+    this.testForm.patchValue({
+      user_uuid: user.uuid,
+      user_email: user.email
+    });
     this.step = 4;
   }
 
@@ -174,18 +143,11 @@ export class NotificationTestComponent implements OnInit {
   }
 
   sendTest() {
-    if (this.testForm.invalid || !this.selectedApp || !this.selectedCompany || !this.selectedUser) return;
+    if (this.testForm.invalid) return;
 
     this.isSending = true;
-    const payload = {
-      ...this.testForm.value,
-      app_uuid: this.selectedApp.uuid,
-      company_uuid: this.selectedCompany.uuid,
-      user_uuid: this.selectedUser.uuid,
-      user_email: this.selectedUser.email
-    };
 
-    this.apiService.sendNotificationToAny(payload).subscribe({
+    this.apiService.sendNotificationToAny(this.testForm.value).subscribe({
       next: () => {
         this.notificationService.success('Notificación enviada correctamente al usuario.');
         this.isSending = false;
@@ -207,7 +169,11 @@ export class NotificationTestComponent implements OnInit {
       title: 'Test Notificación',
       message: 'Este es un mensaje de prueba desde el wizard.',
       type: 'INFO',
-      channels: 'PUSH,EMAIL'
+      channels: 'PUSH,EMAIL',
+      app_uuid: null,
+      company_uuid: null,
+      user_uuid: null,
+      user_email: null
     });
   }
 }

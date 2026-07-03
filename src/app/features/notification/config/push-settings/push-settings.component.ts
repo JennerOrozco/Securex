@@ -1,71 +1,52 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 import { ButtonComponent } from '@shared/components/button/button.component';
-import { BaseNotificationConfigComponent } from '@shared/utils/base-notification-config';
-import { Observable } from 'rxjs';
-import { parseLazyLoadEvent } from '@shared/utils/pagination-utils';
 import { AppService } from '@/core/services';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
+import { PUSH_SETTINGS_COLS, createPushSettingsForm } from './push-settings.config';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   selector: 'app-push-settings',
   standalone: true,
   imports: [CommonModule, CrudPageComponent, ButtonComponent],
-  templateUrl: './push-settings.component.html'
+  templateUrl: './push-settings.component.html',
+  providers: [UnifiedCrudService]
 })
-export class PushSettingsComponent extends BaseNotificationConfigComponent {
+export class PushSettingsComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
   private appService = inject(AppService);
+  private notificationService = inject(NotificationService);
+  crud = inject(UnifiedCrudService);
 
-  formFields: FormField[] = [];
-  get resourceName() { return 'Configuración'; }
+  cols = PUSH_SETTINGS_COLS;
+  
+  formFields = computed(() => {
+    const catalogs = this.crud.catalogItems();
+    return createPushSettingsForm(catalogs);
+  });
 
-  cols: TableColumn[] = [
-    { field: 'app.name', header: 'App Asociada', type: 'text', sortable: true },
-    { field: 'vapid_subject', header: 'Subject', type: 'text', sortable: true },
-    { field: 'icon', header: 'Icon', type: 'image', style: { width: '80px', 'text-align': 'center' }, fallbackIcon: 'pi pi-send' },
-    { field: 'acciones', header: 'Acciones', type: 'actions' }
-  ];
+  constructor() {}
 
-  loadCatalog(): Observable<any> {
-    return this.appService.getAppsWithCompanies().pipe(
-      map((res: any) => ({
-        apps: res.data || res || []
-      }))
-    );
-  }
-
-  loadSettings(event?: any) {
-    const { page, limit, filter, sort } = parseLazyLoadEvent(event, 'id');
-    if (!event?.sortField && !event?.multiSortMeta) sort.direction = 'ASC';
-
-    this.apiService.getPushSettingsGql(page, limit, filter, sort).subscribe({
-      next: (res: any) => {
-        const data = res?.data || [];
-        this.totalRecords = res?.total || 0;
-        this.items = data;
-        this.loading = false;
-      },
-      error: () => (this.loading = false)
+  ngOnInit(): void {
+    this.crud.initialize({
+      resourceName: 'Configuración Push',
+      primaryKey: 'id',
+      defaultSortKey: 'id',
+      fnFetch: this.apiService.getPushSettingsGql.bind(this.apiService),
+      fnCreate: (data) => this.saveSetting(data, 'add'),
+      fnUpdate: (id, data) => this.saveSetting(data, 'edit'),
+      fnDelete: this.apiService.deletePushSetting.bind(this.apiService),
+      fnCatalogs: {
+        apps: () => this.appService.getAppsWithCompanies().pipe(
+          map((res: any) => res.data || res || [])
+        )
+      }
     });
-  }
-
-  override updateFormFields() {
-    this.formFields = [
-      {
-        name: 'app_uuid', label: 'Aplicación Asociada', type: 'select', required: true, icon: 'pi pi-th-large',
-        options: (this.catalogItems.apps || []).map((app: any) => ({ label: app.name, value: app.uuid }))
-      },
-      { name: 'vapid_public_key', label: 'VAPID Public Key', type: 'text', required: true, icon: 'pi pi-key' },
-      { name: 'vapid_private_key', label: 'VAPID Private Key', type: 'text', required: true, icon: 'pi pi-key' },
-      { name: 'vapid_subject', label: 'VAPID Subject', type: 'text', required: false, icon: 'pi pi-envelope' },
-      { name: 'icon', label: 'Icono de Notificación', type: 'file', required: false, accept: 'image/*', icon: 'pi pi-image', fallbackIcon: 'pi-bell' },
-      { name: 'url_base', label: 'URL Base', type: 'text', required: false, icon: 'pi pi-link' }
-    ];
   }
 
   saveSetting(data: any, mode: 'add' | 'edit'): Observable<any> {
@@ -83,29 +64,19 @@ export class PushSettingsComponent extends BaseNotificationConfigComponent {
       });
     }
 
-    return new Observable((subscriber) => {
-      this.apiService.savePushSetting(id, payload).subscribe({
-        next: (res: any) => subscriber.next(res),
-        error: (err) => {
-          this.notificationService.error(err?.error?.message || 'Error al guardar la configuración');
-          subscriber.error(err);
-        }
-      });
-    });
-  }
-
-  deleteSetting(item: any) {
-    return this.apiService.deletePushSetting(item.id);
+    return this.apiService.savePushSetting(id, payload);
   }
 
   handleGenerateVapid() {
     this.apiService.generateVapid().subscribe({
       next: (res: any) => {
         const keys = res.data || res;
-        this.initialData = {
+        const current = this.crud.selectedItem();
+        this.crud.selectedItem.set({
+          ...current,
           vapid_public_key: keys.public_key,
           vapid_private_key: keys.private_key
-        };
+        });
         this.notificationService.success('Llaves VAPID generadas. Por favor completa los demás campos y guarda.');
       },
       error: () => this.notificationService.error('Error al generar llaves VAPID')

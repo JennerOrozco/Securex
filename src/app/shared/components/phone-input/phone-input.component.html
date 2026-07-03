@@ -1,4 +1,4 @@
-<div class="gm-field gm-has-icon">
+<div class="gm-field">
   <label class="gm-label" [for]="id">
     {{ label }}
     @if (required) { <span class="gm-required">*</span> }
@@ -34,7 +34,7 @@
       <span class="gm-field-icon"><i class="pi pi-phone"></i></span>
       <input pInputText
              [id]="id"
-             [placeholder]="placeholder"
+             [placeholder]="currentPlaceholder"
              [disabled]="disabled"
              [value]="localNumber"
              (input)="sanitizePhoneInput($event)"

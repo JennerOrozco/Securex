@@ -12,7 +12,14 @@
   position: sticky;
   top: 0;
   z-index: 40;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+/* --- Collapsed Desktop Mode --- */
+.sidebar.collapsed {
+  width: 64px;
 }
 
 .sidebar-header {
@@ -390,6 +397,104 @@
 .logout-mini-text {
   font-size: 0.65rem;
   font-weight: 800;
+}
+
+/* ==========================================
+   COLLAPSED SIDEBAR (Desktop Icon-Only Mode)
+   ========================================== */
+
+.sidebar.collapsed .sidebar-header {
+  padding: 1rem 0.25rem;
+  justify-content: center;
+}
+
+.sidebar.collapsed .logo-wrapper {
+  justify-content: center;
+  gap: 0;
+}
+
+.sidebar.collapsed .logo-text {
+  display: none;
+}
+
+.sidebar.collapsed .label {
+  display: none;
+}
+
+.sidebar.collapsed .chevron-icon {
+  display: none;
+}
+
+.sidebar.collapsed .sub-chevron {
+  display: none;
+}
+
+.sidebar.collapsed .nav-link,
+.sidebar.collapsed .nav-parent {
+  justify-content: center;
+  padding: 0.6rem 0;
+}
+
+.sidebar.collapsed .nav-group {
+  justify-content: center;
+  gap: 0;
+}
+
+.sidebar.collapsed .submenu-container,
+.sidebar.collapsed .sub-submenu-container {
+  display: none;
+}
+
+.sidebar.collapsed .sidebar-nav {
+  padding: 0.25rem 0.15rem;
+}
+
+.sidebar.collapsed .nav-list {
+  gap: 0.15rem;
+}
+
+.sidebar.collapsed .sidebar-footer {
+  padding: 0.3rem 0.15rem;
+  gap: 0.5rem;
+}
+
+.sidebar.collapsed .user-profile-vertical {
+  gap: 0.35rem;
+}
+
+.sidebar.collapsed .user-avatar-mini {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.sidebar.collapsed .user-meta {
+  display: none;
+}
+
+.sidebar.collapsed .context-chevron {
+  display: none;
+}
+
+.sidebar.collapsed .context-dropdown {
+  display: none;
+}
+
+.sidebar.collapsed .logout-compact-btn {
+  width: 75%;
+  height: 32px;
+  padding: 0;
+}
+
+.sidebar.collapsed .logout-mini-text {
+  display: none;
+}
+
+.sidebar.collapsed .context-info {
+  display: none;
+}
+
+.sidebar.collapsed .context-selector {
+  display: none;
 }
 
 /* --- Mobile Responsive --- */

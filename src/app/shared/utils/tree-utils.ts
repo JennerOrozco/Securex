@@ -1,8 +1,10 @@
 import { TreeNode } from 'primeng/api';
 
 /**
- * Configuration for mapToTreeNodes. Each callback is optional;
- * defaults are permissive (canAdd/canEdit/canDelete = true).
+ * @interface TreeMapOptions
+ * @description Interfaz de configuración para la función `mapToTreeNodes`.
+ * Define las opciones para personalizar la transformación de objetos planos a nodos de árbol.
+ * @template T - Tipo de dato de los elementos que serán convertidos a nodos.
  */
 export interface TreeMapOptions<T = any> {
   canAdd?: (item: T) => boolean;
@@ -17,8 +19,13 @@ export interface TreeMapOptions<T = any> {
 }
 
 /**
- * Converts a nested array of items into PrimeNG TreeNode[].
- * Adds _canAdd / _canEdit / _canDelete flags automatically.
+ * @function mapToTreeNodes
+ * @description Convierte un array de objetos anidados en una estructura de árbol compatible con PrimeNG (TreeNode[]).
+ * Añade automáticamente propiedades de control (_canAdd, _canEdit, _canDelete) a cada nodo basadas en las opciones proporcionadas.
+ * @template T - Tipo de dato de los elementos del array, debe ser un objeto.
+ * @param {T[]} items - Array de elementos a convertir en nodos de árbol.
+ * @param {TreeMapOptions<T>} options - Objeto de configuración opcional para personalizar la transformación.
+ * @returns {TreeNode[]} Array de nodos de árbol listos para ser usados con PrimeNG.
  */
 export function mapToTreeNodes<T extends Record<string, any>>(
   items: T[],
@@ -63,8 +70,14 @@ export function mapToTreeNodes<T extends Record<string, any>>(
 }
 
 /**
- * Filters a nested tree by predicate.  Keeps a node if it matches
- * OR if any descendant matches (preserving the parent chain).
+ * @function filterTree
+ * @description Filtra un árbol jerárquico aplicando un predicado a cada nodo.
+ * Mantiene intacta la estructura del árbol, preservando la relación padre-hijo, 
+ * mostrando tanto los nodos que coinciden con el predicado como sus ancestros.
+ * @template T - Tipo de dato de los nodos del árbol, debe incluir `children` y `name`.
+ * @param {T[]} nodes - Array de nodos raíz del árbol a filtrar.
+ * @param {(node: T) => boolean} predicate - Función de predicado que retorna `true` si el nodo debe ser incluido.
+ * @returns {T[]} Nuevo array de nodos que coinciden con el predicado.
  */
 export function filterTree<T extends { children?: T[]; name: string; slug?: string }>(
   nodes: T[],
@@ -83,7 +96,14 @@ export function filterTree<T extends { children?: T[]; name: string; slug?: stri
 }
 
 /**
- * Filters a nested tree by `name` or `slug` substring (case-insensitive).
+ * @function filterTreeByQuery
+ * @description Filtra un árbol jerárquico basándose en una consulta de búsqueda.
+ * Mantiene intacta la estructura del árbol, preservando la relación padre-hijo, 
+ * mostrando tanto los nodos que coinciden con la búsqueda como sus ancestros.
+ * @template T - Tipo de dato de los nodos del árbol, debe incluir `name` y opcionalmente `slug`.
+ * @param {T[]} nodes - Array de nodos raíz del árbol a filtrar.
+ * @param {string} query - Cadena de búsqueda a aplicar.
+ * @returns {T[]} Nuevo array de nodos que coinciden con la consulta.
  */
 export function filterTreeByQuery<
   T extends { children?: T[]; name: string; slug?: string }

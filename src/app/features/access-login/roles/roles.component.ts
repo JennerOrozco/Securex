@@ -1,95 +1,60 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
-import { TableColumn } from '@shared/table-shared/shared/table.types';
+import { RolePermissionsModalComponent } from '@shared/modals/modal-shell/role-permissions-modal/role-permissions-modal.component';
 import { RoleService } from '@core/services/role.service';
 import { AuthService } from '@core/services/auth.service';
-import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
-import { RolePermissionsModalComponent } from '@shared/modals/modal-shell/role-permissions-modal/role-permissions-modal.component';
 import { NotificationService } from '@core/services/notification.service';
+import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
+import { ROLE_FORM_FIELDS, ROLE_TABLE_COLUMNS, SystemRole } from './roles.config';
+import { trackApi } from '@shared/utils/rxjs-utils';
 
 @Component({
   selector: 'app-security-role-crud',
   standalone: true,
   imports: [CommonModule, CrudPageComponent, RolePermissionsModalComponent],
   templateUrl: './roles.component.html',
+  providers: [UnifiedCrudService]
 })
 export class SecurityRoleCrudComponent implements OnInit {
+  crud = inject(UnifiedCrudService<SystemRole>);
   private roleService = inject(RoleService);
   private authService = inject(AuthService);
-  private notificationService = inject(NotificationService);
+  
+  destroyRef = inject(DestroyRef);
+  notificationService = inject(NotificationService);
 
-  roles: any[] = [];
-  loading = false;
-  isSaving = false;
+  cols = ROLE_TABLE_COLUMNS;
+  formFields = ROLE_FORM_FIELDS;
 
   permModalVisible = false;
-  selectedItem: any = null;
+  selectedRole: SystemRole | null = null;
+  isSaving = false;
 
-  formFields: FormField[] = [
-    { name: 'name', label: 'Nombre del Rol', type: 'text', required: true, icon: 'pi pi-tag' },
-    { name: 'description', label: 'Descripción', type: 'textarea' }
-  ];
-
-  cols: TableColumn[] = [
-    { field: 'name', header: 'Rol', type: 'role', sortable: true },
-    { field: 'description', header: 'Descripción', type: 'text', sortable: true },
-    { field: 'acciones', header: 'Acciones', type: 'actions' }
-  ];
-
-  ngOnInit() { this.load(); }
-
-  load() {
-    this.loading = true;
+  ngOnInit() {
     const companyUuid = this.authService.currentCompany()?.uuid ?? null;
-    this.roleService.getRolesWithPermissions(companyUuid).subscribe({
-      next: (res) => { this.roles = res; this.loading = false; },
-      error: () => this.loading = false
+    this.crud.initialize({
+      resourceName: 'Rol',
+      fnFetch: () => this.roleService.getRolesWithPermissions(companyUuid),
+      fnCreate: this.roleService.createRoleGql.bind(this.roleService),
+      fnUpdate: this.roleService.updateRoleGql.bind(this.roleService),
+      fnDelete: this.roleService.deleteRoleGql.bind(this.roleService),
     });
+    this.crud.load();
   }
 
-  handleManagePermissions(item: any) {
-    this.selectedItem = item;
+  handleManagePermissions(item: SystemRole) {
+    this.selectedRole = item;
     this.permModalVisible = true;
   }
 
-  save(e: { mode: 'add' | 'edit'; data: any }) {
-    this.isSaving = true;
-    const obs = e.mode === 'add'
-      ? this.roleService.createRoleGql(e.data)
-      : this.roleService.updateRoleGql(e.data.uuid, e.data);
-
-    obs.subscribe({
-      next: () => {
-        this.notificationService.notify('success', `Rol ${e.mode === 'add' ? 'creado' : 'actualizado'} correctamente`);
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
-  }
-
-  confirmDelete(item: any) {
-    this.isSaving = true;
-    this.roleService.deleteRoleGql(item.uuid).subscribe({
-      next: () => {
-        this.notificationService.notify('success', 'Rol eliminado');
-        this.load();
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
-  }
-
   syncPermissions(ids: number[]) {
+    if (!this.selectedRole) return;
     this.isSaving = true;
-    this.roleService.syncRolePermissionsGql(this.selectedItem.uuid, ids).subscribe({
-      next: () => {
-        this.notificationService.notify('success', 'Permisos sincronizados correctamente');
-        this.permModalVisible = false;
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
-    });
+    this.roleService.syncRolePermissionsGql(this.selectedRole.uuid, ids)
+      .pipe(trackApi(this, (s) => this.isSaving = s, 'Permisos sincronizados correctamente'))
+      .subscribe({
+        next: () => this.permModalVisible = false
+      });
   }
 }

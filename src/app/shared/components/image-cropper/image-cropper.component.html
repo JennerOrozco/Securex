@@ -13,7 +13,7 @@
     <div class="crop-empty-state">
       @if (existingImageUrl) {
         <div class="crop-preview-current">
-          <img [src]="existingImageUrl" alt="Foto actual" class="crop-preview-img" />
+          <img [src]="existingImageUrl" alt="Foto actual" class="crop-preview-img" [class.is-circle]="aspectRatio === 1" />
           <button type="button" class="crop-change-btn" (click)="openFilePicker()">
             <i class="pi pi-camera"></i>
             Cambiar foto
@@ -34,7 +34,7 @@
       <div class="crop-toolbar">
         <div class="crop-toolbar-group">
           <span class="crop-toolbar-label">Relación:</span>
-          <span class="crop-ar-label">1:1</span>
+          <span class="crop-ar-label">{{ aspectRatioLabel }}</span>
         </div>
         <div class="crop-toolbar-group">
           <button type="button" class="crop-action-btn" (click)="zoomOut()" title="Alejar">
@@ -70,7 +70,7 @@
 
         <div class="crop-preview-panel">
           <span class="crop-preview-panel-label">Vista previa</span>
-          <div class="crop-preview-wrap">
+          <div class="crop-preview-wrap" [class.is-circle]="aspectRatio === 1">
             <canvas #previewCanvas class="crop-preview-canvas"></canvas>
           </div>
         </div>

@@ -17,6 +17,13 @@ import { CellRendererComponent } from '../shared/cell-renderer/cell-renderer.com
 import { TableActionsComponent, TableActionsConfig } from '../shared/table-actions.component';
 import { BaseTableDirective } from '../shared/base-table.directive';
 
+/**
+ * @component TreeTableComponent
+ * @description
+ * Componente que renderiza una tabla jerárquica (TreeTable).
+ * Extiende de `BaseTableDirective` para heredar la gestión unificada de menús de acciones (contextual y móvil).
+ * Soporta ordenamiento, búsqueda, coloreado de filas y arrastrar y soltar (drag & drop) para reordenamiento de nodos.
+ */
 @Component({
   selector: 'app-tree-table-component',
   standalone: true,
@@ -38,44 +45,70 @@ import { BaseTableDirective } from '../shared/base-table.directive';
   templateUrl: './tree-table-component.component.html'
 })
 export class TreeTableComponent extends BaseTableDirective implements OnInit {
+  // --- Entradas de Datos (Inputs) ---
+  /** @property Nodos jerárquicos de la tabla provistos por PrimeNG. */
   @Input() nodes: TreeNode[] = [];
+  /** @property Definición estructural de las columnas de la tabla. */
   @Input() columns: TableColumn[] = [];
+  /** @property Muestra u oculta la leyenda visual explicativa. */
   @Input() showLegend: boolean = true;
+  /** @property Habilita o deshabilita la funcionalidad de arrastrar y soltar para reorganizar nodos. */
   @Input() dragdrop: boolean = false;
+  /** @property Muestra el botón global de agregar elemento raíz. */
   @Input() showAdd: boolean = true;
+  /** @property Si es true, aplica colores de fondo a la fila entera basados en su tipo (ej. Menú, Submenú). */
   @Input() colorRows: boolean = false;
 
+  // --- Salidas de Eventos (Outputs) ---
   @Output() onAddRoot = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<number>();
   @Output() onFilter = new EventEmitter<string>();
   @Output() onFilterType = new EventEmitter<string>();
+  /** @emits Objeto indicando el nodo arrastrado y su nuevo nodo destino (o null si va a la raíz). */
   @Output() onNodeReorder = new EventEmitter<any>();
   @Output() onReset = new EventEmitter<any>();
 
-  // Sort state
+  // --- Estado de Ordenamiento (Sorting) ---
   sortField: string = '';
-  sortOrder: number = 1;
+  sortOrder: number = 1; // 1 = Ascendente, -1 = Descendente
 
+  // Referencia nativa al componente TreeTable de PrimeNG
   @ViewChild('tt') treeTable!: TreeTable;
 
+  /**
+   * @description
+   * Getter dinámico que filtra las columnas para retornar solo aquellas
+   * configuradas explícitamente para ser visibles en la UI.
+   */
   get visibleColumns(): TableColumn[] {
     return this.columns.filter(c => c.visible !== false);
   }
 
   constructor() {
-    super();
+    super(); // Llama al constructor de la directiva base
   }
 
+  /**
+   * @description Función de seguimiento para iteradores `ngFor` que mejora el rendimiento de renderizado.
+   */
   trackByField(index: number, col: TableColumn): string {
     return col.field;
   }
 
+  /**
+   * @action Maneja la lógica manual de ordenamiento de columnas por clic en la cabecera.
+   * @description 
+   * Incluye una zona muerta (10px al borde derecho) para ignorar clics si el usuario 
+   * está intentando redimensionar la columna en lugar de ordenarla.
+   */
   sortByField(field: string, event?: MouseEvent) {
     if (event) {
       const rect = (event.target as HTMLElement).closest('th')!.getBoundingClientRect();
       const offsetX = event.clientX - rect.right;
+      // Zona muerta de 10px: Asume que el usuario intenta redimensionar la columna
       if (offsetX > -10) return;
     }
+    // Si ya estaba ordenado por este campo, invierte el orden. Si es nuevo, ordena ascendente.
     if (this.sortField === field) {
       this.sortOrder = this.sortOrder === 1 ? -1 : 1;
     } else {
@@ -84,45 +117,58 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     }
   }
 
-  // Drag-drop state
+  // =======================================================================
+  // REGION: Estado y Lógica Drag-and-Drop
+  // =======================================================================
+
   draggedNode: any = null;
   dragOverNode: any = null;
   dragOverRoot = false;
 
+  /** @listener Inicio del arrastre de una fila */
   onRowDragStart(event: DragEvent, rowData: any) {
     this.draggedNode = rowData;
+    // Permite que el navegador sepa que este elemento puede ser movido
     event.dataTransfer!.effectAllowed = 'move';
-    event.dataTransfer!.setData('text/plain', '');
+    event.dataTransfer!.setData('text/plain', ''); // Requerido en Firefox para habilitar D&D
   }
 
+  /** @listener El nodo arrastrado pasa sobre otro nodo (posible destino hijo) */
   onRowDragOver(event: DragEvent, rowData: any) {
+    // Evita soltar sobre sí mismo
     if (!this.draggedNode || this.draggedNode === rowData) return;
-    event.preventDefault();
+    event.preventDefault(); // Necesario para permitir el "drop" (soltar)
     this.dragOverNode = rowData;
   }
 
+  /** @listener El nodo arrastrado sale de la zona del nodo destino */
   onRowDragLeave(event: DragEvent) {
     this.dragOverNode = null;
   }
 
+  /** @listener Se suelta el nodo sobre otro nodo específico */
   onRowDrop(event: DragEvent, rowData: any) {
     event.preventDefault();
     if (this.draggedNode && this.draggedNode !== rowData) {
       this.onNodeReorder.emit({ dragNode: this.draggedNode, dropNode: rowData });
     }
+    // Limpieza de estado
     this.draggedNode = null;
     this.dragOverNode = null;
   }
 
+  /** @listener El nodo arrastrado pasa sobre la zona general de "Raíz" (fuera de las filas existentes) */
   onRootDragOver(event: DragEvent) {
     event.preventDefault();
     this.dragOverRoot = true;
   }
 
+  /** @listener El nodo sale de la zona de "Raíz" */
   onRootDragLeave(event: DragEvent) {
     this.dragOverRoot = false;
   }
 
+  /** @listener Se suelta el nodo en la zona "Raíz" para convertirlo en un nodo padre de nivel 0 */
   onRootDrop(event: DragEvent) {
     event.preventDefault();
     if (this.draggedNode) {
@@ -132,6 +178,15 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     this.dragOverRoot = false;
   }
 
+  // =======================================================================
+  // REGION: Configuración y Ejecución de Menús de Acciones
+  // =======================================================================
+
+  /**
+   * @description Implementación obligatoria desde `BaseTableDirective`.
+   * Construye dinámicamente las opciones del menú contextual evaluando 
+   * banderas internas de permisos (`_canAdd`, `_canEdit`, etc.) de la fila activa.
+   */
   get contextMenuItems(): ActionItem[] {
     return [
       { action: 'add-child', label: 'Agregar Sub-elemento', icon: 'pi pi-plus', iconClass: 'view', visible: this.activeRow?._canAdd !== false },
@@ -141,16 +196,21 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     ];
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
+  /** @action Emite el texto a filtrar desde la barra de búsqueda superior */
   onSearch(event: any) {
     this.onFilter.emit(event.target.value);
   }
 
+  /** @action Emite un tipo específico para filtros predefinidos (ej. filtros por tipo de rol/modulo) */
   filterByType(type: string) {
     this.onFilterType.emit(type);
   }
 
+  /**
+   * @description Mapea el tipo de la fila a un estilo de fondo de ícono (ej. Tailwind class).
+   */
   getIconBg(type: string): string {
     switch (type?.toUpperCase()) {
       case 'MENU': return 'bg-indigo';
@@ -163,6 +223,9 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     }
   }
 
+  /**
+   * @description Mapea el tipo de la fila a una clase CSS para colorear todo el renglón (si `colorRows` está activo).
+   */
   getRowClass(type: string): string {
     if (!this.colorRows) return '';
     switch (type?.toUpperCase()) {
@@ -176,6 +239,10 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     }
   }
 
+  /**
+   * @description Convierte la fila de datos en una configuración estandarizada 
+   * que lee el componente `TableActionsComponent` para dibujar los botones de línea.
+   */
   getActionsConfig(row: any): TableActionsConfig {
     return {
       addChild: row._canAdd !== false,
@@ -185,6 +252,11 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
     };
   }
 
+  /**
+   * @action Implementación obligatoria desde `BaseTableDirective`.
+   * Ejecuta la lógica correspondiente cuando el usuario hace clic en un elemento del menú,
+   * emitiendo eventos hacia el componente padre y cerrando los menús.
+   */
   executeAction(action: string) {
     if (!this.activeRow) return;
 
@@ -203,6 +275,6 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
         break;
     }
 
-    this.closeMenus();
+    this.closeMenus(); // Heredado de BaseTableDirective
   }
 }

@@ -1,9 +1,23 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, Output, EventEmitter, ContentChild, TemplateRef, ViewChild, ChangeDetectionStrategy, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  Input,
+  Output,
+  EventEmitter,
+  ContentChild,
+  TemplateRef,
+  ViewChild,
+  ChangeDetectionStrategy,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FilterService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
+import { FilterService } from 'primeng/api';
 
-// PrimeNG Modules
+// ── MÓDULOS DE COMPONENTES DE PRIMENG (VERSION v19+) ────────────────────────
+// Se importan de forma individual para optimizar el árbol de sacudida (Tree-Shaking)
 import { TableModule, Table } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
@@ -17,12 +31,11 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { DialogModule } from 'primeng/dialog';
 import { CheckboxModule } from 'primeng/checkbox';
 import { RippleModule } from 'primeng/ripple';
-import { SelectModule } from 'primeng/select';
-import { DatePickerModule } from 'primeng/datepicker';
 import { SkeletonModule } from 'primeng/skeleton';
+import { SelectModule } from 'primeng/select'; // 💡 Mandatorio en v19 para compilar <p-select>
 
+// ── ARQUITECTURA PROPIA Y COMPONENTES COMPARTIDOS (SHARED MODULE) ───────────
 import { TableColumn } from '../shared/table.types';
-export type { TableColumn } from '../shared/table.types';
 import { ColumnsModalComponent } from '../../modals/modal-shell/columns-modal/columns-modal.component';
 import { ContextMenuComponent } from '../../components/context-menu/context-menu.component';
 import { BottomSheetComponent } from '../../components/bottom-sheet/bottom-sheet.component';
@@ -34,6 +47,16 @@ import { CellRendererComponent } from '../shared/cell-renderer/cell-renderer.com
 import { BaseTableDirective } from '../shared/base-table.directive';
 import { LoadingService } from '@core/services/loading.service';
 
+/** Re-exportación de tipo para garantizar compatibilidad con módulos consumidores */
+export type { TableColumn };
+
+/**
+ * COMPONENTE: TableComponent
+ * DESCRIPCIÓN: Grid de datos genérico y altamente configurable basado en p-table de PrimeNG.
+ * SOPORTA: Paginación en servidor (Lazy), Agrupamiento de filas (Row Grouping), Modales de columnas
+ * dinámicas, Menús contextuales adaptativos (Escritorio/Móvil) e Inyección externa de plantillas de acción.
+ * DESIGN PATTERN: Usa ChangeDetectionStrategy.OnPush para evitar sobrecargar los ciclos de renderizado.
+ */
 @Component({
   selector: 'app-table-component',
   standalone: true,
@@ -53,8 +76,7 @@ import { LoadingService } from '@core/services/loading.service';
     DialogModule,
     CheckboxModule,
     RippleModule,
-    SelectModule,
-    DatePickerModule,
+    SelectModule, // El compilador de Angular requiere este import para reconocer directivas e inputs de p-select
     ColumnsModalComponent,
     ContextMenuComponent,
     BottomSheetComponent,
@@ -66,8 +88,10 @@ import { LoadingService } from '@core/services/loading.service';
   ],
   templateUrl: './table-component.component.html',
   styles: [`
+    /* Oculta el overlay nativo grisáceo de PrimeNG para permitir la visualización fluida de Skeletons */
     :host ::ng-deep .p-datatable-loading-overlay { display: none !important; }
     :host ::ng-deep .p-datatable-loading { opacity: 1 !important; }
+    /* Estilos de override para filas seleccionadas o con estados críticos destacados */
     :host ::ng-deep .p-datatable .p-datatable-tbody > tr.p-highlight {
       background: #fef2f2 !important;
       color: #991b1b !important;
@@ -79,44 +103,71 @@ import { LoadingService } from '@core/services/loading.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent extends BaseTableDirective implements OnInit, OnChanges {
+  // ── SERVICIOS INYECTADOS (ANGULAR FUNCTIONAL INJECTION) ────────────────────
+  /** Servicio global de PrimeNG para registro dinámico de algoritmos de filtrado custom */
+  private readonly filterService = inject(FilterService);
+  /** Intercepta estados de carga asíncronos distribuidos en la aplicación */
+  protected readonly loadingService = inject(LoadingService);
+
+  // ── INPUTS ESENCIALES DE CONTROL DE DATOS Y ESTRUCTURA ─────────────────────
+  /** Fuente de datos principal de la tabla (Colección de objetos planos JSON) */
   @Input() data: any[] = [];
+  /** Configuración de metadatos de las columnas (Tipos, alineaciones, visibilidad, etc.) */
   @Input() columns: TableColumn[] = [];
+  /** Campos del objeto de datos permitidos para la evaluación del filtro de búsqueda global */
   @Input() globalFilterFields: string[] = ['name'];
+  /** Opciones del selector del paginador para cambiar el límite de registros por página */
   @Input() rowsPerPageOptions: number[] = [5, 10, 20, 50];
-  @Input() stripedRows: boolean = true;
-  @Input() minimalMode: boolean = false;
+  /** Activa el coloreado alternado (cebreado) en las filas de la tabla */
+  @Input() stripedRows = true;
+  /** Modo minimalista: Compacta márgenes y paddings para layouts embebidos o dashboards estrechos */
+  @Input() minimalMode = false;
 
-  // Permisos de botones principales
-  @Input() showAdd: boolean = true;
-  @Input() showEdit: boolean = true;
-  @Input() showDelete: boolean = true;
+  /** * PUENTE INTER-COMPONENTE ESENCIAL:
+   * Recibe una referencia de plantilla (`TemplateRef`) inyectada jerárquicamente por el CRUD-Page padre.
+   * Si este Input viene poblado, el HTML anulará los botones por defecto y pintará esta estructura.
+   */
+  @Input() actionButtonsTemplate: TemplateRef<any> | null = null;
 
-  // Acciones secundarias / móviles
-  @Input() showCreate: boolean = false;
-  @Input() createLabel: string = 'Crear';
-  @Input() createIcon: string = 'pi-plus';
-  @Input() showView: boolean = false;
-  @Input() viewLabel: string = 'Visualizar';
-  @Input() viewIcon: string = 'pi-eye';
-  @Input() showPdf: boolean = false;
-  @Input() showSend: boolean = false;
-  @Input() showDuplicate: boolean = false;
-  @Input() showPermissions: boolean = false;
-  @Input() showActivate: boolean = false;
-  @Input() showSelect: boolean = false;
-  @Input() showReset: boolean = false;
+  // ── PERMISOS Y VISIBILIDAD DE ACCIONES BASE ───────────────────────────────
+  @Input() showAdd = true;
+  @Input() showEdit = true;
+  @Input() showDelete = true;
 
-  // Lógica de Row Grouping nativo
-  @Input() enableRowGroup: boolean = false;
-  @Input() groupRowsBy: string = '';
-  @Input() groupHeaderLabel: string = '';
-  @Input() showAddChild: boolean = false;
-  @Input() expandableRowGroups: boolean = false;
+  // ── PAGINACIÓN EN SERVIDOR (LAZY LOADING) ──────────────────────────────────
+  /** Define si la ordenación, filtrado y paginación se resuelven en Backend (true) o en memoria (false) */
+  @Input() lazy = false;
+  /** Totalizador de registros en base de datos. Mandatorio cuando 'lazy' es true para pintar el paginador */
+  @Input() totalRecords = 0;
 
-  // Paginación en servidor
-  @Input() lazy: boolean = false;
-  @Input() totalRecords: number = 0;
+  // ── COMPORTAMIENTOS SECUNDARIOS Y ENTORNOS MÓVILES (ACCIONES ADICIONALES) ──
+  @Input() showCreate = false;
+  @Input() createLabel = 'Crear';
+  @Input() createIcon = 'pi-plus';
+  @Input() showView = false;
+  @Input() viewLabel = 'Visualizar';
+  @Input() viewIcon = 'pi-eye';
+  @Input() showPdf = false;
+  @Input() showSend = false;
+  @Input() showDuplicate = false;
+  @Input() showPermissions = false;
+  @Input() showActivate = false;
+  @Input() showSelect = false;
+  @Input() showReset = false;
 
+  // ── LOGICA DE AGRUPACIÓN NATIVA DE FILAS (ROW GROUPING) ────────────────────
+  /** Activa la visualización por sub-cabeceras agrupadas */
+  @Input() enableRowGroup = false;
+  /** Nombre del campo/propiedad de la fila por el cual se agruparán los elementos visuales */
+  @Input() groupRowsBy = '';
+  /** Prefijo textual que se antepondrá al valor agrupado en la sub-cabecera */
+  @Input() groupHeaderLabel = '';
+  /** Habilita la visualización de un botón secundario para agregar hijos dentro del grupo */
+  @Input() showAddChild = false;
+  /** Determina si las filas de los grupos pueden colapsarse/expandirse interactivamente */
+  @Input() expandableRowGroups = false;
+
+  // ── SISTEMA DE EVENTOS DE SALIDA (OUTPUT EMITTERS) ────────────────────────
   @Output() onAdd = new EventEmitter<void>();
   @Output() onAddChild = new EventEmitter<any>();
   @Output() onCreate = new EventEmitter<any>();
@@ -131,117 +182,41 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
   @Output() onReset = new EventEmitter<any>();
   @Output() onLazyLoad = new EventEmitter<any>();
 
+  // ── SELECTORES INTERNOS DE DOM (QUERIES DE PLANTILLAS Y CONTENIDOS) ────────
+  /** Captura fragmentos HTML/Botones inyectados de manera directa mediante ng-content local */
   @ContentChild('customActions') customActionsTemplate?: TemplateRef<any>;
-
+  /** Referencia nativa al componente p-table de PrimeNG para invocar su API de filtrado y ordenación */
   @ViewChild('dt') dataTable!: Table;
 
+  // ── VARIABLES DE ESTADO LOCAL INTERNO ──────────────────────────────────────
+  /** Almacena colecciones de elementos seleccionados mediante Checkbox multimodo */
   selectedItems: any[] = [];
+  /** Lista activa de columnas que se renderizan actualmente (se altera mediante el modal selector) */
   selectedColumns: TableColumn[] = [];
-  displayColumnsModal: boolean = false;
+  /** Flag de control de visibilidad del modal de configuración de columnas */
+  displayColumnsModal = false;
+  /** Diccionario de índices llave/valor para determinar qué grupos de filas están desplegados en pantalla */
+  expandedRowKeys: Record<string, boolean> = {};
 
+  /** Matriz con anchos porcentuales fijos para diversificar el tamaño aleatorio visual de las celdas de carga (Skeleton) */
+  readonly skeletonWidths = ['70%', '55%', '85%', '40%', '65%', '75%', '50%', '60%', '80%', '45%'];
+
+  // ── GETTERS DE EVALUACIÓN REACTIVA DINÁMICA ────────────────────────────────
+  /** Filtra y retorna únicamente las especificaciones de columnas cuyo flag de visibilidad no sea explícitamente falso */
   get visibleColumns(): TableColumn[] {
     return this.selectedColumns.filter(c => c.visible !== false);
   }
-  expandedRowKeys: { [s: string]: boolean } = {};
 
-  skeletonWidths = ['70%', '55%', '85%', '40%', '65%', '75%', '50%', '60%', '80%', '45%'];
-
-  private filterService = inject(FilterService);
-  protected loadingService = inject(LoadingService);
-
-  constructor() {
-    super();
+  /** Determina si la matriz de columnas configurada tiene asignada una columna dedicada a acciones */
+  get hasActionsColumn(): boolean {
+    return this.selectedColumns.some(col => col.type === 'actions' || col.field === 'actions');
   }
 
-  filterGlobal(searchValue: string) {
-    this.dataTable.filterGlobal(searchValue, 'contains');
-  }
-
-  trackByField(index: number, col: TableColumn): string {
-    return col.field;
-  }
-
-  ngOnInit() {
-    this.selectedColumns = [...this.columns];
-    this._initExpandedGroups();
-
-    // Patch PrimeNG date filters to handle string ISO dates without crashing
-    const patchDateFilter = (filterName: string, comparisonFn: (val: Date, fil: Date) => boolean) => {
-      this.filterService.register(filterName, (value: any, filter: any): boolean => {
-        if (filter === undefined || filter === null) return true;
-        if (value === undefined || value === null) return false;
-
-        let valDate: Date | null = null;
-        let filDate: Date | null = null;
-
-        if (value instanceof Date) {
-          valDate = value;
-        } else if (typeof value === 'string') {
-          const t = Date.parse(value);
-          if (!isNaN(t)) valDate = new Date(t);
-        }
-
-        if (filter instanceof Date) {
-          filDate = filter;
-        } else if (typeof filter === 'string') {
-          const t = Date.parse(filter);
-          if (!isNaN(t)) filDate = new Date(t);
-        }
-
-        if (valDate && filDate) {
-          return comparisonFn(valDate, filDate);
-        }
-        return false;
-      });
-    };
-
-    patchDateFilter('dateIs', (v, f) => v.toDateString() === f.toDateString());
-    patchDateFilter('dateIsNot', (v, f) => v.toDateString() !== f.toDateString());
-    patchDateFilter('dateBefore', (v, f) => {
-        const vTime = new Date(v.getFullYear(), v.getMonth(), v.getDate()).getTime();
-        const fTime = new Date(f.getFullYear(), f.getMonth(), f.getDate()).getTime();
-        return vTime < fTime;
-    });
-    patchDateFilter('dateAfter', (v, f) => {
-        const vTime = new Date(v.getFullYear(), v.getMonth(), v.getDate()).getTime();
-        const fTime = new Date(f.getFullYear(), f.getMonth(), f.getDate()).getTime();
-        return vTime > fTime;
-    });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['data']) {
-      this._initExpandedGroups();
-    }
-  }
-
-  private _initExpandedGroups() {
-    if (this.enableRowGroup && this.expandableRowGroups && this.groupRowsBy && this.data?.length) {
-      const keys: { [s: string]: boolean } = {};
-      this.data.forEach(row => {
-        const val = row[this.groupRowsBy];
-        if (val != null) keys[String(val)] = true;
-      });
-      this.expandedRowKeys = keys;
-    }
-  }
-
-  toggleGroupRow(groupValue: any) {
-    const key = String(groupValue);
-    if (this.expandedRowKeys[key]) {
-      const updated = { ...this.expandedRowKeys };
-      delete updated[key];
-      this.expandedRowKeys = updated;
-    } else {
-      this.expandedRowKeys = { ...this.expandedRowKeys, [key]: true };
-    }
-  }
-
-  onApplyColumns(columns: TableColumn[]) {
-    this.selectedColumns = columns;
-    this.displayColumnsModal = false;
-  }
-
+  /**
+   * CONSTRUCTOR DEL MENÚ CONTEXTUAL / MOBILE BOTTOM SHEET
+   * Mapea de forma limpia qué opciones se dibujarán en los clics derechos o menús desplegables 
+   * móviles basándose en los permisos de visualización (`@Input() showXXX`) resueltos por el padre.
+   */
   get contextMenuItems(): ActionItem[] {
     return [
       { action: 'select', label: 'Seleccionar', icon: 'pi pi-check-circle', iconClass: 'select', visible: this.showSelect },
@@ -257,52 +232,7 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
     ];
   }
 
-  executeAction(actionType: string) {
-    const target = this.activeRow;
-    this.closeMenus();
-
-    setTimeout(() => {
-      if (!target) return;
-      switch (actionType) {
-        case 'create': this.onCreate.emit(target); break;
-        case 'view': this.onView.emit(target); break;
-        case 'pdf': this.onPdf.emit(target); break;
-        case 'send': this.onSend.emit(target); break;
-        case 'duplicate': this.onDuplicate.emit(target); break;
-        case 'edit': this.onEdit.emit(target); break;
-        case 'delete': this.onDelete.emit(target); break;
-        case 'permissions': this.onPermissions.emit(target); break;
-        case 'select': this.onSelect.emit(target); break;
-        case 'reset': this.onReset.emit(target); break;
-      }
-    }, 300);
-  }
-
-  getSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | undefined {
-    switch (status?.toUpperCase()) {
-      case 'ACTIVO':
-      case 'INSTOCK':
-      case 'QUALIFIED':
-        return 'success';
-      case 'PENDIENTE':
-      case 'LOWSTOCK':
-      case 'CONTACTED':
-        return 'warn';
-      case 'INACTIVO':
-      case 'OUTOFSTOCK':
-      case 'LOST':
-        return 'danger';
-      case 'NEW':
-        return 'info';
-      default:
-        return 'info';
-    }
-  }
-
-  get hasActionsColumn(): boolean {
-    return this.selectedColumns.some(col => col.type === 'actions');
-  }
-
+  /** Simplifica el paso de configuraciones Boolean de permisos masivos hacia el componente interno de renderizado de botones */
   get tableActionsConfig(): TableActionsConfig {
     return {
       select: this.showSelect,
@@ -322,6 +252,153 @@ export class TableComponent extends BaseTableDirective implements OnInit, OnChan
     };
   }
 
+  // ── CICLOS DE VIDA DEL COMPONENTE (LIFECYCLE HOOKS) ────────────────────────
+  ngOnInit(): void {
+    // Inicializa la configuración de columnas haciendo una copia por valor del input original
+    this.selectedColumns = [...this.columns];
+    // Evalúa si hay agrupaciones pre-definidas que requieran nacer expandidas
+    this._initExpandedGroups();
+    // Parsea e inyecta filtros avanzados para mitigar crashes por formatos de fecha ISO string
+    this._registerSafeDateFilters();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Si la referencia de la data entrante cambia, recalcula y reevalúa los estados de expansión de los grupos
+    if (changes['data']) {
+      this._initExpandedGroups();
+    }
+    // Si las columnas entran de forma asíncrona (ej: Promise/Lazy Loading), actualizar selectedColumns
+    if (changes['columns']) {
+      this.selectedColumns = [...this.columns];
+    }
+  }
+
+  // ── MÉTODOS PÚBLICOS / MANEJADORES DE ACCIÓN E INTERFACES ──────────────────
+  /** Dispara el filtro global unificado en la instancia nativa del PrimeNG DataTable */
+  filterGlobal(searchValue: string): void {
+    this.dataTable.filterGlobal(searchValue, 'contains');
+  }
+
+  /** Callback ejecutado por el modal selector de columnas para guardar la nueva visibilidad de la grilla */
+  onApplyColumns(columns: TableColumn[]): void {
+    this.selectedColumns = columns;
+    this.displayColumnsModal = false;
+  }
+
+  /** Maneja el estado bitestable (abierto/cerrado) de las sub-cabeceras de filas cuando el agrupamiento está activo */
+  toggleGroupRow(groupValue: any): void {
+    const key = String(groupValue);
+    const updated = { ...this.expandedRowKeys };
+
+    if (updated[key]) {
+      delete updated[key];
+    } else {
+      updated[key] = true;
+    }
+    this.expandedRowKeys = updated;
+  }
+
+  /**
+   * DICCIONARIO DE DISPAROS DE OPERACIONES:
+   * Vincula las acciones de tipo string con su respectivo emisor de Output. 
+   * Incluye un leve retardo asíncrono para coordinar la animación de cerrado del ContextMenu.
+   */
+  executeAction(actionType: string): void {
+    const target = this.activeRow; // Heredado de BaseTableDirective
+    this.closeMenus();
+
+    if (!target) return;
+
+    const actionsMap: Record<string, EventEmitter<any>> = {
+      create: this.onCreate,
+      view: this.onView,
+      pdf: this.onPdf,
+      send: this.onSend,
+      duplicate: this.onDuplicate,
+      edit: this.onEdit,
+      delete: this.onDelete,
+      permissions: this.onPermissions,
+      select: this.onSelect,
+      reset: this.onReset
+    };
+
+    setTimeout(() => {
+      actionsMap[actionType]?.emit(target);
+    }, 300);
+  }
+
+  /**
+   * Resuelve el string de estilo de color ('severity') para las etiquetas de estados (Badges)
+   * basándose en un diccionario de equivalencias directo.
+   */
+  getSeverity(status: string): 'success' | 'secondary' | 'info' | 'warn' | 'danger' | undefined {
+    if (!status) return 'info';
+
+    const severityMap: Record<string, 'success' | 'warn' | 'danger' | 'info'> = {
+      'ACTIVO': 'success', 'INSTOCK': 'success', 'QUALIFIED': 'success',
+      'PENDIENTE': 'warn', 'LOWSTOCK': 'warn', 'CONTACTED': 'warn',
+      'INACTIVO': 'danger', 'OUTOFSTOCK': 'danger', 'LOST': 'danger',
+      'NEW': 'info'
+    };
+
+    return severityMap[status.toUpperCase()] ?? 'info';
+  }
+
+  // ── FUNCIONES INTERNAS PRIVADAS DE CONFIGURACIÓN Y PARSEO ──────────────────
+  /** Escanea la colección de filas inicial e inicializa el mapa de llaves para expandir visualmente los grupos */
+  private _initExpandedGroups(): void {
+    if (this.enableRowGroup && this.expandableRowGroups && this.groupRowsBy && this.data?.length) {
+      const keys: Record<string, boolean> = {};
+      this.data.forEach(row => {
+        const val = row[this.groupRowsBy];
+        if (val != null) keys[String(val)] = true;
+      });
+      this.expandedRowKeys = keys;
+    }
+  }
+
+  /**
+   * CONTROLADOR DE ERRORES CRÍTICOS DE FILTRADO DE FECHAS:
+   * Re-escribe los filtros internos 'dateIs', 'dateIsNot', 'dateBefore' y 'dateAfter' del FilterService.
+   * Permite que strings ISO 860ims provenientes del servidor se parseen de forma segura, evitando crashes fatales en la UI.
+   */
+  private _registerSafeDateFilters(): void {
+    const parseToDate = (val: any): Date | null => {
+      if (val instanceof Date) return val;
+      if (typeof val === 'string') {
+        const timestamp = Date.parse(val);
+        if (!isNaN(timestamp)) return new Date(timestamp);
+      }
+      return null;
+    };
+
+    const registerSafeFilter = (filterName: string, compareFn: (v: Date, f: Date) => boolean) => {
+      this.filterService.register(filterName, (value: any, filter: any): boolean => {
+        if (filter == null) return true;
+        if (value == null) return false;
+
+        const valDate = parseToDate(value);
+        const filDate = parseToDate(filter);
+
+        return (valDate && filDate) ? compareFn(valDate, filDate) : false;
+      });
+    };
+
+    const getZeroTime = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+
+    registerSafeFilter('dateIs', (v, f) => v.toDateString() === f.toDateString());
+    registerSafeFilter('dateIsNot', (v, f) => v.toDateString() !== f.toDateString());
+    registerSafeFilter('dateBefore', (v, f) => getZeroTime(v) < getZeroTime(f));
+    registerSafeFilter('dateAfter', (v, f) => getZeroTime(v) > getZeroTime(f));
+  }
+
+  // ── IDENTIFICADORES DE RENDIMIENTO (TRACK-BY OPTIMIZATIONS) ─────────────────
+  /** Evita el parpadeo del DOM al reordenar columnas */
+  trackByField(_index: number, col: TableColumn): string {
+    return col.field;
+  }
+
+  /** Evita renderizados masivos de filas innecesarios al actualizar colecciones de datos */
   trackByRow(index: number, row: any): any {
     return row?.id ?? row?.uuid ?? row?._trackId ?? index;
   }

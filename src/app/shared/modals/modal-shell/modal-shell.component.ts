@@ -25,9 +25,11 @@ export class ModalShellComponent {
   @Input() title = '';
   @Input() width = '480px';
   @Input() styleClass = '';
-  @Input() draggable = false;
+  @Input() draggable = true;
+  @Input() resizable = true;
   @Input() noPadding = false;
   @Input() breakpoints = { '960px': '80vw', '768px': '92vw', '480px': '96vw' };
+  @Input() appendTo: any = 'body';
 
   // Header configs
   @Input() icon = '';
@@ -38,6 +40,7 @@ export class ModalShellComponent {
   @Input() loading = false;
   @Input() confirmLabel = 'Confirmar';
   @Input() confirmIcon = 'pi pi-check';
+  @Input() confirmDisabled = false;
   @Input() confirmSeverity: 'success' | 'info' | 'warn' | 'danger' | 'help' | 'primary' | 'secondary' | 'contrast' | null | undefined = 'info';
   @Input() cancelLabel = 'Cancelar';
   @Input() cancelIcon = 'pi pi-times';
