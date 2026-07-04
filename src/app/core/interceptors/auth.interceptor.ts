@@ -36,7 +36,8 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
 
     return next(authReq).pipe(
         catchError((error: HttpErrorResponse) => {
-            if (error.status === 401 && !isPublicEndpoint) {
+            const isLogoutOrDeviceUrl = req.url.includes('/auth/logout') || req.url.includes('/notifications/devices');
+            if (error.status === 401 && !isPublicEndpoint && !isLogoutOrDeviceUrl) {
                 return handle401Error(authReq, next, authService, notificationService);
             }
             return throwError(() => error);
