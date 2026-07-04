@@ -144,12 +144,9 @@ export class FormModalComponent implements OnInit {
   initForm() {
     this.formSubs.unsubscribe();
     this.formSubs = new Subscription();
-
     const mode = this.mode();
     const source = mode === 'add' ? this.initialData() : (this.data() || {});
-
-    this.form = buildFormGroup(this.fb, this.fields(), source);
-
+    this.form = buildFormGroup(this.fb, this.fields(), source, mode);
     this.fields().forEach(field => {
       const control = this.form.get(field.name);
       if (control) {

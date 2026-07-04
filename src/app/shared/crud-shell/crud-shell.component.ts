@@ -4,6 +4,9 @@ import { ActivatedRoute } from '@angular/router';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { NotificationService } from '@core/services/notification.service';
+import { CrudConfigService } from '@core/services/crud-config.service';
+import { mapToTableColumns, type CrudConfigFromAPI } from '@shared/types/crud-config.types';
+import { firstValueFrom } from 'rxjs';
 
 export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
 
@@ -82,7 +85,8 @@ export class CrudShellComponent implements OnInit {
   private injector = inject(Injector);
   private service = inject(CRUD_SERVICE_TOKEN, { optional: true });
   crud = inject(UnifiedCrudService);
-  private environmentInjector = inject(EnvironmentInjector);
+  private crudConfigService = inject(CrudConfigService);
+  environmentInjector = inject(EnvironmentInjector);
   destroyRef = inject(DestroyRef);
   notificationService = inject(NotificationService);
 
@@ -103,6 +107,7 @@ export class CrudShellComponent implements OnInit {
   deleteMessage: string | ((item: any) => string) = '';
   formExtraData: any = null;
   routeData: any = null;
+  _dbConfig: CrudConfigFromAPI | null = null;
   customModalComponent: any = null;
   customModalInputs: Record<string, any> = {};
   
@@ -121,10 +126,34 @@ export class CrudShellComponent implements OnInit {
     const data = this.route.snapshot.data;
     this.routeData = data;
     
-    this.title = data['title'] || 'Catálogo';
-    this.subtitle = data['subtitle'] || '';
-    this.resourceName = data['resourceName'] || 'Elemento';
-    this.addLabel = data['addLabel'] || 'Nuevo';
+    // Si hay crudConfigKey, cargar metadata desde BD (API)
+    const crudConfigKey = data['crudConfigKey'];
+    if (crudConfigKey) {
+      const cfg = await firstValueFrom(this.crudConfigService.getCrudConfig(crudConfigKey));
+      if (cfg) {
+        this.title = cfg.title || data['title'] || 'Catálogo';
+        this.subtitle = cfg.subtitle || data['subtitle'] || '';
+        this.resourceName = cfg.resource_name || data['resourceName'] || 'Elemento';
+        this.addLabel = cfg.add_label || data['addLabel'] || 'Nuevo';
+        this.showAdd = cfg.show_add !== undefined ? !!cfg.show_add : true;
+        this.showEdit = cfg.show_edit !== undefined ? !!cfg.show_edit : true;
+        this.showDelete = cfg.show_delete !== undefined ? !!cfg.show_delete : true;
+        this.lazy = !!cfg.lazy_load || data['lazy'] || false;
+        this.isTreeTable = !!cfg.is_tree || data['isTreeTable'] || false;
+        this.deleteMessage = cfg.delete_msg || data['deleteMessage'] || '¿Estás seguro de eliminar este elemento?';
+        if (cfg.columns) {
+          this.cols = mapToTableColumns(cfg.columns);
+        }
+        // Build function overrides from DB config
+        this._dbConfig = cfg;
+      }
+    }
+    
+    // Route data overrides (siempre gana sobre DB)
+    this.title = data['title'] || this.title;
+    this.subtitle = data['subtitle'] || this.subtitle;
+    this.resourceName = data['resourceName'] || this.resourceName;
+    this.addLabel = data['addLabel'] || this.addLabel;
     this.showAdd = data['showAdd'] !== undefined ? data['showAdd'] : true;
     this.showEdit = data['showEdit'] !== undefined ? data['showEdit'] : true;
     this.showDelete = data['showDelete'] !== undefined ? data['showDelete'] : true;
@@ -137,7 +166,9 @@ export class CrudShellComponent implements OnInit {
     this.deleteMessage = data['deleteMessage'] || '¿Estás seguro de eliminar este elemento?';
     
     // Resolve dynamic imports for cols and formFields if they are functions (lazy loaded)
-    this.cols = typeof data['cols'] === 'function' ? await data['cols']() : (data['cols'] || []);
+    if (!this._dbConfig || this.cols.length === 0) {
+      this.cols = typeof data['cols'] === 'function' ? await data['cols']() : (data['cols'] || []);
+    }
     this.formFields = typeof data['formFields'] === 'function' ? await data['formFields']() : (data['formFields'] || []);
     
     if (typeof data['formFieldsFn'] === 'function') {
@@ -167,6 +198,12 @@ export class CrudShellComponent implements OnInit {
     if (data['fnCreate']) fnCreate = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnCreate'](...args));
     if (data['fnUpdate']) fnUpdate = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnUpdate'](...args));
     if (data['fnDelete']) fnDelete = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnDelete'](...args));
+
+    // Approach 3: Use DB config to auto-build fetch/delete functions
+    if (this._dbConfig) {
+      if (!fnFetch) fnFetch = this.crudConfigService.buildFetchFn(this._dbConfig, fnFetch);
+      if (!fnDelete) fnDelete = this.crudConfigService.buildDeleteFn(this._dbConfig, fnDelete);
+    }
 
     let fnCatalogs;
     if (data['fnCatalogs']) {

@@ -96,16 +96,26 @@ export function objectToFormData(data: any, fileKey?: string | string[]): FormDa
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import type { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 
-export function buildFormGroup(fb: FormBuilder, fields: FormField[], source: Record<string, any> = {}): FormGroup {
+export function buildFormGroup(fb: FormBuilder, fields: FormField[], source: Record<string, any> = {}, mode: string = 'add'): FormGroup {
   const group: Record<string, any> = {};
 
   fields.forEach(field => {
-    const value = source[field.name] ?? '';
+    const value = field.dataPath
+      ? (getNestedValue(source, field.dataPath) ?? '')
+      : (source?.[field.name] ?? '');
+
     const validators: any[] = [];
-    if (field.required) validators.push(Validators.required);
-    if (field.type === 'email') validators.push(Validators.email);
-    group[field.name] = [{ value, disabled: !!field.disabled }, validators];
+    if (field.required && mode !== 'view') validators.push(Validators.required);
+    if (field.type === 'email' && mode !== 'view') validators.push(Validators.email);
+
+    const isDisabled = mode === 'view' || !!field.disabled;
+    group[field.name] = [{ value, disabled: isDisabled }, validators];
   });
 
   return fb.group(group);
+}
+
+function getNestedValue(obj: any, path: string): any {
+  if (!obj || !path) return undefined;
+  return path.split('.').reduce((acc, key) => (acc != null ? acc[key] : undefined), obj);
 }

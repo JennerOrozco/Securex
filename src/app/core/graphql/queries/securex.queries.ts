@@ -364,6 +364,20 @@ export const SECUREX_QUERIES = {
       }
     }
   `,
+  CRUD_CONFIG: `
+    query CrudConfig($routePath: String!) {
+      crudConfig(routePath: $routePath) {
+        route_path resource_name title subtitle add_label permission
+        primary_key default_sort lazy_load is_tree show_add show_edit show_delete
+        delete_msg graphql_domain query_name query_field delete_q_name delete_field
+        create_q_name create_field update_q_name update_field
+        columns {
+          id field header type sub_field avatar_fld sortable filterable
+          visible width text_align render_func sort_order
+        }
+      }
+    }
+  `,
 };
 
 export const SECUREX_MUTATIONS = {

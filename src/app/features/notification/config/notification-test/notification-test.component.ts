@@ -50,7 +50,12 @@ export class NotificationTestComponent implements OnInit {
   selectedUser = signal<any>(null);
 
   messageFields = MESSAGE_FIELDS;
-  messageForm!: FormGroup;
+  messageForm = buildFormGroup(this.fb, MESSAGE_FIELDS, {
+    title: 'Test Notificación',
+    message: 'Este es un mensaje de prueba desde el wizard.',
+    type: 'INFO',
+    channels: 'PUSH,EMAIL'
+  });
 
   appTable = new TableDataLoader(
     (p, l, f, s) => this.appService.getAppsWithCompaniesPaginated(p, l, f, s),

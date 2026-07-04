@@ -22,7 +22,7 @@
   </ng-template>
 
   <div class="gm-body gm-body--form" [class.gm-body--no-padding]="noPadding()">
-    <form *ngIf="fields() && fields().length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
+      <form *ngIf="form && fields() && fields().length > 0" [formGroup]="form" class="gm-form" autocomplete="off" novalidate>
       <app-dynamic-form
         [fields]="fields()"
         [parentForm]="form"

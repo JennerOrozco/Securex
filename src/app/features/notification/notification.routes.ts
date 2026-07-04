@@ -10,16 +10,8 @@ export const notificationRoutes: Routes = [
     title: 'Aplicaciones',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Aplicaciones',
-      subtitle: 'Aplicaciones registradas en el servicio de notificaciones',
-      resourceName: 'Aplicación',
+      crudConfigKey: 'notif-apps',
       permission: 'securex.notifications.apps',
-      lazy: true,
-      showAdd: false,
-      showEdit: false,
-      showDelete: false,
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(NotificationSettingsService).getAppsGql(page, limit, filter, sort),
-      cols: () => import('./apps/apps.config').then(m => m.APPS_COLS)
     }
   },
   {
@@ -64,19 +56,8 @@ export const notificationRoutes: Routes = [
     title: 'Dispositivos de Usuario',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Dispositivos de Usuario',
-      subtitle: 'Dispositivos registrados para recibir notificaciones Push',
-      resourceName: 'Dispositivo',
+      crudConfigKey: 'user-devices',
       permission: 'securex.notifications.devices',
-      primaryKey: 'id',
-      lazy: true,
-      showAdd: false,
-      showEdit: false,
-      showDelete: true,
-      deleteMessage: '¿Seguro que deseas eliminar este dispositivo? El usuario dejará de recibir notificaciones push en él.',
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(NotificationSettingsService).getUserDevicesGql(page, limit, filter, sort),
-      fnDelete: (id: string) => inject(NotificationSettingsService).deleteUserDeviceGql(id),
-      cols: () => import('./user-devices/user-devices.config').then(m => m.USER_DEVICES_COLS)
     }
   },
   {
@@ -84,21 +65,8 @@ export const notificationRoutes: Routes = [
     title: 'Historial de Notificaciones',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Historial de Notificaciones',
-      subtitle: 'Registro de todas las notificaciones creadas',
-      resourceName: 'Notificación',
+      crudConfigKey: 'notif-history',
       permission: 'securex.notifications.history',
-      primaryKey: 'id',
-      defaultSortKey: 'created_at',
-      lazy: true,
-      showAdd: false,
-      showEdit: false,
-      showDelete: true,
-      deleteTitle: 'Eliminar Notificación',
-      deleteMessage: '¿Estás seguro que deseas eliminar este registro histórico?',
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(NotificationSettingsService).getNotificationsHistoryGql(page, limit, filter, sort),
-      fnDelete: (id: string) => inject(NotificationSettingsService).deleteNotificationHistoryGql(id),
-      cols: () => import('./logs/notification-history/notification-history.config').then(m => m.NOTIFICATION_HISTORY_COLS)
     }
   },
   {
@@ -106,20 +74,8 @@ export const notificationRoutes: Routes = [
     title: 'Intentos de Envio',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Intentos de Envío de Notificaciones',
-      subtitle: 'Registro de intentos y control de límites (Rate Limiting)',
-      resourceName: 'Intento de Envío',
+      crudConfigKey: 'send-attempts',
       permission: 'securex.notifications.send-attempts',
-      primaryKey: 'id',
-      lazy: true,
-      showAdd: false,
-      showEdit: false,
-      showDelete: true,
-      deleteTitle: 'Eliminar Intento',
-      deleteMessage: '¿Estás seguro que deseas eliminar este registro?',
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(NotificationSettingsService).getSendAttemptsGql(page, limit, filter, sort),
-      fnDelete: (id: string) => inject(NotificationSettingsService).deleteSendAttemptGql(id),
-      cols: () => import('./logs/send-attempts/send-attempts.config').then(m => m.SEND_ATTEMPTS_COLS)
     }
   }
 ];
