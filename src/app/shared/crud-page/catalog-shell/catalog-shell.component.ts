@@ -52,9 +52,16 @@ export class CatalogShellComponent implements OnInit {
     this.resourceName = data['resourceName'] || 'Elemento';
     this.showDelete = data['showDelete'] !== undefined ? data['showDelete'] : true;
     
-    // Resolve dynamic imports for cols and formFields
-    this.cols = typeof data['cols'] === 'function' ? await data['cols']() : (data['cols'] || []);
-    this.formFields = typeof data['formFields'] === 'function' ? await data['formFields']() : (data['formFields'] || []);
+    try {
+      // Resolve dynamic imports for cols and formFields
+      this.cols = typeof data['cols'] === 'function' ? await data['cols']() : (data['cols'] || []);
+      this.formFields = typeof data['formFields'] === 'function' ? await data['formFields']() : (data['formFields'] || []);
+    } catch (err) {
+      console.error('[CatalogShell] Error resolviendo metadatos de configuración:', err);
+      // Asignar fallback vacío si la resolución falla
+      this.cols = [];
+      this.formFields = [];
+    }
     
     // Notify Angular of changes after async operation (OnPush)
     this.cdr.markForCheck();
@@ -69,10 +76,10 @@ export class CatalogShellComponent implements OnInit {
     const deleteMethod = data['methods']?.delete as string;
 
     this.crud.initialize({
-      fnFetch: (serviceInstance && fetchMethod) ? ((serviceInstance as any)[fetchMethod] as Function).bind(serviceInstance) : undefined,
-      fnCreate: (serviceInstance && createMethod) ? ((serviceInstance as any)[createMethod] as Function).bind(serviceInstance) : undefined,
-      fnUpdate: (serviceInstance && updateMethod) ? ((serviceInstance as any)[updateMethod] as Function).bind(serviceInstance) : undefined,
-      fnDelete: (serviceInstance && deleteMethod) ? ((serviceInstance as any)[deleteMethod] as Function).bind(serviceInstance) : undefined,
+      fnFetch: (serviceInstance && fetchMethod && typeof (serviceInstance as any)[fetchMethod] === 'function') ? ((serviceInstance as any)[fetchMethod] as Function).bind(serviceInstance) : undefined,
+      fnCreate: (serviceInstance && createMethod && typeof (serviceInstance as any)[createMethod] === 'function') ? ((serviceInstance as any)[createMethod] as Function).bind(serviceInstance) : undefined,
+      fnUpdate: (serviceInstance && updateMethod && typeof (serviceInstance as any)[updateMethod] === 'function') ? ((serviceInstance as any)[updateMethod] as Function).bind(serviceInstance) : undefined,
+      fnDelete: (serviceInstance && deleteMethod && typeof (serviceInstance as any)[deleteMethod] === 'function') ? ((serviceInstance as any)[deleteMethod] as Function).bind(serviceInstance) : undefined,
       resourceName: this.resourceName,
       defaultSortKey: data['defaultSortKey'] || 'sort_order'
     });

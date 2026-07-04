@@ -87,7 +87,7 @@ export const SECUREX_QUERIES = {
   COMPONENTS: `
     query Components {
       components {
-        id uuid name slug type icon sort_order
+        id uuid name slug route type icon sort_order
       }
     }
   `,

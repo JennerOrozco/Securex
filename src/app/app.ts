@@ -55,6 +55,21 @@ export class App {
   constructor() {
     this.startUpdatePolling();
     this.listenToNotificationClicks();
+    this.scrollToTopOnNavigate();
+  }
+
+  private scrollToTopOnNavigate() {
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(() => {
+      const main = document.querySelector('.main-content');
+      if (main) {
+        main.scrollTo({ top: 0, behavior: 'instant' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
+    });
   }
 
   private startUpdatePolling() {

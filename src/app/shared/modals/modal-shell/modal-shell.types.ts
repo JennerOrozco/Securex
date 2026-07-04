@@ -7,7 +7,7 @@ export interface CatalogConfig {
 export interface FormField {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'currency' | 'select' | 'select-grid' | 'date' | 'textarea' | 'email' | 'file' | 'password' | 'phone' | 'nit' | 'addresses' | 'color';
+  type: 'text' | 'number' | 'currency' | 'select' | 'select-grid' | 'date' | 'textarea' | 'email' | 'file' | 'password' | 'phone' | 'nit' | 'addresses' | 'color' | 'avatar';
   currencyCode?: string;
   locale?: string;
   options?: any[];

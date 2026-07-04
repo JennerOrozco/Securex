@@ -16,6 +16,17 @@
           [mode]="$any(mode())"
         ></app-file-input>
 
+        <app-input-avatar
+          *ngSwitchCase="'avatar'"
+          [id]="field.name"
+          [label]="field.label"
+          [icon]="field.icon || ''"
+          [required]="field.required || false"
+          [control]="$any(form.get(field.name))"
+          [mode]="$any(mode())"
+          [initials]="field.placeholder || '?'"
+        ></app-input-avatar>
+
         <ng-container *ngSwitchCase="'text'">
           <app-input-image
             *ngIf="field.name === 'logo_url'"

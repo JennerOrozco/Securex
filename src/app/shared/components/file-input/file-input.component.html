@@ -1,55 +1,70 @@
 <app-form-field [id]="id" [label]="label" [icon]="icon" [required]="required" [control]="control">
   <div class="gm-file-wrap">
-    <div class="file-drop-zone"
-         [class.has-file]="filePayload || control?.value"
-         [class.drag-over]="dragOver"
-         (click)="mode !== 'view' && fileInput.click()"
-         (dragover)="mode !== 'view' && onDragOver($event)"
-         (dragleave)="mode !== 'view' && onDragLeave($event)"
-         (drop)="mode !== 'view' && onDrop($event)">
-
-      @if (!filePayload && !control?.value) {
+    
+    <!-- Dropzone Area -->
+    @if (mode !== 'view') {
+      <div class="file-drop-zone"
+           [class.drag-over]="dragOver"
+           (click)="fileInput.click()"
+           (dragover)="onDragOver($event)"
+           (dragleave)="onDragLeave($event)"
+           (drop)="onDrop($event)">
+        
         <div class="file-drop-content">
           <i class="pi pi-cloud-upload file-drop-icon"></i>
-          <span class="file-drop-text">Arrastre un archivo o haga clic para seleccionar</span>
-          <span class="file-drop-hint">{{ accept.replace(',', ', ') || 'Todos los archivos' }}</span>
+          <span class="file-drop-text">Elige un archivo o arrástralo aquí</span>
+          <span class="file-drop-hint">Formatos aceptados: {{ accept.replace(',', ', ') || 'Todos' }}</span>
+          
+          <div class="mt-2" (click)="$event.stopPropagation()">
+            <app-button 
+              label="Buscar archivo" 
+              severity="secondary" 
+              [outlined]="true"
+              (onClick)="fileInput.click()">
+            </app-button>
+          </div>
         </div>
-      } @else {
-        <div class="file-preview-row">
+      </div>
+    }
+
+    <!-- Selected File Card (Displays if there is a file) -->
+    @if (filePayload || control?.value) {
+      <div class="file-selected-card">
+        <div class="file-selected-icon-container">
           @if (filePayload) {
             @if (localPreview) {
-              <div class="file-image-preview-container">
-                <img [src]="localPreview" alt="Preview" class="file-image-preview-img" />
-              </div>
+              <img [src]="localPreview" alt="Preview" class="file-selected-preview" />
             } @else {
               <div class="file-icon" [class]="getFileIconClass(filePayload)">
                 <i [class]="getFileIcon(filePayload)"></i>
               </div>
             }
-            <div class="file-details">
-              <span class="file-name">{{ filePayload.name }}</span>
-              <span class="file-size">{{ formatFileSize(filePayload.size) }}</span>
-            </div>
           } @else {
-            <div class="file-image-preview-container">
-              <img [src]="control?.value" alt="Preview" class="file-image-preview-img" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
-              <div class="logo-preview-modal-fallback" style="display: none; width: 48px; height: 48px; border-radius: 8px; justify-content: center; align-items: center; background-color: rgba(0,0,0,0.05); color: #64748b;">
-                <i [class]="'pi ' + (fallbackIcon || 'pi-file')" style="font-size: 1.5rem;"></i>
-              </div>
+            <!-- Existing URL or File -->
+            <img [src]="control?.value" alt="Preview" class="file-selected-preview" (error)="$any($event.target).style.display='none'; $any($event.target).nextElementSibling.style.display='flex'" />
+            <div class="file-icon default" style="display: none;">
+              <i [class]="'pi ' + (fallbackIcon || 'pi-file')"></i>
             </div>
-            <div class="file-details">
-              <span class="file-name">Archivo actual</span>
-              <span class="file-size">Existente</span>
-            </div>
-          }
-          @if (mode !== 'view') {
-            <button type="button" class="remove-btn" (click)="removeFile($event)">
-              <i class="pi pi-times"></i>
-            </button>
           }
         </div>
-      }
-    </div>
+
+        <div class="file-selected-details">
+          <span class="file-selected-name">{{ filePayload ? filePayload.name : 'Archivo actual' }}</span>
+          <div class="file-selected-status">
+            <span class="file-selected-size">{{ filePayload ? formatFileSize(filePayload.size) : 'Existente' }}</span>
+          </div>
+        </div>
+
+        @if (mode !== 'view') {
+          <app-button 
+            icon="pi pi-times" 
+            severity="danger" 
+            class="p-button-text p-button-rounded ml-auto flex-shrink-0"
+            (onClick)="removeFile()">
+          </app-button>
+        }
+      </div>
+    }
 
     <input
       #fileInput

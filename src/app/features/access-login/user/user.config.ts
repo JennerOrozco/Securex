@@ -2,18 +2,28 @@ import { TableColumn } from '@shared/table-shared/shared/table.types';
 import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
 
 export const USER_ACCESS_COLS: TableColumn[] = [
+  // 1. Aprovechando los 'paths' (user.full_name, user.email): El cell-renderer navega automáticamente por el objeto.
   { field: 'user.full_name', header: 'Usuario', type: 'user', subField: 'user.email', avatarField: 'user.profile_picture', sortable: true },
+  
+  // 2. El uso de render aquí es correcto para inyectar el fallback "N/A" si la ruta devuelve null/undefined.
   { field: 'app.name', header: 'Aplicación', type: 'text', sortable: true, render: (row) => row.app?.name || 'N/A' },
   { field: 'company.name', header: 'Compañía', type: 'text', sortable: true, render: (row) => row.company?.name || 'N/A' },
   { field: 'branch.name', header: 'Sucursal', type: 'text', sortable: true, render: (row) => row.branch?.name || 'Todas (Global)' },
+  
   { field: 'role.name', header: 'Rol', type: 'role', sortable: true },
+  
+  // 3. Mejoras en badge: Habilitamos filterMulti para poder filtrar por múltiples estados a la vez, 
+  // y limpiamos el 'render' con un diccionario para mayor legibilidad.
   {
     field: 'status', header: 'Estado', type: 'badge', sortable: true,
     filterOptions: [
       { label: 'Aprobado', value: 'APPROVED' }, { label: 'Pendiente', value: 'PENDING' }, { label: 'Rechazado', value: 'REJECTED' }
-    ], filterOptionLabel: 'label',
-    render: (row) => row.status === 'APPROVED' ? 'Aprobado' : row.status === 'PENDING' ? 'Pendiente' : row.status === 'REJECTED' ? 'Rechazado' : row.status
+    ], 
+    filterOptionLabel: 'label',
+    filterMulti: true,
+    render: (row) => ({ 'APPROVED': 'Aprobado', 'PENDING': 'Pendiente', 'REJECTED': 'Rechazado' }[row.status as string] || row.status)
   },
+  
   { field: 'acciones', header: 'Acciones', type: 'actions' }
 ];
 

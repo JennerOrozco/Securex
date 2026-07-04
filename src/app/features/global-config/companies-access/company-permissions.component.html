@@ -62,12 +62,23 @@
         <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-44"></span></div>
       </div>
 
-      <div *ngIf="selectedAppId && !selectedCompanyId && !loading" class="empty-state">
-        <i class="pi pi-building text-4xl text-slate-300 mb-3"></i>
-        <p class="text-slate-500 font-medium">Seleccione una compa&ntilde;&iacute;a para gestionar sus permisos.</p>
-        <span class="text-xs text-slate-400 mt-1">Use el selector superior para elegir la compa&ntilde;&iacute;a destino.</span>
-      </div>
+      <!-- Estado Inicial: Nada seleccionado -->
+      <app-empty-state
+        *ngIf="!selectedAppId && !selectedCompanyId && !loading"
+        icon="pi pi-window-maximize"
+        title="Seleccione una Aplicación"
+        description="Elija primero la aplicación y luego la compañía destino para comenzar a administrar sus accesos.">
+      </app-empty-state>
 
+      <!-- Estado: Aplicación seleccionada, falta compañía -->
+      <app-empty-state
+        *ngIf="selectedAppId && !selectedCompanyId && !loading"
+        icon="pi pi-building"
+        title="Seleccione una Compañía"
+        description="Use el selector superior para elegir la compañía a la cual desea asignarle los permisos.">
+      </app-empty-state>
+
+      <!-- Árbol de Permisos -->
       <app-permission-tree
         *ngIf="selectedCompanyId && !loading && groups.length > 0"
         [groups]="groups"
@@ -76,11 +87,13 @@
         (selectedIdsChange)="onSelectionChange($event)">
       </app-permission-tree>
 
-      <div *ngIf="selectedCompanyId && !loading && groups.length === 0" class="empty-state">
-        <i class="pi pi-folder-open text-4xl text-slate-300 mb-3"></i>
-        <p class="text-slate-500 font-medium">No hay permisos disponibles para esta aplicaci&oacute;n.</p>
-        <span class="text-xs text-slate-400 mt-1">Verifique que la aplicaci&oacute;n tenga m&oacute;dulos y permisos configurados.</span>
-      </div>
+      <!-- Estado: Sin permisos registrados en el árbol -->
+      <app-empty-state
+        *ngIf="selectedCompanyId && !loading && groups.length === 0"
+        icon="pi pi-folder-open"
+        title="Sin permisos configurados"
+        description="No hay permisos disponibles para esta aplicación. Verifique en los ajustes globales que la aplicación tenga módulos asignados.">
+      </app-empty-state>
     </div>
   </ng-container>
 </div>

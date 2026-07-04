@@ -11,8 +11,8 @@ export const COMPANIES_COLS: TableColumn[] = [
 export const createCompaniesForm = (catalogs: any): FormField[] => {
   const apps = catalogs?.apps || [];
   return [
-    { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true },
-    { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true },
+    { name: 'name', label: 'Nombre de la Compañía', type: 'text', required: true, placeholder: 'Ej. Soluciones Corporativas S.A.' },
+    { name: 'tax_id', label: 'NIT / Identificación Fiscal', type: 'nit', required: true, placeholder: 'Ej. 1234567-8' },
     { name: 'app_id', label: 'Aplicación Asociada', type: 'select', required: false, options: apps.map((app: any) => ({ label: app.name, value: app.id })) },
     { name: 'logo_url', label: 'Logo de la Compañía', type: 'file', required: false, accept: 'image/*' },
     { name: 'is_active', label: '¿Está Activa?', type: 'select', required: true, options: [{ label: 'Activo', value: true }, { label: 'Inactivo', value: false }] }

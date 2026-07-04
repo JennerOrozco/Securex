@@ -1,7 +1,7 @@
 /* =======================================================================
-   TABLES — global styles
-   Shared styles for PrimeNG datatables (used by TableComponent, TableEdit
-   and feature pages).  Imported from src/styles.css.
+   TABLES — global styles v3
+   Product register (impeccable): restrained, no side-stripes, glass only
+   on overlays, motion conveys state only, 150–250ms transitions.
    ======================================================================= */
 
 /* ─────────────────────────────────────────────────────────────
@@ -14,62 +14,63 @@
 }
 
 @media (max-width: 768px) {
-    .page-wrapper {
-        padding: 0;
-    }
+    .page-wrapper { padding: 0; }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   TABLE CONTAINER
+   TABLE CARD — Clean surface, no glass
    ───────────────────────────────────────────────────────────── */
 .gm-data-table {
-    /* border/radius/shadow heredados de .card-base */ }
+    background: var(--app-main-bg-card, var(--color-bg-card, #fff));
+    border-radius: 16px;
+    border: 1px solid var(--app-main-border, var(--color-border));
+    box-shadow:
+        0 1px 3px rgba(0,0,0,0.04),
+        0 8px 24px rgba(0,0,0,0.03);
+    overflow: hidden;
+    padding: 0;
+}
 
+/* Scrollable */
 .gm-data-table .p-datatable-wrapper,
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
     overflow-x: auto !important;
     width: 100%;
     -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
 }
 
 .gm-data-table .p-datatable-wrapper::-webkit-scrollbar,
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar {
-    height: 8px;
+    height: 6px;
 }
 
 .gm-data-table .p-datatable-wrapper::-webkit-scrollbar-thumb,
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb {
-    background: var(--color-text-light);
-    border-radius: var(--radius-xs);
-    transition: background 0.15s ease;
+    background: hsl(215 15% 75%);
+    border-radius: 100px;
 }
 
 .gm-data-table .p-datatable-wrapper::-webkit-scrollbar-thumb:hover,
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-thumb:hover {
-    background: var(--color-text-secondary) !important;
+    background: hsl(215 15% 60%);
 }
 
 .gm-data-table .p-datatable-wrapper::-webkit-scrollbar-track,
 .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body::-webkit-scrollbar-track {
-    background: var(--color-bg-page);
+    background: transparent;
 }
 
 .gm-data-table .p-datatable-table {
     min-width: 800px;
     table-layout: auto !important;
-}
-
-.gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
-    min-width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 @media (max-width: 768px) {
     .gm-data-table {
-        padding: 0 !important;
-    }
-    .gm-data-table .p-datatable-wrapper,
-    .gm-data-table.p-datatable-scrollable .p-datatable-scrollable-body {
-        overflow-x: auto !important;
+        border-radius: 12px;
         padding: 0 !important;
     }
     .gm-data-table .p-datatable-table {
@@ -81,27 +82,36 @@
     .gm-data-table .p-datatable-table {
         width: auto !important;
         min-width: 100%;
-        margin: 0 auto;
     }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   TABLE HEADER & CELLS
+   TABLE HEADER — Solid gradient, clear affordance
    ───────────────────────────────────────────────────────────── */
-.gm-data-table .p-datatable-thead>tr>th {
-    background: var(--app-main-primary) !important;
-    color: var(--color-white-80) !important;
-    font-size: var(--font-sm) !important;
-    font-weight: 700 !important;
+.gm-data-table .p-datatable-thead > tr > th {
+    background: var(--app-main-primary, #960d14) !important;
+    color: #ffffff !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
-    padding: 6px 12px !important;
+    padding: 10px 14px !important;
     border: none !important;
+    border-bottom: 1px solid var(--color-border) !important;
+    transition: filter 0.15s ease;
 }
 
-.gm-data-table .p-datatable-thead>tr>th:hover {
-    background: var(--app-main-primary) !important;
-    color: white !important;
+.gm-data-table .p-datatable-thead > tr > th.p-sortable-column {
+    cursor: pointer;
+    user-select: none;
+}
+
+.gm-data-table .p-datatable-thead > tr > th.p-sortable-column:hover {
+    filter: brightness(1.1);
+}
+
+.gm-data-table .p-datatable-thead > tr > th.p-sortable-column:active {
+    filter: brightness(0.95);
 }
 
 .gm-data-table .p-datatable-thead .th-content {
@@ -112,35 +122,53 @@
     width: 100%;
 }
 
-.gm-data-table .p-datatable-tbody>tr>td {
-    padding: 8px 10px !important;
-    font-size: var(--font-sm) !important;
-    border-bottom: 1px solid var(--app-main-border) !important;
-    vertical-align: middle;
-}
-
-.gm-data-table .p-datatable-striped .p-datatable-tbody>tr:nth-child(even) {
-    background-color: var(--color-bg-subtle) !important;
-}
-
-.gm-data-table .p-datatable-hoverable-rows .p-datatable-tbody>tr:hover {
-    background-color: var(--color-bg-page) !important;
-}
-
-.gm-data-table .p-datatable-tbody>tr {
+/* ─────────────────────────────────────────────────────────────
+   TABLE BODY — Clean rows, state-only motion
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-tbody > tr {
     cursor: context-menu;
     transition: background-color 0.15s ease;
 }
 
+.gm-data-table .p-datatable-tbody > tr > td {
+    padding: 10px 12px !important;
+    font-size: 0.85rem !important;
+    border-bottom: 1px solid hsl(215 20% 92%) !important;
+    vertical-align: middle;
+}
+
+/* Row hover: subtle background tint only */
+.gm-data-table .p-datatable-tbody > tr:hover {
+    background-color: hsl(240 30% 97%) !important;
+}
+
+/* Row click: brief pulse feedback */
+.gm-data-table .p-datatable-tbody > tr:active {
+    background-color: hsl(240 30% 94%) !important;
+    transition: background-color 0.05s ease;
+}
+
+/* Row exit animation */
+.gm-data-table .p-datatable-tbody > tr.row-exiting {
+    animation: rowExit 0.25s ease-in forwards;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+/* Striped rows */
+.gm-data-table .p-datatable-striped .p-datatable-tbody > tr:nth-child(even) {
+    background-color: hsl(215 25% 98%) !important;
+}
+
 @media (max-width: 768px) {
-    .gm-data-table .p-datatable-tbody>tr {
+    .gm-data-table .p-datatable-tbody > tr {
         cursor: pointer;
     }
 }
 
 @media (max-width: 640px) {
-    .gm-data-table .p-datatable-thead>tr>th,
-    .gm-data-table .p-datatable-tbody>tr>td {
+    .gm-data-table .p-datatable-thead > tr > th,
+    .gm-data-table .p-datatable-tbody > tr > td {
         padding: 2px 4px !important;
     }
 }
@@ -155,10 +183,10 @@
 }
 
 .avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-md);
-    background: var(--color-bg-page);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: var(--color-bg-subtle);
     border: 1px solid var(--app-main-border);
     display: flex;
     align-items: center;
@@ -183,30 +211,38 @@
 .text-cell {
     font-size: var(--font-sm);
     color: var(--app-main-primary);
+    font-weight: 500;
+}
+
+.cell-text.clickable {
+    cursor: pointer;
+    transition: background-color 0.1s ease;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin: -2px -4px;
+}
+
+.cell-text.clickable:hover {
+    background-color: var(--color-bg-subtle);
+    color: var(--app-main-primary);
 }
 
 @media (max-width: 640px) {
-    .avatar {
-        display: none;
-    }
-    .user-name {
-        font-size: var(--font-sm);
-    }
-    .text-cell {
-        font-size: var(--font-sm);
-    }
+    .avatar { display: none; }
+    .user-name { font-size: var(--font-sm); }
+    .text-cell { font-size: var(--font-sm); }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   STATUS BADGES (estado-badge + badge-toggle + rol-badge)
+   STATUS BADGES — Solid, no animation
    ───────────────────────────────────────────────────────────── */
 .estado-badge {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    padding: 2px 10px;
-    border-radius: var(--radius-2xl);
-    font-size: var(--font-md);
+    gap: 5px;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 0.75rem;
     font-weight: 600;
 }
 
@@ -214,13 +250,13 @@
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    padding: 2px 10px;
-    border-radius: var(--radius-2xl);
+    padding: 3px 12px;
+    border-radius: 100px;
     font-weight: 600;
-    font-size: var(--font-xs);
+    font-size: 0.75rem;
     border: none;
     cursor: pointer;
-    transition: all 0.15s;
+    transition: background-color 0.15s ease;
 }
 
 .edo-dot {
@@ -239,11 +275,12 @@
 }
 
 .rol-badge {
-    padding: 2px 8px;
-    border-radius: var(--radius-sm);
-    font-size: var(--font-2xs);
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 0.7rem;
     font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.03em;
 }
 
 .rol-admin {
@@ -257,7 +294,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ACTION BUTTONS (act-btn + act-btn-create)
+   ACTION BUTTONS — Circular, solid backgrounds
    ───────────────────────────────────────────────────────────── */
 .actions {
     display: flex;
@@ -265,9 +302,9 @@
 }
 
 .act-btn {
-    width: 28px;
-    height: 28px;
-    border-radius: var(--radius-sm);
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     border: 1px solid var(--app-main-border);
     background: var(--color-bg-card);
     color: var(--app-main-text-muted);
@@ -275,20 +312,22 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s ease;
+    transition: background-color 0.15s ease, color 0.15s ease,
+                border-color 0.15s ease;
+    font-size: 0.8rem;
 }
 
-/* ── act-btn hover variants (agrupados) ── */
-.act-btn.view    { --act-hover-clr: var(--app-main-teal); --act-hover-bg: var(--color-bg-subtle); }
+/* ── act-btn hover variants ── */
+.act-btn.view    { --act-hover-clr: var(--app-main-teal); --act-hover-bg: hsl(173 60% 95%); }
 .act-btn.edit,
-.act-btn.activate { --act-hover-clr: var(--color-accent-blue); --act-hover-bg: var(--app-main-indigo-light); }
-.act-btn.perm    { --act-hover-clr: var(--color-amber); --act-hover-bg: var(--color-amber-bg); }
+.act-btn.activate { --act-hover-clr: var(--color-accent-blue); --act-hover-bg: hsl(240 60% 95%); }
+.act-btn.perm    { --act-hover-clr: var(--color-amber); --act-hover-bg: hsl(45 80% 94%); }
 .act-btn.del,
-.act-btn.pdf     { --act-hover-clr: var(--color-danger-text); --act-hover-bg: var(--color-danger-light); }
-.act-btn.duplicate { --act-hover-clr: var(--color-purple); --act-hover-bg: var(--color-purple-bg); }
+.act-btn.pdf     { --act-hover-clr: var(--color-danger-text); --act-hover-bg: hsl(0 60% 95%); }
+.act-btn.duplicate { --act-hover-clr: var(--color-purple); --act-hover-bg: hsl(270 60% 95%); }
 .act-btn.send,
 .act-btn.select,
-.act-btn.add-child-btn { --act-hover-clr: var(--color-emerald); --act-hover-bg: var(--color-emerald-bg); }
+.act-btn.add-child-btn { --act-hover-clr: var(--color-emerald); --act-hover-bg: hsl(152 60% 94%); }
 
 .act-btn:hover {
     background: var(--act-hover-bg, var(--color-bg-subtle));
@@ -296,7 +335,41 @@
     border-color: var(--act-hover-clr, var(--app-main-border));
 }
 
-.act-btn.add-child-btn:hover { transform: scale(1.05); }
+/* Quick actions — reveal on row hover (desktop only) */
+@media (min-width: 769px) {
+    .gm-data-table .p-datatable-tbody td.td-actions .actions {
+        opacity: 0.5;
+        transition: opacity 0.15s ease;
+    }
+    .gm-data-table .p-datatable-tbody tr:hover td.td-actions .actions {
+        opacity: 1;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   SKELETON LOADING — Shimmer conveys loading state
+   ───────────────────────────────────────────────────────────── */
+.skeleton-row td {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid hsl(215 20% 93%) !important;
+}
+
+.skeleton-shimmer {
+    display: block;
+    height: 1rem;
+    background: linear-gradient(90deg,
+        hsl(215 20% 94%) 0%,
+        hsl(215 20% 96%) 40%,
+        hsl(215 20% 94%) 80%);
+    background-size: 200% 100%;
+    border-radius: 6px;
+    animation: shimmer 1.6s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
 
 /* ─────────────────────────────────────────────────────────────
    EMPTY STATE
@@ -305,20 +378,39 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem;
-    color: var(--app-main-text-light);
+    padding: 3.5rem 2rem;
     text-align: center;
+    gap: 0.75rem;
 }
 
-.empty-state i {
-    font-size: var(--font-3xl);
-    margin-bottom: 0.5rem;
+.empty-icon-wrap {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: hsl(215 25% 96%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.25rem;
 }
 
-.empty-icon {
-    font-size: var(--font-3xl);
-    margin-bottom: 1rem;
-    color: var(--app-main-text-light);
+.empty-icon-wrap i {
+    font-size: 1.5rem;
+    color: var(--color-text-light);
+}
+
+.empty-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+.empty-desc {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    margin: 0;
+    max-width: 320px;
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -328,20 +420,13 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: var(--radius-lg);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
     background: var(--color-bg-card);
     border: 1px solid var(--app-main-border);
     overflow: hidden;
-    box-shadow: 0 2px 5px var(--color-black-05);
-    transition: all 0.2s ease;
-}
-
-.table-logo-container:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px var(--color-black-10);
-    border-color: var(--color-border-light);
+    box-shadow: 0 2px 6px hsl(0 0% 0% / 0.04);
 }
 
 .table-logo-img {
@@ -360,30 +445,29 @@
     background: var(--app-main-indigo-light);
     color: var(--app-main-blue-accent);
     font-size: var(--font-lg);
-    border-radius: var(--radius-md);
+    border-radius: 10px;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   COLUMN-FILTER OVERLAY (PrimeNG)
+   COLUMN-FILTER OVERLAY — Glass allowed (it's a floating overlay)
    ───────────────────────────────────────────────────────────── */
 .p-datatable-filter-overlay {
-    background: var(--color-white-90) !important;
+    background: hsl(215 20% 99% / 0.92) !important;
     backdrop-filter: blur(16px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    border: 1px solid rgba(226, 232, 240, 0.8) !important;
-    border-radius: var(--radius-xl) !important;
+    border: 1px solid hsl(215 20% 90% / 0.8) !important;
+    border-radius: 14px !important;
     box-shadow:
-        0 12px 40px -8px rgba(0, 0, 0, 0.12),
-        0 4px 12px rgba(0, 0, 0, 0.04),
-        inset 0 1px 0 var(--color-white-60) !important;
-    padding: 12px !important;
+        0 12px 40px -8px hsl(0 0% 0% / 0.1),
+        0 2px 8px hsl(0 0% 0% / 0.04) !important;
+    padding: 14px !important;
     min-width: 240px !important;
     animation: filterFadeIn 0.15s ease;
 }
 
 @keyframes filterFadeIn {
-    from { opacity: 0; transform: translateY(-6px) scale(0.97); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-rule-list {
@@ -400,21 +484,21 @@
 
 .p-datatable-filter-overlay .p-select {
     width: 100% !important;
-    border-radius: var(--radius-md) !important;
+    border-radius: 8px !important;
     border: 1px solid var(--color-border) !important;
     background: var(--color-bg-card) !important;
     font-size: var(--font-sm) !important;
-    height: 34px !important;
-    transition: all 0.2s;
+    height: 36px !important;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .p-datatable-filter-overlay .p-select:hover {
-    border-color: var(--color-border-light) !important;
+    border-color: hsl(215 20% 80%) !important;
 }
 
 .p-datatable-filter-overlay .p-select.p-focus {
     border-color: var(--app-main-teal) !important;
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12) !important;
+    box-shadow: 0 0 0 3px hsl(173 60% 50% / 0.12) !important;
 }
 
 .p-datatable-filter-overlay .p-select .p-select-label {
@@ -425,40 +509,41 @@
 
 .p-datatable-filter-overlay .p-inputtext {
     width: 100% !important;
-    border-radius: var(--radius-md) !important;
+    border-radius: 8px !important;
     border: 1px solid var(--color-border) !important;
     background: var(--color-bg-card) !important;
     font-size: var(--font-sm) !important;
     padding: 0.5rem 0.75rem !important;
-    height: 34px !important;
-    transition: all 0.2s;
+    height: 36px !important;
+    transition: border-color 0.15s, box-shadow 0.15s;
     color: var(--color-text-heading) !important;
 }
 
 .p-datatable-filter-overlay .p-inputtext:hover {
-    border-color: var(--color-border-light) !important;
+    border-color: hsl(215 20% 80%) !important;
 }
 
 .p-datatable-filter-overlay .p-inputtext:focus,
 .p-datatable-filter-overlay .p-inputtext.p-focus {
     border-color: var(--app-main-teal) !important;
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12) !important;
+    box-shadow: 0 0 0 3px hsl(173 60% 50% / 0.12) !important;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar {
     display: flex;
     justify-content: flex-end;
     gap: 6px;
-    margin-top: 10px;
-    padding-top: 10px;
+    margin-top: 12px;
+    padding-top: 12px;
     border-top: 1px solid var(--color-bg-page);
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button {
     font-size: var(--font-sm) !important;
     padding: 0.4rem 0.85rem !important;
-    border-radius: var(--radius-md) !important;
-    height: 32px !important;
+    border-radius: 8px !important;
+    height: 34px !important;
+    font-weight: 600;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:first-child {
@@ -468,9 +553,8 @@
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:first-child:hover {
-    background: var(--color-bg-subtle) !important;
-    border-color: var(--color-border-light) !important;
-    color: var(--color-text-secondary) !important;
+    background: var(--app-main-primary, #960d14) !important;
+    border-color: hsl(215 20% 80%) !important;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:last-child {
@@ -480,42 +564,42 @@
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-buttonbar .p-button:last-child:hover {
-    background: var(--app-main-primary-light) !important;
+    background: hsl(215 25% 38%) !important;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-add-rule-button {
     font-size: var(--font-xs) !important;
-    height: 30px !important;
+    height: 32px !important;
     padding: 0 0.7rem !important;
-    border-radius: var(--radius-md) !important;
+    border-radius: 8px !important;
     background: transparent !important;
     color: var(--app-main-teal) !important;
-    border: 1px dashed var(--color-border-light) !important;
-    transition: all 0.2s;
+    border: 1px dashed hsl(215 20% 85%) !important;
+    transition: background-color 0.15s, border-color 0.15s;
 }
 
 .p-datatable-filter-overlay .p-datatable-filter-add-rule-button:hover {
-    background: rgba(13, 148, 136, 0.06) !important;
+    background: hsl(173 60% 50% / 0.06) !important;
     border-color: var(--app-main-teal) !important;
-    color: var(--color-success-text) !important;
 }
 
+/* Column filter menu button */
 .gm-data-table .p-column-filter-menu-button {
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: var(--radius-sm) !important;
-    color: var(--color-white-60) !important;
-    transition: all 0.15s;
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    color: hsl(0 0% 100% / 0.55) !important;
+    transition: background-color 0.15s, color 0.15s;
 }
 
 .gm-data-table .p-column-filter-menu-button:hover {
-    background: var(--color-white-10) !important;
+    background: hsl(0 0% 100% / 0.1) !important;
     color: white !important;
 }
 
 .gm-data-table .p-column-filter-menu-button.p-column-filter-menu-button-active {
-    background: var(--color-white-15) !important;
-    color: var(--color-success-text) !important;
+    background: hsl(0 0% 100% / 0.15) !important;
+    color: hsl(152 60% 50%) !important;
 }
 
 .gm-data-table .p-column-filter-menu-button .p-icon,
@@ -537,44 +621,54 @@
         width: 0.85rem !important;
         height: 0.85rem !important;
     }
-    .gm-data-table p-sortIcon .p-sortable-column-icon {
-        width: 0.85rem !important;
-        height: 0.85rem !important;
-        font-size: var(--font-base) !important;
-    }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   PAGINATOR
+   PAGINATOR — Clean, solid
    ───────────────────────────────────────────────────────────── */
 .gm-data-table .p-paginator {
-    padding: 0.75rem !important;
-    border-top: 1px solid var(--app-main-border) !important;
+    background: hsl(215 25% 97%);
+    padding: 0.65rem 1rem !important;
+    border-top: 1px solid hsl(215 20% 90%) !important;
+    border-radius: 0 0 16px 16px;
+    gap: 2px;
 }
 
 .gm-data-table .p-paginator .p-paginator-element {
-    min-width: 2rem !important;
-    height: 2rem !important;
-    font-size: var(--font-sm) !important;
+    min-width: 2.25rem !important;
+    height: 2.25rem !important;
+    font-size: 0.82rem !important;
+    border-radius: 50% !important;
+    font-weight: 500;
+    transition: background-color 0.15s ease;
+}
+
+.gm-data-table .p-paginator .p-paginator-element:not(.p-disabled):hover {
+    background: hsl(240 30% 94%);
+}
+
+.gm-data-table .p-paginator .p-paginator-element.p-highlight {
+    background: var(--app-main-primary) !important;
+    color: white !important;
+    font-weight: 600;
 }
 
 .gm-data-table .p-paginator .p-paginator-current {
-    font-size: var(--font-md);
+    font-size: 0.82rem;
     color: var(--app-main-text-muted);
+    font-weight: 500;
 }
-
-
 
 @media (max-width: 640px) {
     .gm-data-table .p-paginator {
-        padding: 0.15rem !important;
+        padding: 0.25rem !important;
         gap: 0.15rem !important;
         min-height: auto !important;
     }
     .gm-data-table .p-paginator .p-paginator-element {
-        min-width: 1.25rem !important;
-        height: 1.25rem !important;
-        font-size: var(--font-3xs) !important;
+        min-width: 1.35rem !important;
+        height: 1.35rem !important;
+        font-size: 0.65rem !important;
         margin: 0 !important;
         padding: 0 !important;
     }
@@ -584,22 +678,23 @@
         height: 8px !important;
     }
     .gm-data-table .p-paginator .p-paginator-current {
-        font-size: var(--font-3xs) !important;
+        font-size: 0.65rem !important;
         margin-bottom: 0.1rem !important;
         width: 100% !important;
         text-align: center !important;
         display: block !important;
     }
     .gm-data-table .p-paginator .p-paginator-pages .p-paginator-page {
-        min-width: 1.25rem !important;
-        height: 1.25rem !important;
+        min-width: 1.35rem !important;
+        height: 1.35rem !important;
     }
 }
 
 /* ─────────────────────────────────────────────────────────────
-   ACTIONS COLUMN CENTERING (shared across Table + TreeTable)
+   ACTIONS COLUMN CENTERING
    ───────────────────────────────────────────────────────────── */
-th.th-actions {
+th.th-actions,
+td.td-actions {
     text-align: center !important;
 }
 
@@ -607,10 +702,6 @@ th.th-actions .th-content {
     justify-content: center !important;
     display: flex !important;
     width: 100% !important;
-}
-
-td.td-actions {
-    text-align: center !important;
 }
 
 td.td-actions .actions,
@@ -632,7 +723,7 @@ td.td-actions app-table-actions {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   TABLE EDIT (input / dropdown inside cells)
+   TABLE EDIT
    ───────────────────────────────────────────────────────────── */
 .gm-data-table app-input-number {
     min-width: 120px !important;
@@ -698,8 +789,8 @@ td.td-actions app-table-actions {
     border-radius: 0 !important;
 }
 
-.minimal .gm-data-table .p-datatable-thead>tr>th,
-.minimal .gm-data-table .p-datatable-tbody>tr>td {
+.minimal .gm-data-table .p-datatable-thead > tr > th,
+.minimal .gm-data-table .p-datatable-tbody > tr > td {
     padding: 4px 8px !important;
 }
 
@@ -720,19 +811,150 @@ td.td-actions app-table-actions {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   SELECTED ROW — rojo en vez de verde de PrimeNG
+   SELECTED ROW — accent tint, not red
    ───────────────────────────────────────────────────────────── */
 .gm-data-table .p-datatable-tbody > tr.p-highlight {
-    background: var(--color-danger-light) !important;
-    color: var(--color-danger-text) !important;
+    background: hsl(240 60% 95%) !important;
+    color: var(--app-main-indigo) !important;
 }
 
 .gm-data-table .p-datatable-tbody > tr.p-highlight:hover {
-    background: var(--color-danger-bg) !important;
+    background: hsl(240 50% 92%) !important;
 }
 
 /* ─────────────────────────────────────────────────────────────
-   PAGINATOR DROPDOWN — z-index para evitar clipping
+   BULK ACTION BAR — accent tint, no glass
+   ───────────────────────────────────────────────────────────── */
+.bulk-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1.25rem;
+    background: hsl(240 60% 96%);
+    border-bottom: 0 solid transparent;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.2s ease, opacity 0.2s ease, padding 0.2s ease, border-color 0.2s ease;
+}
+
+.bulk-action-bar.active {
+    max-height: 56px;
+    opacity: 1;
+    padding: 0.6rem 1.25rem;
+    border-bottom: 1px solid hsl(240 50% 88%);
+}
+
+.bulk-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--app-main-indigo);
+}
+
+.bulk-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DENSITY MODES
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table.density-compact .p-datatable-tbody > tr > td {
+    padding: 4px 8px !important;
+    font-size: 0.8rem !important;
+}
+
+.gm-data-table.density-compact .p-datatable-thead > tr > th {
+    padding: 6px 8px !important;
+    font-size: 0.67rem !important;
+}
+
+.gm-data-table.density-relaxed .p-datatable-tbody > tr > td {
+    padding: 14px 18px !important;
+    font-size: 0.9rem !important;
+}
+
+.gm-data-table.density-relaxed .p-datatable-thead > tr > th {
+    padding: 14px 18px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   STICKY HEADER
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-thead {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   DENSITY TOGGLE BUTTON
+   ───────────────────────────────────────────────────────────── */
+.density-toggle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background: var(--color-bg-card);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+    font-size: 0.9rem;
+}
+
+.density-toggle:hover {
+    background: var(--color-bg-subtle);
+    color: var(--app-main-primary);
+    border-color: hsl(240 40% 80%);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   MOBILE CARD LAYOUT (<768px)
+   ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .gm-data-table.table-mobile-cards .p-datatable-thead {
+        display: none;
+    }
+
+    .gm-data-table.table-mobile-cards .p-datatable-tbody > tr {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 0.75rem;
+        border-radius: 12px;
+        background: var(--color-bg-card);
+        border: 1px solid hsl(215 20% 90%);
+        box-shadow: 0 1px 3px hsl(0 0% 0% / 0.04);
+        padding: 0.75rem;
+    }
+
+    .gm-data-table.table-mobile-cards .p-datatable-tbody > tr > td {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.45rem 0;
+        border-bottom: 1px solid hsl(215 20% 93%);
+    }
+
+    .gm-data-table.table-mobile-cards .p-datatable-tbody > tr > td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--color-text-muted);
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+    }
+
+    .gm-data-table.table-mobile-cards .p-datatable-tbody > tr > td:last-child {
+        border-bottom: none;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   PAGINATOR DROPDOWN
    ───────────────────────────────────────────────────────────── */
 .p-paginator .p-dropdown {
     z-index: 100 !important;
@@ -743,31 +965,20 @@ td.td-actions app-table-actions {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   COLUMN-FILTER SELECT / MULTISELECT — overlay flotante
-   Evita que el panel del p-select y p-multiselect empuje el
-   layout; se comporta como un popup absolutamente posicionado.
+   COLUMN-FILTER OVERLAYS
    ───────────────────────────────────────────────────────────── */
-
-/* El overlay del p-select se renderiza en el body via CDK portal,
-   por lo que basta con elevar su z-index y asegurarse de que
-   NO tenga position:static. */
 .p-select-overlay,
 .p-multiselect-overlay {
     position: fixed !important;
     z-index: 99998 !important;
 }
 
-/* Dentro del overlay de filtro de columna, el p-select y el
-   p-multiselect (el trigger, no el panel) NO deben tener
-   overflow:visible forzado que corte el panel. */
 .p-datatable-filter-overlay .p-select,
 .p-datatable-filter-overlay .p-multiselect {
     overflow: visible !important;
     position: relative !important;
 }
 
-/* El p-multiselect-filter-custom que usamos en el template
-   de filtro también necesita que su overlay sea flotante */
 .p-multiselect-filter-custom .p-multiselect-overlay,
 .p-multiselect-filter-custom.p-multiselect-overlay {
     position: fixed !important;
@@ -775,16 +986,142 @@ td.td-actions app-table-actions {
 }
 
 /* ─────────────────────────────────────────────────────────────
-   CRUD PAGE CONTAINER PADDING (Tighter Layout)
+   ACCESSIBILITY — Focus visible
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-tbody > tr:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: -2px;
+    border-radius: 4px;
+}
+
+.gm-data-table .p-datatable-thead > tr > th:focus-visible {
+    outline: var(--focus-ring-width) solid white;
+    outline-offset: -4px;
+}
+
+.act-btn:focus-visible,
+.density-toggle:focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   CRUD PAGE CONTAINER
    ───────────────────────────────────────────────────────────── */
 .gm-crud-page-container {
     padding: 0.5rem;
-    transition: padding 0.2s ease;
 }
 
 @media (max-width: 768px) {
     .gm-crud-page-container {
-        padding: 0 !important;
+        padding: 0.25rem !important;
     }
 }
 
+/* ─────────────────────────────────────────────────────────────
+   TOOLBAR ACTIONS GROUP (density + columns buttons)
+   ───────────────────────────────────────────────────────────── */
+.toolbar-actions-group {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+
+/* ─────────────────────────────────────────────────────────────
+   TABLE DENSITY STYLES (Clean UI switcher support)
+   ───────────────────────────────────────────────────────────── */
+.density-compact .p-datatable-tbody > tr > td {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+}
+.density-compact .p-datatable-thead > tr > th {
+    padding: 8px 12px !important;
+}
+
+.density-relaxed .p-datatable-tbody > tr > td {
+    padding: 16px 14px !important;
+    font-size: 0.9rem !important;
+}
+.density-relaxed .p-datatable-thead > tr > th {
+    padding: 14px 16px !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   THEAD HOVER STATE (Clear color feedback on sortable headers)
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-thead > tr > th.p-sortable-column:hover {
+    background: #b51a22 !important; /* Distinct lighter red hover state */
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+
+
+/* ─────────────────────────────────────────────────────────────
+   FOOLPROOF THEAD HOVER STYLES (Excluding actions)
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-thead > tr > th:not(.th-actions):hover,
+.gm-treetable th.sortable:hover,
+.gm-treetable th:not(.th-actions):hover {
+    background: var(--app-main-primary-light, #3b0808) !important; /* Bright crimson red for high-contrast hover feedback */
+    background-color: var(--app-main-primary-light, #3b0808) !important;
+    cursor: pointer !important;
+    transition: background-color 0.15s ease-in-out !important;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   UI/UX IMPROVEMENTS (Row hover transitions & Mobile Freeze Column)
+   ───────────────────────────────────────────────────────────── */
+.gm-data-table .p-datatable-tbody > tr > td {
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out !important;
+}
+
+.gm-data-table .p-datatable-tbody > tr:hover > td {
+    background-color: var(--color-bg-subtle, hsl(240 30% 97%)) !important;
+}
+
+@media (max-width: 768px) {
+    /* Freeze first column horizontally for mobile context */
+    .gm-data-table .p-datatable-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .gm-data-table .p-datatable-thead > tr > th.column-frozen,
+    .gm-data-table .p-datatable-tbody > tr > td.column-frozen {
+        position: sticky !important;
+        left: 0 !important;
+        background-color: var(--color-bg-card, #ffffff) !important;
+        z-index: 10 !important;
+        box-shadow: 4px 0 8px rgba(0, 0, 0, 0.08) !important;
+    }
+    
+    .gm-data-table .p-datatable-thead > tr > th.column-frozen {
+        z-index: 11 !important;
+        background-color: var(--app-main-primary, #960d14) !important;
+    }
+
+    /* Hide Actions Column on Mobile (row click action is used instead) */
+    .gm-data-table th.th-actions,
+    .gm-data-table td.td-actions {
+        display: none !important;
+    }
+    
+    /* Expand tap targets for actions in mobile */
+    .gm-data-table .td-actions {
+        display: flex !important;
+        gap: 12px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-width: 120px !important;
+        padding: 8px 12px !important;
+    }
+
+    .gm-data-table .td-actions app-table-actions,
+    .gm-data-table .td-actions .actions button {
+        min-width: 38px !important;
+        min-height: 38px !important;
+        padding: 8px !important;
+    }
+}

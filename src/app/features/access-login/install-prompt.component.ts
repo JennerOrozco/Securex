@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div *ngIf="showPrompt" class="fixed bottom-4 left-3 right-3 md:left-auto md:right-6 md:w-[380px] bg-navy-900/30 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[100] animate-ios-slide-up">
+    <div *ngIf="showPrompt" class="fixed bottom-[4.8rem] md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-[380px] bg-navy-900/30 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[100] animate-ios-slide-up">
       <div class="flex flex-col gap-2 md:gap-3">
         <!-- Header con Icono -->
         <div class="flex items-center gap-2 md:gap-3">

@@ -15,12 +15,17 @@
   font-size: 0.8rem;
   font-weight: 600;
   min-height: 34px;
-  transition: all 0.2s;
+  transition: transform 0.1s var(--ease-standard), background-color 0.15s var(--ease-standard);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
   white-space: nowrap;
+}
+
+:host ::ng-deep .gm-btn.p-button:active:not(:disabled),
+:host ::ng-deep .p-button.gm-btn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 :host ::ng-deep .gm-btn.p-button-navy,

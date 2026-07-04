@@ -9,9 +9,9 @@ import {
   contentChild,
   viewChild,
   effect,
-  SimpleChanges,
-  OutputEmitterRef,
-  EventEmitter
+  HostListener,
+  ElementRef,
+  SimpleChanges
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -129,6 +129,7 @@ export class TableComponent extends BaseTableDirective implements OnInit {
   private readonly filterService = inject(FilterService);
   /** Intercepta estados de carga asíncronos distribuidos en la aplicación */
   protected readonly loadingService = inject(LoadingService);
+  private readonly el = inject(ElementRef);
 
   // ── INPUTS ESENCIALES DE CONTROL DE DATOS Y ESTRUCTURA ─────────────────────
   /** Fuente de datos principal de la tabla (Colección de objetos planos JSON) */
@@ -221,6 +222,41 @@ export class TableComponent extends BaseTableDirective implements OnInit {
 
   /** Matriz con anchos porcentuales fijos para diversificar el tamaño aleatorio visual de las celdas de carga (Skeleton) */
   readonly skeletonWidths = ['70%', '55%', '85%', '40%', '65%', '75%', '50%', '60%', '80%', '45%'];
+
+  density: 'comfortable' | 'compact' | 'relaxed' = 'comfortable';
+
+  get densityIcon(): string {
+    if (this.density === 'compact') return 'pi pi-minus';
+    if (this.density === 'relaxed') return 'pi pi-arrows-v';
+    return 'pi pi-th-large';
+  }
+
+  get densityTooltip(): string {
+    if (this.density === 'compact') return 'Densidad: Compacta';
+    if (this.density === 'relaxed') return 'Densidad: Relajada';
+    return 'Densidad: Cómoda';
+  }
+
+  get densityClass(): string {
+    if (this.density === 'compact') return 'density-compact';
+    if (this.density === 'relaxed') return 'density-relaxed';
+    return '';
+  }
+
+  cycleDensity(): void {
+    if (this.density === 'comfortable') this.density = 'compact';
+    else if (this.density === 'compact') this.density = 'relaxed';
+    else this.density = 'comfortable';
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === '/' && event.target === document.body) {
+      event.preventDefault();
+      const input = this.el.nativeElement.querySelector('.search-inp') as HTMLInputElement;
+      if (input) input.focus();
+    }
+  }
 
   // ── GETTERS DE EVALUACIÓN REACTIVA DINÁMICA ────────────────────────────────
   /** Filtra y retorna únicamente las especificaciones de columnas cuyo flag de visibilidad no sea explícitamente falso */

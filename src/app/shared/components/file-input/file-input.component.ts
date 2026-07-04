@@ -1,14 +1,15 @@
-import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewEncapsulation } from '@angular/core';
+import { Component, Input, OnInit, OnChanges, SimpleChanges, ViewEncapsulation, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormFieldComponent } from '../form-field/form-field.component';
+import { ButtonComponent } from '../button/button.component';
 import { BaseFormControl } from '../base-form-control';
 import { getFileIcon, getFileIconClass, formatFileSize } from '../../modals/modal-shell/modal-shell.utils';
 
 @Component({
   selector: 'app-file-input',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormFieldComponent, ButtonComponent],
   templateUrl: './file-input.component.html',
   styleUrls: ['./file-input.component.css'],
   encapsulation: ViewEncapsulation.None
@@ -82,12 +83,15 @@ export class FileInputComponent extends BaseFormControl implements OnInit, OnCha
     }
   }
 
+  private cdr = inject(ChangeDetectorRef);
+
   private processFile(file: File) {
     this.filePayload = file;
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onload = () => {
         this.localPreview = reader.result as string;
+        this.cdr.markForCheck();
       };
       reader.readAsDataURL(file);
     } else {
@@ -96,8 +100,10 @@ export class FileInputComponent extends BaseFormControl implements OnInit, OnCha
     this.setControlValue(file);
   }
 
-  removeFile(event: Event) {
-    event.stopPropagation();
+  removeFile(event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
     this.filePayload = null;
     this.localPreview = null;
     this.setControlValue('');

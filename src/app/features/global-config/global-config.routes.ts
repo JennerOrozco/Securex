@@ -16,11 +16,11 @@ export const globalConfigRoutes: Routes = [
     data: {
       permission: 'securex.security.apps',
       title: 'Aplicaciones',
-      subtitle: 'Catálogo de aplicaciones del ecosistema',
+      subtitle: 'Gestión de aplicaciones registradas en el ecosistema SECUREX',
       resourceName: 'Aplicación',
-      addLabel: 'Nueva',
-      deleteMessage: '¿Estás seguro de eliminar esta aplicación?',
-      defaultSortKey: 'id',
+      addLabel: 'Nueva Aplicación',
+      deleteMessage: (item: any) => `¿Estás seguro de eliminar la aplicación "${item?.name}"? Esta acción no puede deshacerse.`,
+      defaultSortKey: 'name',
       fnFetch: () => inject(AppService).getAppsWithCompanies(),
       fnCreate: (data: any) => inject(AppService).createAppGql(data),
       fnUpdate: (id: string, data: any) => inject(AppService).updateAppGql(id, data),
@@ -39,6 +39,7 @@ export const globalConfigRoutes: Routes = [
       subtitle: 'Organizadas por aplicación',
       resourceName: 'Compañía',
       addLabel: 'Nueva Compañía',
+      primaryKey: 'uuid',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`,
       fnFetch: () => {
         return inject(CompanyService).getCompaniesPageData().pipe(
@@ -66,20 +67,31 @@ export const globalConfigRoutes: Routes = [
       formFieldsFn: () => import('./catalogs/companies/companies.config').then(m => m.createCompaniesForm),
       onAddRootFn: (shell: any) => { shell.formExtraData = null; },
       onAddChildFn: (parentId: any, shell: any) => { shell.formExtraData = { app_id: parentId, is_active: true }; },
-      hooks: {
-        onBeforeSave: (data: any, mode: string) => {
-          return new Promise((resolve, reject) => {
-            if (data.logo_url instanceof File) {
-              const reader = new FileReader();
-              reader.onload = () => { data.logo_url = reader.result as string; resolve(data); };
-              reader.onerror = () => reject(new Error('Error al procesar la imagen del logo'));
-              reader.readAsDataURL(data.logo_url);
-            } else {
-              resolve(data);
-            }
-          });
-        }
+      hooks: () => {
+        const companyService = inject(CompanyService);
+        return {
+          onBeforeSave: (data: any, mode: string) => {
+            return new Promise((resolve, reject) => {
+              if (data.logo_url instanceof File) {
+                // Determine appId from data (app_id could be present directly, or parent_id for TreeTables)
+                const appId = data.app_id || data.parent_id || 'default-app';
+                const companyName = data.name || 'company';
+                
+                companyService.uploadLogo(data.logo_url, appId, companyName).subscribe({
+                  next: (res: any) => {
+                    data.logo_url = res.data?.url || res.url;
+                    resolve(data);
+                  },
+                  error: (err) => reject(new Error('Error al subir la imagen del logo: ' + (err.error?.message || err.message)))
+                });
+              } else {
+                resolve(data);
+              }
+            });
+          }
+        };
       }
+
     }
   },
   {
@@ -92,6 +104,7 @@ export const globalConfigRoutes: Routes = [
       subtitle: 'Organizadas por Compañía',
       resourceName: 'Sucursal',
       addLabel: 'Nueva Sucursal',
+      primaryKey: 'uuid',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`,
       fnFetch: () => {
         return inject(CompanyService).getBranchesPageData().pipe(

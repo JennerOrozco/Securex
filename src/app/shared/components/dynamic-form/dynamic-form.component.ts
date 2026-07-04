@@ -15,6 +15,7 @@ import { DatepickerComponent } from '../datepicker/datepicker.component';
 import { TextareaComponent } from '../textarea/textarea.component';
 import { SelectGridComponent } from '../select-grid/select-grid.component';
 import { InputColorComponent } from '../input-color/input-color.component';
+import { InputAvatarComponent } from '../input-avatar/input-avatar.component';
 
 @Component({
   selector: 'app-dynamic-form',
@@ -34,7 +35,8 @@ import { InputColorComponent } from '../input-color/input-color.component';
     DatepickerComponent,
     TextareaComponent,
     SelectGridComponent,
-    InputColorComponent
+    InputColorComponent,
+    InputAvatarComponent
   ],
   templateUrl: './dynamic-form.component.html'
 })

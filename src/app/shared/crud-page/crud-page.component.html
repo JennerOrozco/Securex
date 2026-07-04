@@ -1,5 +1,4 @@
 <div class="gm-crud-page-container">
-  <div class="content-card">
     <div *ngIf="!hidePermissionGate() && !hasPermission" class="access-denied">
       <i class="pi pi-lock"></i>
       <h2>Acceso restringido</h2>
@@ -45,5 +44,4 @@
       (onClose)="handleCloseModal()"></app-delete-modal>
 
     <ng-content select="[extra-modals]"></ng-content>
-  </div>
 </div>

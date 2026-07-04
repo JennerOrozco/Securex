@@ -371,7 +371,7 @@ export class UnifiedCrudService<T = any> {
   /**
    * Asegurar que catálogos están cargados
    */
-  private ensureCatalogs(callback: () => void): void {
+  public ensureCatalogs(callback: () => void): void {
     if (Object.keys(this.catalogItems()).length > 0) {
       callback();
       return;

@@ -8,15 +8,19 @@
   <div class="toolbar-right">
     <ng-content select="[toolbar-actions-start]"></ng-content>
     @if (showSearch) {
-      <div class="search-box">
+      <div class="search-box" #searchBox [class.expanded-mobile]="searchExpanded">
         <i class="pi pi-search search-ic"></i>
         <input
           pInputText
           type="text"
           (input)="search($event)"
+          (focus)="onSearchFocus()"
           [placeholder]="searchPlaceholder"
           class="search-inp"
         />
+        <button class="search-close-btn" (click)="searchExpanded = false">
+          <i class="pi pi-times"></i>
+        </button>
       </div>
     }
     <ng-content select="[toolbar-actions]"></ng-content>

@@ -1,4 +1,5 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, inject } from '@angular/core';
+// Force compiler rebuild to recognize copyable property in TableColumn
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
@@ -7,6 +8,7 @@ import { TableColumn } from '../table.types';
 import { BadgeClassPipe } from '@shared/pipes';
 import { BooleanTextPipe, CurrencyFormatPipe } from '@shared/pipes';
 import { formatFileSize } from '@shared/utils/file-utils';
+import { NotificationService } from '@core/services/notification.service';
 
 /**
  * @component CellRendererComponent
@@ -146,7 +148,12 @@ import { formatFileSize } from '@shared/utils/file-utils';
       
       @default {
         @if (getCellValue(rowData, col.field) != null) {
-          <span class="cell-text">{{ getCellValue(rowData, col.field) }}</span>
+          <span class="cell-text" [class.clickable]="col.copyable !== false"
+            (click)="copyToClipboard(getCellValue(rowData, col.field), col.field, $event)"
+            [pTooltip]="col.copyable !== false ? 'Clic para copiar' : ''"
+            tooltipPosition="top">
+            {{ getCellValue(rowData, col.field) }}
+          </span>
         }
       }
     }
@@ -155,6 +162,8 @@ import { formatFileSize } from '@shared/utils/file-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CellRendererComponent {
+  private notification = inject(NotificationService);
+
   /** Configuración de la columna que define el tipo de celda, el campo de datos a leer y parámetros extra de renderizado. */
   @Input() col!: TableColumn;
 
@@ -296,5 +305,16 @@ export class CellRendererComponent {
    */
   formatFileSize(bytes: number): string {
     return formatFileSize(bytes);
+  }
+
+  copyToClipboard(value: any, field: string | undefined, event: MouseEvent): void {
+    if (!value || this.col.copyable === false) return;
+    event.stopPropagation();
+    const text = String(value);
+    navigator.clipboard.writeText(text).then(() => {
+      this.notification.success('Copiado al portapapeles');
+    }).catch(() => {
+      this.notification.info('Selecciona y copia manualmente');
+    });
   }
 }

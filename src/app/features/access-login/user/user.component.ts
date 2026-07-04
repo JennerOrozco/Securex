@@ -10,7 +10,7 @@ import { AuthService } from '@core/services/auth.service';
 import { ResetPasswordModalComponent } from '@shared/modals/modal-shell/reset-password-modal/reset-password-modal.component';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { Observable, forkJoin, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { USER_ACCESS_COLS, createUserAccessForm } from './user.config';
 
 @Component({
@@ -34,7 +34,7 @@ export class SecurityUserCrudComponent implements OnInit {
 
   cols = USER_ACCESS_COLS;
   
-  formFields = computed(() => {
+  private parsedData = computed(() => {
     const rawCatalogs = this.crud.catalogItems();
     let pd: any = rawCatalogs['pageData'] || {};
     if (Array.isArray(pd)) pd = pd[0] || {};
@@ -42,19 +42,18 @@ export class SecurityUserCrudComponent implements OnInit {
 
     const currentCompany = this.authService.currentCompany();
     const matchedCompany = catalogs['companies']?.find((c: any) => c.uuid === currentCompany?.uuid);
+    
+    return { catalogs, matchedCompany };
+  });
 
+  formFields = computed(() => {
+    const { catalogs, matchedCompany } = this.parsedData();
     return createUserAccessForm(catalogs, matchedCompany);
   });
 
   constructor() {
     effect(() => {
-      const rawCatalogs = this.crud.catalogItems();
-      let pd: any = rawCatalogs['pageData'] || {};
-      if (Array.isArray(pd)) pd = pd[0] || {};
-      const catalogs: any = { ...rawCatalogs, ...pd };
-
-      const currentCompany = this.authService.currentCompany();
-      const matchedCompany = catalogs['companies']?.find((c: any) => c.uuid === currentCompany?.uuid);
+      const { matchedCompany } = this.parsedData();
 
       if (matchedCompany) {
         this.formInitialData = {
@@ -81,21 +80,20 @@ export class SecurityUserCrudComponent implements OnInit {
       fnDelete: this.userService.deleteUserAccessGql.bind(this.userService),
       fnCatalogs: {
         pageData: () => this.userService.getUserAccessPageData().pipe(
-          map((res: any) => {
+          switchMap((res: any) => {
             const companies = res.companies?.data ?? [];
             const users = res.users?.data ?? [];
             const apps = res.apps?.data ?? [];
             const branches = res.branches?.data ?? [];
             const matchedCompany = companies.find((c: any) => c.uuid === currentCompany?.uuid);
 
-            // Fetch roles immediately as part of catalog extraction
             if (matchedCompany && currentCompany?.uuid) {
-              this.roleService.getRolesByCompany(matchedCompany.app_id, currentCompany.uuid).pipe(catchError(() => of([]))).subscribe(roles => {
-                this.crud.catalogItems.update(c => ({ ...c, roles }));
-              });
+              return this.roleService.getRolesByCompany(matchedCompany.app_id, currentCompany.uuid).pipe(
+                catchError(() => of([])),
+                map(roles => ({ companies, users, apps, branches, roles }))
+              );
             }
-
-            return { companies, users, apps, branches };
+            return of({ companies, users, apps, branches });
           })
         )
       }

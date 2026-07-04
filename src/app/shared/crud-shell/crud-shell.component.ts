@@ -62,6 +62,8 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
         (onConfirmDelete)="crud.confirmDelete($event)"
         (onRefresh)="crud.load()"
         (onPermissions)="handlePermissions($event)"
+        (onAdd)="handleModalOpen()"
+        (onEdit)="handleModalOpen()"
         (onAddRoot)="handleAddRoot()"
         (onAddChild)="handleAddChild($event)">
       </app-crud-page>
@@ -173,6 +175,11 @@ export class CrudShellComponent implements OnInit {
       });
     }
 
+    let hooks = data['hooks'];
+    if (hooks && typeof hooks === 'function') {
+      hooks = this.environmentInjector.runInContext(() => hooks());
+    }
+
     this.crud.initialize({
       fnFetch,
       fnCreate,
@@ -180,11 +187,12 @@ export class CrudShellComponent implements OnInit {
       fnDelete,
       resourceName: this.resourceName,
       defaultSortKey: data['defaultSortKey'] || 'id',
-      primaryKey: data['primaryKey'],
+      ...(data['primaryKey'] ? { primaryKey: data['primaryKey'] } : {}),
       columnMap: data['columnMap'],
       fnCatalogs,
-      hooks: data['hooks']
+      hooks
     });
+
     
     this.initialized = true;
     this.cdr.markForCheck();
@@ -210,7 +218,12 @@ export class CrudShellComponent implements OnInit {
     }
   }
 
+  handleModalOpen() {
+    this.crud.ensureCatalogs(() => {});
+  }
+
   handleAddRoot() {
+    this.handleModalOpen();
     if (this.routeData['onAddRootFn']) {
       this.routeData['onAddRootFn'](this);
     } else {
@@ -219,6 +232,7 @@ export class CrudShellComponent implements OnInit {
   }
 
   handleAddChild(parentId: any) {
+    this.handleModalOpen();
     if (this.routeData['onAddChildFn']) {
       this.routeData['onAddChildFn'](parentId, this);
     } else {

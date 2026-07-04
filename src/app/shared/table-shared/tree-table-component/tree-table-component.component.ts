@@ -6,7 +6,9 @@ import {
   output,
   contentChild,
   viewChild,
-  effect
+  effect,
+  inject,
+  ElementRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -81,6 +83,8 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
   sortField: string = '';
   sortOrder: number = 1; // 1 = Ascendente, -1 = Descendente
 
+  readonly skeletonWidths = ['65%', '80%', '45%', '70%', '55%', '85%'];
+
   // Referencia nativa al componente TreeTable de PrimeNG
   treeTable = viewChild<TreeTable>('tt');
 
@@ -95,6 +99,17 @@ export class TreeTableComponent extends BaseTableDirective implements OnInit {
 
   constructor() {
     super(); // Llama al constructor de la directiva base
+  }
+
+  private readonly el = inject(ElementRef);
+
+  @HostListener('document:keydown', ['$event'])
+  onKeyDown(event: KeyboardEvent): void {
+    if (event.key === '/' && event.target === document.body) {
+      event.preventDefault();
+      const input = this.el.nativeElement.querySelector('.search-inp') as HTMLInputElement;
+      if (input) input.focus();
+    }
   }
 
   /**

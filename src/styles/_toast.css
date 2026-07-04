@@ -18,9 +18,10 @@
     border: 1px solid var(--color-white-06) !important;
     margin-bottom: 0.5rem !important;
     padding: 0.65rem 0.875rem !important;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    transition: transform 0.15s var(--ease-standard), box-shadow 0.15s var(--ease-standard) !important;
     position: relative !important;
     overflow: hidden !important;
+    animation: toastEnter 0.25s var(--ease-out) both;
 }
 
 .app-toast .p-toast-message::before {

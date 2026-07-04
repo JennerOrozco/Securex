@@ -70,3 +70,36 @@
   100% { opacity: 1; transform: scale(1); }
 }
 
+/* ── Row Exit (slide left + fade) ── */
+@keyframes rowExit {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-24px); }
+}
+
+/* ── Toast Enter ── */
+@keyframes toastEnter {
+  from { opacity: 0; transform: translateX(16px) scale(0.96); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* ── Toast Exit ── */
+@keyframes toastExit {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to   { opacity: 0; transform: translateX(16px) scale(0.96); }
+}
+
+/* ============================================
+   ACCESSIBILITY: prefers-reduced-motion
+   Disables all animations and transitions for
+   users who have requested reduced motion.
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

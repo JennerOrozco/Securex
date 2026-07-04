@@ -14,6 +14,14 @@ export class CompanyService extends BaseApiService {
     return this.gql.query<{ apps: { data: any[] }; companies: { data: any[] } }>('security', SECUREX_QUERIES.COMPANIES_PAGE);
   }
 
+  uploadLogo(file: File, appId: string, companyName: string): Observable<{ url: string }> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('app_id', appId);
+    formData.append('company_name', companyName);
+    return this.http.post<{ url: string }>(`${this.baseUrl}/admin/companies/logo`, formData);
+  }
+
   getCompanyWithBranches(uuid: string): Observable<any> {
     return this.gqlQuerySingle<any>('security', SECUREX_QUERIES.COMPANY, 'company', { uuid });
   }

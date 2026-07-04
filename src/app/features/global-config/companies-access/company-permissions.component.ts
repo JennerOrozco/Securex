@@ -1,11 +1,14 @@
-import { Component, OnInit, inject, DestroyRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 import { SelectComponent } from '@shared/components/select/select.component';
 import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { PermissionTreeComponent } from '@shared/components/permission-tree/permission-tree.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { PermissionTreeNode } from '@shared/components/permission-tree/permission-tree.types';
 import { AppService } from '@core/services/app.service';
 import { CompanyService } from '@core/services/company.service';
@@ -19,7 +22,7 @@ import { NotificationService } from '@core/services/notification.service';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     SelectComponent, ToolbarComponent, ButtonComponent,
-    PermissionTreeComponent
+    PermissionTreeComponent, EmptyStateComponent
   ],
   templateUrl: './company-permissions.component.html',
   styleUrl: './company-permissions.component.css'
@@ -31,6 +34,7 @@ export class CompanyPermissionsComponent implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   apps: any[] = [];
   companies: any[] = [];
@@ -67,12 +71,14 @@ export class CompanyPermissionsComponent implements OnInit {
 
   loadApps() {
     this.loading = true;
-    this.appService.getApps().subscribe({
+    this.appService.getApps().pipe(finalize(() => {
+      this.loading = false;
+      this.cdr.markForCheck();
+    })).subscribe({
       next: (res: any) => {
         this.apps = res.data || res || [];
-        this.loading = false;
-      },
-      error: () => this.loading = false
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -88,29 +94,24 @@ export class CompanyPermissionsComponent implements OnInit {
 
     this.loading = true;
 
-    let companiesLoaded = false;
-    let permissionsLoaded = false;
-
-    const checkDone = () => {
-      if (companiesLoaded && permissionsLoaded) this.loading = false;
-    };
-
-    this.companyService.getCompanies().subscribe({
+    forkJoin({
+      companies: this.companyService.getCompanies(),
+      permissions: this.permissionService.getAdminPermissions()
+    }).pipe(
+      finalize(() => {
+        this.loading = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
       next: (res: any) => {
-        const allCompanies = res.data || res || [];
+        const allCompanies = res.companies?.data || res.companies || [];
         this.companies = allCompanies.filter((c: any) => c.app_id === this.selectedAppId);
+        
         if (this.companies.length > 0) {
           this.companyControl.enable();
         }
-        companiesLoaded = true;
-        checkDone();
-      },
-      error: () => { companiesLoaded = true; checkDone(); }
-    });
 
-    this.permissionService.getAdminPermissions().subscribe({
-      next: (res: any) => {
-        const allPerms = res.data || res || [];
+        const allPerms = res.permissions?.data || res.permissions || [];
         const appNode = allPerms.find((a: any) => a.id === this.selectedAppId);
 
         if (appNode && appNode.children) {
@@ -118,11 +119,13 @@ export class CompanyPermissionsComponent implements OnInit {
         } else {
           this.groups = [];
         }
-
-        permissionsLoaded = true;
-        checkDone();
+        this.cdr.markForCheck();
       },
-      error: () => { permissionsLoaded = true; checkDone(); }
+      error: () => {
+        this.companies = [];
+        this.groups = [];
+        this.cdr.markForCheck();
+      }
     });
   }
 
@@ -160,7 +163,10 @@ export class CompanyPermissionsComponent implements OnInit {
     if (!this.selectedCompanyId) return;
 
     this.loading = true;
-    this.permissionService.getCompanyPermissions().subscribe({
+    this.permissionService.getCompanyPermissions().pipe(finalize(() => {
+      this.loading = false;
+      this.cdr.markForCheck();
+    })).subscribe({
       next: (res: any) => {
         const tree = res.data || res || [];
         let assignedPermissionIds: number[] = [];
@@ -181,14 +187,14 @@ export class CompanyPermissionsComponent implements OnInit {
         }
 
         this.selectedIds = new Set(assignedPermissionIds);
-        this.loading = false;
-      },
-      error: () => this.loading = false
+        this.cdr.markForCheck();
+      }
     });
   }
 
   onSelectionChange(ids: Set<number>) {
     this.selectedIds = ids;
+    this.cdr.markForCheck();
   }
 
   savePermissions() {
@@ -197,12 +203,15 @@ export class CompanyPermissionsComponent implements OnInit {
     this.isSaving = true;
     const permissionIds = Array.from(this.selectedIds);
 
-    this.permissionService.syncCompanyPermissions(this.selectedCompanyId, permissionIds).subscribe({
+    this.permissionService.syncCompanyPermissions(this.selectedCompanyId, permissionIds).pipe(
+      finalize(() => {
+        this.isSaving = false;
+        this.cdr.markForCheck();
+      })
+    ).subscribe({
       next: () => {
         this.notificationService.success('Permisos sincronizados correctamente');
-        this.isSaving = false;
-      },
-      error: () => this.isSaving = false
+      }
     });
   }
 }

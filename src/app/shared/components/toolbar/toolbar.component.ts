@@ -21,6 +21,14 @@ export class ToolbarComponent {
   @Output() onSearch = new EventEmitter<string>();
   @Output() onAdd = new EventEmitter<void>();
 
+  searchExpanded = false;
+
+  onSearchFocus() {
+    if (window.innerWidth <= 768) {
+      this.searchExpanded = true;
+    }
+  }
+
   search(event: Event) {
     this.onSearch.emit((event.target as HTMLInputElement).value);
   }

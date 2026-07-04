@@ -38,4 +38,6 @@ export interface TableColumn {
   avatarField?: string;
   avatarRender?: string | ((rowData: any) => any);
   cellStyle?: (rowData: any) => Record<string, string> | undefined;
+  copyable?: boolean;
+  frozen?: boolean;
 }

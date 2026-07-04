@@ -60,6 +60,10 @@
   gap: 0.5rem;
 }
 
+.search-close-btn {
+  display: none;
+}
+
 .search-box {
   position: relative;
   display: flex;

@@ -37,6 +37,18 @@
   --space-10: 2.5rem;
   --space-12: 3rem;
 
+  /* ──────────────── EASING TOKENS ──────────────── */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* ──────────────── FOCUS RINGS ──────────────── */
+  --focus-ring-width: 2px;
+  --focus-ring-color: hsl(240 60% 55%);
+  --focus-ring-offset: 2px;
+
   /* ──────────────── TAILWIND / SHADCN HSL TOKENS ────────────────
      Rojinegro theme — dark surfaces with deep red accents.
      Space-separated HSL for hsl(var(--x)) in tailwind.config.js.
@@ -153,8 +165,8 @@
   --auth-white-20: rgba(255, 255, 255, 0.2);
   --auth-white-10: rgba(255, 255, 255, 0.1);
   --auth-white-05: rgba(255, 255, 255, 0.05);
-  --font-head: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-head: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
 
   /* ──────────────── SHADOWS ──────────────── */
   --shadow-xs:     0 1px 2px rgba(0, 0, 0, 0.06);
