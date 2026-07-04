@@ -38,6 +38,38 @@ export class CrudConfigService {
       );
   }
 
+  buildFetchTreeFn(cfg: CrudConfigFromAPI, fallback?: Function): Function | undefined {
+    if (!cfg.query_name || !cfg.query_field) return fallback;
+    const query = resolveQuery(cfg.graphql_domain, cfg.query_name);
+    if (!query) return fallback;
+    return () =>
+      this.gql.query(cfg.graphql_domain as any, query).pipe(
+        map((d: any) => d[cfg.query_field])
+      );
+  }
+
+  buildCreateFn(cfg: CrudConfigFromAPI, fallback?: Function): Function | undefined {
+    if (!cfg.create_q_name || !cfg.create_field) return fallback;
+    const mutation = resolveMutation(cfg.graphql_domain, cfg.create_q_name);
+    if (!mutation) return fallback;
+    return (data: any) =>
+      this.gql.query(cfg.graphql_domain as any, mutation, data).pipe(
+        map((d: any) => d[cfg.create_field])
+      );
+  }
+
+  buildUpdateFn(cfg: CrudConfigFromAPI, fallback?: Function): Function | undefined {
+    if (!cfg.update_q_name || !cfg.update_field) return fallback;
+    const mutation = resolveMutation(cfg.graphql_domain, cfg.update_q_name);
+    if (!mutation) return fallback;
+    return (id: string | number, data: any) => {
+      const primary = cfg.primary_key || 'id';
+      return this.gql.query(cfg.graphql_domain as any, mutation, { [primary]: id, ...data }).pipe(
+        map((d: any) => d[cfg.update_field])
+      );
+    };
+  }
+
   buildDeleteFn(cfg: CrudConfigFromAPI, fallback?: Function): Function | undefined {
     if (!cfg.delete_q_name || !cfg.delete_field) return fallback;
     const mutation = resolveMutation(cfg.graphql_domain, cfg.delete_q_name);

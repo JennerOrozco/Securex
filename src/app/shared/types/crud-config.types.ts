@@ -1,4 +1,5 @@
 import type { TableColumn } from '../table-shared/shared/table.types';
+import type { FormField } from '../modals/modal-shell/modal-shell.types';
 
 export interface CrudConfigFromAPI {
   route_path: string;
@@ -24,7 +25,9 @@ export interface CrudConfigFromAPI {
   create_field: string;
   update_q_name: string;
   update_field: string;
+  catalogs_json?: string;
   columns?: CrudColumnFromAPI[];
+  form_fields?: CrudFormFieldFromAPI[];
 }
 
 export interface CrudColumnFromAPI {
@@ -42,6 +45,38 @@ export interface CrudColumnFromAPI {
   text_align: string;
   render_func: string | null;
   sort_order: number;
+}
+
+export interface CrudFormFieldFromAPI {
+  id: number;
+  config_id: number;
+  name: string;
+  label: string;
+  type: string;
+  required: number;
+  icon: string | null;
+  placeholder: string | null;
+  options: string | null;
+  catalog_key: string | null;
+  accept: string | null;
+  sort_order: number;
+}
+
+export function mapToFormFields(apiFields: CrudFormFieldFromAPI[], catalogs?: Record<string, any[]>): FormField[] {
+  return apiFields
+    .sort((a, b) => a.sort_order - b.sort_order)
+    .map(f => ({
+      name: f.name,
+      label: f.label,
+      type: f.type as FormField['type'],
+      required: !!f.required,
+      ...(f.icon ? { icon: f.icon } : {}),
+      ...(f.placeholder ? { placeholder: f.placeholder } : {}),
+      ...(f.catalog_key && Array.isArray(catalogs?.[f.catalog_key])
+          ? { options: (catalogs![f.catalog_key] as any[]).map((item: any) => ({ label: item.name, value: item.uuid || item.id })) }
+          : f.options ? { options: JSON.parse(f.options) } : {}),
+      ...(f.accept ? { accept: f.accept } : {}),
+    }));
 }
 
 export function mapToTableColumns(apiColumns: CrudColumnFromAPI[]): TableColumn[] {
@@ -78,6 +113,38 @@ function parseRenderFunc(json: string | null, field: string): ((row: any) => any
       const path = cfg.path || field;
       const fallback = cfg.fallback ?? 'N/A';
       return (row: any) => getNestedValue(row, path) ?? fallback;
+    }
+    if (cfg.type === 'badge') {
+      const path = cfg.path || field;
+      const trueVal = cfg.trueValue || 'Activo';
+      const falseVal = cfg.falseValue || 'Inactivo';
+      const trueSev = cfg.trueSeverity || 'success';
+      const falseSev = cfg.falseSeverity || 'danger';
+      return (row: any) => {
+        const val = getNestedValue(row, path);
+        return val ? { value: trueVal, severity: trueSev } : { value: falseVal, severity: falseSev };
+      };
+    }
+    if (cfg.type === 'truncate') {
+      const path = cfg.path || field;
+      const len = cfg.length || 12;
+      const suffix = cfg.suffix || '...';
+      const prefix = cfg.prefix || false;
+      return (row: any) => {
+        const val = getNestedValue(row, path);
+        if (!val) return '—';
+        const str = String(val);
+        return prefix ? str.slice(0, len) + suffix : (str.length > len ? str.slice(-len) + suffix : str);
+      };
+    }
+    if (cfg.type === 'count') {
+      const path = cfg.path || field;
+      const label = cfg.label || 'item';
+      return (row: any) => {
+        const val = getNestedValue(row, path);
+        const count = Array.isArray(val) ? val.length : 0;
+        return { value: `${count} ${label}${count !== 1 ? 's' : ''}`, severity: count > 0 ? 'info' : 'secondary' };
+      };
     }
     return undefined;
   } catch {

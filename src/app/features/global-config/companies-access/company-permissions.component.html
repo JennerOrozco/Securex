@@ -1,99 +1,101 @@
-<div class="p-2">
-  <div *ngIf="!hasPermission" class="access-denied">
-    <i class="pi pi-lock" style="font-size: 3rem; display: block; margin-bottom: 1rem;"></i>
-    <h2>Acceso restringido</h2>
-    <p>Solo los administradores del sistema pueden gestionar los permisos de compa&ntilde;&iacute;as.</p>
-  </div>
+<div class="p-2" *appHasPermission="'securex.security.company-permissions'; else noPermission">
+  <div class="content-card">
+    <app-toolbar
+      title="Permisos por Compañía"
+      subtitle="Seleccione la aplicación y la compañía para administrar los permisos."
+      [showSearch]="false"
+      [showAdd]="false"
+    >
+      <div toolbar-actions>
+        <app-button
+          *ngIf="selectedCompanyId && groups.length > 0"
+          [label]="isSaving ? 'Guardando...' : 'Guardar Permisos'"
+          [icon]="isSaving ? 'pi pi-spinner animate-spin' : 'pi pi-save'"
+          [disabled]="isSaving"
+          class="p-button-navy"
+          (onClick)="savePermissions()">
+        </app-button>
+      </div>
+    </app-toolbar>
 
-  <ng-container *ngIf="hasPermission">
-    <div class="content-card">
-      <app-toolbar
-        title="Permisos por Compañía"
-        subtitle="Seleccione la aplicación y la compañía para administrar los permisos."
-        [showSearch]="false"
-        [showAdd]="false"
-      >
-        <div toolbar-actions>
-          <app-button
-            *ngIf="selectedCompanyId && groups.length > 0"
-            [label]="isSaving ? 'Guardando...' : 'Guardar Permisos'"
-            [icon]="isSaving ? 'pi pi-spinner animate-spin' : 'pi pi-save'"
-            [disabled]="isSaving"
-            class="p-button-navy"
-            (onClick)="savePermissions()">
-          </app-button>
-        </div>
-      </app-toolbar>
-
-      <div class="selectors-bar">
-        <div class="selector-group">
-          <label class="selector-label">Aplicaci&oacute;n</label>
-          <app-select
-            id="app-select"
-            placeholder="Seleccione una Aplicaci&oacute;n"
-            [options]="apps"
-            optionLabel="name"
-            optionValue="id"
-            [control]="appControl"
-            icon="pi pi-window-maximize">
-          </app-select>
-        </div>
-
-        <div class="selector-group">
-          <label class="selector-label">Compa&ntilde;&iacute;a</label>
-          <app-select
-            id="company-select"
-            placeholder="Seleccione una Compa&ntilde;&iacute;a"
-            [options]="companies"
-            optionLabel="name"
-            optionValue="id"
-            [control]="companyControl"
-            icon="pi pi-building">
-          </app-select>
-        </div>
+    <div class="selectors-bar">
+      <div class="selector-group">
+        <label class="selector-label">Aplicaci&oacute;n</label>
+        <app-select
+          id="app-select"
+          placeholder="Seleccione una Aplicaci&oacute;n"
+          [options]="apps"
+          optionLabel="name"
+          optionValue="id"
+          [control]="appControl"
+          icon="pi pi-window-maximize">
+        </app-select>
       </div>
 
-      <div *ngIf="loading" class="perm-skeleton">
-        <div class="perm-skeleton-header"></div>
-        <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-40"></span></div>
-        <div class="perm-skeleton-row depth-1"><span class="perm-skeleton-bar w-56"></span></div>
-        <div class="perm-skeleton-row depth-2"><span class="perm-skeleton-bar w-72"></span></div>
-        <div class="perm-skeleton-row depth-1"><span class="perm-skeleton-bar w-48"></span></div>
-        <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-44"></span></div>
+      <div class="selector-group">
+        <label class="selector-label">Compa&ntilde;&iacute;a</label>
+        <app-select
+          id="company-select"
+          placeholder="Seleccione una Compa&ntilde;&iacute;a"
+          [options]="companies"
+          optionLabel="name"
+          optionValue="id"
+          [control]="companyControl"
+          icon="pi pi-building">
+        </app-select>
       </div>
-
-      <!-- Estado Inicial: Nada seleccionado -->
-      <app-empty-state
-        *ngIf="!selectedAppId && !selectedCompanyId && !loading"
-        icon="pi pi-window-maximize"
-        title="Seleccione una Aplicación"
-        description="Elija primero la aplicación y luego la compañía destino para comenzar a administrar sus accesos.">
-      </app-empty-state>
-
-      <!-- Estado: Aplicación seleccionada, falta compañía -->
-      <app-empty-state
-        *ngIf="selectedAppId && !selectedCompanyId && !loading"
-        icon="pi pi-building"
-        title="Seleccione una Compañía"
-        description="Use el selector superior para elegir la compañía a la cual desea asignarle los permisos.">
-      </app-empty-state>
-
-      <!-- Árbol de Permisos -->
-      <app-permission-tree
-        *ngIf="selectedCompanyId && !loading && groups.length > 0"
-        [groups]="groups"
-        [selectedIds]="selectedIds"
-        [loading]="false"
-        (selectedIdsChange)="onSelectionChange($event)">
-      </app-permission-tree>
-
-      <!-- Estado: Sin permisos registrados en el árbol -->
-      <app-empty-state
-        *ngIf="selectedCompanyId && !loading && groups.length === 0"
-        icon="pi pi-folder-open"
-        title="Sin permisos configurados"
-        description="No hay permisos disponibles para esta aplicación. Verifique en los ajustes globales que la aplicación tenga módulos asignados.">
-      </app-empty-state>
     </div>
-  </ng-container>
+
+    <div *ngIf="loading" class="perm-skeleton">
+      <div class="perm-skeleton-header"></div>
+      <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-40"></span></div>
+      <div class="perm-skeleton-row depth-1"><span class="perm-skeleton-bar w-56"></span></div>
+      <div class="perm-skeleton-row depth-2"><span class="perm-skeleton-bar w-72"></span></div>
+      <div class="perm-skeleton-row depth-1"><span class="perm-skeleton-bar w-48"></span></div>
+      <div class="perm-skeleton-row depth-0"><span class="perm-skeleton-bar w-44"></span></div>
+    </div>
+
+    <!-- Estado Inicial: Nada seleccionado -->
+    <app-empty-state
+      *ngIf="!selectedAppId && !selectedCompanyId && !loading"
+      icon="pi pi-window-maximize"
+      title="Seleccione una Aplicación"
+      description="Elija primero la aplicación y luego la compañía destino para comenzar a administrar sus accesos.">
+    </app-empty-state>
+
+    <!-- Estado: Aplicación seleccionada, falta compañía -->
+    <app-empty-state
+      *ngIf="selectedAppId && !selectedCompanyId && !loading"
+      icon="pi pi-building"
+      title="Seleccione una Compañía"
+      description="Use el selector superior para elegir la compañía a la cual desea asignarle los permisos.">
+    </app-empty-state>
+
+    <!-- Árbol de Permisos -->
+    <app-permission-tree
+      *ngIf="selectedCompanyId && !loading && groups.length > 0"
+      [groups]="groups"
+      [selectedIds]="selectedIds"
+      [loading]="false"
+      (selectedIdsChange)="onSelectionChange($event)">
+    </app-permission-tree>
+
+    <!-- Estado: Sin permisos registrados en el árbol -->
+    <app-empty-state
+      *ngIf="selectedCompanyId && !loading && groups.length === 0"
+      icon="pi pi-folder-open"
+      title="Sin permisos configurados"
+      description="No hay permisos disponibles para esta aplicación. Verifique en los ajustes globales que la aplicación tenga módulos asignados.">
+    </app-empty-state>
+  </div>
 </div>
+
+<ng-template #noPermission>
+  <div class="p-2 flex items-center justify-center min-h-[60vh]">
+    <app-empty-state
+      icon="pi pi-lock"
+      title="Acceso restringido"
+      description="Solo los administradores del sistema pueden gestionar los permisos de compañías.">
+    </app-empty-state>
+  </div>
+</ng-template>

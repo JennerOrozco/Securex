@@ -5,6 +5,8 @@ import { UserService } from '@core/services/user.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { CompanyService } from '@core/services/company.service';
+import { PermissionService } from '@core/services/permission.service';
+import { mapToTreeNodes } from '@shared/utils/tree-utils';
 import { map, tap } from 'rxjs/operators';
 
 export const globalConfigRoutes: Routes = [
@@ -14,19 +16,7 @@ export const globalConfigRoutes: Routes = [
     title: 'Aplicaciones',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      permission: 'securex.security.apps',
-      title: 'Aplicaciones',
-      subtitle: 'Gestión de aplicaciones registradas en el ecosistema SECUREX',
-      resourceName: 'Aplicación',
-      addLabel: 'Nueva Aplicación',
-      deleteMessage: (item: any) => `¿Estás seguro de eliminar la aplicación "${item?.name}"? Esta acción no puede deshacerse.`,
-      defaultSortKey: 'name',
-      fnFetch: () => inject(AppService).getAppsWithCompanies(),
-      fnCreate: (data: any) => inject(AppService).createAppGql(data),
-      fnUpdate: (id: string, data: any) => inject(AppService).updateAppGql(id, data),
-      fnDelete: (id: string) => inject(AppService).deleteAppGql(id),
-      cols: () => import('./catalogs/apps/apps.config').then(m => m.APPS_COLS),
-      formFields: () => import('./catalogs/apps/apps.config').then(m => m.APPS_FORM_FIELDS)
+      crudConfigKey: 'global-apps',
     }
   },
   {
@@ -34,12 +24,10 @@ export const globalConfigRoutes: Routes = [
     title: 'Compañías',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
+      crudConfigKey: 'companies',
       isTreeTable: true,
-      title: 'Compañías',
-      subtitle: 'Organizadas por aplicación',
-      resourceName: 'Compañía',
-      addLabel: 'Nueva Compañía',
-      primaryKey: 'uuid',
+      showLegend: false,
+      permission: 'securex.security.companies',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la compañía ${item?.name}?`,
       fnFetch: () => {
         return inject(CompanyService).getCompaniesPageData().pipe(
@@ -60,11 +48,6 @@ export const globalConfigRoutes: Routes = [
         const appService = inject(AppService);
         return { apps: () => appService.getAppsWithCompanies() };
       },
-      fnCreate: (data: any) => inject(CompanyService).createCompanyGql(data),
-      fnUpdate: (id: string, data: any) => inject(CompanyService).updateCompanyGql(id, data),
-      fnDelete: (id: string) => inject(CompanyService).deleteCompanyGql(id),
-      cols: () => import('./catalogs/companies/companies.config').then(m => m.COMPANIES_COLS),
-      formFieldsFn: () => import('./catalogs/companies/companies.config').then(m => m.createCompaniesForm),
       onAddRootFn: (shell: any) => { shell.formExtraData = null; },
       onAddChildFn: (parentId: any, shell: any) => { shell.formExtraData = { app_id: parentId, is_active: true }; },
       hooks: () => {
@@ -73,15 +56,10 @@ export const globalConfigRoutes: Routes = [
           onBeforeSave: (data: any, mode: string) => {
             return new Promise((resolve, reject) => {
               if (data.logo_url instanceof File) {
-                // Determine appId from data (app_id could be present directly, or parent_id for TreeTables)
                 const appId = data.app_id || data.parent_id || 'default-app';
                 const companyName = data.name || 'company';
-                
                 companyService.uploadLogo(data.logo_url, appId, companyName).subscribe({
-                  next: (res: any) => {
-                    data.logo_url = res.data?.url || res.url;
-                    resolve(data);
-                  },
+                  next: (res: any) => { data.logo_url = res.data?.url || res.url; resolve(data); },
                   error: (err) => reject(new Error('Error al subir la imagen del logo: ' + (err.error?.message || err.message)))
                 });
               } else {
@@ -91,7 +69,6 @@ export const globalConfigRoutes: Routes = [
           }
         };
       }
-
     }
   },
   {
@@ -99,12 +76,10 @@ export const globalConfigRoutes: Routes = [
     title: 'Sucursales',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
+      crudConfigKey: 'branches',
       isTreeTable: true,
-      title: 'Sucursales',
-      subtitle: 'Organizadas por Compañía',
-      resourceName: 'Sucursal',
-      addLabel: 'Nueva Sucursal',
-      primaryKey: 'uuid',
+      showLegend: false,
+      permission: 'securex.security.branches',
       deleteMessage: (item: any) => `¿Está seguro de que desea eliminar la sucursal ${item?.name}?`,
       fnFetch: () => {
         return inject(CompanyService).getBranchesPageData().pipe(
@@ -125,11 +100,6 @@ export const globalConfigRoutes: Routes = [
         const companyService = inject(CompanyService);
         return { companies: () => companyService.getCompanies() };
       },
-      fnCreate: (data: any) => inject(CompanyService).createBranchGql(data),
-      fnUpdate: (id: string, data: any) => inject(CompanyService).updateBranchGql(id, data),
-      fnDelete: (id: string) => inject(CompanyService).deleteBranchGql(id),
-      cols: () => import('./catalogs/branches/branches.config').then(m => m.BRANCHES_COLS),
-      formFieldsFn: () => import('./catalogs/branches/branches.config').then(m => m.createBranchesForm),
       onAddRootFn: (shell: any) => { shell.formExtraData = null; },
       onAddChildFn: (parentId: any, shell: any) => { shell.formExtraData = { company_id: parentId, is_active: true }; }
     }
@@ -141,18 +111,11 @@ export const globalConfigRoutes: Routes = [
     title: 'Usuarios (Admin)',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Usuarios Administrativos',
-      subtitle: 'Gestión de usuarios y accesos al sistema',
-      resourceName: 'Usuario',
-      defaultSortKey: 'created_at',
+      crudConfigKey: 'admin-users',
       fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(UserService).getAdminUsersPaginated(page, limit, filter, sort).pipe(
         map((res: any) => {
           if (res?.data) {
-            res.data = res.data.map((u: any) => ({
-              ...u,
-              auth_provider: u.auth_provider || 'Local',
-              created_at: u.created_at || u.createdAt
-            }));
+            res.data = res.data.map((u: any) => ({ ...u, auth_provider: u.auth_provider || 'Local', created_at: u.created_at || u.createdAt }));
           }
           return res;
         })
@@ -166,24 +129,15 @@ export const globalConfigRoutes: Routes = [
             if (data.email) {
               authService.adminResetUserPassword(data.email).subscribe({
                 next: (res: any) => {
-                  if (res.success) {
-                    notificationService.success(`Código de invitación enviado a ${data.email}`);
-                  } else {
-                    notificationService.notify('error', res.error || 'No se pudo enviar la invitación.');
-                  }
+                  if (res.success) { notificationService.success(`Código de invitación enviado a ${data.email}`); }
+                  else { notificationService.notify('error', res.error || 'No se pudo enviar la invitación.'); }
                 },
-                error: (err: any) => {
-                  notificationService.notify('error', `Error al enviar invitación: ${err?.message || 'Error de conexión'}`);
-                }
+                error: (err: any) => { notificationService.notify('error', `Error al enviar invitación: ${err?.message || 'Error de conexión'}`); }
               });
             }
           })
         );
       },
-      fnUpdate: (id: string, data: any) => inject(UserService).updateUserGql(id, data),
-      fnDelete: (id: string) => inject(UserService).deleteUserGql(id),
-      cols: () => import('./access/gestion-usuarios/usuarios-admin/admin-users.config').then(m => m.ADMIN_USERS_COLS),
-      formFields: () => import('./access/gestion-usuarios/usuarios-admin/admin-users.config').then(m => m.ADMIN_USERS_FORM_FIELDS)
     }
   },
   {
@@ -199,7 +153,28 @@ export const globalConfigRoutes: Routes = [
   {
     path: 'access/admin-permissions',
     title: 'Permisos (Admin)',
-    loadComponent: () => import('./access/roles-permisos/permisos-admin/admin-permissions.component').then(m => m.AdminPermissionsComponent)
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: {
+      crudConfigKey: 'admin-perms',
+      searchPlaceholder: 'Buscar permiso...',
+      fnFetchTree: () => inject(PermissionService).getAdminPermissionsGql(),
+      mapTreeFn: (items: any[]) => {
+        return mapToTreeNodes(items, {
+          canAdd: (p: any) => p.type !== 'ACTION' && p.type !== 'COMPONENT',
+          canEdit: (p: any) => p.type !== 'APP',
+          canDelete: (p: any) => p.type !== 'APP',
+          label: (p: any) => p.name,
+          icon: (p: any) =>
+            p.type === 'APP'       ? 'pi pi-box'       :
+            p.type === 'MENU'      ? 'pi pi-th-large'  :
+            p.type === 'SUBMENU'   ? 'pi pi-folder'    :
+            p.type === 'ACTION'    ? 'pi pi-tag'       :
+                                      'pi pi-cog',
+          leaf: (p: any) => !p.children || p.children.length === 0,
+          expanded: (p: any) => p.type === 'APP'
+        });
+      },
+    }
   },
 
   // Permisos por compañía
@@ -209,19 +184,30 @@ export const globalConfigRoutes: Routes = [
     loadComponent: () => import('./companies-access/company-permissions.component').then(m => m.CompanyPermissionsComponent)
   },
 
-  // WebAuthn
+  {
+    path: 'admin/crud-configs',
+    title: 'Config CRUD',
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: { crudConfigKey: 'crud-configs' }
+  },
+  {
+    path: 'admin/crud-columns',
+    title: 'Columnas CRUD',
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: { crudConfigKey: 'crud-columns' }
+  },
+  {
+    path: 'admin/crud-form-fields',
+    title: 'Form Fields CRUD',
+    loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
+    data: { crudConfigKey: 'crud-form-fields' }
+  },
   {
     path: 'webauthn-credentials',
     title: 'Credenciales WebAuthn',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Credenciales WebAuthn',
-      subtitle: 'Administración de credenciales de hardware/biometría',
-      resourceName: 'Credencial WebAuthn',
-      defaultSortKey: 'created_at',
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(UserService).getUserWebauthnCredentials(page, limit, filter, sort),
-      fnDelete: (id: string) => inject(UserService).deleteUserWebauthnCredential(Number(id)),
-      cols: () => import('./credenciales-webauthn/user-webauthn-credentials.config').then(m => m.WEBAUTHN_CREDENTIALS_COLS)
+      crudConfigKey: 'webauthn-creds',
     }
   }
 ];

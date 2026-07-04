@@ -119,4 +119,16 @@ export const NOTIFICATION_MUTATIONS = {
       deleteSendAttempt(id: $id)
     }
   `,
+  SAVE_SMTP_SETTING: `
+    mutation SaveSmtpSetting($id: Int, $app_uuid: String!, $smtp_host: String!, $smtp_port: Int!, $smtp_user: String!, $smtp_pass: String, $smtp_encryption: String, $from_email: String!, $from_name: String) {
+      saveSmtpSetting(id: $id, app_uuid: $app_uuid, smtp_host: $smtp_host, smtp_port: $smtp_port, smtp_user: $smtp_user, smtp_pass: $smtp_pass, smtp_encryption: $smtp_encryption, from_email: $from_email, from_name: $from_name) {
+        id app_uuid smtp_host smtp_port smtp_encryption from_email from_name
+      }
+    }
+  `,
+  DELETE_SMTP_SETTING: `
+    mutation DeleteSmtpSetting($id: Int!) {
+      deleteSmtpSetting(id: $id)
+    }
+  `,
 };

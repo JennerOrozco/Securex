@@ -16,6 +16,7 @@ import { PermissionService } from '@core/services/permission.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
 import { trackSignal } from '@shared/utils/rxjs-utils';
+import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
 
 @Component({
   selector: 'app-security-company-permissions',
@@ -23,7 +24,8 @@ import { trackSignal } from '@shared/utils/rxjs-utils';
   imports: [
     CommonModule, FormsModule, ReactiveFormsModule,
     SelectComponent, ToolbarComponent, ButtonComponent,
-    PermissionTreeComponent, EmptyStateComponent
+    PermissionTreeComponent, EmptyStateComponent,
+    HasPermissionDirective
   ],
   templateUrl: './company-permissions.component.html',
   styleUrl: './company-permissions.component.css'

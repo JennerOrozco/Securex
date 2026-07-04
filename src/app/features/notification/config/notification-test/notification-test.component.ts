@@ -8,8 +8,6 @@ import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { TableDataLoader } from '@shared/utils/table-data-loader';
 import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
-import { InputComponent } from '@shared/components/input/input.component';
-import { SelectComponent } from '@shared/components/select/select.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { WizardComponent } from '@shared/components/wizard/wizard.component';
@@ -17,6 +15,7 @@ import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-fo
 import { buildFormGroup } from '@shared/utils/form-utils';
 import { APP_COLS, COMPANY_COLS, USER_COLS, MESSAGE_FIELDS, SEND_CONFIG } from './notification-test.config';
 import { trackSignal } from '@shared/utils/rxjs-utils';
+import { HasPermissionDirective } from '@shared/directives/has-permission.directive';
 import type { WizardStep } from '@shared/components/wizard/wizard.component';
 
 @Component({
@@ -24,8 +23,9 @@ import type { WizardStep } from '@shared/components/wizard/wizard.component';
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    TableComponent, InputComponent, SelectComponent, ButtonComponent,
-    EmptyStateComponent, WizardComponent, DynamicFormComponent
+    TableComponent, ButtonComponent,
+    EmptyStateComponent, WizardComponent, DynamicFormComponent,
+    HasPermissionDirective
   ],
   templateUrl: './notification-test.component.html',
   styleUrls: ['./notification-test.component.css'],

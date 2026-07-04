@@ -284,7 +284,8 @@ export class AuthService {
                         full_name: data.full_name,
                         name: data.full_name,
                         role_name: data.role_name || 'Residente',
-                        profile_picture: data.profile_picture
+                        profile_picture: data.profile_picture,
+                        is_super_admin: data.is_super_admin !== undefined ? data.is_super_admin : existing?.is_super_admin
                     };
                     this.storage.setUser(updatedUser);
                     this.currentUserSignal.set(updatedUser);

@@ -552,6 +552,33 @@ tr.drag-over {
     font-weight: 500;
 }
 
+/* Mobile compact legend styles */
+@media (max-width: 640px) {
+    .types-legend-bar {
+        padding: 0.4rem 0.75rem !important;
+        gap: 0.5rem !important;
+        flex-wrap: wrap !important;
+    }
+    .legend-label {
+        font-size: 0.6rem !important;
+        letter-spacing: 0.03em !important;
+    }
+    .legend-items {
+        gap: 0.5rem !important;
+    }
+    .legend-item {
+        gap: 0.25rem !important;
+    }
+    .legend-desc {
+        display: none !important;
+    }
+    .type-chip {
+        font-size: 0.55rem !important;
+        padding: 0.1rem 0.35rem !important;
+    }
+}
+
+
 /* ─────────────────────────────────────────────────────────────
    PERMISSION-SEARCH (used by role-permissions-modal and
    company-permissions page)

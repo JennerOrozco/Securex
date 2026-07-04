@@ -1,36 +1,14 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, Injector, EnvironmentInjector, InjectionToken, computed, DestroyRef } from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, EnvironmentInjector, InjectionToken, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
-import { NotificationService } from '@core/services/notification.service';
+import { CrudConfigResolverService } from '@core/services/crud-config-resolver.service';
 import { CrudConfigService } from '@core/services/crud-config.service';
-import { mapToTableColumns, type CrudConfigFromAPI } from '@shared/types/crud-config.types';
-import { firstValueFrom } from 'rxjs';
+import { mapToFormFields } from '@shared/types/crud-config.types';
 
 export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
 
-/**
- * CrudShellComponent
- * 
- * Un wrapper genérico para crear pantallas CRUD completas usando solo configuración en las rutas.
- * Elimina la necesidad de crear un Componente TS + HTML para cada catálogo simple.
- * 
- * Uso en el enrutador:
- * {
- *   path: 'apps',
- *   component: CrudShellComponent,
- *   providers: [{ provide: 'CRUD_SERVICE', useExisting: AppService }],
- *   data: {
- *     title: 'Aplicaciones',
- *     subtitle: 'Catálogo de aplicaciones',
- *     resourceName: 'Aplicación',
- *     methods: { fetch: 'getAppsWithCompanies', create: 'createAppGql', update: 'updateAppGql', delete: 'deleteAppGql' },
- *     cols: () => import('./apps.config').then(m => m.APPS_COLS),
- *     formFields: () => import('./apps.config').then(m => m.APPS_FORM_FIELDS)
- *   }
- * }
- */
 @Component({
   selector: 'app-crud-shell',
   standalone: true,
@@ -53,6 +31,7 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
         [showEdit]="showEdit"
         [showDelete]="showDelete"
         [showPermissions]="showPermissions"
+        [showLegend]="showLegend"
         [permission]="permission"
         [hidePermissionGate]="hidePermissionGate"
         [deleteTitle]="deleteTitle"
@@ -60,6 +39,9 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
         [isTreeTable]="isTreeTable"
         [treeNodes]="crud.items()"
         [formExtraData]="formExtraData"
+        [showLegend]="showLegend"
+        [dragdrop]="dragdrop"
+        [searchPlaceholder]="searchPlaceholder"
         (onLazyLoad)="crud.load($event)" 
         (onSave)="crud.save($event)"
         (onConfirmDelete)="crud.confirmDelete($event)"
@@ -68,12 +50,10 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
         (onAdd)="handleModalOpen()"
         (onEdit)="handleModalOpen()"
         (onAddRoot)="handleAddRoot()"
-        (onAddChild)="handleAddChild($event)">
+        (onAddChild)="handleAddChild($event)"
+        (onFilterType)="handleFilterType($event)"
+        (onNodeReorder)="handleNodeReorder($event)">
       </app-crud-page>
-
-      @if (customModalComponent) {
-        <ng-container *ngComponentOutlet="customModalComponent; inputs: customModalInputs"></ng-container>
-      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -82,13 +62,10 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
 export class CrudShellComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
-  private injector = inject(Injector);
-  private service = inject(CRUD_SERVICE_TOKEN, { optional: true });
-  crud = inject(UnifiedCrudService);
+  private resolver = inject(CrudConfigResolverService);
   private crudConfigService = inject(CrudConfigService);
-  environmentInjector = inject(EnvironmentInjector);
-  destroyRef = inject(DestroyRef);
-  notificationService = inject(NotificationService);
+  private environmentInjector = inject(EnvironmentInjector);
+  crud = inject(UnifiedCrudService);
 
   initialized = false;
   title = '';
@@ -99,156 +76,99 @@ export class CrudShellComponent implements OnInit {
   showEdit = true;
   showDelete = true;
   showPermissions = false;
+  showLegend = false;
+  dragdrop = false;
   lazy = false;
   isTreeTable = false;
   permission = '';
   hidePermissionGate = false;
-  deleteTitle: string = '';
+  searchPlaceholder = 'Buscar...';
+  deleteTitle = '';
   deleteMessage: string | ((item: any) => string) = '';
   formExtraData: any = null;
-  routeData: any = null;
-  _dbConfig: CrudConfigFromAPI | null = null;
-  customModalComponent: any = null;
-  customModalInputs: Record<string, any> = {};
-  
   cols: any[] = [];
   formFields: any[] = [];
   formFieldsBuilder: any = null;
 
+  private _dbConfig: any = null;
+  _rawFormFields = signal<any[]>([]);
+  private routeData: any = null;
+
   resolvedFormFields = computed(() => {
-    if (this.formFieldsBuilder) {
-      return this.formFieldsBuilder(this.crud.catalogItems());
+    try {
+      if (this.formFieldsBuilder) {
+        return this.formFieldsBuilder(this.crud.catalogItems());
+      }
+      if (this._rawFormFields().length > 0) {
+        return mapToFormFields(this._rawFormFields(), this.crud.catalogItems());
+      }
+      return this.formFields;
+    } catch (e) {
+      console.error('[CrudShell] Error building form fields:', e);
+      return [];
     }
-    return this.formFields;
   });
 
   async ngOnInit() {
     const data = this.route.snapshot.data;
     this.routeData = data;
-    
-    // Si hay crudConfigKey, cargar metadata desde BD (API)
-    const crudConfigKey = data['crudConfigKey'];
-    if (crudConfigKey) {
-      const cfg = await firstValueFrom(this.crudConfigService.getCrudConfig(crudConfigKey));
-      if (cfg) {
-        this.title = cfg.title || data['title'] || 'Catálogo';
-        this.subtitle = cfg.subtitle || data['subtitle'] || '';
-        this.resourceName = cfg.resource_name || data['resourceName'] || 'Elemento';
-        this.addLabel = cfg.add_label || data['addLabel'] || 'Nuevo';
-        this.showAdd = cfg.show_add !== undefined ? !!cfg.show_add : true;
-        this.showEdit = cfg.show_edit !== undefined ? !!cfg.show_edit : true;
-        this.showDelete = cfg.show_delete !== undefined ? !!cfg.show_delete : true;
-        this.lazy = !!cfg.lazy_load || data['lazy'] || false;
-        this.isTreeTable = !!cfg.is_tree || data['isTreeTable'] || false;
-        this.deleteMessage = cfg.delete_msg || data['deleteMessage'] || '¿Estás seguro de eliminar este elemento?';
-        if (cfg.columns) {
-          this.cols = mapToTableColumns(cfg.columns);
-        }
-        // Build function overrides from DB config
-        this._dbConfig = cfg;
-      }
-    }
-    
-    // Route data overrides (siempre gana sobre DB)
-    this.title = data['title'] || this.title;
-    this.subtitle = data['subtitle'] || this.subtitle;
-    this.resourceName = data['resourceName'] || this.resourceName;
-    this.addLabel = data['addLabel'] || this.addLabel;
-    this.showAdd = data['showAdd'] !== undefined ? data['showAdd'] : true;
-    this.showEdit = data['showEdit'] !== undefined ? data['showEdit'] : true;
-    this.showDelete = data['showDelete'] !== undefined ? data['showDelete'] : true;
-    this.showPermissions = data['showPermissions'] || false;
-    this.lazy = data['lazy'] || false;
-    this.isTreeTable = data['isTreeTable'] || false;
-    this.permission = data['permission'] || '';
-    this.hidePermissionGate = data['hidePermissionGate'] || false;
-    this.deleteTitle = data['deleteTitle'] || 'Eliminar';
-    this.deleteMessage = data['deleteMessage'] || '¿Estás seguro de eliminar este elemento?';
-    
-    // Resolve dynamic imports for cols and formFields if they are functions (lazy loaded)
-    if (!this._dbConfig || this.cols.length === 0) {
-      this.cols = typeof data['cols'] === 'function' ? await data['cols']() : (data['cols'] || []);
-    }
-    this.formFields = typeof data['formFields'] === 'function' ? await data['formFields']() : (data['formFields'] || []);
-    
-    if (typeof data['formFieldsFn'] === 'function') {
-      this.formFieldsBuilder = await data['formFieldsFn']();
-    }
-    
-    this.cdr.markForCheck();
-    
-    // Service methods binding
-    let fnFetch, fnCreate, fnUpdate, fnDelete;
 
-    // Approach 1: Use provided CRUD_SERVICE and method names
-    if (this.service && data['methods']) {
-      const fetchMethod = data['methods'].fetch;
-      const createMethod = data['methods'].create;
-      const updateMethod = data['methods'].update;
-      const deleteMethod = data['methods'].delete;
+    const cfg = await this.resolver.resolve(data, this.environmentInjector);
+    await this.resolver.resolveDynamicFields(cfg, data);
 
-      fnFetch = fetchMethod ? this.service[fetchMethod].bind(this.service) : undefined;
-      fnCreate = createMethod ? this.service[createMethod].bind(this.service) : undefined;
-      fnUpdate = updateMethod ? this.service[updateMethod].bind(this.service) : undefined;
-      fnDelete = deleteMethod ? this.service[deleteMethod].bind(this.service) : undefined;
-    }
-    
-    // Approach 2: Use direct function callbacks passed in route data (they can use inject())
-    if (data['fnFetch']) fnFetch = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnFetch'](...args));
-    if (data['fnCreate']) fnCreate = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnCreate'](...args));
-    if (data['fnUpdate']) fnUpdate = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnUpdate'](...args));
-    if (data['fnDelete']) fnDelete = (...args: any[]) => this.environmentInjector.runInContext(() => data['fnDelete'](...args));
-
-    // Approach 3: Use DB config to auto-build fetch/delete functions
-    if (this._dbConfig) {
-      if (!fnFetch) fnFetch = this.crudConfigService.buildFetchFn(this._dbConfig, fnFetch);
-      if (!fnDelete) fnDelete = this.crudConfigService.buildDeleteFn(this._dbConfig, fnDelete);
-    }
-
-    let fnCatalogs;
-    if (data['fnCatalogs']) {
-      fnCatalogs = this.environmentInjector.runInContext(() => {
-        return typeof data['fnCatalogs'] === 'function' ? data['fnCatalogs']() : data['fnCatalogs'];
-      });
-    }
-
-    let hooks = data['hooks'];
-    if (hooks && typeof hooks === 'function') {
-      hooks = this.environmentInjector.runInContext(() => hooks());
-    }
-
-    this.crud.initialize({
-      fnFetch,
-      fnCreate,
-      fnUpdate,
-      fnDelete,
-      resourceName: this.resourceName,
-      defaultSortKey: data['defaultSortKey'] || 'id',
-      ...(data['primaryKey'] ? { primaryKey: data['primaryKey'] } : {}),
-      columnMap: data['columnMap'],
-      fnCatalogs,
-      hooks
+    Object.assign(this, {
+      title: cfg.title, subtitle: cfg.subtitle, resourceName: cfg.resourceName,
+      addLabel: cfg.addLabel, showAdd: cfg.showAdd, showEdit: cfg.showEdit,
+      showDelete: cfg.showDelete, showPermissions: cfg.showPermissions,
+      lazy: cfg.lazy, isTreeTable: cfg.isTreeTable, permission: cfg.permission,
+      hidePermissionGate: cfg.hidePermissionGate, deleteTitle: cfg.deleteTitle,
+      deleteMessage: cfg.deleteMessage, formExtraData: cfg.formExtraData,
+      cols: cfg.cols, formFields: cfg.formFields,
+      formFieldsBuilder: cfg.formFieldsBuilder,
+      showLegend: data['showLegend'] || false,
+      dragdrop: data['dragdrop'] || false,
+      searchPlaceholder: data['searchPlaceholder'] || 'Buscar...',
     });
 
-    
+    this._dbConfig = cfg.dbConfig;
+    this._rawFormFields.set(cfg.dbConfig?.form_fields || []);
+
+    this.cdr.markForCheck();
+
+    this.crud.initialize({
+      resourceName: cfg.resourceName,
+      defaultSortKey: cfg.defaultSortKey,
+      ...(cfg.primaryKey ? { primaryKey: cfg.primaryKey } : {}),
+      columnMap: cfg.columnMap as any,
+      fnFetch: cfg.fnFetch,
+      fnCreate: cfg.fnCreate,
+      fnUpdate: cfg.fnUpdate,
+      fnDelete: cfg.fnDelete,
+      fnCatalogs: cfg.fnCatalogs,
+      hooks: cfg.hooks,
+      isTreeMode: cfg.isTreeTable || !!data['fnFetchTree'],
+      fnFetchTree: data['fnFetchTree'] 
+        ? (...args: any[]) => this.environmentInjector.runInContext(() => (data['fnFetchTree'] as Function)(...args))
+        : (cfg.dbConfig ? this.crudConfigService.buildFetchTreeFn(cfg.dbConfig) as any : undefined),
+      mapTreeFn: data['mapTreeFn'],
+    });
+
     this.initialized = true;
     this.cdr.markForCheck();
-    
-    // Only manual load if not lazy. If lazy, the table's onLazyLoad will trigger it automatically
-    // once the component renders (since initialized is now true).
+
     if (!this.lazy) {
       this.crud.load();
     }
-    
-    if (data['onInitFn']) {
+
+    if (cfg.onInitFn) {
       this.environmentInjector.runInContext(() => {
-        data['onInitFn'](this.crud, this.cols);
+        cfg.onInitFn!(this.crud, this.cols);
       });
     }
   }
 
   handlePermissions(item: any) {
-    if (this.routeData['onPermissionsFn']) {
+    if (this.routeData?.['onPermissionsFn']) {
       this.environmentInjector.runInContext(() => {
         this.routeData['onPermissionsFn'](item, this);
       });
@@ -256,12 +176,12 @@ export class CrudShellComponent implements OnInit {
   }
 
   handleModalOpen() {
-    this.crud.ensureCatalogs(() => {});
+    this.crud.ensureCatalogs(() => { });
   }
 
   handleAddRoot() {
     this.handleModalOpen();
-    if (this.routeData['onAddRootFn']) {
+    if (this.routeData?.['onAddRootFn']) {
       this.routeData['onAddRootFn'](this);
     } else {
       this.formExtraData = null;
@@ -270,10 +190,22 @@ export class CrudShellComponent implements OnInit {
 
   handleAddChild(parentId: any) {
     this.handleModalOpen();
-    if (this.routeData['onAddChildFn']) {
+    if (this.routeData?.['onAddChildFn']) {
       this.routeData['onAddChildFn'](parentId, this);
     } else {
       this.formExtraData = { parent_id: parentId };
+    }
+  }
+
+  handleFilterType(type: string) {
+    if (this.routeData?.['onFilterTypeFn']) {
+      this.routeData['onFilterTypeFn'](this.crud, type);
+    }
+  }
+
+  handleNodeReorder(event: any) {
+    if (this.routeData?.['onNodeReorderFn']) {
+      this.routeData['onNodeReorderFn'](event, this.crud, this.environmentInjector);
     }
   }
 }

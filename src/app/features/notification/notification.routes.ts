@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { inject } from '@angular/core';
-import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AppService } from '@core/services/app.service';
 import { map } from 'rxjs/operators';
 
@@ -11,7 +10,6 @@ export const notificationRoutes: Routes = [
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
       crudConfigKey: 'notif-apps',
-      permission: 'securex.notifications.apps',
     }
   },
   {
@@ -24,15 +22,7 @@ export const notificationRoutes: Routes = [
     title: 'SMTP Setting',
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
-      title: 'Configuración SMTP',
-      subtitle: 'Configuraciones de los servidores de correo saliente (SMTP)',
-      resourceName: 'Configuración SMTP',
-      lazy: true,
-      defaultSortKey: 'id',
-      fnFetch: (page: number, limit: number, filter: any, sort: any) => inject(NotificationSettingsService).getSmtpSettingsGql(page, limit, filter, sort),
-      fnCreate: (data: any) => inject(NotificationSettingsService).saveSmtpSetting(null, data),
-      fnUpdate: (id: number, data: any) => inject(NotificationSettingsService).saveSmtpSetting(id, data),
-      fnDelete: (id: number) => inject(NotificationSettingsService).deleteSmtpSetting(id),
+      crudConfigKey: 'smtp-settings',
       fnCatalogs: () => {
         const appService = inject(AppService);
         return {
@@ -41,8 +31,6 @@ export const notificationRoutes: Routes = [
           )
         };
       },
-      cols: () => import('./config/smtp-settings/smtp-settings.config').then(m => m.SMTP_SETTINGS_COLS),
-      formFieldsFn: () => import('./config/smtp-settings/smtp-settings.config').then(m => m.createSmtpSettingsForm)
     }
   },
   {
@@ -57,7 +45,6 @@ export const notificationRoutes: Routes = [
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
       crudConfigKey: 'user-devices',
-      permission: 'securex.notifications.devices',
     }
   },
   {
@@ -66,7 +53,6 @@ export const notificationRoutes: Routes = [
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
       crudConfigKey: 'notif-history',
-      permission: 'securex.notifications.history',
     }
   },
   {
@@ -75,7 +61,6 @@ export const notificationRoutes: Routes = [
     loadComponent: () => import('@shared/crud-shell/crud-shell.component').then(m => m.CrudShellComponent),
     data: {
       crudConfigKey: 'send-attempts',
-      permission: 'securex.notifications.send-attempts',
     }
   }
 ];

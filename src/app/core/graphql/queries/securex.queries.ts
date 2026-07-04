@@ -375,6 +375,34 @@ export const SECUREX_QUERIES = {
           id field header type sub_field avatar_fld sortable filterable
           visible width text_align render_func sort_order
         }
+        form_fields {
+          id name label type required icon placeholder options catalog_key accept sort_order
+        }
+        catalogs_json
+      }
+    }
+  `,
+  CRUD_CONFIGS_LIST: `
+    query CrudConfigsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      crudConfigsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data { id route_path resource_name title permission query_name delete_q_name is_active }
+        total currentPage perPage hasMorePages
+      }
+    }
+  `,
+  CRUD_COLUMNS_LIST: `
+    query CrudColumnsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      crudColumnsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data { id config_id field header type sortable width sort_order }
+        total currentPage perPage hasMorePages
+      }
+    }
+  `,
+  CRUD_FORM_FIELDS_LIST: `
+    query CrudFormFieldsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
+      crudFormFieldsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
+        data { id config_id name label type required sort_order }
+        total currentPage perPage hasMorePages
       }
     }
   `,

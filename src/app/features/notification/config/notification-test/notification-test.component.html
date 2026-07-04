@@ -1,4 +1,4 @@
-<div class="gm-crud-page-container animate-fade-in" *ngIf="hasPermission(); else noPermission">
+<div class="gm-crud-page-container animate-fade-in" *appHasPermission="'securex.notifications.test'; else noPermission">
   <app-wizard [steps]="wizardSteps" [currentStep]="step()"
     title="Probar Notificaciones"
     subtitle="Asistente para enviar notificaciones de prueba a usuarios específicos">
