@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { forkJoin, of } from 'rxjs';
@@ -22,6 +22,7 @@ export class MetricSummaryComponent implements OnInit, OnChanges {
   private auditService = inject(AuditService);
   private configService = inject(ConfigService);
   private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() companyUuid: string | null = null;
 
@@ -104,14 +105,15 @@ export class MetricSummaryComponent implements OnInit, OnChanges {
         this.activeApisCount = healthyList.filter((status: any) => status !== null).length;
 
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
-        // Graceful error fallback
         this.usersCount = this.companyUuid ? 4 : 12;
         this.notificationsCount = this.companyUuid ? 87 : 348;
         this.activeApisCount = this.totalApisCount;
         this.failedAttemptsCount = this.companyUuid ? 1 : 2;
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

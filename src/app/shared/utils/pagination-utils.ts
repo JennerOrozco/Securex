@@ -11,7 +11,7 @@ export interface PaginatedResponse<T> {
 }
 
 const DEFAULT_SORT_COLUMN = 'created_at';
-const DEFAULT_PAGE_SIZE = 15;
+export const DEFAULT_PAGE_SIZE = 15;
 
 const MATCH_MODE_MAP: Record<string, string> = {
   contains: 'CONTAINS',

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AuditService } from '@core/services/audit.service';
 import { ChartCardComponent } from '@shared/components/chart-card/chart-card.component';
@@ -14,6 +14,7 @@ import { of } from 'rxjs';
 })
 export class LoginAttemptsChartComponent implements OnInit, OnChanges {
   private auditService = inject(AuditService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() companyUuid: string | null = null;
 
@@ -43,10 +44,12 @@ export class LoginAttemptsChartComponent implements OnInit, OnChanges {
         const logs = Array.isArray(res) ? res : [];
         this.processChartData(logs);
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.processChartData([]);
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

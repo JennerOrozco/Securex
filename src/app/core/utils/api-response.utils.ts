@@ -5,7 +5,7 @@ export interface NormalizedApiResponse<T> {
   pageSize?: number;
 }
 
-function unwrapNestedData(payload: any): any {
+export function unwrapNestedData(payload: any): any {
   const directData = payload?.data ?? payload?.result ?? payload?.response ?? payload?.items ?? payload;
 
   if (Array.isArray(directData)) {

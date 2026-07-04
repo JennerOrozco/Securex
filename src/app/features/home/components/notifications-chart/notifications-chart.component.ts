@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
@@ -16,6 +16,7 @@ import { of } from 'rxjs';
 })
 export class NotificationsChartComponent implements OnInit, OnChanges {
   private apiService = inject(NotificationSettingsService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() companyUuid: string | null = null;
 
@@ -61,11 +62,13 @@ export class NotificationsChartComponent implements OnInit, OnChanges {
         this.rawNotifications = Array.isArray(res) ? res : [];
         this.applyFiltersAndProcess();
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.rawNotifications = [];
         this.applyFiltersAndProcess();
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }

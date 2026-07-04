@@ -24,3 +24,5 @@ export * from './update-prompt/update-prompt.component';
 export * from './dynamic-form/dynamic-form.component';
 export * from './input-color/input-color.component';
 export * from './avatar-upload/avatar-upload.component';
+export * from './metric-card/metric-card.component';
+export * from './gallery/gallery.component';

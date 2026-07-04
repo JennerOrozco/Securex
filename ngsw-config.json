@@ -98,24 +98,6 @@
           "network": 30000
         }
       }
-    },
-    {
-      "name": "config-and-static",
-      "urls": [
-        "assets/config.json",
-        "https://fonts.googleapis.com/**",
-        "https://fonts.gstatic.com/**",
-        "https://cdnjs.cloudflare.com/**",
-        "https://cdn.jsdelivr.net/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxAge": 86400000,
-        "timeout": {
-          "idle": 5000,
-          "network": 10000
-        }
-      }
     }
   ],
   "navigationUrls": [

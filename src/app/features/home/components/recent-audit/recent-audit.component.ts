@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, SimpleChanges, Input, inject } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Input, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { AuditService } from '@core/services/audit.service';
@@ -17,6 +17,7 @@ import { of } from 'rxjs';
 export class RecentAuditComponent implements OnInit, OnChanges {
   private auditService = inject(AuditService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   @Input() companyUuid: string | null = null;
 
@@ -76,12 +77,14 @@ export class RecentAuditComponent implements OnInit, OnChanges {
         this.extractFilterOptions();
         this.applyLocalFilters();
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.generateMockLogs();
         this.extractFilterOptions();
         this.applyLocalFilters();
         this.loading = false;
+        this.cdr.markForCheck();
       }
     });
   }
