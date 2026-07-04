@@ -109,6 +109,7 @@ export class MobileNavComponent implements OnInit {
         next: (res) => {
           const data = res.data || res;
           let components = Array.isArray(data) ? data : [];
+          components = components.filter(c => c.slug?.startsWith('mobile.'));
           
           if (components.length === 0) {
             components = this.getFallbackMenu();
