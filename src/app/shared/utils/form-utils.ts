@@ -57,3 +57,36 @@ export function normalizeBoolean(val: any): boolean {
 export function denormalizeBoolean(val: any): 0 | 1 {
   return val === true || val === 'true' || val === 1 || val === '1' ? 1 : 0;
 }
+
+/**
+ * @function objectToFormData
+ * @description Convierte un objeto genérico en un FormData automáticamente. Ideal para formularios que incluyen archivos (Files).
+ * @param {any} data Objeto con datos del formulario
+ * @param {string | string[]} fileKey Llave (propiedad) que contiene el archivo.
+ * @returns {FormData | any} FormData si contiene archivos, de lo contrario devuelve una copia del objeto original.
+ */
+export function objectToFormData(data: any, fileKey?: string | string[]): FormData | any {
+  let hasFile = false;
+  
+  if (fileKey) {
+    const keys = Array.isArray(fileKey) ? fileKey : [fileKey];
+    hasFile = keys.some(key => data[key] instanceof File);
+  }
+
+  if (!hasFile) {
+    return { ...data };
+  }
+
+  const payload = new FormData();
+  Object.entries(data).forEach(([key, value]) => {
+    if (value === null || value === undefined) return;
+    
+    if (value instanceof File) {
+      payload.append(key, value, value.name);
+    } else {
+      payload.append(key, String(value));
+    }
+  });
+
+  return payload;
+}

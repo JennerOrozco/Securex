@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, DestroyRef, ChangeDetectorRef, signal, computed } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
@@ -15,6 +15,7 @@ import { CompanyService } from '@core/services/company.service';
 import { PermissionService } from '@core/services/permission.service';
 import { AuthService } from '@core/services/auth.service';
 import { NotificationService } from '@core/services/notification.service';
+import { trackSignal } from '@shared/utils/rxjs-utils';
 
 @Component({
   selector: 'app-security-company-permissions',
@@ -34,7 +35,7 @@ export class CompanyPermissionsComponent implements OnInit {
   private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
   private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
+  cdr = inject(ChangeDetectorRef);
 
   apps: any[] = [];
   companies: any[] = [];
@@ -48,8 +49,12 @@ export class CompanyPermissionsComponent implements OnInit {
   groups: PermissionTreeNode[] = [];
   selectedIds: Set<number> = new Set();
 
-  loading = false;
-  isSaving = false;
+  isLoading = signal(false);
+  isSavingSignal = signal(false);
+
+  // Expose as plain booleans for template (legacy *ngIf bindings)
+  get loading(): boolean { return this.isLoading(); }
+  get isSaving(): boolean { return this.isSavingSignal(); }
 
   get hasPermission(): boolean {
     return this.authService.checkPermission('securex.security.company-permissions');
@@ -70,14 +75,16 @@ export class CompanyPermissionsComponent implements OnInit {
   }
 
   loadApps() {
-    this.loading = true;
-    this.appService.getApps().pipe(finalize(() => {
-      this.loading = false;
-      this.cdr.markForCheck();
-    })).subscribe({
+    this.appService.getApps().pipe(
+      trackSignal(this, this.isLoading)
+    ).subscribe({
       next: (res: any) => {
         this.apps = res.data || res || [];
         this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.notificationService.error('Error al cargar aplicaciones');
+        console.error(err);
       }
     });
   }
@@ -92,21 +99,16 @@ export class CompanyPermissionsComponent implements OnInit {
 
     if (!this.selectedAppId) return;
 
-    this.loading = true;
-
     forkJoin({
       companies: this.companyService.getCompanies(),
       permissions: this.permissionService.getAdminPermissions()
     }).pipe(
-      finalize(() => {
-        this.loading = false;
-        this.cdr.markForCheck();
-      })
+      trackSignal(this, this.isLoading)
     ).subscribe({
       next: (res: any) => {
         const allCompanies = res.companies?.data || res.companies || [];
         this.companies = allCompanies.filter((c: any) => c.app_id === this.selectedAppId);
-        
+
         if (this.companies.length > 0) {
           this.companyControl.enable();
         }
@@ -162,11 +164,9 @@ export class CompanyPermissionsComponent implements OnInit {
 
     if (!this.selectedCompanyId) return;
 
-    this.loading = true;
-    this.permissionService.getCompanyPermissions().pipe(finalize(() => {
-      this.loading = false;
-      this.cdr.markForCheck();
-    })).subscribe({
+    this.permissionService.getCompanyPermissions().pipe(
+      trackSignal(this, this.isLoading)
+    ).subscribe({
       next: (res: any) => {
         const tree = res.data || res || [];
         let assignedPermissionIds: number[] = [];
@@ -200,18 +200,10 @@ export class CompanyPermissionsComponent implements OnInit {
   savePermissions() {
     if (!this.selectedCompanyId) return;
 
-    this.isSaving = true;
     const permissionIds = Array.from(this.selectedIds);
 
     this.permissionService.syncCompanyPermissions(this.selectedCompanyId, permissionIds).pipe(
-      finalize(() => {
-        this.isSaving = false;
-        this.cdr.markForCheck();
-      })
-    ).subscribe({
-      next: () => {
-        this.notificationService.success('Permisos sincronizados correctamente');
-      }
-    });
+      trackSignal(this, this.isSavingSignal, 'Permisos sincronizados correctamente')
+    ).subscribe();
   }
 }

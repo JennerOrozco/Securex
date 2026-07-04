@@ -1,14 +1,16 @@
-import { Component, inject, OnInit, computed, ChangeDetectionStrategy, signal } from '@angular/core';
+import { Component, inject, OnInit, computed, ChangeDetectionStrategy, signal, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '@shared/components/button/button.component';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
-import { ButtonComponent } from '@shared/components/button/button.component';
 import { AppService } from '@/core/services';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { PUSH_SETTINGS_COLS, createPushSettingsForm } from './push-settings.config';
-import { map, finalize } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotificationService } from '@core/services/notification.service';
+import { trackSignal } from '@shared/utils/rxjs-utils';
+import { objectToFormData } from '@shared/utils/form-utils';
 
 @Component({
   selector: 'app-push-settings',
@@ -22,6 +24,8 @@ export class PushSettingsComponent implements OnInit {
   private apiService = inject(NotificationSettingsService);
   private appService = inject(AppService);
   private notificationService = inject(NotificationService);
+  destroyRef = inject(DestroyRef);
+  cdr = inject(ChangeDetectorRef);
   crud = inject(UnifiedCrudService);
 
   cols = PUSH_SETTINGS_COLS;
@@ -52,29 +56,15 @@ export class PushSettingsComponent implements OnInit {
 
   saveSetting(data: any, mode: 'add' | 'edit'): Observable<any> {
     const id = mode === 'add' ? null : data.id;
-    const payload: FormData | any = data.icon instanceof File ? new FormData() : { ...data };
-
-    if (payload instanceof FormData) {
-      Object.entries(data).forEach(([key, value]) => {
-        if (value === null || value === undefined) return;
-        if (key === 'icon' && value instanceof File) {
-          payload.append('icon', value, value.name);
-        } else {
-          payload.append(key, String(value));
-        }
-      });
-    }
-
+    const payload = objectToFormData(data, 'icon');
     return this.apiService.savePushSetting(id, payload);
   }
 
   isGeneratingVapid = signal(false);
 
   handleGenerateVapid() {
-    this.isGeneratingVapid.set(true);
-    
     this.apiService.generateVapid().pipe(
-      finalize(() => this.isGeneratingVapid.set(false))
+      trackSignal(this, this.isGeneratingVapid)
     ).subscribe({
       next: (res: any) => {
         const keys = res.data || res;
@@ -85,8 +75,7 @@ export class PushSettingsComponent implements OnInit {
           vapid_private_key: keys.private_key
         });
         this.notificationService.success('Llaves VAPID generadas. Por favor completa los demás campos y guarda.');
-      },
-      error: () => this.notificationService.error('Error al generar llaves VAPID')
+      }
     });
   }
 }

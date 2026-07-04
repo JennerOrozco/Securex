@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
@@ -16,7 +16,7 @@ import { SelectComponent } from '@shared/components/select/select.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
-import { finalize } from 'rxjs/operators';
+import { trackSignal } from '@shared/utils/rxjs-utils';
 
 @Component({
   selector: 'app-notification-test',
@@ -37,6 +37,8 @@ export class NotificationTestComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
+  destroyRef = inject(DestroyRef);
+  cdr = inject(ChangeDetectorRef);
 
   isSending = signal(false);
   step = signal(1);
@@ -135,17 +137,11 @@ export class NotificationTestComponent implements OnInit {
   sendTest() {
     if (this.testForm.invalid) return;
 
-    this.isSending.set(true);
-
     this.apiService.sendNotificationToAny(this.testForm.getRawValue()).pipe(
-      finalize(() => this.isSending.set(false))
+      trackSignal(this, this.isSending, 'Notificación enviada correctamente al usuario.')
     ).subscribe({
       next: () => {
-        this.notificationService.success('Notificación enviada correctamente al usuario.');
         this.resetWizard();
-      },
-      error: (err) => {
-        this.notificationService.error('Error al enviar notificación: ' + (err.error?.message || err.message));
       }
     });
   }
