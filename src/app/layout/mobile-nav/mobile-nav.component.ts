@@ -52,17 +52,21 @@ export class MobileNavComponent implements OnInit {
 
   visibleMenuItems = computed(() => {
     const components = this.mobileComponents();
-    const items = components.map(item => {
-      const rawIcon = item.icon || '';
-      let icon = rawIcon;
-      if (!rawIcon.startsWith('pi ') && !rawIcon.includes(' ')) {
-        icon = ICON_MAP[rawIcon.toLowerCase()] || 'pi pi-circle';
-      }
-      const rawPath = item.route || '';
-      const cleanedPath = rawPath.trim().replace(/^\/+/, '');
-      const path = cleanedPath ? '/' + cleanedPath : undefined;
-      return { label: item.name, icon, path, module: item.slug };
-    });
+    const allowedSlugs = this.authService.userPermissions();
+    
+    const items = components
+      .filter(item => !item.slug || allowedSlugs.includes(item.slug))
+      .map(item => {
+        const rawIcon = item.icon || '';
+        let icon = rawIcon;
+        if (!rawIcon.startsWith('pi ') && !rawIcon.includes(' ')) {
+          icon = ICON_MAP[rawIcon.toLowerCase()] || 'pi pi-circle';
+        }
+        const rawPath = item.route || '';
+        const cleanedPath = rawPath.trim().replace(/^\/+/, '');
+        const path = cleanedPath ? '/' + cleanedPath : undefined;
+        return { label: item.name, icon, path, module: item.slug };
+      });
     return items;
   });
 
