@@ -14,7 +14,9 @@ import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
 import { InputComponent } from '@shared/components/input/input.component';
 import { SelectComponent } from '@shared/components/select/select.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
+import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
 import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
+import { finalize } from 'rxjs/operators';
 
 @Component({
   selector: 'app-notification-test',
@@ -22,7 +24,8 @@ import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
   imports: [
     CommonModule, ReactiveFormsModule,
     CardModule, TextareaModule,
-    TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent
+    TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent,
+    EmptyStateComponent
   ],
   templateUrl: './notification-test.component.html',
   styleUrls: ['./notification-test.component.css'],
@@ -134,15 +137,15 @@ export class NotificationTestComponent implements OnInit {
 
     this.isSending.set(true);
 
-    this.apiService.sendNotificationToAny(this.testForm.getRawValue()).subscribe({
+    this.apiService.sendNotificationToAny(this.testForm.getRawValue()).pipe(
+      finalize(() => this.isSending.set(false))
+    ).subscribe({
       next: () => {
         this.notificationService.success('Notificación enviada correctamente al usuario.');
-        this.isSending.set(false);
         this.resetWizard();
       },
       error: (err) => {
         this.notificationService.error('Error al enviar notificación: ' + (err.error?.message || err.message));
-        this.isSending.set(false);
       }
     });
   }

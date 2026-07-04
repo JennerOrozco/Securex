@@ -133,11 +133,11 @@
 </div>
 
 <ng-template #noPermission>
-  <div class="gm-crud-page-container animate-fade-in">
-    <div class="access-denied">
-      <i class="pi pi-lock"></i>
-      <h2>Acceso restringido</h2>
-      <p>No tienes permiso para utilizar la consola de prueba de notificaciones.</p>
-    </div>
+  <div class="gm-crud-page-container animate-fade-in flex items-center justify-center min-h-[60vh]">
+    <app-empty-state 
+      icon="pi pi-lock" 
+      title="Acceso Restringido" 
+      description="No tienes permiso para utilizar la consola de prueba de notificaciones. Contacta a un administrador.">
+    </app-empty-state>
   </div>
 </ng-template>

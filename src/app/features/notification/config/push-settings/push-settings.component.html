@@ -20,6 +20,7 @@
       <span class="text-xs text-blue-700">Genera un par de llaves criptográficas automáticamente.</span>
     </div>
     <app-button icon="pi pi-key" label="Generar VAPID" class="p-button-navy"
+      [loading]="isGeneratingVapid()"
       (onClick)="handleGenerateVapid()"></app-button>
   </div>
 </app-crud-page>

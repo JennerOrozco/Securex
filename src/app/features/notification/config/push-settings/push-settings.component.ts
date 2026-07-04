@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, OnInit, computed, ChangeDetectionStrategy, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
@@ -6,7 +6,7 @@ import { ButtonComponent } from '@shared/components/button/button.component';
 import { AppService } from '@/core/services';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
 import { PUSH_SETTINGS_COLS, createPushSettingsForm } from './push-settings.config';
-import { map } from 'rxjs/operators';
+import { map, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { NotificationService } from '@core/services/notification.service';
 
@@ -68,8 +68,14 @@ export class PushSettingsComponent implements OnInit {
     return this.apiService.savePushSetting(id, payload);
   }
 
+  isGeneratingVapid = signal(false);
+
   handleGenerateVapid() {
-    this.apiService.generateVapid().subscribe({
+    this.isGeneratingVapid.set(true);
+    
+    this.apiService.generateVapid().pipe(
+      finalize(() => this.isGeneratingVapid.set(false))
+    ).subscribe({
       next: (res: any) => {
         const keys = res.data || res;
         const current = this.crud.selectedItem();
