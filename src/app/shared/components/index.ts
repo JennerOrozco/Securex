@@ -26,3 +26,4 @@ export * from './input-color/input-color.component';
 export * from './avatar-upload/avatar-upload.component';
 export * from './metric-card/metric-card.component';
 export * from './gallery/gallery.component';
+export * from './wizard/wizard.component';

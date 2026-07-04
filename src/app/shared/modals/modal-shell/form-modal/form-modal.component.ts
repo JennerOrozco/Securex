@@ -21,6 +21,7 @@ import { PasswordModule } from 'primeng/password';
 import { FormField, ModalMode } from '../modal-shell.types';
 import { DynamicFormComponent } from '../../../components';
 import { getFileIcon, getFileIconClass, formatFileSize } from '../modal-shell.utils';
+import { buildFormGroup } from '@shared/utils/form-utils';
 
 @Component({
   selector: 'app-form-modal',
@@ -141,30 +142,14 @@ export class FormModalComponent implements OnInit {
   }
 
   initForm() {
-    // Limpieza estricta de suscripciones previas cada vez que el formulario se reconstruye
     this.formSubs.unsubscribe();
     this.formSubs = new Subscription();
 
-    const group: any = {};
     const mode = this.mode();
-    const source = mode === 'add' ? this.initialData() : this.data();
+    const source = mode === 'add' ? this.initialData() : (this.data() || {});
 
-    this.fields().forEach(field => {
-      const value = field.dataPath
-        ? (this.getNestedValue(source, field.dataPath) ?? '')
-        : (source?.[field.name] ?? '');
+    this.form = buildFormGroup(this.fb, this.fields(), source);
 
-      const validators: any[] = [];
-      if (field.required && mode !== 'view') validators.push(Validators.required);
-      if (field.type === 'email' && mode !== 'view') validators.push(Validators.email);
-
-      const isDisabled = mode === 'view' || field.disabled;
-      group[field.name] = [{ value, disabled: isDisabled }, validators];
-    });
-
-    this.form = this.fb.group(group);
-
-    // Escucha segura de cambios por campo
     this.fields().forEach(field => {
       const control = this.form.get(field.name);
       if (control) {

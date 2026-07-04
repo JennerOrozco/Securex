@@ -1,31 +1,31 @@
 import { Component, OnInit, inject, signal, ChangeDetectionStrategy, computed, DestroyRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { NotificationSettingsService } from '@core/services/notification-settings.service';
 import { AppService } from '@core/services/app.service';
 import { UserService } from '@core/services/user.service';
 import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { TableDataLoader } from '@shared/utils/table-data-loader';
-import { CardModule } from 'primeng/card';
-import { TextareaModule } from 'primeng/textarea';
 import { TableComponent } from '@shared/table-shared/table-component/table-component.component';
-import { ToolbarComponent } from '@shared/components/toolbar/toolbar.component';
 import { InputComponent } from '@shared/components/input/input.component';
 import { SelectComponent } from '@shared/components/select/select.component';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { EmptyStateComponent } from '@shared/components/empty-state/empty-state.component';
-import { APP_COLS, COMPANY_COLS, USER_COLS } from './notification-test.config';
+import { WizardComponent } from '@shared/components/wizard/wizard.component';
+import { DynamicFormComponent } from '@shared/components/dynamic-form/dynamic-form.component';
+import { buildFormGroup } from '@shared/utils/form-utils';
+import { APP_COLS, COMPANY_COLS, USER_COLS, MESSAGE_FIELDS, SEND_CONFIG } from './notification-test.config';
 import { trackSignal } from '@shared/utils/rxjs-utils';
+import type { WizardStep } from '@shared/components/wizard/wizard.component';
 
 @Component({
   selector: 'app-notification-test',
   standalone: true,
   imports: [
     CommonModule, ReactiveFormsModule,
-    CardModule, TextareaModule,
-    TableComponent, ToolbarComponent, InputComponent, SelectComponent, ButtonComponent,
-    EmptyStateComponent
+    TableComponent, InputComponent, SelectComponent, ButtonComponent,
+    EmptyStateComponent, WizardComponent, DynamicFormComponent
   ],
   templateUrl: './notification-test.component.html',
   styleUrls: ['./notification-test.component.css'],
@@ -37,6 +37,7 @@ export class NotificationTestComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
+  private fb = inject(FormBuilder);
   destroyRef = inject(DestroyRef);
   cdr = inject(ChangeDetectorRef);
 
@@ -48,16 +49,8 @@ export class NotificationTestComponent implements OnInit {
   selectedCompany = signal<any>(null);
   selectedUser = signal<any>(null);
 
-  testForm = new FormGroup({
-    title: new FormControl<string>('Test Notificación', { nonNullable: true, validators: [Validators.required] }),
-    message: new FormControl<string>('Este es un mensaje de prueba desde el wizard.', { nonNullable: true, validators: [Validators.required] }),
-    type: new FormControl<string>('INFO', { nonNullable: true }),
-    channels: new FormControl<string>('PUSH,EMAIL', { nonNullable: true }),
-    app_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
-    company_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
-    user_uuid: new FormControl<string | null>(null, { validators: [Validators.required] }),
-    user_email: new FormControl<string | null>(null, { validators: [Validators.required] })
-  });
+  messageFields = MESSAGE_FIELDS;
+  messageForm!: FormGroup;
 
   appTable = new TableDataLoader(
     (p, l, f, s) => this.appService.getAppsWithCompaniesPaginated(p, l, f, s),
@@ -78,24 +71,11 @@ export class NotificationTestComponent implements OnInit {
   companyCols = COMPANY_COLS;
   userCols = USER_COLS;
 
-  channelOptions = [
-    { label: 'Push y Email', value: 'PUSH,EMAIL' },
-    { label: 'Solo Push', value: 'PUSH' },
-    { label: 'Solo Email', value: 'EMAIL' }
-  ];
-
-  typeOptions = [
-    { label: 'Información (INFO)', value: 'INFO' },
-    { label: 'Advertencia (WARNING)', value: 'WARNING' },
-    { label: 'Error (ERROR)', value: 'ERROR' },
-    { label: 'Éxito (SUCCESS)', value: 'SUCCESS' }
-  ];
-
-  steps = [
-    { num: 1, label: 'App', icon: 'pi pi-th-large' },
-    { num: 2, label: 'Empresa', icon: 'pi pi-building' },
-    { num: 3, label: 'Usuario', icon: 'pi pi-user' },
-    { num: 4, label: 'Mensaje', icon: 'pi pi-send' },
+  wizardSteps: WizardStep[] = [
+    { label: 'App', icon: 'pi pi-th-large' },
+    { label: 'Empresa', icon: 'pi pi-building' },
+    { label: 'Usuario', icon: 'pi pi-user' },
+    { label: 'Mensaje', icon: 'pi pi-send' },
   ];
 
   hasPermission = computed(() => this.authService.checkPermission('securex.notifications.test'));
@@ -108,24 +88,28 @@ export class NotificationTestComponent implements OnInit {
 
   selectApp(app: any) {
     this.selectedApp.set(app);
-    this.testForm.patchValue({ app_uuid: app.uuid });
     this.step.set(2);
     this.companies.set(app.companies || []);
   }
 
   selectCompany(company: any) {
     this.selectedCompany.set(company);
-    this.testForm.patchValue({ company_uuid: company.uuid });
     this.step.set(3);
   }
 
   selectUser(user: any) {
     this.selectedUser.set(user);
-    this.testForm.patchValue({
-      user_uuid: user.uuid,
-      user_email: user.email
-    });
+    this.initMessageForm();
     this.step.set(4);
+  }
+
+  private initMessageForm() {
+    this.messageForm = buildFormGroup(this.fb, MESSAGE_FIELDS, {
+      title: 'Test Notificación',
+      message: 'Este es un mensaje de prueba desde el wizard.',
+      type: 'INFO',
+      channels: 'PUSH,EMAIL'
+    });
   }
 
   goBack() {
@@ -134,15 +118,21 @@ export class NotificationTestComponent implements OnInit {
     }
   }
 
-  sendTest() {
-    if (this.testForm.invalid) return;
+  sendTest(formData: any) {
+    this.isSending.set(true);
 
-    this.apiService.sendNotificationToAny(this.testForm.getRawValue()).pipe(
-      trackSignal(this, this.isSending, 'Notificación enviada correctamente al usuario.')
+    const payload = {
+      ...formData,
+      app_uuid: this.selectedApp()?.uuid,
+      company_uuid: this.selectedCompany()?.uuid,
+      user_uuid: this.selectedUser()?.uuid,
+      user_email: this.selectedUser()?.email
+    };
+
+    SEND_CONFIG.fn(this.apiService, payload).pipe(
+      trackSignal(this, this.isSending, SEND_CONFIG.successMessage)
     ).subscribe({
-      next: () => {
-        this.resetWizard();
-      }
+      next: () => this.resetWizard()
     });
   }
 
@@ -151,15 +141,5 @@ export class NotificationTestComponent implements OnInit {
     this.selectedApp.set(null);
     this.selectedCompany.set(null);
     this.selectedUser.set(null);
-    this.testForm.reset({
-      title: 'Test Notificación',
-      message: 'Este es un mensaje de prueba desde el wizard.',
-      type: 'INFO',
-      channels: 'PUSH,EMAIL',
-      app_uuid: null,
-      company_uuid: null,
-      user_uuid: null,
-      user_email: null
-    });
   }
 }

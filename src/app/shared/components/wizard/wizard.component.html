@@ -1,0 +1,30 @@
+<div class="wizard-container">
+  @if (title()) {
+    <app-toolbar [title]="title()" [subtitle]="subtitle()" [showAdd]="false"></app-toolbar>
+  }
+
+  <div class="stepper">
+    <div class="stepper-track">
+      <div class="stepper-progress" [style.width.%]="progressPercent"></div>
+    </div>
+    <div class="stepper-steps">
+      @for (s of steps(); track s.label; let i = $index) {
+        <div class="stepper-step"
+          [class.active]="currentStep() > i"
+          [class.current]="currentStep() === i + 1"
+          [class.done]="currentStep() > i + 1">
+          <div class="stepper-dot">
+            @if (currentStep() > i + 1) {
+              <i class="pi pi-check"></i>
+            } @else {
+              <i [class]="s.icon"></i>
+            }
+          </div>
+          <span class="stepper-label">{{ s.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <ng-content></ng-content>
+</div>

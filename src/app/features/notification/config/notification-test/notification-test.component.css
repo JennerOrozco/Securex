@@ -2,112 +2,70 @@
   display: block;
 }
 
-/* ========== Stepper ========== */
-.stepper {
-  margin-bottom: 1.5rem;
+/* ========== Summary Card ========== */
+.summary-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
-.stepper-track {
-  height: 3px;
-  background: var(--color-border);
-  border-radius: var(--radius-full);
-  position: relative;
-  margin-bottom: 0.75rem;
-}
-
-.stepper-progress {
-  height: 100%;
-  background: linear-gradient(90deg, var(--app-main-primary), var(--app-main-primary-light));
-  border-radius: var(--radius-full);
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stepper-steps {
-  display: flex;
-  justify-content: space-between;
-}
-
-.stepper-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.35rem;
-  flex: 1;
-  text-align: center;
-}
-
-.stepper-dot {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+.summary-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  background: var(--color-border);
-  color: var(--color-text-light);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.stepper-step.active .stepper-dot {
-  background: var(--app-main-primary);
-  color: #ffffff;
-}
-
-.stepper-step.current .stepper-dot {
-  box-shadow: 0 0 0 4px var(--color-indigo-15);
-}
-
-.stepper-step.done .stepper-dot {
-  background: var(--color-emerald);
-  color: #ffffff;
-}
-
-.stepper-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: color 0.3s;
-}
-
-.stepper-step.active .stepper-label {
-  color: var(--app-main-primary);
-}
-
-/* ========== Card Headers ========== */
-.card-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0 0 0.75rem;
-  font-size: 0.85rem;
+  gap: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: linear-gradient(135deg, var(--color-bg-subtle), var(--color-bg-card));
+  border-bottom: 1px solid var(--color-border);
+  font-size: 0.82rem;
   font-weight: 700;
-  color: var(--app-main-primary);
+  color: var(--color-text-main);
   letter-spacing: -0.01em;
 }
 
-.card-header i {
+.summary-header i {
   font-size: 1rem;
-  color: var(--app-main-primary-light);
+  color: var(--app-main-primary);
 }
 
-/* ========== Summary ========== */
-.summary-body {
+.summary-items {
   display: flex;
   flex-direction: column;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
   gap: 0.75rem;
-  padding-top: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid hsl(215 20% 94%);
 }
 
-.summary-row {
+.summary-item:last-child {
+  border-bottom: none;
+}
+
+.summary-item > i {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--color-bg-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.summary-item-content {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  gap: 0.05rem;
+  min-width: 0;
 }
 
-.summary-label {
+.summary-item-label {
   font-size: 0.62rem;
   font-weight: 600;
   color: var(--color-text-light);
@@ -115,89 +73,80 @@
   letter-spacing: 0.05em;
 }
 
-.summary-value {
+.summary-item-value {
   font-size: 0.85rem;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-text-main);
 }
 
 .summary-email {
   font-size: 0.78rem;
+  font-weight: 500;
   color: var(--color-text-muted);
   word-break: break-all;
 }
 
-/* ========== Form Fields ========== */
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.field-label {
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.field-required {
-  color: var(--color-red);
-  font-size: 0.75rem;
-}
-
-.field-wrap {
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-}
-
-.field-icon {
-  position: absolute;
-  left: 10px;
-  top: 10px;
-  z-index: 2;
-  color: var(--color-text-light);
-  font-size: 0.75rem;
-  pointer-events: none;
-}
-
-.field-textarea {
-  width: 100%;
-  min-height: 80px;
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-md);
-  padding: 0.5rem 0.65rem 0.5rem 2rem;
-  font-size: 0.85rem;
-  color: var(--color-text-main);
-  background: var(--color-bg-subtle);
-  backdrop-filter: blur(4px);
-  transition: all 0.2s;
-  outline: none;
-  resize: vertical;
-  font-family: inherit;
-  line-height: 1.5;
-}
-
-.field-textarea:focus {
-  border-color: var(--app-main-indigo);
+/* ========== Message Card ========== */
+.message-card {
   background: var(--color-bg-card);
-  box-shadow: 0 0 0 2px var(--color-indigo-08);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  overflow: hidden;
 }
 
-.field-textarea::placeholder {
-  color: var(--color-text-light);
+.message-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1rem 0.85rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.message-icon-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--app-main-primary), var(--app-main-primary-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message-icon-wrap i {
+  font-size: 1.05rem;
+  color: white;
+}
+
+.message-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 2px;
+  letter-spacing: -0.01em;
+}
+
+.message-sub {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin: 0;
+  font-weight: 500;
+}
+
+.message-form-body {
+  padding: 1.25rem 1rem 0.75rem;
 }
 
 /* ========== Form Actions ========== */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  padding-top: 0.5rem;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
 }
 
-/* ========== Back Button Override ========== */
+/* ========== Step Content ========== */
 .step-content ::ng-deep .gm-btn.p-button-text,
 .step-content ::ng-deep .p-button.gm-btn.p-button-text {
   color: var(--app-main-primary) !important;
@@ -208,20 +157,4 @@
 .step-content ::ng-deep .p-button.gm-btn.p-button-text:hover {
   background: var(--app-main-primary) !important;
   color: var(--color-white-80) !important;
-}
-
-/* ========== Step Content Animation ========== */
-.step-content {
-  animation: stepFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes stepFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }

@@ -90,3 +90,22 @@ export function objectToFormData(data: any, fileKey?: string | string[]): FormDa
 
   return payload;
 }
+
+// ----- Form Builder Utility (shared with FormModalComponent) -----
+
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import type { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+
+export function buildFormGroup(fb: FormBuilder, fields: FormField[], source: Record<string, any> = {}): FormGroup {
+  const group: Record<string, any> = {};
+
+  fields.forEach(field => {
+    const value = source[field.name] ?? '';
+    const validators: any[] = [];
+    if (field.required) validators.push(Validators.required);
+    if (field.type === 'email') validators.push(Validators.email);
+    group[field.name] = [{ value, disabled: !!field.disabled }, validators];
+  });
+
+  return fb.group(group);
+}

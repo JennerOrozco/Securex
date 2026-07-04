@@ -1,4 +1,11 @@
 import { TableColumn } from '@shared/table-shared/shared/table.types';
+import { FormField } from '@shared/modals/modal-shell/modal-shell.types';
+import { Observable } from 'rxjs';
+
+export interface SendConfig {
+  fn: (service: any, formData: Record<string, any>) => Observable<any>;
+  successMessage: string;
+}
 
 export const APP_COLS: TableColumn[] = [
   { 
@@ -34,3 +41,24 @@ export const USER_COLS: TableColumn[] = [
   },
   { field: 'acciones', header: 'Acciones', type: 'actions' }
 ];
+
+export const MESSAGE_FIELDS: FormField[] = [
+  { name: 'title', label: 'Título de la Notificación', type: 'text', required: true, icon: 'pi pi-tag', placeholder: 'Ej. Alerta de Seguridad' },
+  { name: 'message', label: 'Mensaje', type: 'textarea', required: true, icon: 'pi pi-comment', placeholder: 'Escribe el contenido del mensaje...' },
+  { name: 'type', label: 'Tipo de Notificación', type: 'select', required: true, icon: 'pi pi-tag', options: [
+    { label: 'Información (INFO)', value: 'INFO' },
+    { label: 'Advertencia (WARNING)', value: 'WARNING' },
+    { label: 'Error (ERROR)', value: 'ERROR' },
+    { label: 'Éxito (SUCCESS)', value: 'SUCCESS' }
+  ]},
+  { name: 'channels', label: 'Canales de Envío', type: 'select', required: true, icon: 'pi pi-sliders-h', options: [
+    { label: 'Push y Email', value: 'PUSH,EMAIL' },
+    { label: 'Solo Push', value: 'PUSH' },
+    { label: 'Solo Email', value: 'EMAIL' }
+  ]}
+];
+
+export const SEND_CONFIG: SendConfig = {
+  fn: (service, data) => service.sendNotificationToAny(data),
+  successMessage: 'Notificación enviada correctamente al usuario.'
+};

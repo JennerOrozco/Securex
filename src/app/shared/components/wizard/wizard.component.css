@@ -1,0 +1,98 @@
+:host {
+  display: block;
+}
+
+.wizard-container {
+  padding: 0;
+}
+
+/* ========== Stepper ========== */
+.stepper {
+  padding: 1.25rem 1.5rem 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.stepper-track {
+  height: 3px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.stepper-progress {
+  height: 100%;
+  background: linear-gradient(90deg, var(--app-main-primary), var(--app-main-primary-light));
+  border-radius: var(--radius-full);
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stepper-steps {
+  display: flex;
+  justify-content: space-between;
+}
+
+.stepper-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  text-align: center;
+}
+
+.stepper-dot {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  background: var(--color-border);
+  color: var(--color-text-light);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stepper-step.active .stepper-dot {
+  background: var(--app-main-primary);
+  color: #ffffff;
+}
+
+.stepper-step.current .stepper-dot {
+  box-shadow: 0 0 0 4px var(--color-indigo-15);
+}
+
+.stepper-step.done .stepper-dot {
+  background: var(--color-emerald);
+  color: #ffffff;
+}
+
+.stepper-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: color 0.3s;
+}
+
+.stepper-step.active .stepper-label {
+  color: var(--app-main-primary);
+}
+
+/* ========== Step Content Animation ========== */
+.step-content {
+  animation: stepFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
