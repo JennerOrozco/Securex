@@ -18,6 +18,14 @@ export class NotificationPanelService {
 
   unreadCount = computed(() => this.notifications().filter(n => !n.is_read).length);
 
+  constructor() {
+    this.notificationService.realTimeNotification$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(notif => {
+        this.addRealTimeNotification(notif);
+      });
+  }
+
   loadNotifications(): void {
     this.notificationsLoading.set(true);
     this.notificationsError.set(null);
@@ -88,5 +96,11 @@ export class NotificationPanelService {
           });
       }
     });
+  }
+
+  addRealTimeNotification(notif: AppNotification): void {
+    // Evitar duplicados por si el polling/refresh lo trajo al mismo tiempo
+    if (this.notifications().some(n => n.id === notif.id)) return;
+    this.notifications.update(notifs => [notif, ...notifs]);
   }
 }

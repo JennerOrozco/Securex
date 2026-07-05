@@ -1,9 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, NgZone } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { SwPush } from '@angular/service-worker';
 import { ConfigService } from './config.service';
 import { StorageService } from './storage.service';
-import { Observable, firstValueFrom, map, timeout } from 'rxjs';
+import { Observable, firstValueFrom, map, timeout, Subject } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { GraphqlService } from '../graphql/graphql.service';
 import { NOTIFICATION_QUERIES, NOTIFICATION_MUTATIONS } from '../graphql/queries/notification.queries';
@@ -149,4 +149,42 @@ export class NotificationService {
   info(message: string) { this.notify('info', message); }
 
   warn(message: string) { this.notify('warn', message); }
+
+  private eventSource: EventSource | null = null;
+  private zone = inject(NgZone);
+  public realTimeNotification$ = new Subject<AppNotification>();
+
+  initSSE(token: string) {
+    this.closeSSE(); // Cerramos si hubiera alguna conexión previa activa
+    
+    // Conectamos pasando el token por query param, ya que EventSource no admite cabeceras nativas
+    const url = `${this.configService.notificationApiUrl}/notifications/stream?token=${token}`;
+    this.eventSource = new EventSource(url);
+
+    this.eventSource.onmessage = (event) => {
+      this.zone.run(() => {
+        try {
+          const newNotification: AppNotification = JSON.parse(event.data);
+          this.realTimeNotification$.next(newNotification);
+          this.info(`Nuevo reporte: ${newNotification.title}`);
+        } catch (e) {
+          console.error('Error parseando notificación SSE:', e);
+        }
+      });
+    };
+
+    this.eventSource.onerror = (error) => {
+      // EventSource reconecta automáticamente, por lo que un error aquí es normal cuando el backend cierra por timeout (Long Polling behavior)
+      if (this.eventSource?.readyState === EventSource.CLOSED) {
+        // La conexión se cerró definitivamente, o el navegador está offline
+      }
+    };
+  }
+
+  closeSSE() {
+    if (this.eventSource) {
+      this.eventSource.close();
+      this.eventSource = null;
+    }
+  }
 }

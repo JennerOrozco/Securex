@@ -81,6 +81,11 @@ export class AuthService {
 
         const permissions = this.storage.getUserPermissions();
         if (permissions.length > 0) this.userPermissionsSignal.set(permissions);
+
+        const token = this.storage.getAccessToken();
+        if (token) {
+            this.notificationService.initSSE(token);
+        }
     }
 
     public get currentUserValue(): User | null {
@@ -163,6 +168,9 @@ export class AuthService {
         if (data.branches) this.setUserBranches(data.branches);
 
         this.notificationService.registerForPush();
+        if (data.access_token) {
+            this.notificationService.initSSE(data.access_token);
+        }
     }
 
     setUserCompanies(companies: Company[]): void {
@@ -414,6 +422,7 @@ export class AuthService {
                 .subscribe({ error: () => {} });
         }
 
+        this.notificationService.closeSSE();
         this.storage.clearSession();
         this.currentUserSignal.set(null);
         this.userMenuSignal.set([]);
