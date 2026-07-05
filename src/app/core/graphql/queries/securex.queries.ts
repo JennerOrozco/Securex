@@ -393,7 +393,10 @@ export const SECUREX_QUERIES = {
   CRUD_COLUMNS_LIST: `
     query CrudColumnsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       crudColumnsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
-        data { id config_id field header type sortable width sort_order }
+        data { 
+          id config_id field header type sortable width sort_order 
+          config { id title }
+        }
         total currentPage perPage hasMorePages
       }
     }
@@ -401,7 +404,10 @@ export const SECUREX_QUERIES = {
   CRUD_FORM_FIELDS_LIST: `
     query CrudFormFieldsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       crudFormFieldsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
-        data { id config_id name label type required sort_order }
+        data { 
+          id config_id name label type required sort_order 
+          config { id title }
+        }
         total currentPage perPage hasMorePages
       }
     }
@@ -561,4 +567,61 @@ export const SECUREX_MUTATIONS = {
       }
     }
   `,
+  CREATE_CRUD_CONFIG: `
+    mutation CreateCrudConfig($route_path: String!, $resource_name: String!, $title: String, $subtitle: String, $permission: String, $primary_key: String, $default_sort: String, $graphql_domain: String, $query_name: String, $query_field: String, $delete_q_name: String, $delete_field: String, $create_q_name: String, $create_field: String, $update_q_name: String, $update_field: String, $lazy_load: Int, $is_tree: Int, $show_add: Int, $show_edit: Int, $show_delete: Int, $is_active: Int) {
+      createCrudConfig(route_path: $route_path, resource_name: $resource_name, title: $title, subtitle: $subtitle, permission: $permission, primary_key: $primary_key, default_sort: $default_sort, graphql_domain: $graphql_domain, query_name: $query_name, query_field: $query_field, delete_q_name: $delete_q_name, delete_field: $delete_field, create_q_name: $create_q_name, create_field: $create_field, update_q_name: $update_q_name, update_field: $update_field, lazy_load: $lazy_load, is_tree: $is_tree, show_add: $show_add, show_edit: $show_edit, show_delete: $show_delete, is_active: $is_active) {
+        id route_path
+      }
+    }
+  `,
+  UPDATE_CRUD_CONFIG: `
+    mutation UpdateCrudConfig($id: Int!, $route_path: String, $resource_name: String, $title: String, $subtitle: String, $permission: String, $primary_key: String, $default_sort: String, $graphql_domain: String, $query_name: String, $query_field: String, $delete_q_name: String, $delete_field: String, $create_q_name: String, $create_field: String, $update_q_name: String, $update_field: String, $lazy_load: Int, $is_tree: Int, $show_add: Int, $show_edit: Int, $show_delete: Int, $is_active: Int) {
+      updateCrudConfig(id: $id, route_path: $route_path, resource_name: $resource_name, title: $title, subtitle: $subtitle, permission: $permission, primary_key: $primary_key, default_sort: $default_sort, graphql_domain: $graphql_domain, query_name: $query_name, query_field: $query_field, delete_q_name: $delete_q_name, delete_field: $delete_field, create_q_name: $create_q_name, create_field: $create_field, update_q_name: $update_q_name, update_field: $update_field, lazy_load: $lazy_load, is_tree: $is_tree, show_add: $show_add, show_edit: $show_edit, show_delete: $show_delete, is_active: $is_active) {
+        id route_path
+      }
+    }
+  `,
+  DELETE_CRUD_CONFIG: `
+    mutation DeleteCrudConfig($id: Int!) {
+      deleteCrudConfig(id: $id)
+    }
+  `,
+  CREATE_CRUD_COLUMN: `
+    mutation CreateCrudColumn($config_id: Int!, $field: String!, $header: String!, $type: String, $sub_field: String, $avatar_fld: String, $sortable: Int, $filterable: Int, $visible: Int, $width: String, $text_align: String, $render_func: String, $sort_order: Int) {
+      createCrudColumn(config_id: $config_id, field: $field, header: $header, type: $type, sub_field: $sub_field, avatar_fld: $avatar_fld, sortable: $sortable, filterable: $filterable, visible: $visible, width: $width, text_align: $text_align, render_func: $render_func, sort_order: $sort_order) {
+        id field
+      }
+    }
+  `,
+  UPDATE_CRUD_COLUMN: `
+    mutation UpdateCrudColumn($id: Int!, $config_id: Int, $field: String, $header: String, $type: String, $sub_field: String, $avatar_fld: String, $sortable: Int, $filterable: Int, $visible: Int, $width: String, $text_align: String, $render_func: String, $sort_order: Int) {
+      updateCrudColumn(id: $id, config_id: $config_id, field: $field, header: $header, type: $type, sub_field: $sub_field, avatar_fld: $avatar_fld, sortable: $sortable, filterable: $filterable, visible: $visible, width: $width, text_align: $text_align, render_func: $render_func, sort_order: $sort_order) {
+        id field
+      }
+    }
+  `,
+  DELETE_CRUD_COLUMN: `
+    mutation DeleteCrudColumn($id: Int!) {
+      deleteCrudColumn(id: $id)
+    }
+  `,
+  CREATE_CRUD_FORM_FIELD: `
+    mutation CreateCrudFormField($config_id: Int!, $name: String!, $label: String!, $type: String, $required: Int, $icon: String, $placeholder: String, $options: String, $catalog_key: String, $accept: String, $sort_order: Int) {
+      createCrudFormField(config_id: $config_id, name: $name, label: $label, type: $type, required: $required, icon: $icon, placeholder: $placeholder, options: $options, catalog_key: $catalog_key, accept: $accept, sort_order: $sort_order) {
+        id name
+      }
+    }
+  `,
+  UPDATE_CRUD_FORM_FIELD: `
+    mutation UpdateCrudFormField($id: Int!, $config_id: Int, $name: String, $label: String, $type: String, $required: Int, $icon: String, $placeholder: String, $options: String, $catalog_key: String, $accept: String, $sort_order: Int) {
+      updateCrudFormField(id: $id, config_id: $config_id, name: $name, label: $label, type: $type, required: $required, icon: $icon, placeholder: $placeholder, options: $options, catalog_key: $catalog_key, accept: $accept, sort_order: $sort_order) {
+        id name
+      }
+    }
+  `,
+  DELETE_CRUD_FORM_FIELD: `
+    mutation DeleteCrudFormField($id: Int!) {
+      deleteCrudFormField(id: $id)
+    }
+  `
 };
