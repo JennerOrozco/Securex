@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectorRef, inject, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-notification-prompt',
@@ -54,25 +55,31 @@ import { NotificationService } from '../../core/services/notification.service';
     }
   `]
 })
-export class NotificationPromptComponent implements OnInit {
+export class NotificationPromptComponent {
   showPrompt = false;
   private notificationService = inject(NotificationService);
-
+  private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
-  ngOnInit() {
-    this.checkPermission();
+  constructor() {
+    effect(() => {
+      const user = this.authService.currentUser();
+      if (user) {
+        // Ejecutar fuera del efecto reactivo para evitar ciclos y usar delays
+        setTimeout(() => this.checkPermission(), 3000);
+      } else {
+        this.showPrompt = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   async checkPermission() {
     if (!('Notification' in window)) return;
 
     if (Notification.permission === 'default') {
-      // Mostrar el prompt después de un delay
-      setTimeout(() => {
-        this.showPrompt = true;
-        this.cdr.detectChanges();
-      }, 5000);
+      this.showPrompt = true;
+      this.cdr.detectChanges();
     }
   }
 

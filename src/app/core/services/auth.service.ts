@@ -167,7 +167,10 @@ export class AuthService {
         if (data.companies) this.setUserCompanies(data.companies);
         if (data.branches) this.setUserBranches(data.branches);
 
-        this.notificationService.registerForPush();
+        if ('Notification' in window && Notification.permission === 'granted') {
+            this.notificationService.registerForPush();
+        }
+        
         if (data.access_token) {
             this.notificationService.initSSE(data.access_token);
         }
