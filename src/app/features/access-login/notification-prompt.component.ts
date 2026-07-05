@@ -61,12 +61,21 @@ export class NotificationPromptComponent {
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
+  private timeoutId: any;
+
   constructor() {
     effect(() => {
       const user = this.authService.currentUser();
+      
+      // Limpiamos cualquier timeout pendiente
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+        this.timeoutId = null;
+      }
+
       if (user) {
         // Ejecutar fuera del efecto reactivo para evitar ciclos y usar delays
-        setTimeout(() => this.checkPermission(), 3000);
+        this.timeoutId = setTimeout(() => this.checkPermission(), 3000);
       } else {
         this.showPrompt = false;
         this.cdr.detectChanges();
