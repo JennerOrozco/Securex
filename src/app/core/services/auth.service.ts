@@ -406,25 +406,34 @@ export class AuthService {
         const refreshToken = this.storage.getRefreshToken();
         const accessToken = this.storage.getAccessToken();
 
+        // 1. Desvincular Push Notifications (await para asegurar que el interceptor use el token)
         if (this.swPush.isEnabled) {
-            firstValueFrom(this.swPush.subscription)
-                .then(sub => {
-                    if (sub) {
-                            firstValueFrom(
-                                this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, {
-                                    body: { device_token: JSON.stringify(sub) }
-                                })
-                            ).catch(() => {});
-                        }
-                    })
-                    .catch(() => {});
+            try {
+                const sub = await firstValueFrom(this.swPush.subscription);
+                if (sub) {
+                    await firstValueFrom(
+                        this.http.delete(`${this.configService.notificationApiUrl}/notifications/devices`, {
+                            body: { device_token: JSON.stringify(sub) }
+                        })
+                    );
+                }
+            } catch (e) {
+                // Fallo silencioso
+            }
         }
 
+        // 2. Cerrar sesión en el backend principal
         if (refreshToken && accessToken) {
-            this.http.post(`${this.configService.apiUrl}/auth/logout`, { refresh_token: refreshToken })
-                .subscribe({ error: () => {} });
+            try {
+                await firstValueFrom(
+                    this.http.post(`${this.configService.apiUrl}/auth/logout`, { refresh_token: refreshToken })
+                );
+            } catch (e) {
+                // Fallo silencioso
+            }
         }
 
+        // 3. Limpiar estado local
         this.notificationService.closeSSE();
         this.storage.clearSession();
         this.currentUserSignal.set(null);
