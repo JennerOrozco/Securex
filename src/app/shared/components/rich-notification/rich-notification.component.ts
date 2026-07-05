@@ -3,45 +3,29 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { NotificationService, AppNotification } from '@core/services/notification.service';
-import { animate, style, transition, trigger, query, stagger } from '@angular/animations';
 
 interface RichNotification extends AppNotification {
   _id: string;
+  isLeaving?: boolean;
 }
 
 @Component({
   selector: 'app-rich-notification',
   standalone: true,
   imports: [CommonModule],
-  animations: [
-    trigger('listAnimation', [
-      transition('* => *', [
-        query(':enter', [
-          style({ transform: 'translateX(-100%)', opacity: 0, height: 0 }),
-          stagger(50, [
-            animate('300ms cubic-bezier(0.2, 1, 0.2, 1)', style({ transform: 'translateX(0)', opacity: 1, height: '*' }))
-          ])
-        ], { optional: true }),
-        query(':leave', [
-          stagger(50, [
-            animate('250ms cubic-bezier(0.2, 1, 0.2, 1)', style({ transform: 'translateX(-100%)', opacity: 0, height: 0, margin: 0, padding: 0 }))
-          ])
-        ], { optional: true })
-      ])
-    ])
-  ],
   template: `
-    <div class="fixed bottom-4 left-4 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full md:w-[360px]" [@listAnimation]="activeNotifications().length">
+    <div class="fixed bottom-4 left-4 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full md:w-[360px]">
       @for (notif of activeNotifications(); track notif._id) {
-        <div class="pointer-events-auto bg-[#1e1e1e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex gap-3 items-start cursor-pointer transition-all hover:bg-[#252525]/95 hover:border-white/20 hover:scale-[1.02]"
+        <div class="pointer-events-auto bg-[#1e1e1e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252525]/95 hover:border-white/20 hover:scale-[1.02] origin-bottom-left"
+             [class.opacity-0]="notif.isLeaving"
+             [class.translate-y-4]="notif.isLeaving"
+             [class.scale-95]="notif.isLeaving"
+             [class.animate-fade-in-up]="!notif.isLeaving"
+             style="animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;"
              (click)="onClick(notif)">
           
           <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 overflow-hidden border border-blue-500/30">
-            @if (notif.icon_url) {
-              <img [src]="notif.icon_url" class="w-full h-full object-cover" />
-            } @else {
-              <i class="pi pi-bell text-lg"></i>
-            }
+            <i class="pi pi-bell text-lg"></i>
           </div>
 
           <div class="flex-1 min-w-0 flex flex-col gap-1">
@@ -59,6 +43,19 @@ interface RichNotification extends AppNotification {
         </div>
       }
     </div>
+
+    <style>
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 100%, 0) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0) scale(1);
+        }
+      }
+    </style>
   `
 })
 export class RichNotificationComponent {
@@ -79,16 +76,26 @@ export class RichNotificationComponent {
   addNotification(notif: AppNotification) {
     const enriched: RichNotification = {
       ...notif,
-      _id: Math.random().toString(36).substr(2, 9)
+      _id: Math.random().toString(36).substr(2, 9),
+      isLeaving: false
     };
     
-    // Add to the list
     this.activeNotifications.update(list => [...list, enriched]);
 
-    // Auto-remove after 6 seconds
     setTimeout(() => {
-      this.removeNotification(enriched._id);
+      this.triggerLeave(enriched._id);
     }, 6000);
+  }
+
+  triggerLeave(id: string) {
+    this.activeNotifications.update(list => 
+      list.map(n => n._id === id ? { ...n, isLeaving: true } : n)
+    );
+
+    // Esperar que termine la transición de CSS (300ms) para removerlo del DOM
+    setTimeout(() => {
+      this.removeNotification(id);
+    }, 300);
   }
 
   removeNotification(id: string) {
@@ -97,13 +104,13 @@ export class RichNotificationComponent {
 
   close(event: Event, id: string) {
     event.stopPropagation();
-    this.removeNotification(id);
+    this.triggerLeave(id);
   }
 
   onClick(notif: RichNotification) {
     if (notif.route_url) {
       this.router.navigateByUrl(notif.route_url);
     }
-    this.removeNotification(notif._id);
+    this.triggerLeave(notif._id);
   }
 }
