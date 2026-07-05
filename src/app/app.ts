@@ -2,9 +2,10 @@ import { Component, signal, computed, inject, ApplicationRef, DestroyRef } from 
 import { Router, RouterOutlet, NavigationEnd } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '@core/services/auth.service';
-import { InstallPromptComponent } from './features/access-login/install-prompt.component';
+import { InstallPromptComponent } from './shared/components/install-prompt/install-prompt.component';
 import { NotificationPromptComponent } from './features/access-login/notification-prompt.component';
-import { UpdatePromptComponent } from '@shared/components/update-prompt';
+import { UpdatePromptComponent } from './shared/components/update-prompt/update-prompt.component';
+import { RichNotificationComponent } from './shared/components/rich-notification/rich-notification.component';
 import { SwPush, SwUpdate } from '@angular/service-worker';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
@@ -26,7 +27,8 @@ import { LoggerService } from '@core/services/logger.service';
     UpdatePromptComponent,
     ToastModule,
     ConfirmDialogModule,
-    LoaderComponent
+    LoaderComponent,
+    RichNotificationComponent
   ]
 })
 export class App {

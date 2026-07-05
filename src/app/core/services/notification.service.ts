@@ -199,7 +199,6 @@ export class NotificationService {
         try {
           const newNotification: AppNotification = JSON.parse(event.data);
           this.realTimeNotification$.next(newNotification);
-          this.info(`Nuevo reporte: ${newNotification.title}`, newNotification);
         } catch (e) {
           console.error('Error parseando notificación SSE:', e);
         }
