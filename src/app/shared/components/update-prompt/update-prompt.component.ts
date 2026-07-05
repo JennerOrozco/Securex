@@ -72,7 +72,15 @@ export class UpdatePromptComponent implements OnInit {
 
   async updateNow() {
     this.showUpdate = false;
-    await this.swUpdate.activateUpdate();
+    try {
+      // Evitamos que se quede colgado si el Service Worker tarda en responder
+      await Promise.race([
+        this.swUpdate.activateUpdate(),
+        new Promise(resolve => setTimeout(resolve, 1500))
+      ]);
+    } catch (e) {
+      console.warn('Update activation timeout or error', e);
+    }
     window.location.reload();
   }
 

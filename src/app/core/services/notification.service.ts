@@ -44,7 +44,6 @@ export class NotificationService {
 
     try {
       // Intentar obtener la llave pública dinámicamente desde la BD del backend
-      console.log('[NotificationService] Requesting VAPID from:', `${this.configService.notificationApiUrl}/notifications/vapid-public-key?app_uuid=${this.configService.appUuid}`);
       // El interceptor de Angular (response.interceptor.ts) extrae el "data", por lo que la respuesta es directamente el objeto interno.
       const res = await firstValueFrom(
         this.http.get<{public_key: string}>(
@@ -52,44 +51,36 @@ export class NotificationService {
         ).pipe(timeout(3000))
       );
       if (res && (res as any).public_key) {
-        console.log('[NotificationService] Got dynamic VAPID key:', (res as any).public_key);
         serverPublicKey = (res as any).public_key;
       }
     } catch (e: any) {
       console.warn('[NotificationService] No se pudo obtener llave VAPID dinámica, usando fallback. Error:', e.message);
     }
 
-    console.log('[NotificationService] Calling requestSubscription with key:', serverPublicKey);
     try {
       const sub = await this.swPush.requestSubscription({
         serverPublicKey: serverPublicKey
       });
-      console.log('[NotificationService] requestSubscription success! sub:', sub);
 
       this.sendSubscriptionToApi(sub).subscribe({
         error: () => {} // Silencioso en producción
       });
     } catch (err: any) {
-      console.error('[NotificationService] requestSubscription failed. err:', err);
       // Si el navegador rechaza la suscripción porque la llave VAPID pública cambió
       // respecto a la que tenía antes, forzamos la desuscripción de la vieja e intentamos de nuevo.
       if (err?.name === 'NotSupportedError' || err?.name === 'DOMException' || err?.message?.includes('applicationServerKey')) {
-        console.log('[NotificationService] Attempting to auto-migrate old subscription...');
         try {
           const oldSub = await firstValueFrom(this.swPush.subscription.pipe(timeout(2000)));
           if (oldSub) {
-            console.log('[NotificationService] Unsubscribing old subscription...');
             await this.swPush.unsubscribe();
           }
           // Re-intentar con la nueva llave dinámica
-          console.log('[NotificationService] Re-requesting with new key...');
           const newSub = await this.swPush.requestSubscription({
             serverPublicKey: serverPublicKey
           });
-          console.log('[NotificationService] Auto-migrate success! newSub:', newSub);
           this.sendSubscriptionToApi(newSub).subscribe({ error: () => {} });
         } catch (retryErr) {
-          console.error('[NotificationService] Auto-migrate failed:', retryErr);
+          // Fallo silencioso final
         }
       }
     }
