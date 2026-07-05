@@ -19,7 +19,7 @@ export const NOTIFICATION_QUERIES = {
       notifications(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data {
           id user_uuid company_uuid app_uuid user_email
-          title message channels is_read email_sent
+          title message channels is_read email_sent error icon_url route_url
           type created_at
           app { name }
           user { full_name email profile_picture }

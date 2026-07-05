@@ -14,14 +14,14 @@ interface RichNotification extends AppNotification {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed bottom-4 left-4 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-full md:w-[360px]">
+    <div class="fixed top-[70px] right-4 md:right-6 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-[calc(100vw-2rem)] md:w-[360px]">
       @for (notif of activeNotifications(); track notif._id) {
-        <div class="pointer-events-auto bg-[#1e1e1e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252525]/95 hover:border-white/20 hover:scale-[1.02] origin-bottom-left"
+        <div class="pointer-events-auto bg-[#1e1e1e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252525]/95 hover:border-white/20 hover:scale-[1.02] origin-top-right"
              [class.opacity-0]="notif.isLeaving"
-             [class.translate-y-4]="notif.isLeaving"
-             [class.scale-95]="notif.isLeaving"
-             [class.animate-fade-in-up]="!notif.isLeaving"
-             style="animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;"
+             [class.-translate-y-4]="notif.isLeaving"
+             [class.translate-x-4]="notif.isLeaving"
+             [class.scale-75]="notif.isLeaving"
+             style="animation: popOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;"
              (click)="onClick(notif)">
           
           <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 overflow-hidden border border-blue-500/30">
@@ -45,14 +45,14 @@ interface RichNotification extends AppNotification {
     </div>
 
     <style>
-      @keyframes fadeInUp {
+      @keyframes popOut {
         from {
           opacity: 0;
-          transform: translate3d(0, 100%, 0) scale(0.95);
+          transform: scale(0.8) translate3d(40px, -40px, 0);
         }
         to {
           opacity: 1;
-          transform: translate3d(0, 0, 0) scale(1);
+          transform: scale(1) translate3d(0, 0, 0);
         }
       }
     </style>
