@@ -58,6 +58,24 @@ export class CrudPageComponent {
    */
   externalActionButtons = contentChild<TemplateRef<any>>('rowActionButtons');
 
+  /** Referencia al componente FormModal para manipulaciones programáticas */
+  formModal = viewChild(FormModalComponent);
+
+  /** Permite actualizar de forma reactiva el formulario abierto sin tener que cerrarlo */
+  patchFormValue(value: any): void {
+    const modal = this.formModal();
+    if (modal && modal.form) {
+      modal.form.patchValue(value);
+      Object.keys(value).forEach(key => {
+        const ctrl = modal.form.get(key);
+        if (ctrl) {
+          ctrl.markAsDirty();
+          ctrl.updateValueAndValidity();
+        }
+      });
+    }
+  }
+
   // ── 🛡️ CONTROL DE ACCESO / SEGURIDAD (PERMISSION GATE) ─────────────────────
   /** String identificador de la acción/permiso requerida para renderizar el módulo (ej: 'USERS_VIEW') */
   permission = input<string>('');

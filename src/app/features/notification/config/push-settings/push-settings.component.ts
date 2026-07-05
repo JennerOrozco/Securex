@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, computed, ChangeDetectionStrategy, signal, DestroyRef, ChangeDetectorRef } from '@angular/core';
+import { Component, inject, OnInit, computed, ChangeDetectionStrategy, signal, DestroyRef, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonComponent } from '@shared/components/button/button.component';
 import { CrudPageComponent } from '@shared/crud-page/crud-page.component';
@@ -60,6 +60,8 @@ export class PushSettingsComponent implements OnInit {
     return this.apiService.savePushSetting(id, payload);
   }
 
+  @ViewChild(CrudPageComponent) crudPage!: CrudPageComponent;
+
   isGeneratingVapid = signal(false);
 
   handleGenerateVapid() {
@@ -68,12 +70,23 @@ export class PushSettingsComponent implements OnInit {
     ).subscribe({
       next: (res: any) => {
         const keys = res.data || res;
+        
+        // Actualizamos el estado interno del crud (útil por si el modal se cierra y abre)
         const current = this.crud.selectedItem();
         this.crud.selectedItem.set({
           ...current,
           vapid_public_key: keys.public_key,
           vapid_private_key: keys.private_key
         });
+
+        // Forzamos la actualización reactiva en el formulario que está abierto
+        if (this.crudPage) {
+          this.crudPage.patchFormValue({
+            vapid_public_key: keys.public_key,
+            vapid_private_key: keys.private_key
+          });
+        }
+        
         this.notificationService.success('Llaves VAPID generadas. Por favor completa los demás campos y guarda.');
       }
     });
