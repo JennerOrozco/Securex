@@ -137,18 +137,18 @@ export class NotificationService {
     warn: { severity: 'warn', summary: 'Advertencia', life: 2500, icon: 'pi pi-exclamation-triangle' },
   };
 
-  notify(type: keyof typeof this.toastConfig, message: string) {
+  notify(type: keyof typeof this.toastConfig, message: string, data?: any) {
     const cfg = this.toastConfig[type];
-    this.messageService.add({ severity: cfg.severity, summary: cfg.summary, detail: message, life: cfg.life, icon: cfg.icon });
+    this.messageService.add({ severity: cfg.severity, summary: cfg.summary, detail: message, life: cfg.life, icon: cfg.icon, data });
   }
 
-  success(message: string) { this.notify('success', message); }
+  success(message: string, data?: any) { this.notify('success', message, data); }
 
-  error(message: string) { this.notify('error', message); }
+  error(message: string, data?: any) { this.notify('error', message, data); }
 
-  info(message: string) { this.notify('info', message); }
+  info(message: string, data?: any) { this.notify('info', message, data); }
 
-  warn(message: string) { this.notify('warn', message); }
+  warn(message: string, data?: any) { this.notify('warn', message, data); }
 
   private eventSource: EventSource | null = null;
   private zone = inject(NgZone);
@@ -166,7 +166,7 @@ export class NotificationService {
         try {
           const newNotification: AppNotification = JSON.parse(event.data);
           this.realTimeNotification$.next(newNotification);
-          this.info(`Nuevo reporte: ${newNotification.title}`);
+          this.info(`Nuevo reporte: ${newNotification.title}`, newNotification);
         } catch (e) {
           console.error('Error parseando notificación SSE:', e);
         }

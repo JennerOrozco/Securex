@@ -72,6 +72,15 @@ export class App {
     });
   }
 
+  navigateTo(url: string): void {
+    if (url.startsWith('http')) {
+      window.open(url, '_blank');
+    } else {
+      const targetUrl = url.startsWith('/') ? url : '/' + url;
+      this.router.navigate([targetUrl]);
+    }
+  }
+
   private startUpdatePolling() {
     if (!this.swUpdate.isEnabled) return;
 
