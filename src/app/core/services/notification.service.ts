@@ -45,14 +45,15 @@ export class NotificationService {
     try {
       // Intentar obtener la llave pública dinámicamente desde la BD del backend
       console.log('[NotificationService] Requesting VAPID from:', `${this.configService.notificationApiUrl}/notifications/vapid-public-key?app_uuid=${this.configService.appUuid}`);
+      // El interceptor de Angular (response.interceptor.ts) extrae el "data", por lo que la respuesta es directamente el objeto interno.
       const res = await firstValueFrom(
-        this.http.get<{status: string, data: {public_key: string}}>(
+        this.http.get<{public_key: string}>(
           `${this.configService.notificationApiUrl}/notifications/vapid-public-key?app_uuid=${this.configService.appUuid}`
         ).pipe(timeout(3000))
       );
-      if (res?.data?.public_key) {
-        console.log('[NotificationService] Got dynamic VAPID key:', res.data.public_key);
-        serverPublicKey = res.data.public_key;
+      if (res && (res as any).public_key) {
+        console.log('[NotificationService] Got dynamic VAPID key:', (res as any).public_key);
+        serverPublicKey = (res as any).public_key;
       }
     } catch (e: any) {
       console.warn('[NotificationService] No se pudo obtener llave VAPID dinámica, usando fallback. Error:', e.message);
