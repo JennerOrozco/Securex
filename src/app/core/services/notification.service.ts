@@ -40,16 +40,48 @@ export class NotificationService {
       return;
     }
 
+    let serverPublicKey = this.configService.vapidPublicKey; // Fallback inicial
+
+    try {
+      // Intentar obtener la llave pública dinámicamente desde la BD del backend
+      const res = await firstValueFrom(
+        this.http.get<{status: string, data: {public_key: string}}>(
+          `${this.configService.notificationApiUrl}/notifications/vapid-public-key?app_uuid=${this.configService.appUuid}`
+        ).pipe(timeout(3000))
+      );
+      if (res?.data?.public_key) {
+        serverPublicKey = res.data.public_key;
+      }
+    } catch (e) {
+      console.warn('[NotificationService] No se pudo obtener llave VAPID dinámica, usando fallback.');
+    }
+
     try {
       const sub = await this.swPush.requestSubscription({
-        serverPublicKey: this.configService.vapidPublicKey
+        serverPublicKey: serverPublicKey
       });
 
       this.sendSubscriptionToApi(sub).subscribe({
         error: () => {} // Silencioso en producción
       });
-    } catch {
-      // Silencioso: push no es crítico para la funcionalidad core
+    } catch (err: any) {
+      // Si el navegador rechaza la suscripción porque la llave VAPID pública cambió
+      // respecto a la que tenía antes, forzamos la desuscripción de la vieja e intentamos de nuevo.
+      if (err?.name === 'NotSupportedError' || err?.name === 'DOMException' || err?.message?.includes('applicationServerKey')) {
+        try {
+          const oldSub = await firstValueFrom(this.swPush.subscription.pipe(timeout(2000)));
+          if (oldSub) {
+            await this.swPush.unsubscribe();
+          }
+          // Re-intentar con la nueva llave dinámica
+          const newSub = await this.swPush.requestSubscription({
+            serverPublicKey: serverPublicKey
+          });
+          this.sendSubscriptionToApi(newSub).subscribe({ error: () => {} });
+        } catch (retryErr) {
+          // Fallo silencioso final
+        }
+      }
     }
   }
 
