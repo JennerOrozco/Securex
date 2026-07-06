@@ -1,9 +1,10 @@
 import { Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { timer } from 'rxjs';
+import { timer, firstValueFrom } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SkeletonModule } from 'primeng/skeleton';
+import { SwPush } from '@angular/service-worker';
 
 import { AuthService } from '../../../core/services/auth.service';
 import { NotificationService } from '../../../core/services/notification.service';
@@ -12,6 +13,7 @@ import { ProfileService } from '../../../core/services/profile.service';
 import { GraphqlService } from '../../../core/graphql/graphql.service';
 import { FormMapperService } from '../../../core/services/form-mapper.service';
 import { SECUREX_QUERIES, SECUREX_MUTATIONS } from '../../../core/graphql/queries/securex.queries';
+import { NOTIFICATION_QUERIES, NOTIFICATION_MUTATIONS } from '../../../core/graphql/queries/notification.queries';
 
 import { PasswordComponent } from '../../../shared/components/password/password.component';
 import { AvatarUploadComponent } from '../../../shared/components/avatar-upload/avatar-upload.component';
@@ -41,6 +43,7 @@ export class ProfileComponent implements OnInit {
   private gql = inject(GraphqlService);
   private formMapper = inject(FormMapperService);
   private destroyRef = inject(DestroyRef);
+  private swPush = inject(SwPush);
 
   deleteModalVisible = signal(false);
   itemToDelete = signal<any | null>(null);
@@ -52,6 +55,10 @@ export class ProfileComponent implements OnInit {
   
   devices = signal<any[]>([]);
   devicesLoading = signal<boolean>(false);
+
+  notificationDevices = signal<any[]>([]);
+  notificationDevicesLoading = signal<boolean>(false);
+  currentPushSubscription = signal<string | null>(null);
 
   columns = DEVICE_TABLE_COLUMNS;
   activeTab = signal<string>('info');
@@ -72,6 +79,41 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.loadInitialProfileFromCache();
     this.fetchProfileFromServer();
+    this.getCurrentSubscription();
+  }
+
+  private async getCurrentSubscription() {
+    if (this.swPush.isEnabled) {
+      try {
+        const sub = await firstValueFrom(this.swPush.subscription);
+        if (sub) {
+          this.currentPushSubscription.set(sub.endpoint);
+        }
+      } catch (e) {
+        // Silencioso
+      }
+    }
+  }
+
+  isCurrentDevice(device: any): boolean {
+    const currentEndpoint = this.currentPushSubscription();
+    if (!currentEndpoint || !device.device_token) return false;
+    try {
+      const parsed = JSON.parse(device.device_token);
+      return parsed.endpoint === currentEndpoint;
+    } catch {
+      return false;
+    }
+  }
+
+  fetchNotificationDevices() {
+    this.gql.query<any>('notification', NOTIFICATION_QUERIES.USER_DEVICES, { limit: 100 })
+      .pipe(trackSignal(this, this.notificationDevicesLoading))
+      .subscribe({
+        next: (res) => {
+          this.notificationDevices.set(res?.userDevices?.data || []);
+        }
+      });
   }
 
   private initPasswordForm() {
@@ -135,10 +177,19 @@ export class ProfileComponent implements OnInit {
     this.activeTab.set(tab);
     this.passwordError.set(null);
     this.passwordSuccess.set(false);
+    
+    if (tab === 'devices' && this.notificationDevices().length === 0) {
+      this.fetchNotificationDevices();
+    }
   }
 
   fortifyAccount() {
     this.setTab('security');
+  }
+
+  deleteNotificationDevice(device: any) {
+    this.itemToDelete.set({ ...device, type: 'notification_device' });
+    this.deleteModalVisible.set(true);
   }
 
   deleteDevice(device: any) {
@@ -153,6 +204,18 @@ export class ProfileComponent implements OnInit {
     if (item.type === 'picture') {
       this.resetDeleteState();
       this.performDeletePicture();
+      return;
+    }
+
+    if (item.type === 'notification_device') {
+      this.gql.query<any>('notification', NOTIFICATION_MUTATIONS.DELETE_DEVICE, { id: parseInt(item.id, 10) })
+        .pipe(trackSignal(this, this.notificationDevicesLoading, 'Dispositivo desvinculado exitosamente'))
+        .subscribe({
+          next: () => {
+            this.resetDeleteState();
+            this.fetchNotificationDevices();
+          }
+        });
       return;
     }
 

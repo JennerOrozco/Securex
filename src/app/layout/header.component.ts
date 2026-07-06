@@ -6,14 +6,13 @@ import { NotificationService } from '@core/services/notification.service';
 import { NotificationPanelService } from '@shared/services/notification-panel.service';
 import { LayoutService } from '@core/services/layout.service';
 import { NotificationPanelComponent } from './notification-panel/notification-panel.component';
-import { TiktokBadgeComponent } from '../shared/components/tiktok-badge/tiktok-badge.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-header',
     templateUrl: './header.component.html',
     standalone: true,
-    imports: [CommonModule, RouterModule, NotificationPanelComponent, TiktokBadgeComponent],
+    imports: [CommonModule, RouterModule, NotificationPanelComponent],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent implements OnInit {

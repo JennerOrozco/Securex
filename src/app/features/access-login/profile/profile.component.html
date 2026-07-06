@@ -58,6 +58,11 @@
           <i class="pi pi-shield"></i>
           <span>Seguridad</span>
         </button>
+        <button [class.active]="activeTab() === 'devices'" (click)="setTab('devices')" role="tab"
+          [attr.aria-selected]="activeTab() === 'devices'">
+          <i class="pi pi-mobile"></i>
+          <span>Dispositivos</span>
+        </button>
       </nav>
     </div>
 
@@ -76,6 +81,12 @@
           [attr.aria-selected]="activeTab() === 'security'">
           <i class="pi pi-lock"></i>
           <span>Seguridad & Accesos</span>
+          <i class="pi pi-chevron-right gm-menu-chevron"></i>
+        </button>
+        <button [class.active]="activeTab() === 'devices'" (click)="setTab('devices')" role="tab"
+          [attr.aria-selected]="activeTab() === 'devices'">
+          <i class="pi pi-mobile"></i>
+          <span>Dispositivos Vinculados</span>
           <i class="pi pi-chevron-right gm-menu-chevron"></i>
         </button>
       </nav>
@@ -338,6 +349,54 @@
           </div>
 
         </div>
+        }
+
+        @if (activeTab() === 'devices') {
+          <div class="gm-pane-header">
+            <h3><i class="pi pi-mobile mr-2 text-primary"></i>Dispositivos Vinculados</h3>
+            <p>Gestiona los dispositivos en los que tienes la sesión iniciada y reciben notificaciones.</p>
+          </div>
+          
+          <div class="gm-devices-list">
+            @if (notificationDevicesLoading()) {
+              <div class="gm-pane-skeleton mt-4">
+                <p-skeleton width="100%" height="80px" borderRadius="12px" styleClass="mb-3"></p-skeleton>
+                <p-skeleton width="100%" height="80px" borderRadius="12px"></p-skeleton>
+              </div>
+            } @else if (notificationDevices().length === 0) {
+              <div class="gm-empty-state">
+                <i class="pi pi-desktop empty-icon"></i>
+                <p>No tienes dispositivos vinculados para recibir notificaciones.</p>
+              </div>
+            } @else {
+              @for (device of notificationDevices(); track device.id) {
+                <div class="gm-device-card" [class.current]="isCurrentDevice(device)">
+                  <div class="device-icon">
+                    <i class="pi" [ngClass]="device.device_type?.toLowerCase().includes('windows') || device.device_type?.toLowerCase().includes('mac') ? 'pi-desktop' : 'pi-mobile'"></i>
+                  </div>
+                  <div class="device-info">
+                    <div class="device-title-row">
+                      <h4>{{ device.device_type || 'Dispositivo Desconocido' }}</h4>
+                      @if (isCurrentDevice(device)) {
+                        <span class="current-badge">Este dispositivo</span>
+                      }
+                    </div>
+                    <div class="device-meta">
+                      <span><i class="pi pi-calendar mr-1"></i> Vinculado el {{ device.created_at | date:'mediumDate' }}</span>
+                      @if (device.last_active) {
+                        <span class="ml-3"><i class="pi pi-clock mr-1"></i> Última act. {{ device.last_active | date:'shortTime' }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="device-actions">
+                    <button class="gm-btn-unlink" (click)="deleteNotificationDevice(device)" title="Desvincular dispositivo">
+                      <i class="pi pi-sign-out"></i>
+                    </button>
+                  </div>
+                </div>
+              }
+            }
+          </div>
         }
       </div>
     </div>
