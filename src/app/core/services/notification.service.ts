@@ -128,10 +128,28 @@ export class NotificationService {
   }
 
   private getDeviceType(): string {
+    if (typeof navigator === 'undefined') return 'Unknown Device';
     const ua = navigator.userAgent;
-    if (/android/i.test(ua)) return 'PWA_ANDROID';
-    if (/iPad|iPhone|iPod/.test(ua)) return 'PWA_IOS';
-    return 'PWA_DESKTOP';
+    let os = 'Unknown OS';
+    let browser = 'Web Browser';
+
+    // Detectar Sistema Operativo
+    if (/windows phone/i.test(ua)) { os = 'Windows Phone'; }
+    else if (/windows/i.test(ua)) { os = 'Windows'; }
+    else if (/Android/i.test(ua)) { os = 'Android'; }
+    else if (/iPad|iPhone|iPod/.test(ua)) { os = 'iOS'; }
+    else if (/Mac/i.test(ua)) { os = 'Mac OS'; }
+    else if (/Linux/i.test(ua)) { os = 'Linux'; }
+
+    // Detectar Navegador (el orden importa por cómo se construyen los user-agents)
+    if (/samsungbrowser/i.test(ua)) { browser = 'Samsung Internet'; }
+    else if (/edg/i.test(ua)) { browser = 'Edge'; }
+    else if (/opr|opera/i.test(ua)) { browser = 'Opera'; }
+    else if (/chrome|crios|crmo/i.test(ua)) { browser = 'Chrome'; }
+    else if (/firefox|iceweasel|fxios/i.test(ua)) { browser = 'Firefox'; }
+    else if (/safari/i.test(ua)) { browser = 'Safari'; }
+
+    return `${os} - ${browser}`;
   }
 
   /**
