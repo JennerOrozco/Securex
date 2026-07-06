@@ -89,8 +89,8 @@ export class RichNotificationComponent {
     
     this.activeNotifications.update(list => [...list, enriched]);
 
-    // Haptic feedback (Vibración) para dispositivos móviles aunque el componente visual esté oculto
-    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+    // Haptic feedback (Vibración) solo para dispositivos móviles (pantallas < 768px)
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate([200, 100, 200]);
     }
 

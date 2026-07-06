@@ -16,8 +16,8 @@ import { NotificationService } from '@core/services/notification.service';
         <div class="absolute -top-1.5 right-3 w-3 h-3 bg-[#ff2a5f] rotate-45 transform origin-center rounded-sm"></div>
         
         <!-- Contenido del Tooltip Estilo TikTok -->
-        <div class="bg-[#ff2a5f] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-[0_4px_12px_rgba(255,42,95,0.5)] whitespace-nowrap flex items-center gap-1.5 relative border border-white/20">
-          <i class="pi pi-bell text-[10px] animate-pulse"></i>
+        <div class="bg-[#ff2a5f] text-white text-[11px] font-bold px-2.5 py-1 rounded-full shadow-md whitespace-nowrap flex items-center gap-1.5 relative">
+          <i class="pi pi-bell text-[10px]"></i>
           <span class="tracking-wide">Nueva alerta</span>
         </div>
       </div>
