@@ -54,6 +54,10 @@ export const CRUD_SERVICE_TOKEN = new InjectionToken<any>('CRUD_SERVICE');
         (onFilterType)="handleFilterType($event)"
         (onNodeReorder)="handleNodeReorder($event)">
       </app-crud-page>
+
+      @if (customModalComponent) {
+        <ng-container *ngComponentOutlet="customModalComponent; inputs: customModalInputs"></ng-container>
+      }
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -89,6 +93,9 @@ export class CrudShellComponent implements OnInit {
   cols: any[] = [];
   formFields: any[] = [];
   formFieldsBuilder: any = null;
+
+  customModalComponent: any = null;
+  customModalInputs: Record<string, any> = {};
 
   private _dbConfig: any = null;
   _rawFormFields = signal<any[]>([]);

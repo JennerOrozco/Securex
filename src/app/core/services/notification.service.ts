@@ -43,16 +43,17 @@ export class NotificationService {
 
     let serverPublicKey = this.configService.vapidPublicKey; // Fallback inicial
 
+
     try {
-      // Intentar obtener la llave pública dinámicamente desde la BD del backend
-      // El interceptor de Angular (response.interceptor.ts) extrae el "data", por lo que la respuesta es directamente el objeto interno.
       const res = await firstValueFrom(
-        this.http.get<{public_key: string}>(
+        this.http.get<any>(
           `${this.configService.notificationApiUrl}/notifications/vapid-public-key?app_uuid=${this.configService.appUuid}`
         ).pipe(timeout(3000))
       );
-      if (res && (res as any).public_key) {
-        serverPublicKey = (res as any).public_key;
+      if (res && res.data && res.data.public_key) {
+        serverPublicKey = res.data.public_key;
+      } else if (res && res.public_key) {
+        serverPublicKey = res.public_key;
       }
     } catch (e: any) {
       console.warn('[NotificationService] No se pudo obtener llave VAPID dinámica, usando fallback. Error:', e.message);
@@ -63,26 +64,23 @@ export class NotificationService {
         serverPublicKey: serverPublicKey
       });
 
-      this.sendSubscriptionToApi(sub).subscribe({
-        error: () => {} // Silencioso en producción
-      });
+      await firstValueFrom(this.sendSubscriptionToApi(sub));
     } catch (err: any) {
-      // Si el navegador rechaza la suscripción porque la llave VAPID pública cambió
-      // respecto a la que tenía antes, forzamos la desuscripción de la vieja e intentamos de nuevo.
       if (err?.name === 'NotSupportedError' || err?.name === 'DOMException' || err?.message?.includes('applicationServerKey')) {
         try {
           const oldSub = await firstValueFrom(this.swPush.subscription.pipe(timeout(2000)));
           if (oldSub) {
             await this.swPush.unsubscribe();
           }
-          // Re-intentar con la nueva llave dinámica
           const newSub = await this.swPush.requestSubscription({
             serverPublicKey: serverPublicKey
           });
-          this.sendSubscriptionToApi(newSub).subscribe({ error: () => {} });
+          await firstValueFrom(this.sendSubscriptionToApi(newSub));
         } catch (retryErr) {
-          // Fallo silencioso final
+          throw retryErr;
         }
+      } else {
+        throw err;
       }
     }
   }

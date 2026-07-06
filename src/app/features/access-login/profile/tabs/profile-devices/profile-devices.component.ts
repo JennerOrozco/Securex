@@ -86,9 +86,13 @@ export class ProfileDevicesComponent {
         this.notifService.info('Dispositivo registrado correctamente.');
         this.onDeviceRegistered.emit();
       });
-    } catch (error) {
+    } catch (error: any) {
       this.zone.run(() => {
-        this.notifService.error('No se pudo registrar el dispositivo para notificaciones.');
+        if (error?.name === 'NotAllowedError' || error?.message?.toLowerCase().includes('permission denied')) {
+          this.notifService.error('Permiso denegado. Haz clic en el candado de la barra de direcciones de tu navegador y permite las notificaciones.');
+        } else {
+          this.notifService.error('No se pudo registrar el dispositivo para notificaciones.');
+        }
       });
     }
   }
