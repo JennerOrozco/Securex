@@ -39,6 +39,7 @@ export interface FormField {
    * Vinculación declarativa automática con catálogos en BaseCatalogComponent.
    */
   catalogConfig?: CatalogConfig;
+  panelStyleClass?: string;
 }
 
 export type ModalMode = 'add' | 'edit' | 'delete' | 'view';

@@ -24,6 +24,7 @@ export class SelectComponent extends BaseFormControl {
   @Input() required: boolean = false;
   @Input() override control!: any;
   @Input() showClear: boolean = false;
+  @Input() panelStyleClass: string = '';
 
   @Output() onChange = new EventEmitter<any>();
 }

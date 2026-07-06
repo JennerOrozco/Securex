@@ -45,13 +45,13 @@ export const USER_COLS: TableColumn[] = [
 export const MESSAGE_FIELDS: FormField[] = [
   { name: 'title', label: 'Título de la Notificación', type: 'text', required: true, icon: 'pi pi-tag', placeholder: 'Ej. Alerta de Seguridad' },
   { name: 'message', label: 'Mensaje', type: 'textarea', required: true, icon: 'pi pi-comment', placeholder: 'Escribe el contenido del mensaje...' },
-  { name: 'type', label: 'Tipo de Notificación', type: 'select', required: true, icon: 'pi pi-tag', options: [
+  { name: 'type', label: 'Tipo de Notificación', type: 'select', required: true, icon: 'pi pi-tag', panelStyleClass: 'gm-select-up', options: [
     { label: 'Información (INFO)', value: 'INFO' },
     { label: 'Advertencia (WARNING)', value: 'WARNING' },
     { label: 'Error (ERROR)', value: 'ERROR' },
     { label: 'Éxito (SUCCESS)', value: 'SUCCESS' }
   ]},
-  { name: 'channels', label: 'Canales de Envío', type: 'select', required: true, icon: 'pi pi-sliders-h', options: [
+  { name: 'channels', label: 'Canales de Envío', type: 'select', required: true, icon: 'pi pi-sliders-h', panelStyleClass: 'gm-select-up', options: [
     { label: 'Push y Email', value: 'PUSH,EMAIL' },
     { label: 'Solo Push', value: 'PUSH' },
     { label: 'Solo Email', value: 'EMAIL' }

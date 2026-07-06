@@ -323,6 +323,16 @@ app-select .gm-control-wrap {
   }
 }
 
+/* Forzar que el overlay de selección suba por encima del input en móvil */
+@media (max-width: 768px) {
+  .p-select-overlay.gm-select-up,
+  .p-select-panel.gm-select-up {
+    transform: translateY(-330px) !important; /* Desplaza el alto del dropdown + el input */
+    transform-origin: bottom !important;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25) !important;
+  }
+}
+
 /* ════════════════════════════════════════════
    PHONE INPUT COUNTRY SELECT
    ════════════════════════════════════════════ */

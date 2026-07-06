@@ -122,6 +122,7 @@
           [control]="$any(form.get(field.name))"
           [icon]="field.icon || ''"
           [required]="field.required || false"
+          [panelStyleClass]="field.panelStyleClass || ''"
         ></app-select>
 
         <app-select-grid
