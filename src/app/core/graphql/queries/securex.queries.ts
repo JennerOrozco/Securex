@@ -385,7 +385,11 @@ export const SECUREX_QUERIES = {
   CRUD_CONFIGS_LIST: `
     query CrudConfigsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       crudConfigsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
-        data { id route_path resource_name title permission query_name delete_q_name is_active }
+        data { 
+          id route_path resource_name title subtitle add_label permission primary_key default_sort 
+          graphql_domain query_name query_field delete_q_name delete_field create_q_name create_field 
+          update_q_name update_field lazy_load is_tree show_add show_edit show_delete is_active 
+        }
         total currentPage perPage hasMorePages
       }
     }
@@ -394,7 +398,7 @@ export const SECUREX_QUERIES = {
     query CrudColumnsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       crudColumnsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data { 
-          id config_id field header type sortable width sort_order 
+          id config_id field header type sub_field avatar_fld sortable filterable visible width text_align render_func sort_order 
           config { id title }
         }
         total currentPage perPage hasMorePages
@@ -405,7 +409,7 @@ export const SECUREX_QUERIES = {
     query CrudFormFieldsList($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       crudFormFieldsList(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data { 
-          id config_id name label type required sort_order 
+          id config_id name label type required icon placeholder options catalog_key accept sort_order 
           config { id title }
         }
         total currentPage perPage hasMorePages

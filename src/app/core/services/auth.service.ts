@@ -404,9 +404,12 @@ export class AuthService {
     async logout() {
         this.sessionExpiredToastShown = false;
         const refreshToken = this.storage.getRefreshToken();
-        const accessToken = this.storage.getAccessToken();
+        
+        // Removemos el token de acceso antes de hacer las peticiones de limpieza 
+        // para asegurar que endpoints públicos (como delete device) no envíen un token expirado.
+        this.storage.removeAccessToken();
 
-        // 1. Desvincular Push Notifications (await para asegurar que el interceptor use el token)
+        // 1. Desvincular Push Notifications (await para asegurar que el interceptor no falle por auth)
         if (this.swPush.isEnabled) {
             try {
                 const sub = await firstValueFrom(this.swPush.subscription);
@@ -423,7 +426,7 @@ export class AuthService {
         }
 
         // 2. Cerrar sesión en el backend principal
-        if (refreshToken && accessToken) {
+        if (refreshToken) {
             try {
                 await firstValueFrom(
                     this.http.post(`${this.configService.apiUrl}/auth/logout`, { refresh_token: refreshToken })

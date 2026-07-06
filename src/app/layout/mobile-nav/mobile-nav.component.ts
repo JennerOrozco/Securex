@@ -8,6 +8,7 @@ import { NotificationPanelService } from '@shared/services/notification-panel.se
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NotificationPanelComponent } from '../notification-panel/notification-panel.component';
+import { TiktokBadgeComponent } from '../../shared/components/tiktok-badge/tiktok-badge.component';
 
 interface MenuItem {
   icon: string;
@@ -32,7 +33,7 @@ const ICON_MAP: Record<string, string> = {
 @Component({
   selector: 'app-mobile-nav',
   standalone: true,
-  imports: [CommonModule, RouterLink, NotificationPanelComponent],
+  imports: [CommonModule, RouterLink, NotificationPanelComponent, TiktokBadgeComponent],
   templateUrl: './mobile-nav.component.html',
   styleUrl: './mobile-nav.component.css',
   encapsulation: ViewEncapsulation.None

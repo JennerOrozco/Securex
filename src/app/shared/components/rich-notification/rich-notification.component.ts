@@ -14,30 +14,37 @@ interface RichNotification extends AppNotification {
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="fixed top-[70px] right-4 md:right-6 z-[9999] flex flex-col gap-3 pointer-events-none max-w-sm w-[calc(100vw-2rem)] md:w-[360px]">
+    <div class="hidden md:flex fixed top-[70px] right-4 md:right-6 z-[9999] flex-col gap-3 pointer-events-none max-w-sm w-[360px]">
       @for (notif of activeNotifications(); track notif._id) {
-        <div class="pointer-events-auto bg-[#1e1e1e]/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252525]/95 hover:border-white/20 hover:scale-[1.02] origin-top-right"
+        <div class="pointer-events-auto bg-[#1a1a1e]/80 backdrop-blur-2xl border border-white/20 rounded-3xl p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252528]/90 hover:border-white/30 hover:scale-[1.03] hover:shadow-[0_10px_40px_-5px_rgba(255,255,255,0.1)] origin-top-right relative overflow-hidden group"
              [class.opacity-0]="notif.isLeaving"
              [class.-translate-y-4]="notif.isLeaving"
              [class.translate-x-4]="notif.isLeaving"
              [class.scale-75]="notif.isLeaving"
-             style="animation: popOut 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;"
+             style="animation: popOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;"
              (click)="onClick(notif)">
           
-          <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 overflow-hidden border border-blue-500/30">
-            <i class="pi pi-bell text-lg"></i>
+          <!-- Efecto de resplandor sutil (glow) -->
+          <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+
+          <div class="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 overflow-hidden border border-blue-500/30 shadow-inner">
+            @if (notif.icon_url) {
+              <img [src]="notif.icon_url" class="w-full h-full object-cover">
+            } @else {
+              <i class="pi pi-bell text-xl animate-pulse"></i>
+            }
           </div>
 
-          <div class="flex-1 min-w-0 flex flex-col gap-1">
+          <div class="flex-1 min-w-0 flex flex-col gap-0.5 mt-0.5 relative z-10">
             <div class="flex justify-between items-center gap-2">
-              <span class="text-white font-semibold text-sm truncate">{{ notif.title || 'Nueva Notificación' }}</span>
-              <span class="text-white/40 text-[10px] font-medium uppercase tracking-wider flex-shrink-0">Ahora</span>
+              <span class="text-white font-bold text-sm truncate tracking-tight">{{ notif.title || 'Nueva Notificación' }}</span>
+              <span class="text-blue-400/80 text-[9px] font-bold uppercase tracking-widest flex-shrink-0 bg-blue-500/10 px-1.5 py-0.5 rounded-md">Ahora</span>
             </div>
-            <p class="text-white/60 text-xs leading-snug line-clamp-2">{{ notif.message }}</p>
+            <p class="text-gray-300 text-xs leading-relaxed line-clamp-2">{{ notif.message }}</p>
           </div>
 
           <button (click)="close($event, notif._id)" 
-                  class="w-6 h-6 flex items-center justify-center rounded-full text-white/30 hover:bg-white/10 hover:text-white transition-colors flex-shrink-0 -mt-1 -mr-1">
+                  class="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/20 hover:text-white transition-all duration-200 flex-shrink-0 -mt-1 -mr-1 relative z-10 backdrop-blur-md">
             <i class="pi pi-times text-xs"></i>
           </button>
         </div>
@@ -48,11 +55,11 @@ interface RichNotification extends AppNotification {
       @keyframes popOut {
         from {
           opacity: 0;
-          transform: scale(0.8) translate3d(40px, -40px, 0);
+          transform: scale(0.6) translate3d(60px, -40px, 0) rotate(5deg);
         }
         to {
           opacity: 1;
-          transform: scale(1) translate3d(0, 0, 0);
+          transform: scale(1) translate3d(0, 0, 0) rotate(0deg);
         }
       }
     </style>
@@ -81,6 +88,11 @@ export class RichNotificationComponent {
     };
     
     this.activeNotifications.update(list => [...list, enriched]);
+
+    // Haptic feedback (Vibración) para dispositivos móviles aunque el componente visual esté oculto
+    if (typeof navigator !== 'undefined' && navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
+    }
 
     setTimeout(() => {
       this.triggerLeave(enriched._id);

@@ -147,14 +147,20 @@ import { NotificationService } from '@core/services/notification.service';
       }
       
       @default {
-        @if (getCellValue(rowData, col.field) != null) {
-          <span class="cell-text" [class.clickable]="col.copyable !== false"
-            (click)="copyToClipboard(getCellValue(rowData, col.field), col.field, $event)"
-            [pTooltip]="col.copyable !== false ? 'Clic para copiar' : ''"
-            tooltipPosition="top">
-            {{ getCellValue(rowData, col.field) }}
-          </span>
-        }
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          @if (getCellValue(rowData, col.field) != null) {
+            <span class="cell-text" [class.clickable]="col.copyable !== false"
+              [ngStyle]="{'font-weight': col.subField ? '500' : 'normal', 'color': col.subField ? 'var(--text-color, #1e293b)' : 'inherit'}"
+              (click)="copyToClipboard(getCellValue(rowData, col.field), col.field, $event)"
+              [pTooltip]="col.copyable !== false ? 'Clic para copiar' : ''"
+              tooltipPosition="top">
+              {{ getCellValue(rowData, col.field) }}
+            </span>
+          }
+          @if (col.subField && getSubCellValue(rowData, col)) {
+            <span style="font-size: 0.75rem; color: var(--text-color-secondary, #64748b);">{{ getSubCellValue(rowData, col) }}</span>
+          }
+        </div>
       }
     }
   `,
