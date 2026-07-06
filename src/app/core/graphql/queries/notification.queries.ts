@@ -35,7 +35,7 @@ export const NOTIFICATION_QUERIES = {
     query UserDevices($page: Int, $limit: Int, $filter: GenericFilterInput, $sort: SortInput) {
       userDevices(page: $page, limit: $limit, filter: $filter, sort: $sort) {
         data {
-          id user_uuid app_uuid device_token device_type
+          id user_uuid app_uuid device_token device_type created_at last_active
           app { name }
           user { full_name email profile_picture }
         }

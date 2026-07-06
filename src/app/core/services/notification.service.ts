@@ -16,6 +16,7 @@ export interface AppNotification {
   is_read: boolean;
   created_at: string;
   route_url?: string | null;
+  icon_url?: string | null;
 }
 
 @Injectable({
