@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+﻿import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SelectModule } from 'primeng/select';
@@ -16,7 +16,7 @@ export class SelectComponent extends BaseFormControl {
 
   @Input() id: string = '';
   @Input() label: string = '';
-  @Input() placeholder: string = 'Seleccione una opción';
+  @Input() placeholder: string = 'Seleccione una opcion';
   @Input() options: any[] = [];
   @Input() optionLabel: string = 'nombre';
   @Input() optionValue: string = 'id';

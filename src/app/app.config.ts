@@ -35,7 +35,11 @@ export const appConfig: ApplicationConfig = {
         }
       },
       overlayOptions: {
-        appendTo: 'body'
+        appendTo: 'body',
+        responsive: {
+          breakpoint: '768px',
+          direction: 'center'
+        }
       },
       translation: {
         startsWith: 'Empieza con',
