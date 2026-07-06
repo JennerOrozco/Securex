@@ -215,6 +215,40 @@
   transform: translateY(-1px);
 }
 
+/* ─── Responsive — Mobile (≤ 768px) ────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .gm-device-card {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .device-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+
+  .device-info h4 {
+    font-size: 13px;
+  }
+
+  .current-badge {
+    font-size: 8px;
+    padding: 0px 5px;
+  }
+
+  .device-meta {
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  .gm-btn-unlink {
+    width: 32px;
+    height: 32px;
+  }
+}
+
 /* ─── Empty state ────────────────────────────────────────────────────────── */
 .gm-empty-state {
   display: flex;

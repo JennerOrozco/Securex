@@ -9,7 +9,7 @@ import { SwUpdate } from '@angular/service-worker';
   imports: [CommonModule],
   template: `
     @if (showUpdate) {
-      <div class="fixed bottom-4 left-3 right-3 md:left-auto md:right-6 md:w-[380px] z-[100]"
+      <div class="fixed bottom-20 md:bottom-4 left-3 right-3 md:left-auto md:right-6 md:w-[380px] z-[100]"
         style="animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1);">
         <div class="bg-[#1e1e1e]/95 backdrop-blur-2xl border border-orange-500/20 rounded-2xl shadow-2xl shadow-orange-500/10 p-4">
           <div class="flex items-start gap-3">

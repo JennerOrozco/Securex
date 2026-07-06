@@ -296,7 +296,7 @@ app-select .gm-control-wrap {
 }
 
 .p-select-overlay .p-select-filter.p-inputtext {
-  font-size: xx-small !important;
+  font-size: 0.85rem !important;
 }
 
 .p-select-panel .p-select-filter {
@@ -309,6 +309,18 @@ app-select .gm-control-wrap {
 
 .p-select-panel .p-select-empty-message {
   padding: 0.35rem 0.65rem !important;
+}
+
+/* Evitar que el dropdown se salga por debajo de la pantalla en móvil */
+@media (max-width: 768px) {
+  .p-select-overlay, 
+  .p-select-panel {
+    max-height: 220px !important;
+  }
+  .p-select-panel .p-select-items-wrapper {
+    max-height: 160px !important;
+    overflow-y: auto !important;
+  }
 }
 
 /* ════════════════════════════════════════════
