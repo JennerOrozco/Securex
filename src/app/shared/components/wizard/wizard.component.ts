@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToolbarComponent } from '../toolbar/toolbar.component';
 
@@ -13,7 +13,8 @@ export interface WizardStep {
   standalone: true,
   imports: [CommonModule, ToolbarComponent],
   templateUrl: './wizard.component.html',
-  styleUrl: './wizard.component.css'
+  styleUrl: './wizard.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WizardComponent {
   steps = input<WizardStep[]>([]);

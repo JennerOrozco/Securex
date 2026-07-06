@@ -1,0 +1,76 @@
+<div class="gm-devices-list-wrapper">
+  @if (loading()) {
+    <!-- Skeleton alineado -->
+    <div class="gm-pane-skeleton mt-4">
+      <p-skeleton width="100%" height="80px" borderRadius="12px" styleClass="mb-3"></p-skeleton>
+      <p-skeleton width="100%" height="80px" borderRadius="12px" styleClass="mb-3"></p-skeleton>
+    </div>
+  } @else {
+    <!-- El Header ahora se renderiza aquí dentro del estado listo, igual que en profile-info -->
+    <div class="gm-pane-header">
+      <h3><i class="pi pi-mobile mr-2 text-primary"></i>Dispositivos Vinculados</h3>
+      <p>Gestiona los dispositivos en los que tienes la sesión iniciada y reciben notificaciones.</p>
+    </div>
+
+    @if (processedDevices().length === 0) {
+      <div class="gm-empty-state">
+        <i class="pi pi-desktop empty-icon"></i>
+        <p class="gm-empty-title">Sin dispositivos vinculados</p>
+        <p class="gm-empty-desc">No tienes dispositivos registrados para recibir notificaciones push.</p>
+        <button class="gm-btn-register-push" (click)="registerThisDevice()">
+          <i class="pi pi-bell mr-2"></i>
+          Vincular este dispositivo
+        </button>
+      </div>
+    } @else {
+      <div class="gm-devices-list">
+        @for (device of processedDevices(); track device.id) {
+          <div class="gm-device-card" [class.current]="device.isCurrent">
+            <div class="device-icon">
+              <i class="pi" [ngClass]="getDevicePrimeIcon(device.device_type)"></i>
+            </div>
+            
+            <div class="device-info">
+              <div class="device-title-row">
+                <h4>{{ device.device_type || 'Dispositivo Desconocido' }}</h4>
+                @if (device.isCurrent) {
+                  <span class="current-badge">Este dispositivo</span>
+                }
+              </div>
+              <div class="device-meta">
+                <span>
+                  <i class="pi pi-calendar mr-1"></i> 
+                  Vinculado {{ device.created_at | timeAgo }}
+                </span>
+                @if (device.last_active) {
+                  <span class="device-meta-sep">·</span>
+                  <span class="text-success">
+                    <i class="pi pi-clock mr-1"></i> 
+                    Activo {{ device.last_active | timeAgo }}
+                  </span>
+                }
+              </div>
+            </div>
+
+            <div class="device-actions">
+              <button 
+                class="gm-btn-unlink" 
+                (click)="emitDelete(device)" 
+                [title]="'Desvincular ' + (device.device_type || 'dispositivo')">
+                <i class="pi pi-sign-out"></i>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (!hasCurrentDevice()) {
+        <div class="gm-add-device-wrapper">
+          <button class="gm-btn-add-device-dashed" (click)="registerThisDevice()">
+            <i class="pi pi-plus mr-2"></i> Vincular este dispositivo
+          </button>
+        </div>
+      }
+    }
+  }
+</div>

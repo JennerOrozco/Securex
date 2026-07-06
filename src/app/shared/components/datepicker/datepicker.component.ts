@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FormFieldComponent } from '../form-field/form-field.component';
 import { BaseFormControl } from '../base-form-control';
@@ -19,6 +19,6 @@ export class DatepickerComponent extends BaseFormControl {
   @Input() placeholder: string = 'YYYY-MM-DD';
   @Input() icon: string = 'pi pi-calendar';
   @Input() required: boolean = false;
-  @Input() override control!: any;
+  @Input() override control!: FormControl;
   @Input() dateFormat: string = 'yy-mm-dd';
 }

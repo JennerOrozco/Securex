@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
 import { AuthFormBase } from '../shared/auth-form-base';
@@ -23,7 +23,8 @@ import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
       flex: 1;
     }
   `],
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginFormComponent extends AuthFormBase implements OnInit {
   @Output() onSubmit = new EventEmitter<{ email: string; password: string }>();

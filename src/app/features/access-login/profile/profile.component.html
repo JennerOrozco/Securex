@@ -18,17 +18,15 @@
     </div>
   </div>
   } @else {
-  <!-- Tarjeta Principal de Perfil Alineada con el Sistema -->
   <div class="gm-profile-card">
 
-    <!-- Banner/Header Hero Sólido y Corporativo -->
     <div class="gm-profile-banner-hero">
       <div class="gm-profile-banner-overlay"></div>
       <div class="gm-profile-hero-content">
         
         <app-avatar-upload
           [imageUrl]="profileData()?.profile_picture"
-          [initials]="getUserInitials()"
+          [initials]="userInitials()"
           [loading]="avatarLoading()"
           [title]="'Cambiar foto de perfil'"
           (onImageCropped)="handleCrop($event)"
@@ -46,357 +44,74 @@
         </div>
       </div>
 
-      <!-- Tabs para Mobile (dentro del header) -->
       <nav class="gm-profile-mobile-tabs" role="tablist">
-        <button [class.active]="activeTab() === 'info'" (click)="setTab('info')" role="tab"
-          [attr.aria-selected]="activeTab() === 'info'">
+        <button [class.active]="activeTab() === ProfileTab.INFO" (click)="setTab(ProfileTab.INFO)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.INFO">
           <i class="pi pi-user"></i>
           <span>Información</span>
         </button>
-        <button [class.active]="activeTab() === 'security'" (click)="setTab('security')" role="tab"
-          [attr.aria-selected]="activeTab() === 'security'">
+        <button [class.active]="activeTab() === ProfileTab.SECURITY" (click)="setTab(ProfileTab.SECURITY)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.SECURITY">
           <i class="pi pi-shield"></i>
           <span>Seguridad</span>
         </button>
-        <button [class.active]="activeTab() === 'devices'" (click)="setTab('devices')" role="tab"
-          [attr.aria-selected]="activeTab() === 'devices'">
+        <button [class.active]="activeTab() === ProfileTab.DEVICES" (click)="setTab(ProfileTab.DEVICES)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.DEVICES">
           <i class="pi pi-mobile"></i>
           <span>Dispositivos</span>
         </button>
       </nav>
     </div>
 
-    <!-- Cuerpo del Card (Navegación + Contenido) -->
     <div class="gm-profile-card-body">
-
-      <!-- Menú de pestañas para Desktop (Dock Lateral) -->
       <nav class="gm-profile-sidebar-menu" role="tablist">
-        <button [class.active]="activeTab() === 'info'" (click)="setTab('info')" role="tab"
-          [attr.aria-selected]="activeTab() === 'info'">
+        <button [class.active]="activeTab() === ProfileTab.INFO" (click)="setTab(ProfileTab.INFO)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.INFO">
           <i class="pi pi-user-edit"></i>
           <span>Información Personal</span>
           <i class="pi pi-chevron-right gm-menu-chevron"></i>
         </button>
-        <button [class.active]="activeTab() === 'security'" (click)="setTab('security')" role="tab"
-          [attr.aria-selected]="activeTab() === 'security'">
+        <button [class.active]="activeTab() === ProfileTab.SECURITY" (click)="setTab(ProfileTab.SECURITY)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.SECURITY">
           <i class="pi pi-lock"></i>
           <span>Seguridad & Accesos</span>
           <i class="pi pi-chevron-right gm-menu-chevron"></i>
         </button>
-        <button [class.active]="activeTab() === 'devices'" (click)="setTab('devices')" role="tab"
-          [attr.aria-selected]="activeTab() === 'devices'">
+        <button [class.active]="activeTab() === ProfileTab.DEVICES" (click)="setTab(ProfileTab.DEVICES)" role="tab"
+          [attr.aria-selected]="activeTab() === ProfileTab.DEVICES">
           <i class="pi pi-mobile"></i>
           <span>Dispositivos Vinculados</span>
           <i class="pi pi-chevron-right gm-menu-chevron"></i>
         </button>
       </nav>
 
-      <!-- Panel de Contenido Activo -->
       <div class="gm-profile-pane">
-        @if (activeTab() === 'info') {
-        @if (profileLoading()) {
-        <div class="gm-pane-skeleton">
-          <div class="gm-pane-skeleton-header">
-            <p-skeleton width="40%" height="1.1rem" borderRadius="6px"></p-skeleton>
-            <div style="margin-top:0.4rem;"><p-skeleton width="65%" height="0.75rem" borderRadius="6px"></p-skeleton>
-            </div>
-          </div>
-          <div style="margin-bottom:1.25rem;"><p-skeleton width="100%" height="76px" borderRadius="10px"></p-skeleton>
-          </div>
-          <div class="gm-info-grid">
-            <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
-            <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
-          </div>
-        </div>
-        } @else {
-        <div class="gm-pane-header">
-          <h3><i class="pi pi-id-card mr-2 text-primary"></i>Información del Perfil</h3>
-          <p>Consulta los datos personales de tu cuenta y los detalles de tu organización.</p>
-        </div>
-
-        <!-- Grids de Información en tarjetas limpias -->
-        <div class="gm-info-grid">
-          <div class="gm-info-card">
-            <div class="gm-card-header">
-              <i class="pi pi-user mr-2 text-primary"></i>
-              <h4>Datos Personales</h4>
-            </div>
-            <div class="gm-card-body">
-              <div class="gm-info-field">
-                <span class="gm-field-label">Nombre Completo</span>
-                <strong class="gm-field-value">{{ profileData()?.full_name }}</strong>
-              </div>
-              <div class="gm-info-field">
-                <span class="gm-field-label">Correo Electrónico</span>
-                <strong class="gm-field-value">{{ profileData()?.email }}</strong>
-              </div>
-            </div>
-          </div>
-
-          <div class="gm-info-card">
-            <div class="gm-card-header">
-              <i class="pi pi-building mr-2 text-primary"></i>
-              <h4>Organización</h4>
-            </div>
-            <div class="gm-card-body">
-              <div class="gm-info-field">
-                <span class="gm-field-label">Compañía</span>
-                <strong class="gm-field-value">{{ profileData()?.company_name || 'N/A' }}</strong>
-              </div>
-              <div class="gm-info-field">
-                <span class="gm-field-label">Sucursal asignada</span>
-                <strong class="gm-field-value">{{ profileData()?.branch?.name || 'N/A' }}</strong>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Panel de Salud de Seguridad (Premium Widget) -->
-        <div class="gm-security-health-panel" [class.secure]="devices().length > 0">
-          <div class="gm-security-health-card">
-            <!-- Indicador Radial (Gauge Circular) -->
-            <div class="gm-health-gauge-container">
-              <svg class="gm-health-gauge" viewBox="0 0 100 100">
-                <!-- Círculo de Fondo -->
-                <circle class="gm-gauge-bg" cx="50" cy="50" r="42"></circle>
-                <!-- Círculo de Progreso Dinámico -->
-                <circle class="gm-gauge-progress" [class.secure]="devices().length > 0" cx="50" cy="50" r="42"
-                  stroke-dasharray="264" [style.strokeDashoffset]="devices().length > 0 ? '0' : '132'"></circle>
-              </svg>
-              <!-- Contenido Central del Círculo -->
-              <div class="gm-gauge-center">
-                <span class="gm-gauge-percent">{{ devices().length > 0 ? '100%' : '50%' }}</span>
-                <span class="gm-gauge-label">Salud</span>
-              </div>
-            </div>
-
-            <!-- Detalles y Checklist de Controles -->
-            <div class="gm-health-details">
-              <div class="gm-health-header">
-                <h4>Estado de Seguridad de tu Cuenta</h4>
-                <p>Monitoreamos el estado de tu cuenta para asegurar que tu información permanezca protegida bajo los
-                  estándares más altos.</p>
-              </div>
-
-              <!-- Checklist de Controles -->
-              <div class="gm-health-checklist">
-                <!-- Control 1: Contraseña -->
-                <div class="gm-checklist-item secure">
-                  <div class="gm-item-status">
-                    <i class="pi pi-check-circle"></i>
-                  </div>
-                  <div class="gm-item-content">
-                    <span class="gm-item-title">Contraseña de Acceso</span>
-                    <span class="gm-item-desc">Configurada y protegida</span>
-                  </div>
-                </div>
-
-                <!-- Control 2: Autenticación Biométrica -->
-                <div class="gm-checklist-item" [class.secure]="devices().length > 0"
-                  [class.warning]="devices().length === 0">
-                  <div class="gm-item-status">
-                    <i class="pi" [class.pi-check-circle]="devices().length > 0"
-                      [class.pi-exclamation-circle]="devices().length === 0"></i>
-                  </div>
-                  <div class="gm-item-content">
-                    <span class="gm-item-title">Autenticación Biométrica / FIDO2</span>
-                    <span class="gm-item-desc">
-                      {{ devices().length > 0
-                      ? 'Activa (Llaves de seguridad FIDO2 de alta resistencia)'
-                      : 'No configurada (Vulnerable a ataques de ingeniería social)'
-                      }}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Botón de Acción si no está al 100% -->
-              @if (devices().length === 0) {
-              <div class="gm-health-actions animate-slide-in">
-                <button class="gm-btn-fortify" (click)="fortifyAccount()">
-                  <i class="pi pi-shield mr-2"></i> Fortalecer Cuenta
-                </button>
-              </div>
-              }
-            </div>
-          </div>
-        </div>
-        }
+        @if (activeTab() === ProfileTab.INFO) {
+          <app-profile-info
+            [profileData]="profileData()"
+            [loading]="profileLoading()"
+            [devicesCount]="devices().length"
+            (onFortify)="setTab(ProfileTab.SECURITY)">
+          </app-profile-info>
         }
 
-        @if (activeTab() === 'security') {
-        <div class="gm-security-grid">
-
-          <!-- Cambiar Contraseña -->
-          <div class="gm-security-box card-box">
-            <div class="gm-box-header">
-              <i class="pi pi-lock"></i>
-              <div>
-                <h4>Actualizar Contraseña</h4>
-                <p class="subtitle">Modifica la clave de acceso a tu cuenta periódicamente para mayor seguridad.</p>
-              </div>
-            </div>
-
-            <form [formGroup]="passwordForm" (ngSubmit)="changePassword()" class="gm-form-styled">
-              <app-password label="Contraseña Actual" placeholder="Ingrese su contraseña actual"
-                [control]="passwordForm.get('currentPassword')" [required]="true" [feedback]="false"></app-password>
-
-              <app-password label="Nueva Contraseña" placeholder="Mínimo 6 caracteres"
-                [control]="passwordForm.get('newPassword')" [required]="true" [feedback]="true"></app-password>
-
-              <app-password label="Confirmar Nueva Contraseña" placeholder="Repita la nueva contraseña"
-                [control]="passwordForm.get('confirmPassword')" [required]="true" [feedback]="false"></app-password>
-
-              @if (passwordForm.hasError('mismatch') && passwordForm.get('confirmPassword')?.touched) {
-              <div class="gm-form-feedback error animate-shake">
-                <i class="pi pi-exclamation-circle"></i>
-                <span>Las contraseñas no coinciden.</span>
-              </div>
-              }
-
-              @if (passwordSuccess()) {
-              <div class="gm-form-feedback success animate-bounce-in">
-                <i class="pi pi-check-circle"></i>
-                <span>Contraseña actualizada exitosamente.</span>
-              </div>
-              }
-
-              @if (passwordError(); as errMsg) {
-              <div class="gm-form-feedback error animate-shake">
-                <i class="pi pi-exclamation-circle"></i>
-                <span>{{ errMsg }}</span>
-              </div>
-              }
-
-              <button type="submit" [disabled]="passwordForm.invalid || passwordLoading()" class="gm-btn-submit">
-                @if (passwordLoading()) {
-                <i class="pi pi-spin pi-spinner mr-2"></i>
-                }
-                {{ passwordLoading() ? 'Actualizando...' : 'Actualizar Contraseña' }}
-              </button>
-            </form>
-          </div>
-
-          <!-- Autenticación Biométrica Limpia y Sobria -->
-          <div class="gm-security-box card-box">
-            @if (devicesLoading() && devices().length === 0) {
-            <div class="gm-security-skeleton-inner">
-              <p-skeleton width="100%" height="46px" borderRadius="8px"></p-skeleton>
-              <div style="margin-top:0.75rem;"><p-skeleton width="70%" height="0.8rem" borderRadius="6px"></p-skeleton>
-              </div>
-              <div style="margin-top:1rem;"><p-skeleton width="100%" height="140px" borderRadius="8px"></p-skeleton>
-              </div>
-            </div>
-            } @else {
-            <div class="gm-box-header">
-              <i class="fa-solid fa-fingerprint"></i>
-              <div>
-                <h4>Autenticación Biométrica / Llaves de Acceso</h4>
-                <p class="subtitle">Inicia sesión de forma rápida y segura mediante huella dactilar, reconocimiento
-                  facial o PIN del dispositivo.</p>
-              </div>
-            </div>
-
-            @if (biometricsSuccess()) {
-            <div class="gm-form-feedback success mb-3 animate-bounce-in">
-              <i class="pi pi-check-circle"></i>
-              <span>Huella registrada exitosamente.</span>
-            </div>
-            }
-
-            @if (biometricsError(); as errMsg) {
-            <div class="gm-form-feedback error mb-3 animate-shake">
-              <i class="pi pi-exclamation-circle"></i>
-              <span>{{ errMsg }}</span>
-            </div>
-            }
-
-            @if (!devicesLoading() && devices().length === 0) {
-            <div class="gm-biometric-panel-register">
-              <div class="gm-biometric-icon-container">
-                <i class="fa-solid fa-fingerprint"></i>
-              </div>
-              <div class="gm-biometric-details">
-                <h4>Protege tu cuenta con acceso biométrico</h4>
-                <p>
-                  Vincule la huella digital o rostro de su computadora o teléfono. Esto genera una llave criptográfica
-                  única bajo el estándar FIDO2 que es imposible de duplicar o hackear.
-                </p>
-                <div class="gm-biometric-features">
-                  <span><i class="pi pi-shield"></i> Cifrado FIDO2</span>
-                  <span><i class="pi pi-bolt"></i> Acceso Rápido</span>
-                  <span><i class="pi pi-lock-open"></i> Sin contraseñas</span>
-                </div>
-                <button class="gm-btn-register-flat" (click)="registerBiometrics()" [disabled]="biometricsLoading()">
-                  @if (biometricsLoading()) {
-                  <i class="pi pi-spin pi-spinner mr-2"></i>
-                  }
-                  <i class="fa-solid fa-fingerprint mr-2"></i>
-                  {{ biometricsLoading() ? 'Registrando...' : 'Registrar mi llave de acceso' }}
-                </button>
-              </div>
-            </div>
-            }
-
-            <div class="gm-table-container">
-              <app-table-component [title]="'Dispositivos Registrados'"
-                [subtitle]="'Métodos de autenticación activos para esta cuenta'" [data]="devices()" [columns]="columns"
-                [loading]="devicesLoading()" [showAdd]="devices().length > 0" [addLabel]="'Agregar Método'"
-                [showEdit]="false" [showDelete]="true" [rows]="5" (onAdd)="registerBiometrics()"
-                (onDelete)="deleteDevice($event)"></app-table-component>
-            </div>
-            }
-          </div>
-
-        </div>
+        @if (activeTab() === ProfileTab.SECURITY) {
+          <app-profile-security
+            [devices]="devices()"
+            [devicesLoading]="devicesLoading()"
+            (onDeleteDevice)="deleteDevice($event)"
+            (onRefreshProfile)="fetchProfileFromServer()">
+          </app-profile-security>
         }
 
-        @if (activeTab() === 'devices') {
-          <div class="gm-pane-header">
-            <h3><i class="pi pi-mobile mr-2 text-primary"></i>Dispositivos Vinculados</h3>
-            <p>Gestiona los dispositivos en los que tienes la sesión iniciada y reciben notificaciones.</p>
-          </div>
-          
-          <div class="gm-devices-list">
-            @if (notificationDevicesLoading()) {
-              <div class="gm-pane-skeleton mt-4">
-                <p-skeleton width="100%" height="80px" borderRadius="12px" styleClass="mb-3"></p-skeleton>
-                <p-skeleton width="100%" height="80px" borderRadius="12px"></p-skeleton>
-              </div>
-            } @else if (notificationDevices().length === 0) {
-              <div class="gm-empty-state">
-                <i class="pi pi-desktop empty-icon"></i>
-                <p>No tienes dispositivos vinculados para recibir notificaciones.</p>
-              </div>
-            } @else {
-              @for (device of notificationDevices(); track device.id) {
-                <div class="gm-device-card" [class.current]="isCurrentDevice(device)">
-                  <div class="device-icon">
-                    <i class="pi" [ngClass]="device.device_type?.toLowerCase().includes('windows') || device.device_type?.toLowerCase().includes('mac') ? 'pi-desktop' : 'pi-mobile'"></i>
-                  </div>
-                  <div class="device-info">
-                    <div class="device-title-row">
-                      <h4>{{ device.device_type || 'Dispositivo Desconocido' }}</h4>
-                      @if (isCurrentDevice(device)) {
-                        <span class="current-badge">Este dispositivo</span>
-                      }
-                    </div>
-                    <div class="device-meta">
-                      <span><i class="pi pi-calendar mr-1"></i> Vinculado el {{ device.created_at | date:'mediumDate' }}</span>
-                      @if (device.last_active) {
-                        <span class="ml-3"><i class="pi pi-clock mr-1"></i> Última act. {{ device.last_active | date:'shortTime' }}</span>
-                      }
-                    </div>
-                  </div>
-                  <div class="device-actions">
-                    <button class="gm-btn-unlink" (click)="deleteNotificationDevice(device)" title="Desvincular dispositivo">
-                      <i class="pi pi-sign-out"></i>
-                    </button>
-                  </div>
-                </div>
-              }
-            }
-          </div>
+        @if (activeTab() === ProfileTab.DEVICES) {
+          <app-profile-devices
+            [notificationDevices]="notificationDevices()"
+            [loading]="notificationDevicesLoading()"
+            [currentPushEndpoint]="currentPushSubscription()"
+            (onDeleteDevice)="deleteNotificationDevice($event)"
+            (onDeviceRegistered)="fetchNotificationDevices()">
+          </app-profile-devices>
         }
       </div>
     </div>
@@ -404,9 +119,10 @@
   }
 </div>
 
-<app-delete-modal [visible]="deleteModalVisible()"
-  [title]="itemToDelete()?.type === 'picture' ? 'Eliminar Foto de Perfil' : 'Eliminar Dispositivo'"
-  [bodyMessage]="itemToDelete()?.type === 'picture' 
-    ? '¿Está seguro de que desea eliminar su foto de perfil? Esta acción no puede deshacerse.' 
-    : '¿Eliminar el dispositivo <strong>' + (itemToDelete()?.device_name || '') + '</strong>? Esta acción no puede deshacerse.'" (onConfirm)="handleConfirmDelete()"
-  (onClose)="deleteModalVisible.set(false)"></app-delete-modal>
+<app-delete-modal
+  [visible]="deleteFacade.deleteModalVisible()"
+  [title]="deleteFacade.title()"
+  [bodyMessage]="deleteFacade.message()"
+  (onConfirm)="handleConfirmDelete()"
+  (onClose)="deleteFacade.close()">
+</app-delete-modal>

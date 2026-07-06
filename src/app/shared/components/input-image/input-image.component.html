@@ -8,7 +8,7 @@
     [formControl]="control"
   />
 
-  @if (control?.value) {
+  @if (control.value) {
     <div class="logo-preview-modal-container" style="margin-top: 8px;">
       <img
         [src]="control.value"

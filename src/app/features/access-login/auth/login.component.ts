@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, NgZone, ChangeDetectorRef, ViewEncapsulation, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ElementRef, ViewChild, NgZone, ChangeDetectorRef, ViewEncapsulation, inject, ChangeDetectionStrategy } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +19,7 @@ declare var google: any;
 @Component({
   selector: 'app-login',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
   encapsulation: ViewEncapsulation.None,
@@ -46,11 +47,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = false;
   loadingConfig = false;
   error: string | null = null;
-
-
-
-  toastMessage: string | null = null;
-  toastType: 'success' | 'error' = 'error';
 
   // New properties for password recovery
   view: 'login' | 'register' | 'forgot-password' | 'reset-password' = 'login';
@@ -275,7 +271,6 @@ export class LoginComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleMode(mode: string) {
     this.view = mode as 'login' | 'register' | 'forgot-password' | 'reset-password';
     this.error = null;
-    this.toastMessage = null;
 
     if (this.view === 'login') {
       setTimeout(() => this.initGoogleButton(), 50);

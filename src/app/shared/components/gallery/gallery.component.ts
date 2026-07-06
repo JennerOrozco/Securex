@@ -1,4 +1,4 @@
-import { Component, input, output, signal, computed, effect, ElementRef, viewChild } from '@angular/core';
+import { Component, input, output, signal, computed, effect, ElementRef, viewChild, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,7 +6,8 @@ import { CommonModule } from '@angular/common';
     standalone: true,
     imports: [CommonModule],
     templateUrl: './gallery.component.html',
-    styleUrl: './gallery.component.css'
+    styleUrl: './gallery.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GalleryComponent {
     /** Lista de imágenes. Soporta un arreglo de strings (URLs) o de objetos con propiedad url/photo_url */

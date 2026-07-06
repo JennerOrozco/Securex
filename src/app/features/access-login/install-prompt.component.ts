@@ -1,12 +1,14 @@
-import { Component, OnInit, HostListener, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, OnInit, HostListener, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-install-prompt',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div *ngIf="showPrompt" class="fixed bottom-[4.8rem] md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-[380px] bg-navy-900/30 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[100] animate-ios-slide-up">
+    @if (showPrompt) {
+    <div class="fixed bottom-[4.8rem] md:bottom-6 left-3 right-3 md:left-auto md:right-6 md:w-[380px] bg-navy-900/30 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[100] animate-ios-slide-up">
       <div class="flex flex-col gap-2 md:gap-3">
         <!-- Header con Icono -->
         <div class="flex items-center gap-2 md:gap-3">
@@ -25,7 +27,7 @@ import { CommonModule } from '@angular/common';
 
         <div class="space-y-2 md:space-y-3">
           <!-- Android / Desktop Content -->
-          <ng-container *ngIf="!isIOS">
+          @if (!isIOS) {
             <p class="text-white/80 text-[10px] md:text-xs leading-relaxed font-body">
               Acceso rápido y notificaciones en tiempo real.
             </p>
@@ -37,14 +39,15 @@ import { CommonModule } from '@angular/common';
                   Más tarde
                 </button>
             </div>
-          </ng-container>
+          }
 
           <!-- iOS Content (Wizard Style) -->
-          <ng-container *ngIf="isIOS">
+          @if (isIOS) {
             <div class="bg-white/5 rounded-lg md:rounded-xl p-2 md:p-3 border border-white/10 min-h-[80px] md:min-h-[100px] flex flex-col justify-center">
 
               <!-- Step 1: Intro -->
-              <div *ngIf="iosStep === 1" class="animate-fade-in space-y-1 md:space-y-2">
+              @if (iosStep === 1) {
+              <div class="animate-fade-in space-y-1 md:space-y-2">
                 <p class="text-white/90 text-[10px] md:text-xs font-body leading-relaxed text-center">
                   Agrega <strong>SECUREX APP</strong> a tu pantalla de inicio para una mejor experiencia.
                 </p>
@@ -56,9 +59,11 @@ import { CommonModule } from '@angular/common';
                    </div>
                 </div>
               </div>
+              }
 
               <!-- Step 2: Share Button -->
-              <div *ngIf="iosStep === 2" class="animate-fade-in space-y-2 md:space-y-3">
+              @if (iosStep === 2) {
+              <div class="animate-fade-in space-y-2 md:space-y-3">
                 <div class="flex items-start gap-2">
                   <div class="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 flex items-center justify-center bg-brand-bright text-navy-900 rounded-md text-[10px] font-bold">1</div>
                   <p class="text-white/90 text-[10px] md:text-xs font-body pt-0.5">
@@ -73,9 +78,11 @@ import { CommonModule } from '@angular/common';
                    </div>
                 </div>
               </div>
+              }
 
               <!-- Step 3: Add to Home -->
-              <div *ngIf="iosStep === 3" class="animate-fade-in space-y-2 md:space-y-3">
+              @if (iosStep === 3) {
+              <div class="animate-fade-in space-y-2 md:space-y-3">
                 <div class="flex items-start gap-2">
                   <div class="w-5 h-5 md:w-6 md:h-6 flex-shrink-0 flex items-center justify-center bg-brand-bright text-navy-900 rounded-md text-[10px] font-bold">2</div>
                   <p class="text-white/90 text-[10px] md:text-xs font-body pt-0.5">
@@ -93,6 +100,7 @@ import { CommonModule } from '@angular/common';
                    </div>
                 </div>
               </div>
+              }
 
             </div>
 
@@ -107,10 +115,11 @@ import { CommonModule } from '@angular/common';
                   {{ iosStep === 3 ? '¡Listo!' : 'Siguiente' }}
                </button>
             </div>
-          </ng-container>
+          }
         </div>
       </div>
     </div>
+    }
   `,
   styles: [`
     .animate-ios-slide-up {

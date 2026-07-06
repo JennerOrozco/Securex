@@ -1,4 +1,4 @@
-import { Component, inject, DestroyRef, signal } from '@angular/core';
+import { Component, inject, DestroyRef, signal, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -60,7 +60,8 @@ interface RichNotification extends AppNotification {
         }
       }
     </style>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RichNotificationComponent {
   private notificationService = inject(NotificationService);
@@ -80,7 +81,7 @@ export class RichNotificationComponent {
   addNotification(notif: AppNotification) {
     const enriched: RichNotification = {
       ...notif,
-      _id: Math.random().toString(36).substr(2, 9),
+      _id: Math.random().toString(36).substring(2, 11),
       isLeaving: false
     };
 

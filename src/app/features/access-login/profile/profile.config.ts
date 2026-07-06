@@ -1,5 +1,11 @@
 import { TableColumn } from '../../../shared/table-shared/shared/table.types';
 
+export enum ProfileTab {
+  INFO = 'info',
+  SECURITY = 'security',
+  DEVICES = 'devices',
+}
+
 export interface ProfileData {
   uuid: string;
   full_name: string;

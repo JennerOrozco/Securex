@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { TextareaModule } from 'primeng/textarea';
 import { FormFieldComponent } from '../form-field/form-field.component';
 import { BaseFormControl } from '../base-form-control';
@@ -20,7 +20,7 @@ export class TextareaComponent extends BaseFormControl {
   @Input() placeholder: string = '';
   @Input() icon: string = '';
   @Input() required: boolean = false;
-  @Input() control!: any;
+  @Input() control!: FormControl;
   @Input() rows: number = 3;
   @Input() autoResize: boolean = true;
 

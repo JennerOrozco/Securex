@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, effect, computed } from '@angular/core';
+import { Component, inject, OnInit, effect, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -9,13 +9,14 @@ import { NotificationService } from '@core/services/notification.service';
 import { AuthService } from '@core/services/auth.service';
 import { ResetPasswordModalComponent } from '@shared/modals/modal-shell/reset-password-modal/reset-password-modal.component';
 import { UnifiedCrudService } from '@shared/crud-base/unified-crud.service';
-import { Observable, forkJoin, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { USER_ACCESS_COLS, createUserAccessForm } from './user.config';
 
 @Component({
   selector: 'app-security-user-crud',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, FormsModule, CrudPageComponent, ResetPasswordModalComponent],
   templateUrl: './user.component.html',
   providers: [UnifiedCrudService]

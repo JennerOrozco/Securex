@@ -36,7 +36,7 @@
     </div>
 
     <div class="auth-field-wrap captcha-container">
-        <div class="g-recaptcha" data-sitekey="6Ldm1uQsAAAAAL5VHXzeLMFndyixG9ZoRPozvgRS" data-callback="onCaptchaSuccess"></div>
+        <div class="g-recaptcha" [attr.data-sitekey]="recaptchaSiteKey" data-callback="onCaptchaSuccess"></div>
     </div>
 
     <app-submit-button [loading]="loading" label="Registrarse" loadingLabel="Registrando..."></app-submit-button>

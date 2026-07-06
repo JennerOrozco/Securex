@@ -52,6 +52,7 @@ export class InputAvatarComponent extends BaseFormControl {
   }
 
   override ngOnChanges(changes: any) {
+    super.ngOnChanges(changes);
     if (changes['control'] || changes['mode']) {
       this.syncInitialState();
     }

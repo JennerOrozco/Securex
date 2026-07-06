@@ -1,0 +1,58 @@
+<!-- ============================================================================
+  EJEMPLO REAL — Template HTML de un componente CRUD
+  Fuente: src/app/features/access-login/user/user.component.html
+
+  Características demostradas:
+  - Todos los inputs/outputs de CrudPageComponent
+  - [showReset]: botón de acción extra en cada fila
+  - [formExtraData]: datos pre-llenados sin que el usuario los vea
+  - (onSelectGridEmptyFilter): callback cuando no hay resultados en select-grid
+  - Modal adicional junto al CRUD (ResetPasswordModal)
+============================================================================ -->
+
+<!-- CrudPageComponent: el wrapper estándar de toda pantalla CRUD -->
+<app-crud-page
+  title="Accesos de Usuarios"
+  subtitle="Sucursales y roles filtrados por tu compañía activa"
+
+  [resourceName]="'Acceso de Usuario'"     <!-- nombre en toasts y modal title -->
+  [columns]="cols"                          <!-- TableColumn[] del .config.ts -->
+  [data]="crud.items()"                     <!-- Signal → array de items cargados -->
+  [loading]="crud.loading()"                <!-- Signal → muestra skeleton/spinner -->
+  [lazy]="true"                             <!-- paginación del lado del servidor -->
+  [totalRecords]="crud.totalRecords()"      <!-- Signal → total para el paginador -->
+
+  [showAdd]="true"                          <!-- botón "+ Agregar" en toolbar -->
+  [showEdit]="true"                         <!-- botón Editar en cada fila -->
+  [showDelete]="true"                       <!-- botón Eliminar en cada fila -->
+  [showReset]="true"                        <!-- botón de acción extra en cada fila (ícono reset) -->
+
+  [formFields]="formFields()"               <!-- computed Signal → campos del modal -->
+  [isSaving]="crud.isSaving()"             <!-- deshabilita botón Guardar durante petición -->
+  [formExtraData]="formInitialData"         <!-- datos pre-llenados invisibles en el formulario -->
+
+  deleteMessage="¿Estás seguro de eliminar este acceso? El usuario perderá el rol en esta compañía/sucursal."
+
+  <!-- Eventos de la tabla -->
+  (onLazyLoad)="crud.load($event)"          <!-- PrimeNG LazyLoadEvent → paginar/filtrar/ordenar -->
+  (onRefresh)="crud.load()"                 <!-- botón de refresh manual -->
+
+  <!-- Eventos del modal CRUD -->
+  (onAdd)="crud.handleAdd()"               <!-- abre modal en modo 'add' -->
+  (onEdit)="crud.handleEdit($event)"       <!-- abre modal en modo 'edit' con el item -->
+  (onSave)="crud.save($event)"             <!-- guarda (create o update según mode) -->
+  (onConfirmDelete)="crud.confirmDelete($event)"  <!-- confirma y ejecuta delete -->
+
+  <!-- Eventos especiales -->
+  (onReset)="handleResetPassword($event)"  <!-- acción del botón [showReset] -->
+  (onSelectGridEmptyFilter)="onSelectGridEmptyFilter()">  <!-- no hay resultados en select-grid -->
+</app-crud-page>
+
+<!-- Modal adicional: independiente del flujo CRUD estándar -->
+<!-- Patrón: [(visible)] two-way binding para el open/close del modal -->
+<app-reset-password-modal
+  [(visible)]="resetModalVisible"
+  [userEmail]="resetModalItem?.user?.email || ''"
+  [userName]="resetModalItem?.user?.full_name || ''"
+  (onClose)="closeResetModal()">
+</app-reset-password-modal>

@@ -1,14 +1,60 @@
 
-## graphify
+## SECUREX — Contexto del Proyecto
 
-This project has a nodesify-graphify knowledge graph at .graphify/.
+**SECUREX** es el frontend Angular 21 de la plataforma GGTS. Es un panel de administración de seguridad empresarial que gestiona usuarios, roles, permisos, notificaciones en tiempo real, configuración global del sistema y monitoreo de logs.
 
-CRITICAL RULES:
-- Always run graphify commands targeting `src/` (never the root `.`), to avoid indexing `dist/` build artifacts.
-- If no `.graphify/graph.json` exists, run `nodesify-graphify run src` to build the graph.
-- You are **FORBIDDEN** from using native search tools (Grep, Glob, Search, etc.) as your first step for discovery.
-- You **MUST** read .graphify/graph_report.md before doing any file exploration.
-- You **MUST** use `nodesify-graphify query "<question>"`, `nodesify-graphify path "<A>" "<B>"`, or `nodesify-graphify explain "<concept>"` via shell commands to locate files, components, and understand cross-module relationships.
-- Only use native file reading/searching tools *after* you have queried the graph to find the exact files you need.
-- After modifying code files in this session, run `nodesify-graphify update src` to keep the graph current. Then run `nodesify-graphify export --format html --out graph-viz.html` to regenerate the interactive visualization.
-- Use `nodesify-graphify status` to check graph freshness before querying.
+---
+
+### Stack técnico
+
+- Angular 21 (Standalone Components, Signals, RxJS)
+- PrimeNG 21 con tema Aura + Tailwind CSS v3
+- Lucide Angular (iconos)
+- GraphQL custom (NO Apollo) vía `GraphqlService`
+- PWA con Service Worker + Web Push (VAPID)
+- SSE (Server-Sent Events) para notificaciones en tiempo real
+- WebAuthn / Passkeys
+
+---
+
+### Dominios / Features
+
+| Ruta | Feature |
+|---|---|
+| `/home` | Dashboard principal |
+| `/security` | Usuarios, roles, permisos |
+| `/config` | Configuración global, catálogos |
+| `/system-logs` | Logs y monitoreo |
+| `/notification` | Panel y config de notificaciones |
+
+---
+
+### Herramienta de grafo de conocimiento: Graphify
+
+- Siempre corre `nodesify-graphify status` antes de explorar el código.
+- Usa `nodesify-graphify query "<pregunta>"` para ubicar archivos y relaciones.
+- Usa `nodesify-graphify path "<A>" "<B>"` para entender dependencias entre módulos.
+- Usa `nodesify-graphify explain "<concepto>"` para entender patrones del proyecto.
+- Lee `.graphify/graph_report.md` antes de cualquier exploración de archivos.
+- TARGETS siempre en `src/` (nunca `.` ni `dist/`).
+- Después de modificar código: `nodesify-graphify update src` → `nodesify-graphify export --format html --out graph-viz.html`.
+
+---
+
+### Archivos protegidos — NO modificar sin instrucción explícita
+
+- `src/app/app.config.ts` — Cadena de interceptores calibrada
+- `src/app/core/interceptors/*` — Lógica crítica de auth/error
+- `src/app/core/services/auth.service.ts` — Sesión, tokens, WebAuthn
+- `src/app/core/services/notification.service.ts` — SSE + WebPush frágil
+- `ngsw-config.json` — Service Worker PWA
+
+---
+
+### Convenciones clave
+
+- Path aliases obligatorios: `@core/`, `@shared/`, nunca rutas relativas entre features
+- `UnifiedCrudService` en providers del componente (nunca `providedIn: 'root'`)
+- `NotificationService` para todos los toasts (nunca `MessageService` directo)
+- GraphQL siempre vía `GraphqlService.query()` / `.mutate()`
+- Reglas completas en `.agents/rules/angular.md`

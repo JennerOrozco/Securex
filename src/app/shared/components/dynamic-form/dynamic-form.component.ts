@@ -1,4 +1,4 @@
-import { Component, input, output } from '@angular/core';
+import { Component, input, output, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -38,7 +38,8 @@ import { InputAvatarComponent } from '../input-avatar/input-avatar.component';
     InputColorComponent,
     InputAvatarComponent
   ],
-  templateUrl: './dynamic-form.component.html'
+  templateUrl: './dynamic-form.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DynamicFormComponent {
   fields = input.required<FormField[]>();

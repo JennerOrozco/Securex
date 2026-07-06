@@ -1,4 +1,4 @@
-import { Component, input, model, output, signal, computed } from '@angular/core';
+import { Component, input, model, output, signal, computed, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -43,6 +43,7 @@ import { SelectGridComponent } from '../select-grid/select-grid.component';
   ],
   templateUrl: './line-item-form.component.html',
   styleUrl: './line-item-form.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LineItemFormComponent {
   typeOptions = LINE_ITEM_TYPE_OPTIONS;

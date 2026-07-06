@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal, computed, input } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed, input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 export interface OpportunityMetrics {
@@ -80,7 +80,8 @@ const ENTITY_LABEL_MAP: Record<string, string> = {
   standalone: true,
   imports: [CommonModule],
   templateUrl: './activity-timeline.html',
-  styleUrl: './activity-timeline.css'
+  styleUrl: './activity-timeline.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityTimelineComponent {
   activities = input<ActivityTimelineLog[]>([]);

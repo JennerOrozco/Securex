@@ -4,20 +4,18 @@ import {
   HostBinding,
   HostListener,
   Input,
-  OnDestroy,
-  OnInit,
   ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AbstractControl } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
+import { BaseFormControl } from '../base-form-control';
 import { FormFieldComponent } from '../form-field/form-field.component';
 
 interface Hsv {
-  h: number; // 0-360
-  s: number; // 0-100
-  v: number; // 0-100
+  h: number;
+  s: number;
+  v: number;
 }
 
 @Component({
@@ -27,17 +25,19 @@ interface Hsv {
   templateUrl: './input-color.html',
   styleUrl: './input-color.css',
 })
-export class InputColorComponent implements OnInit, OnDestroy {
-  @Input() id = `color-${Math.random().toString(36).substring(2, 9)}`;
+export class InputColorComponent extends BaseFormControl {
+  @Input() id = '';
   @Input() label = '';
   @Input() placeholder = '#000000';
   @Input() icon = 'pi pi-palette';
   @Input() required = false;
-  @Input() control!: AbstractControl | null;
+  @Input() override control!: AbstractControl;
 
   isOpen = false;
   hsv: Hsv = { h: 210, s: 60, v: 70 };
   hexDraft = '';
+
+  protected prefix = 'color-';
 
   @HostBinding('class.is-open') get openClass() {
     return this.isOpen;
@@ -51,20 +51,18 @@ export class InputColorComponent implements OnInit, OnDestroy {
   @ViewChild('satBox') private satBoxRef?: ElementRef<HTMLDivElement>;
   @ViewChild('hueBar') private hueBarRef?: ElementRef<HTMLDivElement>;
 
-  private sub?: Subscription;
   private dragTarget: 'sat' | 'hue' | null = null;
 
-  constructor(private host: ElementRef<HTMLElement>) { }
-
-  ngOnInit(): void {
-    this.syncFromControl(this.control?.value);
-    this.sub = this.control?.valueChanges.subscribe((val) => {
-      if (val !== this.hexValue) this.syncFromControl(val);
-    });
+  constructor(private host: ElementRef<HTMLElement>) {
+    super();
   }
 
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+  override onControlInit(): void {
+    this.syncFromControl(this.control?.value);
+  }
+
+  override onControlChange(val: unknown): void {
+    if (val !== this.hexValue) this.syncFromControl(val);
   }
 
   get hexValue(): string {
@@ -174,8 +172,7 @@ export class InputColorComponent implements OnInit, OnDestroy {
   }
 
   private emitChange(): void {
-    this.control?.setValue(this.hexValue);
-    this.control?.markAsDirty();
+    this.setControlValue(this.hexValue);
   }
 }
 

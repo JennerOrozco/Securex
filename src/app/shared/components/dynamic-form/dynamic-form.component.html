@@ -45,7 +45,7 @@
             [placeholder]="field.placeholder || ''"
             [icon]="field.icon || ''"
             [required]="field.required || false"
-            [control]="form.get(field.name)"
+            [control]="$any(form.get(field.name))"
           ></app-input>
         </ng-container>
 
@@ -56,7 +56,7 @@
           [placeholder]="field.placeholder || 'correo@ejemplo.com'"
           [icon]="field.icon || ''"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           type="email"
         ></app-input>
 
@@ -67,7 +67,7 @@
           [placeholder]="field.placeholder || ''"
           [icon]="field.icon || ''"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           [feedback]="false"
           [toggleMask]="true"
         ></app-password>
@@ -79,7 +79,7 @@
           [placeholder]="field.placeholder || ''"
           [icon]="field.icon || ''"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           [minFractionDigits]="0"
           [maxFractionDigits]="2"
         ></app-input-number>
@@ -91,7 +91,7 @@
           [placeholder]="field.placeholder || ''"
           [icon]="field.icon || ''"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           mode="currency"
           [currency]="field.currencyCode || 'GTQ'"
           [locale]="field.locale || 'es-GT'"
@@ -119,7 +119,7 @@
           [optionLabel]="'label'"
           [optionValue]="'value'"
           [placeholder]="field.placeholder || 'Seleccione'"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           [icon]="field.icon || ''"
           [required]="field.required || false"
         ></app-select>
@@ -158,7 +158,7 @@
           [label]="field.label"
           [placeholder]="field.placeholder || 'YYYY-MM-DD'"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
         ></app-datepicker>
 
         <app-nit-input
@@ -167,7 +167,7 @@
           [label]="field.label"
           [placeholder]="field.placeholder || 'C/F o número de NIT'"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
           [disabled]="mode() === 'view' || !!field.disabled"
         ></app-nit-input>
 
@@ -178,7 +178,7 @@
           [placeholder]="field.placeholder || '#000000'"
           [icon]="field.icon || 'pi pi-palette'"
           [required]="field.required || false"
-          [control]="form.get(field.name)"
+          [control]="$any(form.get(field.name))"
         ></app-input-color>
       </ng-container>
     </div>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, DestroyRef } from '@angular/core';
+import { Component, inject, signal, DestroyRef, ChangeDetectionStrategy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '@core/services/notification.service';
@@ -34,7 +34,8 @@ import { NotificationService } from '@core/services/notification.service';
         50% { transform: translateY(3px); }
       }
     </style>
-  `
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TiktokBadgeComponent {
   private notificationService = inject(NotificationService);

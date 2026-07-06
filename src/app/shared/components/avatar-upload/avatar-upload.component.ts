@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 
@@ -14,7 +14,8 @@ import { ImageCropperComponent } from '../image-cropper/image-cropper.component'
   standalone: true,
   imports: [CommonModule, ImageCropperComponent],
   templateUrl: './avatar-upload.component.html',
-  styleUrls: ['./avatar-upload.component.css']
+  styleUrls: ['./avatar-upload.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AvatarUploadComponent {
   /** URL de la imagen actual (si existe). Prioritaria sobre las iniciales. */

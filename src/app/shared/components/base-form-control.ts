@@ -18,7 +18,7 @@ export abstract class BaseFormControl implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     if (!this.id) {
-      this.id = this.prefix + Math.random().toString(36).substr(2, 9);
+      this.id = this.prefix + Math.random().toString(36).substring(2, 11);
     }
     this.initControl();
   }

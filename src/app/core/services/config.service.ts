@@ -9,6 +9,7 @@ export interface AppConfig {
   apiAdminTowerUrl: string;
   appUuid: string;
   googleClientId: string;
+  recaptchaSiteKey: string;
   vapidPublicKey: string;
   notificationApiUrl: string;
   financeApiUrl: string;
@@ -22,6 +23,7 @@ const FALLBACK_CONFIG: AppConfig = {
   apiAdminTowerUrl: 'https://secureapi.jennerorozcoa.dev/v1',
   appUuid: 'securex-app',
   googleClientId: '',
+  recaptchaSiteKey: '6Ldm1uQsAAAAAL5VHXzeLMFndyixG9ZoRPozvgRS',
   vapidPublicKey: '',
   notificationApiUrl: 'https://notificationapi.jennerorozcoa.dev/v1',
   financeApiUrl: 'https://financial.jennerorozcoa.dev/v1',
@@ -56,6 +58,7 @@ export class ConfigService {
   get apiAdminTowerUrl(): string { return this.config?.apiAdminTowerUrl || FALLBACK_CONFIG.apiAdminTowerUrl; }
   get appUuid(): string { return this.config?.appUuid || FALLBACK_CONFIG.appUuid; }
   get googleClientId(): string { return this.config?.googleClientId || FALLBACK_CONFIG.googleClientId; }
+  get recaptchaSiteKey(): string { return this.config?.recaptchaSiteKey || FALLBACK_CONFIG.recaptchaSiteKey; }
   get vapidPublicKey(): string { return this.config?.vapidPublicKey || FALLBACK_CONFIG.vapidPublicKey; }
   get notificationApiUrl(): string { return this.config?.notificationApiUrl || FALLBACK_CONFIG.notificationApiUrl; }
   get financeApiUrl(): string { return this.config?.financeApiUrl || FALLBACK_CONFIG.financeApiUrl; }

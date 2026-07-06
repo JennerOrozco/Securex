@@ -1,6 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { FormFieldComponent } from '../form-field/form-field.component';
 import { BaseFormControl } from '../base-form-control';
@@ -21,7 +21,7 @@ export class InputComponent extends BaseFormControl {
   @Input() step: string | null = null;
   @Input() icon: string = '';
   @Input() required: boolean = false;
-  @Input() override control!: any;
+  @Input() override control!: FormControl;
 
   @Output() onInput = new EventEmitter<any>();
 }

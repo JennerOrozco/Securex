@@ -18,7 +18,10 @@ import {
 } from "./chunk-WCYLRWYG.js";
 import {
   InputText
-} from "./chunk-WQYM6V56.js";
+} from "./chunk-6BYTSIGF.js";
+import {
+  NG_VALUE_ACCESSOR
+} from "./chunk-VN65QM5Q.js";
 import {
   Ripple
 } from "./chunk-7YLYSIWI.js";
@@ -70,9 +73,6 @@ import {
   y,
   z
 } from "./chunk-ZGIVYFBQ.js";
-import {
-  NG_VALUE_ACCESSOR
-} from "./chunk-VN65QM5Q.js";
 import {
   CommonModule,
   NgForOf,
@@ -3525,4 +3525,4 @@ export {
   Select,
   SelectModule
 };
-//# sourceMappingURL=chunk-MLHORCZU.js.map
+//# sourceMappingURL=chunk-6JQBOGDM.js.map

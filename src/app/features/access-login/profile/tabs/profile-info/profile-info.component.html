@@ -1,0 +1,107 @@
+@if (loading()) {
+  <div class="gm-pane-skeleton">
+    <div class="gm-pane-skeleton-header">
+      <p-skeleton width="40%" height="1.1rem" borderRadius="6px"></p-skeleton>
+      <div style="margin-top:0.4rem;"><p-skeleton width="65%" height="0.75rem" borderRadius="6px"></p-skeleton></div>
+    </div>
+    <div style="margin-bottom:1.25rem;"><p-skeleton width="100%" height="76px" borderRadius="10px"></p-skeleton></div>
+    <div class="gm-info-grid">
+      <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
+      <p-skeleton width="100%" height="170px" borderRadius="10px"></p-skeleton>
+    </div>
+  </div>
+} @else {
+  <div class="gm-pane-header">
+    <h3><i class="pi pi-id-card mr-2 text-primary"></i>Información del Perfil</h3>
+    <p>Consulta los datos personales de tu cuenta y los detalles de tu organización.</p>
+  </div>
+
+  <div class="gm-info-grid">
+    <div class="gm-info-card">
+      <div class="gm-card-header">
+        <i class="pi pi-user mr-2 text-primary"></i>
+        <h4>Datos Personales</h4>
+      </div>
+      <div class="gm-card-body">
+        <div class="gm-info-field">
+          <span class="gm-field-label">Nombre Completo</span>
+          <strong class="gm-field-value">{{ profileData()?.full_name }}</strong>
+        </div>
+        <div class="gm-info-field">
+          <span class="gm-field-label">Correo Electrónico</span>
+          <strong class="gm-field-value">{{ profileData()?.email }}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="gm-info-card">
+      <div class="gm-card-header">
+        <i class="pi pi-building mr-2 text-primary"></i>
+        <h4>Organización</h4>
+      </div>
+      <div class="gm-card-body">
+        <div class="gm-info-field">
+          <span class="gm-field-label">Compañía</span>
+          <strong class="gm-field-value">{{ profileData()?.company_name || 'N/A' }}</strong>
+        </div>
+        <div class="gm-info-field">
+          <span class="gm-field-label">Sucursal asignada</span>
+          <strong class="gm-field-value">{{ profileData()?.branch?.name || 'N/A' }}</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gm-security-health-panel" [class.secure]="devicesCount() > 0">
+    <div class="gm-security-health-card">
+      <div class="gm-health-gauge-container">
+        <svg class="gm-health-gauge" viewBox="0 0 100 100">
+          <circle class="gm-gauge-bg" cx="50" cy="50" r="42"></circle>
+          <circle class="gm-gauge-progress" [class.secure]="devicesCount() > 0" cx="50" cy="50" r="42"
+            stroke-dasharray="264" [style.strokeDashoffset]="devicesCount() > 0 ? '0' : '132'"></circle>
+        </svg>
+        <div class="gm-gauge-center">
+          <span class="gm-gauge-percent">{{ devicesCount() > 0 ? '100%' : '50%' }}</span>
+          <span class="gm-gauge-label">Salud</span>
+        </div>
+      </div>
+
+      <div class="gm-health-details">
+        <div class="gm-health-header">
+          <h4>Estado de Seguridad de tu Cuenta</h4>
+          <p>Monitoreamos el estado de tu cuenta para asegurar que tu información permanezca protegida bajo los estándares más altos.</p>
+        </div>
+
+        <div class="gm-health-checklist">
+          <div class="gm-checklist-item secure">
+            <div class="gm-item-status"><i class="pi pi-check-circle"></i></div>
+            <div class="gm-item-content">
+              <span class="gm-item-title">Contraseña de Acceso</span>
+              <span class="gm-item-desc">Configurada y protegida</span>
+            </div>
+          </div>
+
+          <div class="gm-checklist-item" [class.secure]="devicesCount() > 0" [class.warning]="devicesCount() === 0">
+            <div class="gm-item-status">
+              <i class="pi" [class.pi-check-circle]="devicesCount() > 0" [class.pi-exclamation-circle]="devicesCount() === 0"></i>
+            </div>
+            <div class="gm-item-content">
+              <span class="gm-item-title">Autenticación Biométrica / FIDO2</span>
+              <span class="gm-item-desc">
+                {{ devicesCount() > 0 ? 'Activa (Llaves de seguridad FIDO2 de alta resistencia)' : 'No configurada (Vulnerable a ataques de ingeniería social)' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        @if (devicesCount() === 0) {
+          <div class="gm-health-actions animate-slide-in">
+            <button class="gm-btn-fortify" (click)="onFortify.emit()">
+              <i class="pi pi-shield mr-2"></i> Fortalecer Cuenta
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+}

@@ -55,7 +55,7 @@
                     <p class="card-sub card-sub--company">Tienes acceso a múltiples compañías. Selecciona una para continuar:</p>
 
                     <div class="company-list-container">
-                        @for (company of availableCompanies; track $index) {
+                        @for (company of availableCompanies; track company.uuid) {
                             <app-company-card
                                 [company]="company"
                                 [selected]="selectedCompanyUuid === company.uuid"
@@ -121,22 +121,5 @@
 
         </div>
     </div>
-
-    @if (toastMessage) {
-        <div class="toast"
-            [ngClass]="{'toast--success': toastType === 'success', 'toast--error': toastType === 'error'}">
-            @if (toastType === 'success') {
-                <svg class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                </svg>
-            }
-            @if (toastType === 'error') {
-                <svg class="toast__icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            }
-            <span>{{ toastMessage }}</span>
-        </div>
-    }
 
 </div>

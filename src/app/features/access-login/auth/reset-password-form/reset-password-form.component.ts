@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
 import { AuthFormBase } from '../shared/auth-form-base';
@@ -11,7 +11,8 @@ import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
   imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent, SubmitButtonComponent, AuthBottomLinkComponent],
   selector: 'app-reset-password-form',
   templateUrl: './reset-password-form.component.html',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordFormComponent extends AuthFormBase {
   @Output() onSubmit = new EventEmitter<{ code: string; newPassword: string; confirmNewPassword: string }>();

@@ -1,0 +1,495 @@
+/* DESIGN TOKENS */
+
+:host {
+  --pro-red: var(--color-red);
+  --pro-red-dark: var(--color-red-dark);
+  --pro-red-muted: var(--color-red-muted);
+  --pro-red-glow: var(--color-red-glow);
+
+  --pro-slate-1: var(--color-bg-subtle);
+  --pro-slate-2: var(--color-border);
+  --pro-slate-3: var(--color-border);
+  --pro-slate-4: var(--color-text-light);
+  --pro-slate-5: var(--color-text-secondary);
+
+  --pro-text-head: var(--color-text-main);
+  --pro-text-body: var(--color-text-secondary);
+  --pro-text-muted: var(--color-text-muted);
+  --pro-text-light: var(--color-text-light);
+
+  --pro-green: var(--color-emerald);
+  --pro-green-bg: var(--color-emerald-bg);
+  --pro-green-border: var(--color-emerald-border);
+  --pro-amber: var(--color-amber);
+  --pro-amber-bg: var(--color-amber-bg);
+  --pro-amber-border: var(--color-amber-border);
+
+  --pro-radius-sm: var(--radius-sm);
+  --pro-radius: var(--radius-md);
+  --pro-radius-lg: var(--radius-xl);
+  --pro-radius-xl: var(--radius-2xl);
+
+  --pro-shadow-xs: var(--shadow-xs);
+  --pro-shadow-sm: var(--shadow-sm);
+  --pro-shadow-md: var(--shadow-md);
+  --pro-shadow-lg: var(--shadow-lg);
+
+  --pro-ease: var(--ease-spring);
+}
+
+/* -----------------------------------------------------------------------
+   PANE HEADER
+   ----------------------------------------------------------------------- */
+.gm-pane-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid var(--pro-slate-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gm-pane-header h3 {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--pro-text-head);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  letter-spacing: -0.01em;
+}
+
+.gm-pane-header h3 i {
+  color: var(--pro-red);
+  font-size: 0.9rem;
+}
+
+.gm-pane-header p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--pro-text-muted);
+  line-height: 1.4;
+}
+
+/* -----------------------------------------------------------------------
+   SECURITY HEALTH PANEL (Premium Radial Gauge & Checklist)
+   ----------------------------------------------------------------------- */
+.gm-security-health-panel {
+  background: linear-gradient(135deg, var(--pro-slate-1) 0%, var(--color-bg-biometric, #f0f5fb) 100%);
+  border: 1px solid var(--pro-slate-2);
+  border-radius: var(--pro-radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s var(--pro-ease), box-shadow 0.3s var(--pro-ease);
+}
+
+/* Light / Dark Mode compliant adjustments */
+[class="my-app-dark"] .gm-security-health-panel {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, rgba(30, 41, 59, 0.7) 100%);
+}
+
+.gm-security-health-panel.secure {
+  border-color: rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.05);
+}
+
+.gm-security-health-panel::after {
+  content: '';
+  position: absolute;
+  right: -30px;
+  top: -30px;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-red-06) 0%, transparent 70%);
+  pointer-events: none;
+  transition: background 0.3s;
+}
+
+.gm-security-health-panel.secure::after {
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.06) 0%, transparent 70%);
+}
+
+.gm-security-health-card {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .gm-security-health-card {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: center;
+    text-align: center;
+  }
+}
+
+/* --- INDICADOR RADIAL --- */
+.gm-health-gauge-container {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gm-health-gauge {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.gm-gauge-bg {
+  fill: none;
+  stroke: var(--pro-slate-2);
+  stroke-width: 7;
+}
+
+[class="my-app-dark"] .gm-gauge-bg {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.gm-gauge-progress {
+  fill: none;
+  stroke: var(--pro-amber);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.8s ease;
+}
+
+.gm-gauge-progress.secure {
+  stroke: var(--pro-green);
+}
+
+.gm-gauge-center {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.gm-gauge-percent {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--pro-text-head);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.gm-gauge-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--pro-text-muted);
+  margin-top: 0.1rem;
+}
+
+/* --- DETALLES Y CHECKLIST --- */
+.gm-health-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.gm-health-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.gm-health-header h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 800;
+  color: var(--pro-text-head);
+  letter-spacing: -0.01em;
+}
+
+.gm-health-header p {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--pro-text-muted);
+  line-height: 1.4;
+}
+
+.gm-health-checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.gm-checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--pro-radius-sm);
+  background: rgba(255, 255, 255, 0.4);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  transition: background 0.2s;
+}
+
+[class="my-app-dark"] .gm-checklist-item {
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.01);
+}
+
+.gm-checklist-item:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+[class="my-app-dark"] .gm-checklist-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.gm-item-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.15rem;
+}
+
+.gm-item-status i {
+  font-size: 0.95rem;
+}
+
+.gm-checklist-item.secure .gm-item-status i {
+  color: var(--pro-green);
+}
+
+.gm-checklist-item.warning .gm-item-status i {
+  color: var(--pro-amber);
+  animation: pulseIcon 2s infinite var(--pro-ease);
+}
+
+.gm-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  text-align: left;
+}
+
+.gm-item-title {
+  font-size: 0.775rem;
+  font-weight: 700;
+  color: var(--pro-text-head);
+}
+
+.gm-item-desc {
+  font-size: 0.7rem;
+  color: var(--pro-text-muted);
+  line-height: 1.4;
+}
+
+/* --- BOTÓN FORTALECER CUENTA --- */
+.gm-health-actions {
+  display: flex;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .gm-health-actions {
+    justify-content: center;
+  }
+}
+
+.gm-btn-fortify {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  background: linear-gradient(135deg, var(--pro-red) 0%, var(--pro-red-dark) 100%);
+  color: var(--color-bg-card);
+  font-size: 0.775rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: var(--pro-radius);
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--pro-red-glow);
+  transition: transform 0.2s var(--pro-ease), box-shadow 0.2s var(--pro-ease);
+}
+
+.gm-btn-fortify:hover {
+  transform: translateY(-1.5px);
+  box-shadow: 0 6px 16px var(--pro-red-glow), 0 0 0 2px rgba(192, 17, 26, 0.15);
+}
+
+.gm-btn-fortify:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px var(--pro-red-glow);
+}
+
+/* -----------------------------------------------------------------------
+   INFO GRID
+   ----------------------------------------------------------------------- */
+.gm-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.gm-info-card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--pro-slate-2);
+  border-radius: var(--pro-radius);
+  overflow: hidden;
+  transition: box-shadow 0.2s var(--pro-ease), border-color 0.2s;
+}
+
+.gm-info-card:hover {
+  box-shadow: var(--pro-shadow-sm);
+  border-color: var(--pro-slate-3);
+}
+
+.gm-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1rem;
+  background: var(--pro-slate-1);
+  border-bottom: 1px solid var(--pro-slate-2);
+}
+
+.gm-card-header h4 {
+  margin: 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--pro-text-head);
+  letter-spacing: -0.005em;
+}
+
+.gm-card-header i {
+  color: var(--pro-red);
+  font-size: 0.8rem;
+}
+
+.gm-card-body {
+  display: flex;
+  flex-direction: column;
+  padding: 0.25rem 0;
+}
+
+.gm-info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding: 0.45rem 1rem;
+  transition: background 0.15s;
+}
+
+.gm-info-field:not(:last-child) {
+  border-bottom: 1px solid var(--pro-slate-1);
+}
+
+.gm-info-field:hover {
+  background: var(--pro-slate-1);
+}
+
+.gm-field-label {
+  font-size: 0.63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--pro-text-light);
+}
+
+.gm-field-value {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--pro-text-head);
+  letter-spacing: -0.01em;
+}
+
+/* -----------------------------------------------------------------------
+   SKELETON LOADING (pane)
+   ----------------------------------------------------------------------- */
+.gm-pane-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  animation: paneFadeIn 0.28s var(--pro-ease) both;
+}
+
+.gm-pane-skeleton-header {
+  margin-bottom: 0.5rem;
+}
+
+/* -----------------------------------------------------------------------
+   KEYFRAMES
+   ----------------------------------------------------------------------- */
+@keyframes paneFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulseIcon {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.15);
+    opacity: 0.8;
+  }
+}
+
+/* -----------------------------------------------------------------------
+   MICRO-ANIMATIONS
+   ----------------------------------------------------------------------- */
+.animate-slide-in {
+  animation: slideInAction 0.3s var(--pro-ease) both;
+}
+
+@keyframes slideInAction {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -----------------------------------------------------------------------
+   RESPONSIVE — MOBILE  (≤ 768px)
+   ----------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .gm-pane-header {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.4rem;
+  }
+
+  .gm-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .gm-pane-skeleton .gm-info-grid {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+}

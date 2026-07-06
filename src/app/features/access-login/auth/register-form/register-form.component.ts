@@ -1,20 +1,26 @@
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
-import { Component, EventEmitter, Output, OnInit, OnDestroy } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, OnDestroy, inject, ChangeDetectionStrategy } from '@angular/core';
 import { InputComponent } from '@shared/components/input/input.component';
 import { PasswordComponent } from '@shared/components/password/password.component';
 import { AuthFormBase } from '../shared/auth-form-base';
 import { SubmitButtonComponent } from '../shared/submit-button.component';
 import { AuthBottomLinkComponent } from '../shared/auth-bottom-link.component';
+import { ConfigService } from '@core/services/config.service';
+import { NotificationService } from '@core/services/notification.service';
 
 @Component({
   imports: [CommonModule, ReactiveFormsModule, InputComponent, PasswordComponent, SubmitButtonComponent, AuthBottomLinkComponent],
   selector: 'app-register-form',
   templateUrl: './register-form.component.html',
-  standalone: true
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterFormComponent extends AuthFormBase implements OnInit, OnDestroy {
   @Output() onSubmit = new EventEmitter<Record<string, string>>();
+
+  private configService = inject(ConfigService);
+  private notificationService = inject(NotificationService);
 
   registerForm = new FormGroup({
     name: new FormControl('', [Validators.required]),
@@ -23,8 +29,12 @@ export class RegisterFormComponent extends AuthFormBase implements OnInit, OnDes
   });
 
   captchaResponse: string | null = null;
+  recaptchaSiteKey = '';
+  private recaptchaScript: HTMLScriptElement | null = null;
 
   ngOnInit(): void {
+    this.recaptchaSiteKey = this.configService.recaptchaSiteKey;
+
     (window as any).onCaptchaSuccess = (response: string) => {
       this.captchaResponse = response;
     };
@@ -34,10 +44,15 @@ export class RegisterFormComponent extends AuthFormBase implements OnInit, OnDes
     script.async = true;
     script.defer = true;
     document.body.appendChild(script);
+    this.recaptchaScript = script;
   }
 
   ngOnDestroy(): void {
     delete (window as any).onCaptchaSuccess;
+    if (this.recaptchaScript) {
+      this.recaptchaScript.remove();
+      this.recaptchaScript = null;
+    }
   }
 
   submit(): void {
@@ -47,7 +62,7 @@ export class RegisterFormComponent extends AuthFormBase implements OnInit, OnDes
     }
 
     if (!this.captchaResponse) {
-      alert('Por favor completa el captcha.');
+      this.notificationService.warn('Por favor completa el captcha.');
       return;
     }
 

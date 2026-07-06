@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, inject, effect } from '@angular/core';
+import { Component, ChangeDetectorRef, ChangeDetectionStrategy, inject, effect, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NotificationService } from '../../core/services/notification.service';
 import { AuthService } from '../../core/services/auth.service';
@@ -7,8 +7,10 @@ import { AuthService } from '../../core/services/auth.service';
   selector: 'app-notification-prompt',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div *ngIf="showPrompt" class="fixed top-20 left-4 right-4 md:left-auto md:right-6 md:w-[380px] bg-navy-900/40 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[110] animate-ios-slide-down">
+    @if (showPrompt) {
+    <div class="fixed top-20 left-4 right-4 md:left-auto md:right-6 md:w-[380px] bg-navy-900/40 backdrop-blur-2xl border border-white/20 rounded-[1.5rem] shadow-2xl p-3 md:p-4 z-[110] animate-ios-slide-down">
       <div class="flex flex-col gap-2 md:gap-3">
         <!-- Header con Icono -->
         <div class="flex items-center gap-2 md:gap-3">
@@ -43,6 +45,7 @@ import { AuthService } from '../../core/services/auth.service';
         </div>
       </div>
     </div>
+    }
   `,
   styles: [`
     .animate-ios-slide-down {
@@ -55,13 +58,20 @@ import { AuthService } from '../../core/services/auth.service';
     }
   `]
 })
-export class NotificationPromptComponent {
+export class NotificationPromptComponent implements OnDestroy {
   showPrompt = false;
   private notificationService = inject(NotificationService);
   private authService = inject(AuthService);
   private cdr = inject(ChangeDetectorRef);
 
-  private timeoutId: any;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
+
+  ngOnDestroy() {
+    if (this.timeoutId !== null) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+  }
 
   constructor() {
     effect(() => {
