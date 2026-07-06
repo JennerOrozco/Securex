@@ -82,16 +82,18 @@ export class ProfileComponent implements OnInit {
     this.getCurrentSubscription();
   }
 
-  private async getCurrentSubscription() {
+  private getCurrentSubscription() {
     if (this.swPush.isEnabled) {
-      try {
-        const sub = await firstValueFrom(this.swPush.subscription);
-        if (sub) {
-          this.currentPushSubscription.set(sub.endpoint);
-        }
-      } catch (e) {
-        // Silencioso
-      }
+      this.swPush.subscription.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+        next: (sub) => {
+          if (sub) {
+            this.currentPushSubscription.set(sub.endpoint);
+          } else {
+            this.currentPushSubscription.set(null);
+          }
+        },
+        error: (err) => console.error('Error al obtener suscripción:', err)
+      });
     }
   }
 
@@ -99,7 +101,9 @@ export class ProfileComponent implements OnInit {
     const currentEndpoint = this.currentPushSubscription();
     if (!currentEndpoint || !device.device_token) return false;
     try {
-      const parsed = JSON.parse(device.device_token);
+      const parsed = typeof device.device_token === 'string' 
+        ? JSON.parse(device.device_token) 
+        : device.device_token;
       return parsed.endpoint === currentEndpoint;
     } catch {
       return false;
