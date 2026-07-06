@@ -311,57 +311,125 @@ app-select .gm-control-wrap {
   padding: 0.35rem 0.65rem !important;
 }
 
-/* ─── OVERLAYS DE SELECTS Y MULTISELECTS (Alineados con la UI de tablas) ─── */
+/* ─── ENFOQUE 1: PATRÓN MODAL DE PANTALLA COMPLETA EN MÓVILES ─── */
 @media (max-width: 768px) {
-  /* Controlar altura y comportamiento de los paneles en móvil */
-  body .p-select-overlay.p-select-panel,
-  body .p-multiselect-panel {
-    max-height: 200px !important;
-    border-radius: 10px !important;
-    border: 1px solid var(--color-border, rgba(255,255,255,0.12)) !important;
-    background: var(--color-bg-card, #1e1e1e) !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3) !important;
+  /* Forzar que el body no haga scroll cuando el select está abierto */
+  body:has(.p-select-overlay) {
+    overflow: hidden !important;
   }
 
-  /* Asegurar que el contenedor de opciones sea flexible y tenga scroll */
+  /* Transformar el overlay en un modal centrado a pantalla completa */
+  body .p-select-overlay,
+  body .p-select-panel,
+  body .p-multiselect-panel {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 92vw !important;
+    max-width: 380px !important;
+    height: auto !important;
+    max-height: 75vh !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: #141414 !important; /* Fondo oscuro premium */
+    /* Sombra gigante de 200vmax que actúa como el fondo oscuro traslúcido y desenfocado detrás del modal */
+    box-shadow: 0 0 0 200vmax rgba(0, 0, 0, 0.65), 0 25px 50px -12px rgba(0, 0, 0, 0.8) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    padding: 12px 6px !important;
+    animation: scaleInOverlay 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Asegurar que las opciones fluyan y tengan scroll cómodo */
+  body .p-select-overlay .p-select-items-wrapper,
   body .p-select-panel .p-select-items-wrapper,
   body .p-multiselect-panel .p-multiselect-items-wrapper {
-    max-height: 150px !important;
+    max-height: 50vh !important;
     overflow-y: auto !important;
+    padding-inline: 4px !important;
+    display: block !important;
   }
 
-  /* Ajustar legibilidad del texto de las opciones en móvil con padding compacto */
+  /* Ajustar legibilidad del texto de las opciones en móvil con máxima prioridad */
+  body .p-select-overlay .p-select-option,
   body .p-select-panel .p-select-option,
   body .p-multiselect-panel .p-multiselect-option {
-    color: var(--color-text-main, #ffffff) !important;
-    background: transparent !important;
-    font-size: 0.8rem !important;
-    padding: 0.35rem 0.65rem !important;
-    margin: 1px 4px !important;
-    border-radius: 5px !important;
-    transition: background 0.15s ease, box-shadow 0.15s ease !important;
+    color: #e2e8f0 !important;
+    background: rgba(255, 255, 255, 0.02) !important;
+    border: 1px solid rgba(255, 255, 255, 0.04) !important;
+    font-size: 0.88rem !important;
+    padding: 0.75rem 1rem !important;
+    margin: 6px 4px !important;
+    border-radius: 12px !important;
+    display: block !important;
+    transition: all 0.2s ease !important;
   }
 
-  /* Estados hover y activo */
+  /* Forzar colores claros en select-grids móviles dentro del modal */
+  body .p-select-overlay .sg-item-main,
+  body .p-select-panel .sg-item-main {
+    color: #ffffff !important; /* Texto principal en blanco */
+    font-size: 0.85rem !important;
+  }
+
+  body .p-select-overlay .sg-item-col,
+  body .p-select-panel .sg-item-col,
+  body .p-select-overlay .sg-item-col-muted,
+  body .p-select-panel .sg-item-col-muted {
+    color: #94a3b8 !important; /* Subtítulos en gris claro slate-400 */
+    font-size: 0.72rem !important;
+  }
+
+  /* Hovers y Seleccionados con acentos del tema */
+  body .p-select-overlay .p-select-option:hover,
   body .p-select-panel .p-select-option:hover,
   body .p-multiselect-panel .p-multiselect-option:hover {
-    background: rgba(249, 115, 22, 0.08) !important; /* Tono naranja traslúcido */
+    background: rgba(249, 115, 22, 0.08) !important;
+    border-color: rgba(249, 115, 22, 0.3) !important;
     color: var(--color-primary, #f97316) !important;
   }
 
+  body .p-select-overlay .p-select-option.p-select-option-selected,
   body .p-select-panel .p-select-option.p-select-option-selected,
+  body .p-select-overlay .p-select-option.p-highlight,
+  body .p-select-panel .p-select-option.p-highlight,
   body .p-multiselect-panel .p-multiselect-option.p-highlight {
-    background: rgba(249, 115, 22, 0.12) !important;
-    color: var(--color-primary, #f97316) !important;
-    box-shadow: inset 2px 0 0 0 var(--color-primary, #f97316) !important;
+    background: var(--color-primary, #f97316) !important;
+    border-color: var(--color-primary, #f97316) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35) !important;
   }
 
-  /* FORZAR DESPLIEGUE HACIA ARRIBA para los selects inferiores con clase gm-select-up */
-  body .p-select-overlay.gm-select-up,
-  body .p-multiselect-panel.gm-select-up {
-    margin-top: -250px !important; /* Desplaza el panel arriba del select input */
-    transform-origin: bottom !important;
+  /* Filtro/Buscador adaptado */
+  body .p-select-panel .p-select-filter-container,
+  body .p-multiselect-panel .p-multiselect-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+    padding: 8px 12px 14px !important;
+    margin-bottom: 8px !important;
   }
+
+  body .p-select-overlay .p-select-filter.p-inputtext,
+  body .p-multiselect-panel .p-multiselect-filter {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    border-radius: 10px !important;
+    font-size: 0.9rem !important;
+    padding: 0.55rem 0.75rem !important;
+  }
+}
+
+@keyframes fadeInOverlay {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleInOverlay {
+  from { transform: translate(-50%, -48%) scale(0.96); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
 /* ════════════════════════════════════════════
