@@ -16,35 +16,32 @@ interface RichNotification extends AppNotification {
   template: `
     <div class="hidden md:flex fixed top-[70px] right-4 md:right-6 z-[9999] flex-col gap-3 pointer-events-none max-w-sm w-[360px]">
       @for (notif of activeNotifications(); track notif._id) {
-        <div class="pointer-events-auto bg-[#1a1a1e]/80 backdrop-blur-2xl border border-white/20 rounded-3xl p-4 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] flex gap-3 items-start cursor-pointer transition-all duration-300 hover:bg-[#252528]/90 hover:border-white/30 hover:scale-[1.03] hover:shadow-[0_10px_40px_-5px_rgba(255,255,255,0.1)] origin-top-right relative overflow-hidden group"
+        <div class="pointer-events-auto bg-white border border-[color:var(--slate-200,#E4E6EA)] rounded-[20px] p-4 shadow-[0_10px_30px_-8px_rgba(11,27,51,0.12)] flex gap-3 items-start cursor-pointer transition-all duration-300 hover:border-[color:var(--slate-300,#D7DAE0)] hover:shadow-[0_14px_36px_-8px_rgba(11,27,51,0.16)] hover:-translate-y-0.5 origin-top-right relative overflow-hidden group"
              [class.opacity-0]="notif.isLeaving"
-             [class.-translate-y-4]="notif.isLeaving"
-             [class.translate-x-4]="notif.isLeaving"
-             [class.scale-75]="notif.isLeaving"
-             style="animation: popOut 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;"
+             [class.-translate-y-2]="notif.isLeaving"
+             [class.translate-x-3]="notif.isLeaving"
+             [class.scale-95]="notif.isLeaving"
+             style="animation: popIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;"
              (click)="onClick(notif)">
-          
-          <!-- Efecto de resplandor sutil (glow) -->
-          <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
-          <div class="w-12 h-12 rounded-2xl flex-shrink-0 flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20 text-blue-400 overflow-hidden border border-blue-500/30 shadow-inner">
+          <div class="w-11 h-11 rounded-2xl flex-shrink-0 flex items-center justify-center bg-[color:var(--navy-100,#E8ECF3)] border border-[color:var(--slate-200,#E4E6EA)] text-[color:var(--navy-900,#0B1B33)] overflow-hidden">
             @if (notif.icon_url) {
               <img [src]="notif.icon_url" class="w-full h-full object-cover">
             } @else {
-              <i class="pi pi-bell text-xl animate-pulse"></i>
+              <i class="pi pi-bell text-lg"></i>
             }
           </div>
 
-          <div class="flex-1 min-w-0 flex flex-col gap-0.5 mt-0.5 relative z-10">
+          <div class="flex-1 min-w-0 flex flex-col gap-1 mt-0.5 relative z-10">
             <div class="flex justify-between items-center gap-2">
-              <span class="text-white font-bold text-sm truncate tracking-tight">{{ notif.title || 'Nueva Notificación' }}</span>
-              <span class="text-blue-400/80 text-[9px] font-bold uppercase tracking-widest flex-shrink-0 bg-blue-500/10 px-1.5 py-0.5 rounded-md">Ahora</span>
+              <span class="text-[color:var(--slate-900,#1F2430)] font-medium text-sm truncate tracking-tight">{{ notif.title || 'Nueva notificación' }}</span>
+              <span class="text-[color:var(--crimson-500,#C81E3A)] text-[10px] font-medium tracking-wide flex-shrink-0 bg-[color:var(--crimson-100,#FBE4E8)] px-2 py-0.5 rounded-lg">Ahora</span>
             </div>
-            <p class="text-gray-300 text-xs leading-relaxed line-clamp-2">{{ notif.message }}</p>
+            <p class="text-[color:var(--slate-600,#6B7280)] text-xs leading-relaxed line-clamp-2">{{ notif.message }}</p>
           </div>
 
-          <button (click)="close($event, notif._id)" 
-                  class="w-7 h-7 flex items-center justify-center rounded-full bg-white/5 text-white/40 hover:bg-white/20 hover:text-white transition-all duration-200 flex-shrink-0 -mt-1 -mr-1 relative z-10 backdrop-blur-md">
+          <button (click)="close($event, notif._id)"
+                  class="w-6.5 h-6.5 flex items-center justify-center rounded-full bg-[color:var(--slate-100,#F4F5F7)] text-[color:var(--slate-500,#8A8F9C)] hover:bg-[color:var(--slate-200,#E4E6EA)] hover:text-[color:var(--slate-900,#1F2430)] transition-all duration-200 flex-shrink-0 -mt-1 -mr-1 relative z-10">
             <i class="pi pi-times text-xs"></i>
           </button>
         </div>
@@ -52,14 +49,14 @@ interface RichNotification extends AppNotification {
     </div>
 
     <style>
-      @keyframes popOut {
+      @keyframes popIn {
         from {
           opacity: 0;
-          transform: scale(0.6) translate3d(60px, -40px, 0) rotate(5deg);
+          transform: scale(0.92) translate3d(24px, -12px, 0);
         }
         to {
           opacity: 1;
-          transform: scale(1) translate3d(0, 0, 0) rotate(0deg);
+          transform: scale(1) translate3d(0, 0, 0);
         }
       }
     </style>
@@ -86,10 +83,9 @@ export class RichNotificationComponent {
       _id: Math.random().toString(36).substr(2, 9),
       isLeaving: false
     };
-    
+
     this.activeNotifications.update(list => [...list, enriched]);
 
-    // Haptic feedback (Vibración) solo para dispositivos móviles (pantallas < 768px)
     if (typeof window !== 'undefined' && window.innerWidth < 768 && typeof navigator !== 'undefined' && navigator.vibrate) {
       navigator.vibrate([200, 100, 200]);
     }
@@ -100,11 +96,10 @@ export class RichNotificationComponent {
   }
 
   triggerLeave(id: string) {
-    this.activeNotifications.update(list => 
+    this.activeNotifications.update(list =>
       list.map(n => n._id === id ? { ...n, isLeaving: true } : n)
     );
 
-    // Esperar que termine la transición de CSS (300ms) para removerlo del DOM
     setTimeout(() => {
       this.removeNotification(id);
     }, 300);
