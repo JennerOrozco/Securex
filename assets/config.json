@@ -1,0 +1,11 @@
+{
+  "apiUrl": "https://secureapi.jennerorozcoa.dev/v1",            
+  "recaptchaSiteKey": "6LdC_R4sAAAAALdkIRCXk4rtgo42XPwgRSEd7A2w",
+  "googleClientId": "966637622172-7pu5ak4ujjif94pphjum28uppir4ursn.apps.googleusercontent.com",
+  "appUuid": "373166e7-5491-11f1-9e08-b904e36964b7",
+  "vapidPublicKey": "BAWTud9m5pdyEThXL_cJ1zAh26jB-OMBbQ-Yin0VUfqsHTCkxVMLGI1xqp5W7blvRPLy24t300RaLHTTzGBTRUY",
+  "notificationApiUrl": "https://notificationapi.jennerorozcoa.dev/v1",
+  "financeApiUrl": "https://financial.jennerorozcoa.dev/v1/finance",
+  "crmApiUrl": "https://crm.jennerorozcoa.dev/v1/crm",
+  "reportApiUrl": "https://reportapi.jennerorozcoa.dev/v1/report"
+}
