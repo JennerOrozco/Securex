@@ -1,32 +1,52 @@
 .mobile-sheet-backdrop {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(15,23,42,0.4); backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px); z-index: 9998;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9998;
   animation: fadeInBackdrop 0.25s ease;
 }
 
 @keyframes fadeInBackdrop {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .mobile-bottom-sheet {
-  position: fixed; bottom: 0; left: 0; width: 100%;
-  background: rgba(255,255,255,0.95);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  border: 1px solid rgba(255,255,255,0.5);
-  box-shadow: 0 -12px 40px rgba(15,23,42,0.15);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 -12px 40px rgba(15, 23, 42, 0.15);
   z-index: 9999;
-  transform: translateY(100%); visibility: hidden;
-  transition: transform 0.3s cubic-bezier(0.16,1,0.3,1), visibility 0.3s;
-  padding: 0 0 calc(env(safe-area-inset-bottom,0px) + 16px);
-  max-height: 80vh; display: flex; flex-direction: column;
+  transform: translateY(100%);
+  visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.3s;
+  padding: 0 0 calc(env(safe-area-inset-bottom, 0px) + 16px);
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.mobile-bottom-sheet.show { transform: translateY(0); visibility: visible; }
+.mobile-bottom-sheet.show {
+  transform: translateY(0);
+  visibility: visible;
+}
 
 .sheet-handle-container {
   padding: 10px 0 6px;
@@ -39,13 +59,13 @@
 .sheet-handle {
   width: 36px;
   height: 5px;
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
   border-radius: 100px;
 }
 
 .sheet-header {
   padding: 0 20px 12px;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .sheet-title {
@@ -79,14 +99,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px 14px;
+  padding: 0px 0px;
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-main);
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.15s ease;
-  min-height: 48px;
+  min-height: 0px;
 }
 
 .sheet-list li:active {
@@ -113,8 +133,8 @@
   width: 100%;
   margin-top: 10px;
   height: 48px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: rgba(255,255,255,0.7);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.7);
   border-radius: 14px;
   font-size: 0.95rem;
   font-weight: 600;
